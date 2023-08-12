@@ -11,7 +11,8 @@ struct MailTransaction: Identifiable {
     var transaction: Transaction?
 }
 
-struct Transaction { // TODO don't define here, move some other place, somewhere near the DB
+struct Transaction: Identifiable, Hashable { // TODO don't define here, move some other place, somewhere near the DB
+    var id: UInt32
     var expense: Bool
     var transactionDate: Date
     var bankAccount: String
@@ -108,6 +109,7 @@ class TransactionMailImporter: ObservableObject {
                 let messageBody = messageParser.htmlBodyRendering()
                 transaction.rawMessage = messageBody
                 transaction.transaction = self.parser.parseHtmlContent(htmlContent: messageBody ?? "")
+                transaction.transaction?.id = transaction.id
                 self.transactions.append(transaction)
             }
         }
@@ -148,7 +150,7 @@ struct RaiffeisenMailParser: TransactionMailParser {
         amount = Double(substringFromString(original: htmlContent, from: "<br/><br/>Betrag: ", to: " CHF<br/>")) ?? 0.0
         receiver = substringFromString(original: htmlContent, from: "<br/>Buchung:<br/>", to: "<br/><br/>Freundliche ")
 
-        return Transaction(expense: expense, transactionDate: transactionDate, bankAccount: bankAccount, amount: amount, receiver: receiver)
+        return Transaction(id: 0, expense: expense, transactionDate: transactionDate, bankAccount: bankAccount, amount: amount, receiver: receiver)
     }
 }
 

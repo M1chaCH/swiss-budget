@@ -13,7 +13,7 @@ struct ContentView: View {
     var body: some View {
         VStack {
             Text("Hello World!")
-                .padding(/*@START_MENU_TOKEN@*/.all, 20.0/*@END_MENU_TOKEN@*/)
+                .padding(.all, 20.0)
             if mailTransactionLoader.startedImport {
                 ProgressView("importing mails...")
             } else if mailTransactionLoader.transactions.count == 0 {

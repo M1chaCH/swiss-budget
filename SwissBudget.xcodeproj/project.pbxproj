@@ -9,6 +9,10 @@
 /* Begin PBXBuildFile section */
 		860D03D12A80FE22002B0054 /* MailCore2 in Frameworks */ = {isa = PBXBuildFile; productRef = 860D03D02A80FE22002B0054 /* MailCore2 */; };
 		860D03D32A8230EF002B0054 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 860D03D22A8230EF002B0054 /* ContentView.swift */; };
+		867603DC2A84E8060084E6B2 /* WelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 867603DB2A84E8060084E6B2 /* WelcomeView.swift */; };
+		867603DE2A8621570084E6B2 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 867603DD2A8621570084E6B2 /* HomeView.swift */; };
+		867603E72A862C680084E6B2 /* Oswald.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 867603E62A862C670084E6B2 /* Oswald.ttf */; };
+		867603E92A87E6190084E6B2 /* TransactionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 867603E82A87E6190084E6B2 /* TransactionsView.swift */; };
 		8698DEA42A7D8B82000B499A /* SwissBudgetApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8698DEA32A7D8B82000B499A /* SwissBudgetApp.swift */; };
 		8698DEA62A7D8B82000B499A /* Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8698DEA52A7D8B82000B499A /* Persistence.swift */; };
 		8698DEA92A7D8B82000B499A /* SwissBudget.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 8698DEA72A7D8B82000B499A /* SwissBudget.xcdatamodeld */; };
@@ -40,6 +44,11 @@
 
 /* Begin PBXFileReference section */
 		860D03D22A8230EF002B0054 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		867603DB2A84E8060084E6B2 /* WelcomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeView.swift; sourceTree = "<group>"; };
+		867603DD2A8621570084E6B2 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		867603E52A86295C0084E6B2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		867603E62A862C670084E6B2 /* Oswald.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Oswald.ttf; sourceTree = "<group>"; };
+		867603E82A87E6190084E6B2 /* TransactionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionsView.swift; sourceTree = "<group>"; };
 		8698DEA02A7D8B82000B499A /* SwissBudget.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SwissBudget.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8698DEA32A7D8B82000B499A /* SwissBudgetApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwissBudgetApp.swift; sourceTree = "<group>"; };
 		8698DEA52A7D8B82000B499A /* Persistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence.swift; sourceTree = "<group>"; };
@@ -82,12 +91,25 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		860D03CE2A80EB97002B0054 /* Mail */ = {
+		860D03CE2A80EB97002B0054 /* Data */ = {
 			isa = PBXGroup;
 			children = (
+				8698DEA52A7D8B82000B499A /* Persistence.swift */,
 				86A246662A80DD0E000E8700 /* MailTransactionImporter.swift */,
 			);
-			path = Mail;
+			path = Data;
+			sourceTree = "<group>";
+		};
+		867603DF2A8627210084E6B2 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				860D03D22A8230EF002B0054 /* ContentView.swift */,
+				8698DEAA2A7D8B82000B499A /* ContentViewOld.swift */,
+				867603DB2A84E8060084E6B2 /* WelcomeView.swift */,
+				867603DD2A8621570084E6B2 /* HomeView.swift */,
+				867603E82A87E6190084E6B2 /* TransactionsView.swift */,
+			);
+			path = View;
 			sourceTree = "<group>";
 		};
 		8698DE972A7D8B82000B499A = {
@@ -113,11 +135,11 @@
 		8698DEA22A7D8B82000B499A /* SwissBudget */ = {
 			isa = PBXGroup;
 			children = (
-				860D03CE2A80EB97002B0054 /* Mail */,
+				867603E62A862C670084E6B2 /* Oswald.ttf */,
+				867603E52A86295C0084E6B2 /* Info.plist */,
+				867603DF2A8627210084E6B2 /* View */,
+				860D03CE2A80EB97002B0054 /* Data */,
 				8698DEA32A7D8B82000B499A /* SwissBudgetApp.swift */,
-				860D03D22A8230EF002B0054 /* ContentView.swift */,
-				8698DEA52A7D8B82000B499A /* Persistence.swift */,
-				8698DEAA2A7D8B82000B499A /* ContentViewOld.swift */,
 				8698DEAC2A7D8B83000B499A /* Assets.xcassets */,
 				8698DEAE2A7D8B83000B499A /* SwissBudget.entitlements */,
 				8698DEA72A7D8B82000B499A /* SwissBudget.xcdatamodeld */,
@@ -262,6 +284,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8698DEB12A7D8B83000B499A /* Preview Assets.xcassets in Resources */,
+				867603E72A862C680084E6B2 /* Oswald.ttf in Resources */,
 				8698DEAD2A7D8B83000B499A /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -292,7 +315,10 @@
 				860D03D32A8230EF002B0054 /* ContentView.swift in Sources */,
 				8698DEAB2A7D8B82000B499A /* ContentViewOld.swift in Sources */,
 				8698DEA92A7D8B82000B499A /* SwissBudget.xcdatamodeld in Sources */,
+				867603E92A87E6190084E6B2 /* TransactionsView.swift in Sources */,
+				867603DE2A8621570084E6B2 /* HomeView.swift in Sources */,
 				86A246672A80DD0E000E8700 /* MailTransactionImporter.swift in Sources */,
+				867603DC2A84E8060084E6B2 /* WelcomeView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -454,6 +480,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = SwissBudget/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Swiss Budget";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.finance";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
@@ -497,6 +524,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = SwissBudget/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Swiss Budget";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.finance";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
