@@ -13,6 +13,7 @@
 		867603DE2A8621570084E6B2 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 867603DD2A8621570084E6B2 /* HomeView.swift */; };
 		867603E72A862C680084E6B2 /* Oswald.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 867603E62A862C670084E6B2 /* Oswald.ttf */; };
 		867603E92A87E6190084E6B2 /* TransactionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 867603E82A87E6190084E6B2 /* TransactionsView.swift */; };
+		867603EB2A8A16F20084E6B2 /* DemoData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 867603EA2A8A16F20084E6B2 /* DemoData.swift */; };
 		8698DEA42A7D8B82000B499A /* SwissBudgetApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8698DEA32A7D8B82000B499A /* SwissBudgetApp.swift */; };
 		8698DEA62A7D8B82000B499A /* Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8698DEA52A7D8B82000B499A /* Persistence.swift */; };
 		8698DEA92A7D8B82000B499A /* SwissBudget.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 8698DEA72A7D8B82000B499A /* SwissBudget.xcdatamodeld */; };
@@ -22,7 +23,9 @@
 		8698DEBB2A7D8B83000B499A /* SwissBudgetTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8698DEBA2A7D8B83000B499A /* SwissBudgetTests.swift */; };
 		8698DEC52A7D8B83000B499A /* SwissBudgetUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8698DEC42A7D8B83000B499A /* SwissBudgetUITests.swift */; };
 		8698DEC72A7D8B83000B499A /* SwissBudgetUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8698DEC62A7D8B83000B499A /* SwissBudgetUITestsLaunchTests.swift */; };
+		869DFB4B2A8CCB0F0076F5DD /* TransactionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 869DFB4A2A8CCB0F0076F5DD /* TransactionView.swift */; };
 		86A246672A80DD0E000E8700 /* MailTransactionImporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86A246662A80DD0E000E8700 /* MailTransactionImporter.swift */; };
+		86B4AF592A8D0124000AB165 /* TransactionEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86B4AF582A8D0124000AB165 /* TransactionEditView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -49,6 +52,7 @@
 		867603E52A86295C0084E6B2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		867603E62A862C670084E6B2 /* Oswald.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Oswald.ttf; sourceTree = "<group>"; };
 		867603E82A87E6190084E6B2 /* TransactionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionsView.swift; sourceTree = "<group>"; };
+		867603EA2A8A16F20084E6B2 /* DemoData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoData.swift; sourceTree = "<group>"; };
 		8698DEA02A7D8B82000B499A /* SwissBudget.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SwissBudget.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8698DEA32A7D8B82000B499A /* SwissBudgetApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwissBudgetApp.swift; sourceTree = "<group>"; };
 		8698DEA52A7D8B82000B499A /* Persistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence.swift; sourceTree = "<group>"; };
@@ -62,7 +66,9 @@
 		8698DEC02A7D8B83000B499A /* SwissBudgetUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SwissBudgetUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		8698DEC42A7D8B83000B499A /* SwissBudgetUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwissBudgetUITests.swift; sourceTree = "<group>"; };
 		8698DEC62A7D8B83000B499A /* SwissBudgetUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwissBudgetUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		869DFB4A2A8CCB0F0076F5DD /* TransactionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionView.swift; sourceTree = "<group>"; };
 		86A246662A80DD0E000E8700 /* MailTransactionImporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MailTransactionImporter.swift; sourceTree = "<group>"; };
+		86B4AF582A8D0124000AB165 /* TransactionEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionEditView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -96,6 +102,7 @@
 			children = (
 				8698DEA52A7D8B82000B499A /* Persistence.swift */,
 				86A246662A80DD0E000E8700 /* MailTransactionImporter.swift */,
+				867603EA2A8A16F20084E6B2 /* DemoData.swift */,
 			);
 			path = Data;
 			sourceTree = "<group>";
@@ -108,6 +115,8 @@
 				867603DB2A84E8060084E6B2 /* WelcomeView.swift */,
 				867603DD2A8621570084E6B2 /* HomeView.swift */,
 				867603E82A87E6190084E6B2 /* TransactionsView.swift */,
+				869DFB4A2A8CCB0F0076F5DD /* TransactionView.swift */,
+				86B4AF582A8D0124000AB165 /* TransactionEditView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -314,11 +323,14 @@
 				8698DEA62A7D8B82000B499A /* Persistence.swift in Sources */,
 				860D03D32A8230EF002B0054 /* ContentView.swift in Sources */,
 				8698DEAB2A7D8B82000B499A /* ContentViewOld.swift in Sources */,
+				867603EB2A8A16F20084E6B2 /* DemoData.swift in Sources */,
+				869DFB4B2A8CCB0F0076F5DD /* TransactionView.swift in Sources */,
 				8698DEA92A7D8B82000B499A /* SwissBudget.xcdatamodeld in Sources */,
 				867603E92A87E6190084E6B2 /* TransactionsView.swift in Sources */,
 				867603DE2A8621570084E6B2 /* HomeView.swift in Sources */,
 				86A246672A80DD0E000E8700 /* MailTransactionImporter.swift in Sources */,
 				867603DC2A84E8060084E6B2 /* WelcomeView.swift in Sources */,
+				86B4AF592A8D0124000AB165 /* TransactionEditView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -11,15 +11,6 @@ struct MailTransaction: Identifiable {
     var transaction: Transaction?
 }
 
-struct Transaction: Identifiable, Hashable { // TODO don't define here, move some other place, somewhere near the DB
-    var id: UInt32
-    var expense: Bool
-    var transactionDate: Date
-    var bankAccount: String
-    var amount: Double
-    var receiver: String
-}
-
 protocol TransactionMailParser {
     func isValidTransactionMail(mailHeader: MCOMessageHeader) -> Bool
     func parseHtmlContent(htmlContent: String) -> Transaction
@@ -150,7 +141,7 @@ struct RaiffeisenMailParser: TransactionMailParser {
         amount = Double(substringFromString(original: htmlContent, from: "<br/><br/>Betrag: ", to: " CHF<br/>")) ?? 0.0
         receiver = substringFromString(original: htmlContent, from: "<br/>Buchung:<br/>", to: "<br/><br/>Freundliche ")
 
-        return Transaction(id: 0, expense: expense, transactionDate: transactionDate, bankAccount: bankAccount, amount: amount, receiver: receiver)
+        return Transaction(id: 0, expense: expense, transactionDate: transactionDate, bankAccount: bankAccount, amount: amount, receiver: receiver, tag: Tag(id: 0, systemIcon: "folder.badge.questionmark", color: .appPrimary, name: "Undefined", keywords: ["*"]))
     }
 }
 

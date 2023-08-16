@@ -1,9 +1,12 @@
 import SwiftUI
 
 struct HomeView: View {
+    let dataLoader = DataLoader()
+    @State var transactions: [Date: [Transaction]]
+    
     var body: some View {
         TabView() {
-            TransactionsView()
+            TransactionsView(transactions: $transactions)
                 .tabItem {
                     Label("Transactions", systemImage: "banknote.fill")
                 }
@@ -20,6 +23,10 @@ struct HomeView: View {
                     Label("Settings", systemImage: "gear")
                 }
         }
+    }
+    
+    init() {
+        transactions = dataLoader.mapDataToDates(dataLoader.transactions)
     }
 }
 
