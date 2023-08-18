@@ -2,6 +2,7 @@ import SwiftUI
 
 struct TransactionsView: View {
     @Binding var transactions: [Date: [Transaction]]
+    @Binding var tags: [Tag]
     @State var sortedTransactionKeys: [Date] = []
     
     let dataLoader = DataLoader()
@@ -16,7 +17,7 @@ struct TransactionsView: View {
                         ForEach(sortedTransactionKeys, id: \.self) { key in
                             DayTransactionView(
                                 day: dataLoader.dateToString(key, format: "dd. MMM yyyy", useLiterals: true),
-                                transactions: self.transactions[key] ?? [])
+                                transactions: self.transactions[key] ?? [], tags: tags)
                             .padding()
                         }
                     }
@@ -35,17 +36,14 @@ struct TransactionsView: View {
 
 struct TransactionsView_Previews: PreviewProvider {
     static var previews: some View {
-        TransactionsView(transactions: .constant([:]))
+        TransactionsView(transactions: .constant([:]), tags: .constant(DataLoader().tags))
     }
 }
 
 struct DayTransactionView: View {
     @State var day: String
     @State var transactions: [Transaction]
-    
-    @State var editTag: Bool = false
-    @State var editAlias: Bool = false
-    @State var editNote: Bool = false
+    @State var tags: [Tag]
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -53,52 +51,30 @@ struct DayTransactionView: View {
                 .font(.headline)
                 .padding([.top, .leading])
             
-            ForEach($transactions, id: \.self) { t in
-                TransactionLinkView(transaction: t)
-                    .contextMenu {
-                        Button {
-                            self.editTag = true
-                        } label: {
-                            Label("Change Tag", systemImage: "tag.fill")
-                        }
-                        Button {
-                            self.editAlias = true
-                        } label: {
-                            Label("Change Alias", systemImage: "pencil")
-                        }
-                        Button {
-                            self.editNote = true
-                        } label: {
-                            Label("Change Note", systemImage: "note.text")
-                        }
-                    } preview: {
-                        TransactionLinkPreviewView(transaction: t)
-                    }
-                    .popover(isPresented: self.$editAlias) {
-                        TransactionEditAliasView(transaction: t, open: self.$editAlias)
-                    }
-                    .popover(isPresented: self.$editTag) {
-                        TransactionEditTagView(transaction: t)
-                    }
-                    .popover(isPresented: self.$editNote) {
-                        TransactionEditNoteView(transaction: t, open: self.$editNote)
-                    }
+            ForEach($transactions, id: \.self.id) { t in
+                TransactionLinkView(transaction: t, tags: $tags)
             }
         }
     }
     
-    init(day: String, transactions: [Transaction]) {
+    init(day: String, transactions: [Transaction], tags: [Tag]) {
         self.day = day
         self.transactions = transactions
+        self.tags = tags
     }
 }
 
 struct TransactionLinkView: View {
     @Binding var transaction: Transaction
+    @Binding var tags: [Tag]
+    
+    @State var editTag: Bool = false
+    @State var editAlias: Bool = false
+    @State var editNote: Bool = false
     
     var body: some View {
         NavigationLink {
-            TransactionView(transaction: $transaction)
+            TransactionView(transaction: $transaction, tags: $tags)
                 .navigationTitle("Transaction")
                 .navigationBarTitleDisplayMode(.inline)
         } label: {
@@ -146,5 +122,33 @@ struct TransactionLinkView: View {
         }
         .padding(5)
         .frame(height: 50)
+        .contextMenu {
+            Button {
+                editTag = true
+            } label: {
+                Label("Change Tag", systemImage: "tag.fill")
+            }
+            Button {
+                editAlias = true
+            } label: {
+                Label("Change Alias", systemImage: "pencil")
+            }
+            Button {
+                editNote = true
+            } label: {
+                Label("Change Note", systemImage: "note.text")
+            }
+        } preview: {
+            TransactionLinkPreviewView(transaction: $transaction)
+        }
+        .popover(isPresented: self.$editAlias) {
+            TransactionEditAliasView(transaction: $transaction, open: $editAlias)
+        }
+        .popover(isPresented: self.$editTag) {
+            TransactionEditTagView(transaction: $transaction, tags: $tags, open: $editTag)
+        }
+        .popover(isPresented: self.$editNote) {
+            TransactionEditNoteView(transaction: $transaction, open: $editNote)
+        }
     }
 }

@@ -12,7 +12,7 @@ struct SwissBudgetApp: App {
             // ContentView()
             //    .environment(\.managedObjectContext, persistenceController.container.viewContext)
             if setupComplete {
-                HomeView()
+                ContentView()
                     .background(Color.appBackground)
             } else {
                 WelcomeView()

@@ -69,6 +69,7 @@ struct TransactionView: View {
     let dataLoader = DataLoader()
     
     @Binding var transaction: Transaction
+    @Binding var tags: [Tag]
     
     @State var editTag: Bool = false
     @State var editAlias: Bool = false
@@ -176,7 +177,7 @@ struct TransactionView: View {
                 .navigationTitle("change alias")
         }
         .popover(isPresented: $editTag) {
-            TransactionEditTagView(transaction: $transaction)
+            TransactionEditTagView(transaction: $transaction, tags: $tags, open: $editTag)
         }
         .popover(isPresented: $editNote) {
             TransactionEditNoteView(transaction: $transaction, open: $editNote)
@@ -198,6 +199,6 @@ struct TransactionView_Previews: PreviewProvider {
                                                alias: "SBB GA Night")
     
     static var previews: some View {
-        TransactionView(transaction: .constant(defaultTransaction))
+        TransactionView(transaction: .constant(defaultTransaction), tags: .constant(DataLoader().tags))
     }
 }
