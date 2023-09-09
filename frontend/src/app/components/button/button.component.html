@@ -1,0 +1,7 @@
+<button [class.icon-grid]="rightIcon || leftIcon" [style.height]="height" [style.width]="width">
+  <span *ngIf="leftIcon || rightIcon" class="material-symbols-rounded">{{leftIcon}}</span>
+  <ng-container>
+    <ng-content></ng-content>
+  </ng-container>
+  <span *ngIf="leftIcon || rightIcon" class="material-symbols-rounded">{{rightIcon}}</span>
+</button>

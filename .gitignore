@@ -55,6 +55,7 @@ hs_err_pid*
 *.lau11nch
 .settings/
 *.sublime-workspace
+.iml
 
 # Visual Studio Code
 */.vscode/*

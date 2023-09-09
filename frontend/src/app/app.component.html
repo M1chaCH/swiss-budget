@@ -1,1 +1,22 @@
-<h1>SwissBudget</h1>
+<div class="root">
+  <header *ngIf="!fullscreenPage">
+    <p>header</p>
+  </header>
+
+  <div [style.height]="fullscreenPage ? 'calc(100%)' : 'calc(100% - 20px - 80px)'"
+       class="center">
+    <nav *ngIf="!fullscreenPage"
+         [style.width]="sideMenuOpen ? '300px' : '0px'">
+      <p>nav</p>
+      <button (click)="sideMenuOpen = false">close</button>
+    </nav>
+
+    <main [@routeChangeTrigger]="currentRoute"
+          [style.width]="!sideMenuOpen || fullscreenPage ? '100%' : 'calc(100% - 300px)'"
+          class="page-container">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+
+  <footer *ngIf="!fullscreenPage"></footer>
+</div>

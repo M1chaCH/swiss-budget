@@ -1,0 +1,15 @@
+<svg fill="none" height="512" viewBox="0 0 374 374" width="512" xmlns="http://www.w3.org/2000/svg">
+  <g clip-path="url(#clip0_1_7)">
+    <path
+      d="M0 59V0L188 186.5L298.5 74V299.5L334 336.5V42H75.5L33.5 0H374.5V374.5H314.5L261 320.5V166.5L184.5 244L0 59Z"
+      fill="#3C3E3C"
+      id="michu-tech-logo-upper"/>
+    <path d="M0 374.5V100.5L198 299H157.5L36 178V335.5H236L274 374.5H0Z" fill="#E28521"
+          id="michu-tech-logo-lower"/>
+  </g>
+  <defs>
+    <clipPath id="clip0_1_7">
+      <rect fill="transparent" height="512" width="512"/>
+    </clipPath>
+  </defs>
+</svg>

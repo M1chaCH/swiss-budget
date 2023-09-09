@@ -1,0 +1,26 @@
+button {
+  all: unset;
+  padding: 10px;
+  background-color: var(--michu-tech-primary);
+  height: 60px;
+  box-sizing: border-box;
+  cursor: pointer;
+  transition: all 150ms ease-out;
+  border-radius: 2px;
+}
+
+button:hover, button:focus {
+  background-color: color-mix(in srgb, var(--michu-tech-primary) 60%, var(--michu-tech-background));
+}
+
+button:active {
+  background-color: color-mix(in srgb, var(--michu-tech-primary) 40%, var(--michu-tech-background));
+}
+
+.icon-grid {
+  display: grid;
+  grid-template-rows: 100%;
+  grid-template-columns: 20% 60% 20%;
+  align-items: center;
+  justify-items: center;
+}

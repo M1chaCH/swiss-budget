@@ -1,0 +1,45 @@
+/* https://coolors.co/EAEBEA-140D03-3C3E3C-E28521-C13D2B */
+:root,
+[color-theme="default"] {
+  --michu-tech-background: #EAEBEA;
+  --michu-tech-foreground: #140D03;
+  --michu-tech-primary: #3C3E3C;
+  --michu-tech-accent: #E28521;
+  --michu-tech-warn: #C13D2B;
+
+  transition: all 200ms ease-out;
+}
+
+/* https://coolors.co/1C1917-D5D7D5-4C4F4C-E59238-D34936 */
+[color-theme="dark"] {
+  --michu-tech-background: #1C1917;
+  --michu-tech-foreground: #D5D7D5;
+  --michu-tech-primary: #4C4F4C;
+  --michu-tech-accent: #E59238;
+  --michu-tech-warn: #D34936;
+}
+
+::selection {
+  color: var(--michu-tech-background);
+  background: var(--michu-tech-foreground);
+}
+
+html {
+  background-color: var(--michu-tech-background);
+  color: var(--michu-tech-foreground);
+
+  font-family: "Oswald", sans-serif;
+}
+
+body {
+  padding: 0;
+}
+
+.page {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  box-sizing: border-box;
+}

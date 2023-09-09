@@ -1,0 +1,46 @@
+.root {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+
+  box-sizing: border-box;
+
+  header {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-evenly;
+    align-items: center;
+    height: 80px;
+  }
+
+  .center {
+    display: flex;
+    flex-flow: row nowrap;
+    height: calc(100% - 80px - 20px);
+
+    nav {
+      height: 100%;
+      overflow: hidden;
+
+      transition: width 250ms ease-out;
+    }
+
+    .page-container {
+      box-sizing: border-box;
+      overflow: auto;
+
+      margin: auto;
+      height: 100%;
+      max-width: 2500px;
+
+      position: relative;
+      transition: width 250ms ease-out;
+    }
+  }
+
+  footer {
+    height: 20px;
+  }
+}

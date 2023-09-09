@@ -1,0 +1,13 @@
+form {
+  display: grid;
+  grid-template-columns: 200px;
+  grid-template-rows: repeat(5, 60px);
+  gap: 12px;
+}
+
+input {
+  margin: 0 0 10px 0;
+  box-sizing: border-box;
+}
+
+
