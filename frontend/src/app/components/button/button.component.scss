@@ -1,20 +1,33 @@
-button {
+.button {
   all: unset;
   padding: 10px;
   background-color: var(--michu-tech-primary);
-  height: 60px;
   box-sizing: border-box;
   cursor: pointer;
   transition: all 150ms ease-out;
   border-radius: 2px;
 }
 
-button:hover, button:focus {
+.button:hover:not(.disabled), .button:focus:not(.disabled) {
   background-color: color-mix(in srgb, var(--michu-tech-primary) 60%, var(--michu-tech-background));
 }
 
-button:active {
+.button:active:not(.disabled) {
   background-color: color-mix(in srgb, var(--michu-tech-primary) 40%, var(--michu-tech-background));
+}
+
+.secondary {
+  background-color: color-mix(in srgb, var(--michu-tech-primary) 30%, transparent);
+  border: var(--michu-tech-primary) dashed 2px;
+}
+
+.secondary:hover:not(.disabled),
+.secondary:focus:not(.disabled) {
+  background-color: color-mix(in srgb, var(--michu-tech-primary) 20%, var(--michu-tech-background));
+}
+
+.secondary:active:not(.disabled) {
+  background-color: color-mix(in srgb, var(--michu-tech-primary) 10%, var(--michu-tech-background));
 }
 
 .icon-grid {
@@ -23,4 +36,17 @@ button:active {
   grid-template-columns: 20% 60% 20%;
   align-items: center;
   justify-items: center;
+}
+
+.flex-button {
+  display: flex;
+  gap: 10px;
+  flex-flow: row wrap;
+  justify-content: center;
+  align-items: center;
+}
+
+.disabled {
+  filter: brightness(50%);
+  cursor: default !important;
 }

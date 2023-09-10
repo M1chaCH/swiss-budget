@@ -1,6 +1,6 @@
 form {
   display: grid;
-  grid-template-columns: 200px;
+  grid-template-columns: clamp(200px, 80vw, 275px);
   grid-template-rows: repeat(5, 60px);
   gap: 12px;
 }

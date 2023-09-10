@@ -10,6 +10,13 @@ export class ButtonComponent {
   @Input() height: string = "100%";
   @Input() leftIcon: string | undefined;
   @Input() rightIcon: string | undefined;
+  @Input() design: "primary" | "secondary" = "primary";
+  @Input() disabled: boolean = false;
+
+  @Input() useAnchor: boolean = false;
+  @Input() href: string | undefined;
+  @Input() target: "_blank" | "_parent" | "_self" | "_top" = "_self"
+  @Input() routerLink: string | undefined;
 
   @Output() clicked: EventEmitter<boolean> = new EventEmitter<boolean>();
 }

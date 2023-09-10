@@ -1,9 +1,14 @@
-<form (submit)="login()">
-  <div>TODO: style input, style secondary</div>
-  <input placeholder="Mail" type="text"/>
-  <input placeholder="Password" type="password"/>
+<form (submit)="form.submit()"
+      [formGroup]="form.group">
+  <app-text-input [value]="form.mail" errorText="not valid mail address"
+                  placeholder="Mail"></app-text-input>
+  <app-text-input [password]="true" [value]="form.password" errorText="password required"
+                  placeholder="Password"></app-text-input>
+  <div></div>
   <app-button rightIcon="login">
     Sign In
   </app-button>
-  <a routerLink="setup">Setup</a>
+  <app-button [useAnchor]="true" design="secondary" routerLink="setup">
+    Get started
+  </app-button>
 </form>

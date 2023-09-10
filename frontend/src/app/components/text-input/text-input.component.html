@@ -1,0 +1,14 @@
+<div [class.disabled]="value.disabled"
+     [class.secondary]="design === 'secondary'"
+     [style.height]="height"
+     [style.width]="width"
+     class="container">
+  <input
+    (change)="edited = true"
+    [formControl]="value"
+    [placeholder]="value.hasValidator(Validators.required) ? placeholder + '*' : placeholder"
+    [type]="password ? 'password' : 'text'"
+    class="input"/>
+  <span *ngIf="hint && !value.invalid" class="hint">{{hint}}</span>
+  <span *ngIf="value.invalid && edited" class="hint error">{{errorText}}</span>
+</div>

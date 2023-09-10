@@ -10,7 +10,6 @@ import {ThemeService} from "../../services/theme.service";
 })
 export class LoginPageComponent implements OnInit {
   subrouteActive: boolean = false;
-  setupPage: string = `/${pages.LOGIN}/${pages.login.SETUP}`
   backgroundImageUrl: string = "url('/assets/welcome-large-background-light.svg')";
 
   constructor(

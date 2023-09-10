@@ -7,6 +7,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow-y: auto;
 
   .center-card {
     width: clamp(240px, 70vw, 1200px);
@@ -23,6 +24,7 @@
         flex-flow: column;
         align-items: flex-start;
         justify-content: center;
+        font-family: "Oswald", sans-serif;
 
         #developedBy {
           margin: 5px 0 0 0;
@@ -60,7 +62,7 @@
         }
       }
 
-      .login-form-container {
+      .login-form-container { // TODO WHY DOES THIS IDIOT LOSE HEIGHT IN DISPLAY FLEX???
         position: relative;
 
         .login-form {
@@ -70,6 +72,19 @@
           align-items: center;
           justify-content: center;
         }
+      }
+    }
+  }
+}
+
+@media (max-width: 1000px) {
+  .login-page {
+    .center-card {
+
+      .card-grid {
+        display: inline-flex;
+        flex-flow: column;
+        gap: 200px;
       }
     }
   }

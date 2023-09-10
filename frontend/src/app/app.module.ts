@@ -11,6 +11,8 @@ import {FullscreenPageDirective} from './pages/fullscreen-page.directive';
 import {NgOptimizedImage} from "@angular/common";
 import {LoginComponent} from './components/login/login.component';
 import {ButtonComponent} from './components/button/button.component';
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
+import {TextInputComponent} from './components/text-input/text-input.component';
 
 @NgModule({
   declarations: [
@@ -20,13 +22,16 @@ import {ButtonComponent} from './components/button/button.component';
     HomePageComponent,
     FullscreenPageDirective,
     LoginComponent,
-    ButtonComponent
+    ButtonComponent,
+    TextInputComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
-    NgOptimizedImage
+    NgOptimizedImage,
+    FormsModule,
+    ReactiveFormsModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

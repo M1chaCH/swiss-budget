@@ -1,0 +1,83 @@
+.container {
+  container: input / size;
+
+  transition: all 150ms ease-out;
+
+  background-color: var(--michu-tech-primary);
+  padding: 10px;
+  border-radius: 2px;
+  position: relative;
+  box-sizing: border-box;
+
+  display: inline-flex;
+  align-items: center;
+
+  .input {
+    all: unset;
+
+    width: 100cqw;
+    height: 60cqh;
+    margin: 0;
+    box-sizing: border-box;
+
+    font-weight: 400;
+    font-size: 16px;
+    letter-spacing: 1px;
+  }
+
+  .label {
+    position: absolute;
+    top: 2cqh;
+    font-weight: 400;
+    letter-spacing: 1px;
+    font-size: 16px;
+  }
+
+  .hint {
+    position: absolute;
+    bottom: 2cqh;
+    font-weight: 600;
+    font-size: 12px;
+
+    animation: 250ms ease-out fly-in;
+  }
+
+  .error {
+    color: var(--michu-tech-warn);
+  }
+}
+
+.container:hover:not(.disabled), .container:focus:not(.disabled) {
+  background-color: color-mix(in srgb, var(--michu-tech-primary) 60%, var(--michu-tech-background));
+}
+
+.secondary {
+  background-color: color-mix(in srgb, var(--michu-tech-primary) 30%, transparent);
+  border: var(--michu-tech-primary) dashed 2px;
+}
+
+.secondary:hover:not(.disabled) {
+  background-color: color-mix(in srgb, var(--michu-tech-primary) 20%, var(--michu-tech-background));
+}
+
+.secondary:active:not(.disabled), .secondary:focus:not(.disabled) {
+  background-color: color-mix(in srgb, var(--michu-tech-primary) 10%, var(--michu-tech-background));
+}
+
+.disabled {
+  filter: brightness(50%);
+  cursor: default !important;
+}
+
+@keyframes fly-in {
+  0% {
+    transform: translateY(-8px);
+    opacity: 0;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
