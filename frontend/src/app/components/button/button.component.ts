@@ -14,7 +14,6 @@ export class ButtonComponent {
   @Input() disabled: boolean = false;
 
   @Input() useAnchor: boolean = false;
-  @Input() href: string | undefined;
   @Input() target: "_blank" | "_parent" | "_self" | "_top" = "_self"
   @Input() routerLink: string | undefined;
 
