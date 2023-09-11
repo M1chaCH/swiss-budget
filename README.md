@@ -1,8 +1,7 @@
 # Swiss Budget 💰🇨🇭 <img src="https://github.com/M1chaCH/swiss-budget/assets/67689103/3aa9b887-93fc-4ebc-82ef-8d1e1b0cdc14" alt="app-icon" height="80px" style="float: right" />
 
 A WebApp (tried making it a IOS App, but I'd rather go back to the old web stack) that lets you
-manage your money in a breeze with a focus on your privacy. It features automatic transaction import
-via E-Mail!
+manage your money in a breeze. It features automatic transaction import via E-Mail!
 
 
 
