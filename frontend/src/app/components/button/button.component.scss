@@ -47,6 +47,6 @@
 }
 
 .disabled {
-  filter: brightness(50%);
+  filter: opacity(50%);
   cursor: default !important;
 }

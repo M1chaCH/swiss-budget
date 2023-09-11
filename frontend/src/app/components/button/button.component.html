@@ -1,5 +1,6 @@
 <ng-container *ngIf="useAnchor else useButton">
-  <a [class.disabled]="disabled"
+  <a (click)="onClick.emit($event)"
+     [class.disabled]="disabled"
      [class.flex-button]="!rightIcon && !leftIcon"
      [class.icon-grid]="rightIcon || leftIcon"
      [class.secondary]="design === 'secondary'"
@@ -13,7 +14,8 @@
 </ng-container>
 
 <ng-template #useButton>
-  <button [class.disabled]="disabled" [class.flex-button]="!rightIcon && !leftIcon"
+  <button (click)="onClick.emit($event)" [class.disabled]="disabled"
+          [class.flex-button]="!rightIcon && !leftIcon"
           [class.icon-grid]="rightIcon || leftIcon"
           [class.secondary]="design === 'secondary'"
           [disabled]="disabled"

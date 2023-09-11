@@ -13,6 +13,8 @@ import {LoginComponent} from './components/login/login.component';
 import {ButtonComponent} from './components/button/button.component';
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {TextInputComponent} from './components/text-input/text-input.component';
+import {StepsPanelComponent} from './components/steps-panel/steps-panel.component';
+import {PanelStepDirective} from './components/steps-panel/panel-step.directive';
 
 @NgModule({
   declarations: [
@@ -23,7 +25,9 @@ import {TextInputComponent} from './components/text-input/text-input.component';
     FullscreenPageDirective,
     LoginComponent,
     ButtonComponent,
-    TextInputComponent
+    TextInputComponent,
+    StepsPanelComponent,
+    PanelStepDirective
   ],
   imports: [
     BrowserModule,

@@ -1,1 +1,20 @@
-<p>setup.page works!</p>
+<div class="setup-subpage">
+  <h3 style="margin: 0 0 5px 0;">Get Started</h3>
+  <p style="margin: 0 0 16px 0;">Follow the next few steps to get started with your Swiss Budget.
+    The setup takes about 6 minutes.</p>
+  <div style="height: 500px;">
+    <app-steps-panel (firstPreviousClicked)="navigateToLogin()" (lastNextClicked)="complete()"
+                     [firstPreviousClickable]="true" [lastNextClickable]="true"
+                     lastNextLabel="Done">
+      <div *appPanelStep class="steps-panel-step">
+        <span>one</span>
+      </div>
+      <div *appPanelStep class="steps-panel-step">
+        <span>two</span>
+      </div>
+      <div *appPanelStep class="steps-panel-step">
+        <span>three</span>
+      </div>
+    </app-steps-panel>
+  </div>
+</div>

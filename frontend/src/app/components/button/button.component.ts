@@ -17,5 +17,5 @@ export class ButtonComponent {
   @Input() target: "_blank" | "_parent" | "_self" | "_top" = "_self"
   @Input() routerLink: string | undefined;
 
-  @Output() clicked: EventEmitter<boolean> = new EventEmitter<boolean>();
+  @Output() onClick: EventEmitter<Event> = new EventEmitter<Event>();
 }
