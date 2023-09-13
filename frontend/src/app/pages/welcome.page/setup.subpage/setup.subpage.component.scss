@@ -8,4 +8,26 @@
 
   padding: 24px;
   box-sizing: border-box;
+
+  .setup-step-container {
+    display: flex;
+    flex-flow: column;
+
+    h3 {
+      margin: 12px 0 10px 0;
+    }
+
+    p {
+      margin: 0 0 5px 0;
+    }
+
+    .controls {
+      min-width: 200px;
+      width: 100%;
+      max-width: 300px;
+      align-self: center;
+
+      margin-top: 20px;
+    }
+  }
 }

@@ -5,6 +5,8 @@
      class="container">
   <input
     (change)="edited = true"
+    (keydown.enter)="submit.emit()"
+    (keydown.escape)="cancel.emit()"
     [formControl]="value"
     [placeholder]="value.hasValidator(Validators.required) ? placeholder + '*' : placeholder"
     [type]="password ? 'password' : 'text'"

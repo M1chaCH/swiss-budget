@@ -1,4 +1,4 @@
-import {Component, Input} from '@angular/core';
+import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {FormControl, Validators} from "@angular/forms";
 
 @Component({
@@ -17,6 +17,9 @@ export class TextInputComponent {
   @Input() errorText: string = "Field is invalid";
 
   @Input() password: boolean = false;
+
+  @Output() submit: EventEmitter<void> = new EventEmitter<void>();
+  @Output() cancel: EventEmitter<void> = new EventEmitter<void>();
 
   edited: boolean = false;
   protected readonly Validators = Validators;

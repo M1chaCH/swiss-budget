@@ -1,11 +1,11 @@
 <div class="steps-panel">
-  <ng-container *ngIf="navigationPlace === 'above'">
+  <ng-container *ngIf="navigationPlace === 'above' && showNavigation">
     <ng-template [ngTemplateOutlet]="navigation"></ng-template>
   </ng-container>
   <div [@stepSliderAnimation]="cursor" class="steps">
     <ng-content></ng-content>
   </div>
-  <ng-container *ngIf="navigationPlace === 'bellow'">
+  <ng-container *ngIf="navigationPlace === 'bellow' && showNavigation">
     <ng-template [ngTemplateOutlet]="navigation"></ng-template>
   </ng-container>
 </div>
