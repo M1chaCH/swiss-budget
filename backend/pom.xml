@@ -3,6 +3,7 @@
   xmlns="http://maven.apache.org/POM/4.0.0"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <artifactId>swissbudget</artifactId>
+
   <build>
     <plugins>
       <plugin>
@@ -23,12 +24,30 @@
         </executions>
         <groupId>org.jboss.jandex</groupId>
       </plugin>
+
+      <plugin>
+        <artifactId>generator</artifactId>
+        <configuration>
+          <dbConfigPath>
+            src/main/resources/META-INF/microprofile-config.properties
+          </dbConfigPath>
+        </configuration>
+        <groupId>ch.michu.tech.jooq</groupId>
+
+        <version>0.0.1-SNAPSHOT</version>
+      </plugin>
     </plugins>
   </build>
+
   <dependencies>
+    <!--    Helidon -->
     <dependency>
       <artifactId>helidon-microprofile-core</artifactId>
       <groupId>io.helidon.microprofile.bundles</groupId>
+    </dependency>
+    <dependency>
+      <artifactId>helidon-microprofile-config</artifactId>
+      <groupId>io.helidon.microprofile.config</groupId>
     </dependency>
     <dependency>
       <artifactId>jakarta.json.bind-api</artifactId>
@@ -49,6 +68,30 @@
       <groupId>jakarta.activation</groupId>
       <scope>runtime</scope>
     </dependency>
+
+    <!--    Custom -->
+    <dependency>
+      <artifactId>jooq</artifactId>
+      <groupId>org.jooq</groupId>
+      <version>${jooq.version}</version>
+    </dependency>
+    <dependency>
+      <artifactId>jooq-meta</artifactId>
+      <groupId>org.jooq</groupId>
+      <version>${jooq.version}</version>
+    </dependency>
+    <dependency>
+      <artifactId>postgresql</artifactId>
+      <groupId>org.postgresql</groupId>
+      <version>${postgres.version}</version>
+    </dependency>
+    <dependency>
+      <artifactId>generator</artifactId>
+      <groupId>ch.michu.tech.jooq</groupId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+
+    <!--    Test -->
     <dependency>
       <artifactId>junit-jupiter-api</artifactId>
       <groupId>org.junit.jupiter</groupId>
@@ -65,6 +108,7 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+
   <groupId>ch.michu.tech</groupId>
   <modelVersion>4.0.0</modelVersion>
 
@@ -76,6 +120,8 @@
   </parent>
 
   <properties>
+    <jooq.version>3.17.14</jooq.version>
+    <postgres.version>42.4.0</postgres.version>
   </properties>
 
   <version>0.0.1-SNAPSHOT</version>
