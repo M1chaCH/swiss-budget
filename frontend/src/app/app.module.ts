@@ -15,6 +15,10 @@ import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {TextInputComponent} from './components/text-input/text-input.component';
 import {StepsPanelComponent} from './components/steps-panel/steps-panel.component';
 import {PanelStepDirective} from './components/steps-panel/panel-step.directive';
+import {HttpClientModule} from "@angular/common/http";
+import {DialogComponent} from './components/dialog/dialog.component';
+import {HelpComponent} from './components/help/help.component';
+import {DialogDirective} from './components/dialog/dialog.directive';
 
 @NgModule({
   declarations: [
@@ -27,7 +31,10 @@ import {PanelStepDirective} from './components/steps-panel/panel-step.directive'
     ButtonComponent,
     TextInputComponent,
     StepsPanelComponent,
-    PanelStepDirective
+    PanelStepDirective,
+    DialogComponent,
+    HelpComponent,
+    DialogDirective
   ],
   imports: [
     BrowserModule,
@@ -36,6 +43,7 @@ import {PanelStepDirective} from './components/steps-panel/panel-step.directive'
     NgOptimizedImage,
     FormsModule,
     ReactiveFormsModule,
+    HttpClientModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

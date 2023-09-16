@@ -8,11 +8,11 @@
   border-radius: 2px;
 }
 
-.button:hover:not(.disabled), .button:focus:not(.disabled) {
+.button:hover:not(.transparent), .button:focus:not(.transparent) {
   background-color: color-mix(in srgb, var(--michu-tech-primary) 60%, var(--michu-tech-background));
 }
 
-.button:active:not(.disabled) {
+.button:active:not(.transparent) {
   background-color: color-mix(in srgb, var(--michu-tech-primary) 40%, var(--michu-tech-background));
 }
 
@@ -21,12 +21,12 @@
   border: var(--michu-tech-primary) dashed 2px;
 }
 
-.secondary:hover:not(.disabled),
-.secondary:focus:not(.disabled) {
+.secondary:hover:not(.transparent),
+.secondary:focus:not(.transparent) {
   background-color: color-mix(in srgb, var(--michu-tech-primary) 20%, var(--michu-tech-background));
 }
 
-.secondary:active:not(.disabled) {
+.secondary:active:not(.transparent) {
   background-color: color-mix(in srgb, var(--michu-tech-primary) 10%, var(--michu-tech-background));
 }
 
@@ -46,7 +46,25 @@
   align-items: center;
 }
 
-.disabled {
+.transparent {
   filter: opacity(50%);
   cursor: default !important;
+}
+
+.loading {
+  animation-name: slow-blink;
+  animation-duration: 600ms;
+  animation-timing-function: ease-in-out;
+  animation-fill-mode: forwards;
+  animation-direction: alternate;
+  animation-iteration-count: infinite;
+}
+
+@keyframes slow-blink {
+  0% {
+    opacity: 35%;
+  }
+  100% {
+    opacity: 60%;
+  }
 }

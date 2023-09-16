@@ -47,7 +47,7 @@
   }
 }
 
-.container:hover:not(.disabled), .container:focus:not(.disabled) {
+.container:hover:not(.transparent), .container:focus:not(.transparent) {
   background-color: color-mix(in srgb, var(--michu-tech-primary) 60%, var(--michu-tech-background));
 }
 
@@ -56,15 +56,15 @@
   border: var(--michu-tech-primary) dashed 2px;
 }
 
-.secondary:hover:not(.disabled) {
+.secondary:hover:not(.transparent) {
   background-color: color-mix(in srgb, var(--michu-tech-primary) 20%, var(--michu-tech-background));
 }
 
-.secondary:active:not(.disabled), .secondary:focus:not(.disabled) {
+.secondary:active:not(.transparent), .secondary:focus:not(.transparent) {
   background-color: color-mix(in srgb, var(--michu-tech-primary) 10%, var(--michu-tech-background));
 }
 
-.disabled {
+.transparent {
   filter: opacity(50%);
   cursor: default !important;
 }

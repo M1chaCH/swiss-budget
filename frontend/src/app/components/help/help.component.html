@@ -1,0 +1,11 @@
+<app-button (onClick)="dialogOpen = true" height="60px" width="125px">
+    Help
+</app-button>
+
+<div *appDialog="dialogOpen">
+    <!--    TODO write content here, add optional close button in dialog, continue with setup ui -->
+    <h1>Help</h1>
+    <app-button (onClick)="dialogOpen = false" height="60px" width="125px">
+        Close
+    </app-button>
+</div>

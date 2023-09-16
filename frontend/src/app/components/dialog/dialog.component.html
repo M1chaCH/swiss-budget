@@ -1,0 +1,5 @@
+<div (click)="closeDialog($event)" [class.closed]="!(open | async)" id="dialog-container">
+    <div *ngIf="(open | async) && dialogContent" class="dialog">
+        <ng-container *ngTemplateOutlet="dialogContent"></ng-container>
+    </div>
+</div>
