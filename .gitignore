@@ -85,3 +85,4 @@ yarn-error.log
 /out-tsc
 /bazel-out
 /frontend/node_modules/
+*.iml

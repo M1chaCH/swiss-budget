@@ -2,6 +2,9 @@ package ch.michu.tech.generator;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Properties;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -23,6 +26,7 @@ public class JooqCodeGeneratorMojo extends AbstractMojo {
     public static final String GENERATION_PATH_PROP = "ch.michu.tech.jooq.generator.dir";
     public static final String GENERATION_DB_DIALECT_PROP = "ch.michu.tech.jooq.generator.dialect";
     public static final String GENERATION_DB_PACKAGE_PROP = "ch.michu.tech.jooq.generator.package";
+    public static final String GENERATION_DB_INIT_SCRIPT_PROP = "ch.michu.tech.jooq.generator.init.script";
     public static final String DB_USER_PROP = "db.user";
     public static final String DB_PASSWORD_PROP = "db.password";
     public static final String DB_URL_PROP = "db.url";
@@ -79,6 +83,7 @@ public class JooqCodeGeneratorMojo extends AbstractMojo {
         String driver = config.getProperty(DB_DRIVER_PROP);
         String jooqDialect = config.getProperty(GENERATION_DB_DIALECT_PROP);
         String jooqPackage = config.getProperty(GENERATION_DB_PACKAGE_PROP);
+        String initScript = loadInitScript(config);
 
         try {
             GenerationTool.generate(new Configuration()
@@ -86,7 +91,8 @@ public class JooqCodeGeneratorMojo extends AbstractMojo {
                     .withUser(user)
                     .withUrl(url)
                     .withPassword(password)
-                    .withDriver(driver))
+                    .withDriver(driver)
+                    .withInitScript(initScript))
                 .withGenerator(new Generator()
                     .withName("org.jooq.codegen.JavaGenerator")
                     .withDatabase(new Database()
@@ -100,5 +106,23 @@ public class JooqCodeGeneratorMojo extends AbstractMojo {
             throw new MojoExecutionException(
                 String.format("failed to generate code: %s", e.getClass().getSimpleName()), e);
         }
+    }
+
+    private String loadInitScript(Properties config) {
+        String jooqInitScriptSource = config.getProperty(GENERATION_DB_INIT_SCRIPT_PROP);
+        if (jooqInitScriptSource == null) {
+            return "";
+        }
+
+        try {
+            Path path = Path.of(jooqInitScriptSource);
+            byte[] byteScript = Files.readAllBytes(path);
+            String script = new String(byteScript, StandardCharsets.UTF_8);
+            log.info(String.format("loaded init script at %s", path.toAbsolutePath()));
+            return script;
+        } catch (IOException e) {
+            log.warn(String.format("could not find init script at %s", jooqInitScriptSource));
+        }
+        return "";
     }
 }
