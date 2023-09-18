@@ -20,6 +20,10 @@ export class SetupSubpageComponent {
   ) {
   }
 
+  isInvalid() {
+    return this.form.mail.invalid || this.form.password.invalid;
+  }
+
   checkMailCredentials() { // FIXME form group is never valid
     console.log(this.form.group.valid)
     if (this.form.group.valid) {

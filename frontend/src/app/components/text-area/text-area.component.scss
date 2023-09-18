@@ -16,7 +16,7 @@
     all: unset;
 
     width: 100cqw;
-    height: 60cqh;
+    height: 90cqh;
     margin: 0;
     box-sizing: border-box;
 
@@ -25,12 +25,13 @@
     letter-spacing: 1px;
   }
 
-  .label {
+  .length {
     position: absolute;
     top: 2cqh;
-    font-weight: 400;
-    letter-spacing: 1px;
-    font-size: 16px;
+    right: 1cqw;
+    font-weight: 600;
+    font-size: 12px;
+    opacity: 0.6;
   }
 
   .hint {

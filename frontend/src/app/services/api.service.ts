@@ -4,6 +4,13 @@ import {catchError, NEVER, Observable} from "rxjs";
 import {environment} from "../../environments/environment";
 import {ErrorService} from "./error.service";
 
+export const endpoint = {
+  REGISTER: "/register",
+  CHECK_MAIL: "/register/mail",
+  CONTACT: "/contact",
+}
+
+
 @Injectable({
   providedIn: 'root'
 })
@@ -16,7 +23,7 @@ export class ApiService {
   }
 
   public get<T>(endpoint: string, queryParams?: { key: string, value: string }[], showDialogOnError: boolean = false): Observable<T> {
-    let url: string = `${environment.API_URL}/${endpoint}`;
+    let url: string = `${environment.API_URL}${endpoint}`;
 
     if (queryParams)
       url += this.parseQueryParams(queryParams);
@@ -30,7 +37,7 @@ export class ApiService {
   }
 
   public post<T>(endpoint: string, payload: any, queryParams?: { key: string, value: string }[], showDialogOnError: boolean = false) {
-    let url: string = `${environment.API_URL}/${endpoint}`;
+    let url: string = `${environment.API_URL}${endpoint}`;
 
     if (queryParams)
       url += this.parseQueryParams(queryParams);
@@ -44,7 +51,7 @@ export class ApiService {
   }
 
   public put<T>(endpoint: string, payload: any, queryParams?: { key: string, value: string }[], showDialogOnError: boolean = false) {
-    let url: string = `${environment.API_URL}/${endpoint}`;
+    let url: string = `${environment.API_URL}${endpoint}`;
 
     if (queryParams)
       url += this.parseQueryParams(queryParams);
@@ -58,7 +65,7 @@ export class ApiService {
   }
 
   public delete<T>(endpoint: string, showDialogOnError: boolean = false): Observable<T> {
-    let url: string = `${environment.API_URL}/${endpoint}`;
+    let url: string = `${environment.API_URL}${endpoint}`;
 
     this.logRequest("DELETE", url);
 
@@ -91,9 +98,4 @@ export class ApiService {
     if (environment.IS_DEV)
       console.log(`${method} -> ${url}`, payload ?? "");
   }
-}
-
-export const endpoint = {
-  REGISTER: "/register",
-  CHECK_MAIL: "/register/mail",
 }

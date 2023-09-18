@@ -34,6 +34,7 @@ public class RuntimeExceptionMapper implements ExceptionMapper<RuntimeException>
 
         LOGGER.log(Level.WARNING, "RuntimeException: {0}: {1}",
             new Object[]{exception.getClass().getSimpleName(), exception.getMessage()});
+        LOGGER.log(Level.WARNING, "stack:", exception);
         return Response.status(Status.INTERNAL_SERVER_ERROR).build();
     }
 }

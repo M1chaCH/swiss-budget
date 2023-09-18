@@ -1,7 +1,7 @@
 package ch.michu.tech.swissbudget.framework.mail;
 
-import ch.michu.tech.swissbudget.framework.error.exception.MailConnectionException;
-import ch.michu.tech.swissbudget.framework.error.exception.MailProviderNotSupportedException;
+import ch.michu.tech.swissbudget.framework.error.exception.mail.MailConnectionException;
+import ch.michu.tech.swissbudget.framework.error.exception.mail.MailProviderNotSupportedException;
 import ch.michu.tech.swissbudget.framework.event.EventHandlerPriority;
 import ch.michu.tech.swissbudget.framework.event.HandlerPriority;
 import ch.michu.tech.swissbudget.framework.event.OnAppStartupListener;

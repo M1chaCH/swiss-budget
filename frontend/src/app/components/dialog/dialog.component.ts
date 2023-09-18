@@ -19,8 +19,9 @@ export class DialogComponent {
         this.dialogContent = content);
   }
 
-  closeDialog(event: any) {
-    if (event.target.id === "dialog-container") {
+  closeDialog(event?: any) {
+    const hitDialog = event ? event.target.id === "dialog-container" : true;
+    if (hitDialog) {
       this.service.closeDialog();
     }
   }

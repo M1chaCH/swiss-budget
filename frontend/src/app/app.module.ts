@@ -19,6 +19,7 @@ import {HttpClientModule} from "@angular/common/http";
 import {DialogComponent} from './components/dialog/dialog.component';
 import {HelpComponent} from './components/help/help.component';
 import {DialogDirective} from './components/dialog/dialog.directive';
+import {TextAreaComponent} from './components/text-area/text-area.component';
 
 @NgModule({
   declarations: [
@@ -34,7 +35,8 @@ import {DialogDirective} from './components/dialog/dialog.directive';
     PanelStepDirective,
     DialogComponent,
     HelpComponent,
-    DialogDirective
+    DialogDirective,
+    TextAreaComponent
   ],
   imports: [
     BrowserModule,

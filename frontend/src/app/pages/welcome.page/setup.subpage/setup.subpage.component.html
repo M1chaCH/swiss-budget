@@ -49,7 +49,7 @@
                                     height="60px"
                                     placeholder="Password"></app-text-input>
                     <p *ngIf="errorMessage" class="form-error-message">{{errorMessage}}</p>
-                    <app-button (onClick)="checkMailCredentials()" [disabled]="form.group.invalid"
+                    <app-button (onClick)="checkMailCredentials()" [disabled]="isInvalid()"
                                 [loading]="loading"
                                 height="60px"
                                 rightIcon="chevron_right">Next
