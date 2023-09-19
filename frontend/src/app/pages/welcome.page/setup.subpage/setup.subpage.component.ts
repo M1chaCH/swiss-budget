@@ -13,44 +13,57 @@ export class SetupSubpageComponent {
   form: SetupForm = new SetupForm();
   cursor: number = 0;
   errorMessage: string | undefined;
+  showGoogleMessage: boolean = false;
   loading: boolean = false;
 
   constructor(
       private api: ApiService,
   ) {
+    this.form.mail.valueChanges.subscribe(v => this.showGoogleMessage = v.includes("gmail"));
   }
 
-  isInvalid() {
+  isMailAndPasswordInvalid() {
     return this.form.mail.invalid || this.form.password.invalid;
   }
 
-  checkMailCredentials() { // FIXME form group is never valid
-    console.log(this.form.group.valid)
-    if (this.form.group.valid) {
+  checkMailCredentials() {
+    if (!this.isMailAndPasswordInvalid()) {
       this.errorMessage = "";
       this.loading = true;
-      console.log("sending")
 
       this.api.post<null>(endpoint.CHECK_MAIL, {
         mail: this.form.mail.value,
         password: this.form.password.value
       }).subscribe({
         next: _ => {
-          console.log("done")
           this.loading = false;
           this.cursor++;
         },
-        error: (err: ErrorDto) => {
-          console.log(err)
+        error: (err: { error: ErrorDto }) => {
           this.loading = false;
-          this.errorMessage = err.errorKey;
+          switch (err.error.errorKey) {
+            case "DtoValidationException":
+              this.errorMessage = "Invalid Input";
+              break;
+            case "MailConnectionException":
+              this.errorMessage = "Could not connect to mail server. " +
+                  "(check password or check IMAP requirements of provider)";
+              break;
+            case "MailProviderNotSupportedException":
+              this.errorMessage = this.form.mail.value + " is not from a supported provider. I would " +
+                  "happily add this provider to my list, just send me a message via the help feature. " +
+                  "But it has to be a private account, school or work accounts are not supported."
+              break;
+            default:
+              this.errorMessage = "Failed, please contact admin.";
+          }
         }
       })
     }
   }
 }
 
-export class SetupForm { // todo create some sort of abstraction layer component
+export class SetupForm {
   mail: FormControl;
   password: FormControl;
   mailFolderName: FormControl;

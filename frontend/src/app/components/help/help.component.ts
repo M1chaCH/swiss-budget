@@ -33,7 +33,6 @@ export class HelpComponent {
         message: sanitizedContent
       }, undefined, true).subscribe(() => {
         this.loading = false;
-        // todo, show success message
         this.dialogOpen = false;
       });
     }

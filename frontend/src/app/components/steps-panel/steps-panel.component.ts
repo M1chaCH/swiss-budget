@@ -1,12 +1,4 @@
-import {
-  AfterViewInit,
-  Component,
-  ContentChildren,
-  EventEmitter,
-  Input,
-  Output,
-  QueryList
-} from '@angular/core';
+import {Component, ContentChildren, EventEmitter, Input, Output, QueryList} from '@angular/core';
 import {PanelStepDirective} from "./panel-step.directive";
 import {stepSliderAnimation} from "../../animations";
 
@@ -16,7 +8,7 @@ import {stepSliderAnimation} from "../../animations";
   styleUrls: ['./steps-panel.component.scss'],
   animations: [stepSliderAnimation],
 })
-export class StepsPanelComponent implements AfterViewInit {
+export class StepsPanelComponent {
 
   @Input() nextLabel: string = "Next";
   @Input() previousLabel: string = "Back";
@@ -24,7 +16,6 @@ export class StepsPanelComponent implements AfterViewInit {
   @Input() lastNextLabel: string | undefined;
   @Input() firstPreviousClickable: boolean = false;
   @Input() lastNextClickable: boolean = false;
-  // @Input() moveCursor: Observable<number> | undefined;
   @Input() navigationPlace: "above" | "bellow" = "bellow";
   @Input() showNavigation: boolean = true;
 
@@ -50,16 +41,6 @@ export class StepsPanelComponent implements AfterViewInit {
     const maxN = length > 0 ? length - 1 : 0;
     this._cursor = Math.max(0, Math.min(n, maxN));
     this.cursorChange.emit(this._cursor);
-    this.updateChildren();
-  }
-
-  ngAfterViewInit() {
-    // this.moveCursor?.subscribe(n => {
-    //   const length = this.steps?.length ?? 0;
-    //   const maxN = length > 0 ? length - 1 : 0;
-    //   this.cursor = Math.min(0, Math.max(n, maxN));
-    //   this.updateChildren();
-    // })
     this.updateChildren();
   }
 

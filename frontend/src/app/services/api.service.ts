@@ -42,7 +42,7 @@ export class ApiService {
     if (queryParams)
       url += this.parseQueryParams(queryParams);
 
-    this.logRequest("POST", url);
+    this.logRequest("POST", url, payload);
 
     const request = this.http.post(url, payload);
     return ((request as any) as Observable<T>).pipe(
@@ -56,7 +56,7 @@ export class ApiService {
     if (queryParams)
       url += this.parseQueryParams(queryParams);
 
-    this.logRequest("PUT", url);
+    this.logRequest("PUT", url, payload);
 
     const request = this.http.put(url, payload);
     return ((request as any) as Observable<T>).pipe(
@@ -77,7 +77,7 @@ export class ApiService {
 
   private handleError<T>(err: any, _: Observable<T>, showDialogOnError: boolean): Observable<T> {
     if (!this.errorService.handleAuthenticationError(err)) {
-      if (showDialogOnError) this.errorService.showErrorDialog(err);
+      if (showDialogOnError) this.errorService.showErrorDialog(err.error);
       else throw err;
     }
     return NEVER;

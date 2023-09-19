@@ -59,6 +59,19 @@ body {
   animation: flyIn ease-out 250ms forwards;
 }
 
+a {
+  color: var(--michu-tech-accent);
+  transition: all 150ms ease-out;
+}
+
+a:hover {
+  color: color-mix(in srgb, var(--michu-tech-accent) 80%, white);
+}
+
+a:visited {
+  color: color-mix(in srgb, var(--michu-tech-accent) 75%, black);
+}
+
 @keyframes flyIn {
   0% {
     transform: translateY(-12px);

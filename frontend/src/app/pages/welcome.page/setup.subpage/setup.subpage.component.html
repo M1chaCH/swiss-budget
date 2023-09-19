@@ -3,7 +3,7 @@
     <p style="margin: 0 0 16px 0;">Welcome to SwissBudget!</p>
     <div style="height: 500px;">
         <app-steps-panel [cursor]="cursor" [showNavigation]="false">
-            <div *appPanelStep class="steps-panel-step setup-step-container">
+            <div *appPanelStep="true" class="steps-panel-step setup-step-container">
                 <h3>What you have to do...</h3>
                 <p>
                     In the next few steps, I am going to guide you through a short setup
@@ -21,9 +21,9 @@
                 <h3>Setup process</h3>
                 <ol style="margin: 0 0 5px 0;">
                     <li>Enter E-Mail credentials</li>
+                    <li>Enter bank name</li>
                     <li>Configure E-Mail notifications in E-Banking</li>
                     <li>(optional) Move transaction mails to folder (rule)</li>
-                    <li>Enter bank name</li>
                     <li>Done 🎉</li>
                 </ol>
 
@@ -48,19 +48,46 @@
                                     errorText="password required"
                                     height="60px"
                                     placeholder="Password"></app-text-input>
-                    <p *ngIf="errorMessage" class="form-error-message">{{errorMessage}}</p>
-                    <app-button (onClick)="checkMailCredentials()" [disabled]="isInvalid()"
+                    <p *ngIf="errorMessage" class="form-error-message"
+                       style="margin-top: 10px;">{{errorMessage}}</p>
+                    <app-button (onClick)="checkMailCredentials()"
+                                [disabled]="isMailAndPasswordInvalid()"
                                 [loading]="loading"
                                 height="60px"
-                                rightIcon="chevron_right">Next
+                                rightIcon="chevron_right">
+                        Next
                     </app-button>
+                    <p *ngIf="showGoogleMessage" style="margin-top: 10px;">
+                        <strong>NOTE</strong>: Google requires some additional configuration. <br>
+                        See
+                        <a href="https://support.google.com/mail/answer/7126229?hl=en#zippy=%2Cstep-check-that-imap-is-turned-on"
+                           target="_blank">
+                            here
+                        </a>
+                        how you have to setup your gmail. (only step 1 is required)<br>
+                        And create a custom application password
+                        <a href="https://myaccount.google.com/apppasswords"
+                           target="_blank">
+                            here
+                        </a>
+                        . Use this <strong>password</strong> for the login to
+                        <strong>SwissBudget</strong>.
+                        Explanation can be found
+                        <a href="https://support.google.com/accounts/answer/185833?hl=en"
+                           target="_blank">
+                            (here)
+                        </a>.
+                    </p>
                 </form>
             </div>
             <div *appPanelStep class="steps-panel-step">
-                <span>two</span>
+                <span>TODO combobox with supported banks</span>
             </div>
             <div *appPanelStep class="steps-panel-step">
-                <span>three</span>
+                <span>TODO show tutorial for email notifications</span>
+            </div>
+            <div *appPanelStep class="steps-panel-step">
+                <span>TODO optionally show tutorial for how to enable automatic transaction mail move</span>
             </div>
         </app-steps-panel>
         <div
