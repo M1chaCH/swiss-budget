@@ -1,0 +1,35 @@
+<app-button (onClick)="dialogOpen = true" height="60px" width="125px">
+    Help
+</app-button>
+
+<div *appDialog="dialogOpen" class="help-container">
+    <h2>Need help?</h2>
+    <p>
+        Don't worry, I am here to help. Just describe your question in the box bellow and enter your
+        email so that I can answer your question.
+    </p>
+    <form [formGroup]="form.group">
+        <div class="message-header">
+            <app-text-input [value]="form.mail" errorText="No valid mail address" height="60px"
+                            placeholder="Mail"
+                            width="220px">
+            </app-text-input>
+
+            <app-text-input [value]="form.subject" errorText="Subject required" height="60px"
+                            placeholder="Subject"
+                            width="220px">
+            </app-text-input>
+        </div>
+        <app-text-area [maxLength]="300" [value]="form.question"
+                       errorText="Has to be at least 25 letters long" height="250px"
+                       placeholder="Question">
+        </app-text-area>
+    </form>
+
+    <app-button (onClick)="sendRequest()" [disabled]="form.group.invalid" [loading]="loading"
+                height="60px"
+                rightIcon="send"
+                style="align-self: flex-end" width="125px">
+        Send
+    </app-button>
+</div>

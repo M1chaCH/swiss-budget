@@ -1,5 +1,7 @@
 import {Component} from '@angular/core';
 import {FormControl, FormGroup, Validators} from "@angular/forms";
+import {ApiService, endpoint} from "../../../services/api.service";
+import {ErrorDto} from "../../../dtos/ErrorDto";
 
 @Component({
   selector: 'app-setup-subpage',
@@ -11,18 +13,57 @@ export class SetupSubpageComponent {
   form: SetupForm = new SetupForm();
   cursor: number = 0;
   errorMessage: string | undefined;
+  showGoogleMessage: boolean = false;
+  loading: boolean = false;
 
-  constructor() {
+  constructor(
+      private api: ApiService,
+  ) {
+    this.form.mail.valueChanges.subscribe(v => this.showGoogleMessage = v.includes("gmail"));
+  }
+
+  isMailAndPasswordInvalid() {
+    return this.form.mail.invalid || this.form.password.invalid;
   }
 
   checkMailCredentials() {
-    this.errorMessage = "not implemented!"
-    // todo, test credentials in backend
-    // this.cursor++;
+    if (!this.isMailAndPasswordInvalid()) {
+      this.errorMessage = "";
+      this.loading = true;
+
+      this.api.post<null>(endpoint.CHECK_MAIL, {
+        mail: this.form.mail.value,
+        password: this.form.password.value
+      }).subscribe({
+        next: _ => {
+          this.loading = false;
+          this.cursor++;
+        },
+        error: (err: { error: ErrorDto }) => {
+          this.loading = false;
+          switch (err.error.errorKey) {
+            case "DtoValidationException":
+              this.errorMessage = "Invalid Input";
+              break;
+            case "MailConnectionException":
+              this.errorMessage = "Could not connect to mail server. " +
+                  "(check password or check IMAP requirements of provider)";
+              break;
+            case "MailProviderNotSupportedException":
+              this.errorMessage = this.form.mail.value + " is not from a supported provider. I would " +
+                  "happily add this provider to my list, just send me a message via the help feature. " +
+                  "But it has to be a private account, school or work accounts are not supported."
+              break;
+            default:
+              this.errorMessage = "Failed, please contact admin.";
+          }
+        }
+      })
+    }
   }
 }
 
-export class SetupForm { // todo create some sort of abstraction layer component
+export class SetupForm {
   mail: FormControl;
   password: FormControl;
   mailFolderName: FormControl;
@@ -30,10 +71,10 @@ export class SetupForm { // todo create some sort of abstraction layer component
   group: FormGroup;
 
   constructor(
-    mail: string = "",
-    password: string = "",
-    mailFolderName: string = "",
-    bank: SupportedBanks = "raiffeisen") {
+      mail: string = "",
+      password: string = "",
+      mailFolderName: string = "",
+      bank: SupportedBanks = "raiffeisen") {
     this.mail = new FormControl(mail, [Validators.email, Validators.minLength(5), Validators.required]);
     this.password = new FormControl(password, [Validators.required]);
     this.mailFolderName = new FormControl(mailFolderName, [Validators.required, Validators.minLength(5)]);

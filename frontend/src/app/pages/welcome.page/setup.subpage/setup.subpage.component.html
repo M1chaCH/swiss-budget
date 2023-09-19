@@ -1,40 +1,101 @@
 <div class="setup-subpage">
-  <h2 style="margin: 0 0 5px 0;">Get Started</h2>
-  <p style="margin: 0 0 16px 0;">Follow the next few steps to get started with your Swiss Budget.
-    The setup takes about 6 minutes.</p>
-  <div style="height: 500px;">
-    <app-steps-panel [cursor]="cursor" [showNavigation]="false">
-      <div *appPanelStep class="steps-panel-step setup-step-container">
-        <h3>E-Mail Account</h3>
-        <p>Enter your mail address and password. We need these credentials to import your
-          transaction notifications.</p>
-        <p>This will automatically also be the login to this application.</p>
-        <form [formGroup]="form.group" class="controls">
-          <app-text-input (submit)="checkMailCredentials()" [value]="form.mail"
-                          errorText="not valid mail address"
-                          height="60px"></app-text-input>
-          <app-text-input (submit)="checkMailCredentials()" [password]="true"
-                          [value]="form.password"
-                          errorText="password required"
-                          height="60px"></app-text-input>
-          <p *ngIf="errorMessage" class="form-error-message">{{errorMessage}}</p>
-          <app-button (onClick)="checkMailCredentials()"
-                      height="60px"
-                      rightIcon="chevron_right">Next
-          </app-button>
-        </form>
-      </div>
-      <div *appPanelStep class="steps-panel-step">
-        <span>two</span>
-      </div>
-      <div *appPanelStep class="steps-panel-step">
-        <span>three</span>
-      </div>
-    </app-steps-panel>
-    <div style="align-self: flex-start;">
-      <app-button [useAnchor]="true" height="60px" routerLink="login" width="125px">
-        Cancel
-      </app-button>
+    <h2 style="margin: 0 0 5px 0;">Get Started</h2>
+    <p style="margin: 0 0 16px 0;">Welcome to SwissBudget!</p>
+    <div style="height: 500px;">
+        <app-steps-panel [cursor]="cursor" [showNavigation]="false">
+            <div *appPanelStep="true" class="steps-panel-step setup-step-container">
+                <h3>What you have to do...</h3>
+                <p>
+                    In the next few steps, I am going to guide you through a short setup
+                    process.<br><br>
+                    A key feature of SwissBudget is the automatic import of your money transactions.
+                    Since the swiss banks don't have a public server for developers to access their
+                    data (understandably...), I had to come up with an other solution for automatic
+                    transaction import. <br>
+                    My solution is the E-Mail notification of your E-Banking. In most E-Banking
+                    platforms you can request a notification every time anything in your balance
+                    changes. So this app loads those notifications.<br><br>
+                    This is why you will have to enter your E-Mail address and password. (So that we
+                    can import those notifications.)
+                </p>
+                <h3>Setup process</h3>
+                <ol style="margin: 0 0 5px 0;">
+                    <li>Enter E-Mail credentials</li>
+                    <li>Enter bank name</li>
+                    <li>Configure E-Mail notifications in E-Banking</li>
+                    <li>(optional) Move transaction mails to folder (rule)</li>
+                    <li>Done 🎉</li>
+                </ol>
+
+                <app-button (onClick)="cursor = cursor + 1" height="60px" rightIcon="chevron_right"
+                            style="margin-top: 10px;">
+                    Start
+                </app-button>
+            </div>
+
+            <div *appPanelStep class="steps-panel-step setup-step-container">
+                <h3>E-Mail Account</h3>
+                <p>Enter your mail address and password. We need these credentials to import your
+                    transaction notifications.</p>
+                <p>This will automatically also be the login to this application.</p>
+                <form [formGroup]="form.group" class="controls">
+                    <app-text-input (submit)="checkMailCredentials()" [value]="form.mail"
+                                    errorText="not valid mail address"
+                                    height="60px"
+                                    placeholder="E-Mail"></app-text-input>
+                    <app-text-input (submit)="checkMailCredentials()" [password]="true"
+                                    [value]="form.password"
+                                    errorText="password required"
+                                    height="60px"
+                                    placeholder="Password"></app-text-input>
+                    <p *ngIf="errorMessage" class="form-error-message"
+                       style="margin-top: 10px;">{{errorMessage}}</p>
+                    <app-button (onClick)="checkMailCredentials()"
+                                [disabled]="isMailAndPasswordInvalid()"
+                                [loading]="loading"
+                                height="60px"
+                                rightIcon="chevron_right">
+                        Next
+                    </app-button>
+                    <p *ngIf="showGoogleMessage" style="margin-top: 10px;">
+                        <strong>NOTE</strong>: Google requires some additional configuration. <br>
+                        See
+                        <a href="https://support.google.com/mail/answer/7126229?hl=en#zippy=%2Cstep-check-that-imap-is-turned-on"
+                           target="_blank">
+                            here
+                        </a>
+                        how you have to setup your gmail. (only step 1 is required)<br>
+                        And create a custom application password
+                        <a href="https://myaccount.google.com/apppasswords"
+                           target="_blank">
+                            here
+                        </a>
+                        . Use this <strong>password</strong> for the login to
+                        <strong>SwissBudget</strong>.
+                        Explanation can be found
+                        <a href="https://support.google.com/accounts/answer/185833?hl=en"
+                           target="_blank">
+                            (here)
+                        </a>.
+                    </p>
+                </form>
+            </div>
+            <div *appPanelStep class="steps-panel-step">
+                <span>TODO combobox with supported banks</span>
+            </div>
+            <div *appPanelStep class="steps-panel-step">
+                <span>TODO show tutorial for email notifications</span>
+            </div>
+            <div *appPanelStep class="steps-panel-step">
+                <span>TODO optionally show tutorial for how to enable automatic transaction mail move</span>
+            </div>
+        </app-steps-panel>
+        <div
+            style="align-self: flex-start; margin-top: 10px; display: flex; flex-flow: row nowrap; justify-content: space-between;">
+            <app-button [useAnchor]="true" height="60px" routerLink="login" width="125px">
+                Cancel
+            </app-button>
+            <app-help></app-help>
+        </div>
     </div>
-  </div>
 </div>

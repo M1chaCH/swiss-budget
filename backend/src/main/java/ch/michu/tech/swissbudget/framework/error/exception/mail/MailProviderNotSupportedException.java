@@ -1,5 +1,6 @@
-package ch.michu.tech.swissbudget.framework.error.exception;
+package ch.michu.tech.swissbudget.framework.error.exception.mail;
 
+import ch.michu.tech.swissbudget.framework.error.exception.AppException;
 import jakarta.ws.rs.core.Response.Status;
 import lombok.Getter;
 

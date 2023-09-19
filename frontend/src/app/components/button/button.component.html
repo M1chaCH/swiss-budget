@@ -1,36 +1,38 @@
 <ng-container *ngIf="useAnchor else useButton">
-  <a (click)="onClick.emit($event)"
-     [class.disabled]="disabled"
-     [class.flex-button]="!rightIcon && !leftIcon"
-     [class.icon-grid]="rightIcon || leftIcon"
-     [class.secondary]="design === 'secondary'"
-     [routerLink]="routerLink"
-     [style.height]="height"
-     [style.width]="width"
-     [target]="target"
-     class="button">
-    <ng-container *ngTemplateOutlet="content"></ng-container>
-  </a>
+    <a (click)="onClick.emit($event)"
+       [class.disabled]="disabled"
+       [class.flex-button]="!rightIcon && !leftIcon"
+       [class.icon-grid]="rightIcon || leftIcon"
+       [class.secondary]="design === 'secondary'"
+       [routerLink]="routerLink"
+       [style.height]="height"
+       [style.width]="width"
+       [target]="target"
+       class="button">
+        <ng-container *ngTemplateOutlet="content"></ng-container>
+    </a>
 </ng-container>
 
 <ng-template #useButton>
-  <button (click)="onClick.emit($event)" [class.disabled]="disabled"
-          [class.flex-button]="!rightIcon && !leftIcon"
-          [class.icon-grid]="rightIcon || leftIcon"
-          [class.secondary]="design === 'secondary'"
-          [disabled]="disabled"
-          [style.height]="height"
-          [style.width]="width"
-          class="button"
-          type="button">
-    <ng-container *ngTemplateOutlet="content"></ng-container>
-  </button>
+    <button (click)="onClick.emit($event)"
+            [class.flex-button]="!rightIcon && !leftIcon"
+            [class.icon-grid]="rightIcon || leftIcon"
+            [class.loading]="loading"
+            [class.secondary]="design === 'secondary'"
+            [class.transparent]="disabled || loading"
+            [disabled]="disabled || loading"
+            [style.height]="height"
+            [style.width]="width"
+            class="button"
+            type="button">
+        <ng-container *ngTemplateOutlet="content"></ng-container>
+    </button>
 </ng-template>
 
 <ng-template #content>
-  <span *ngIf="leftIcon || rightIcon" class="material-symbols-rounded">{{leftIcon}}</span>
-  <span>
+    <span *ngIf="leftIcon || rightIcon" class="material-symbols-rounded">{{leftIcon}}</span>
+    <span>
       <ng-content></ng-content>
     </span>
-  <span *ngIf="leftIcon || rightIcon" class="material-symbols-rounded">{{rightIcon}}</span>
+    <span *ngIf="leftIcon || rightIcon" class="material-symbols-rounded">{{rightIcon}}</span>
 </ng-template>

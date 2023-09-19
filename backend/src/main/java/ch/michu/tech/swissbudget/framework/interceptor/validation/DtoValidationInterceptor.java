@@ -40,8 +40,14 @@ public class DtoValidationInterceptor {
             try {
                 field.setAccessible(true);
 
+                boolean nullable = field.isAnnotationPresent(Nullable.class);
+
                 Object fieldObject = field.get(arg);
                 if (fieldObject == null) {
+                    if (!nullable) {
+                        throw new DtoValidationException(arg, field, Nullable.class);
+                    }
+
                     continue;
                 }
 

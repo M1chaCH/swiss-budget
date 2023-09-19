@@ -1,0 +1,75 @@
+#dialog-container {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 999;
+
+  backdrop-filter: brightness(25%);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  transition: all 250ms ease-out;
+
+  .dialog {
+    display: block;
+    padding: 24px;
+    margin: 10px;
+    box-sizing: border-box;
+    background-color: var(--michu-tech-background);
+    border-radius: 5px;
+
+    animation-name: dialog-open;
+    animation-duration: 350ms;
+    animation-timing-function: ease-out;
+    animation-fill-mode: forwards;
+    animation-direction: normal;
+    animation-iteration-count: 1;
+
+    position: relative;
+
+    .close {
+      all: unset;
+      cursor: pointer;
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      box-sizing: border-box;
+
+      transition: all 150ms ease-out;
+
+      color: var(--michu-tech-foreground);
+    }
+
+    .close:hover {
+      opacity: 0.6;
+    }
+  }
+}
+
+.closed {
+  backdrop-filter: unset !important;
+  pointer-events: none;
+}
+
+@keyframes dialog-open {
+  0% {
+    opacity: 0;
+    scale: 0.88;
+  }
+  25% {
+    scale: 0.88;
+  }
+  100% {
+    opacity: 1;
+    scale: 1;
+  }
+}

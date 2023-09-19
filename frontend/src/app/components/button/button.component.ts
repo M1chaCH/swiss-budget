@@ -12,6 +12,7 @@ export class ButtonComponent {
   @Input() rightIcon: string | undefined;
   @Input() design: "primary" | "secondary" = "primary";
   @Input() disabled: boolean = false;
+  @Input() loading: boolean = false;
 
   @Input() useAnchor: boolean = false;
   @Input() target: "_blank" | "_parent" | "_self" | "_top" = "_self"

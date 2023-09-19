@@ -50,6 +50,10 @@
       <groupId>io.helidon.microprofile.config</groupId>
     </dependency>
     <dependency>
+      <artifactId>helidon-microprofile-cors</artifactId>
+      <groupId>io.helidon.microprofile</groupId>
+    </dependency>
+    <dependency>
       <artifactId>jakarta.json.bind-api</artifactId>
       <groupId>jakarta.json.bind</groupId>
     </dependency>

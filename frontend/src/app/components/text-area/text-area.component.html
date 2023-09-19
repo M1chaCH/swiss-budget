@@ -3,14 +3,17 @@
      [style.height]="height"
      [style.width]="width"
      class="container">
-    <input
+    <textarea
         (change)="edited = true"
         (keydown.enter)="submit.emit()"
         (keydown.escape)="cancel.emit()"
         [formControl]="value"
+        [maxlength]="maxLength ?? 0"
         [placeholder]="value.hasValidator(Validators.required) ? placeholder + '*' : placeholder"
-        [type]="password ? 'password' : 'text'"
-        class="textarea"/>
+        [rows]="rows"
+        class="textarea">
+    </textarea>
+    <span class="length">{{length}} / {{maxLength ? maxLength : '∞'}}</span>
     <span *ngIf="hint && !value.invalid" class="hint">{{hint}}</span>
     <span *ngIf="value.invalid && edited" class="hint error">{{errorText}}</span>
 </div>
