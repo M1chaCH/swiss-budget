@@ -14,10 +14,11 @@ export class SetupSubpageComponent {
   cursor: number = 0;
   errorMessage: string | undefined;
   showGoogleMessage: boolean = false;
-  loading: boolean = false;
+  loadingMailTest: boolean = false;
+  readonly supportedBanks = ["Raiffeisen"];
 
   constructor(
-      private api: ApiService,
+    private api: ApiService,
   ) {
     this.form.mail.valueChanges.subscribe(v => this.showGoogleMessage = v.includes("gmail"));
   }
@@ -29,30 +30,30 @@ export class SetupSubpageComponent {
   checkMailCredentials() {
     if (!this.isMailAndPasswordInvalid()) {
       this.errorMessage = "";
-      this.loading = true;
+      this.loadingMailTest = true;
 
       this.api.post<null>(endpoint.CHECK_MAIL, {
         mail: this.form.mail.value,
         password: this.form.password.value
       }).subscribe({
         next: _ => {
-          this.loading = false;
+          this.loadingMailTest = false;
           this.cursor++;
         },
         error: (err: { error: ErrorDto }) => {
-          this.loading = false;
+          this.loadingMailTest = false;
           switch (err.error.errorKey) {
             case "DtoValidationException":
               this.errorMessage = "Invalid Input";
               break;
             case "MailConnectionException":
               this.errorMessage = "Could not connect to mail server. " +
-                  "(check password or check IMAP requirements of provider)";
+                "(check password or check IMAP requirements of provider)";
               break;
             case "MailProviderNotSupportedException":
               this.errorMessage = this.form.mail.value + " is not from a supported provider. I would " +
-                  "happily add this provider to my list, just send me a message via the help feature. " +
-                  "But it has to be a private account, school or work accounts are not supported."
+                "happily add this provider to my list, just send me a message via the help feature. " +
+                "But it has to be a private account, school or work accounts are not supported."
               break;
             default:
               this.errorMessage = "Failed, please contact admin.";
@@ -71,10 +72,10 @@ export class SetupForm {
   group: FormGroup;
 
   constructor(
-      mail: string = "",
-      password: string = "",
-      mailFolderName: string = "",
-      bank: SupportedBanks = "raiffeisen") {
+    mail: string = "",
+    password: string = "",
+    mailFolderName: string = "",
+    bank: SupportedBanks = "Raiffeisen") {
     this.mail = new FormControl(mail, [Validators.email, Validators.minLength(5), Validators.required]);
     this.password = new FormControl(password, [Validators.required]);
     this.mailFolderName = new FormControl(mailFolderName, [Validators.required, Validators.minLength(5)]);
@@ -89,4 +90,4 @@ export class SetupForm {
   }
 }
 
-export type SupportedBanks = "raiffeisen";
+export type SupportedBanks = "Raiffeisen";

@@ -20,6 +20,7 @@ import {DialogComponent} from './components/dialog/dialog.component';
 import {HelpComponent} from './components/help/help.component';
 import {DialogDirective} from './components/dialog/dialog.directive';
 import {TextAreaComponent} from './components/text-area/text-area.component';
+import {SelectComponent} from './components/select/select.component';
 
 @NgModule({
   declarations: [
@@ -36,7 +37,8 @@ import {TextAreaComponent} from './components/text-area/text-area.component';
     DialogComponent,
     HelpComponent,
     DialogDirective,
-    TextAreaComponent
+    TextAreaComponent,
+    SelectComponent
   ],
   imports: [
     BrowserModule,
