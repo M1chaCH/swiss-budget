@@ -1,6 +1,8 @@
 package ch.michu.tech.swissbudget.app.endpoint;
 
+import ch.michu.tech.swissbudget.app.dto.CreateMailFolderDto;
 import ch.michu.tech.swissbudget.app.dto.CredentialDto;
+import ch.michu.tech.swissbudget.app.dto.RegisterDto;
 import ch.michu.tech.swissbudget.app.service.RegistrationService;
 import ch.michu.tech.swissbudget.framework.filter.logging.Logged;
 import ch.michu.tech.swissbudget.framework.interceptor.validation.ValidateDtos;
@@ -34,5 +36,21 @@ public class RegisterEndpoint {
     public Response postEmailCredentials(CredentialDto credentials) {
         service.checkMailCredentials(credentials);
         return Response.status(Status.NO_CONTENT).build();
+    }
+
+    @POST()
+    @Path("/mail/folder")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response postEmailFolder(CreateMailFolderDto dto) {
+        service.createMailFolder(dto);
+        return Response.status(Status.NO_CONTENT).build();
+    }
+
+    @POST()
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response postRegister(RegisterDto dto) {
+        return Response.status(Status.OK).entity(service.register(dto)).build();
     }
 }

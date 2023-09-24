@@ -1,5 +1,6 @@
 package ch.michu.tech.swissbudget.app.service.mail;
 
+import ch.michu.tech.swissbudget.framework.error.exception.mail.MailConnectionException;
 import ch.michu.tech.swissbudget.framework.mail.MailReader;
 import ch.michu.tech.swissbudget.framework.mail.TemplatedMailSender;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -7,6 +8,7 @@ import jakarta.inject.Inject;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.mail.Folder;
 import javax.mail.MessagingException;
 import javax.mail.Store;
 
@@ -30,6 +32,21 @@ public class MailService {
             connectedStore.close();
         } catch (MessagingException e) {
             LOGGER.log(Level.FINE, "could not close connection store after testing connection", e);
+        }
+    }
+
+    public void createFolder(String mail, String password, String folderName) {
+        Store store = mailReader.openConnection(mail, password);
+        try {
+            Folder folder = store.getFolder(folderName);
+            if (!folder.exists()) {
+                folder.create(Folder.HOLDS_MESSAGES);
+                folder.setSubscribed(true);
+            }
+
+            store.close();
+        } catch (MessagingException e) {
+            throw new MailConnectionException(mail, "undefined", e);
         }
     }
 

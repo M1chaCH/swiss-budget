@@ -7,6 +7,7 @@ import {ErrorService} from "./error.service";
 export const endpoint = {
   REGISTER: "/register",
   CHECK_MAIL: "/register/mail",
+  CREATE_MAIL_FOLDER: "/register/mail/folder",
   CONTACT: "/contact",
 }
 
@@ -22,7 +23,10 @@ export class ApiService {
   ) {
   }
 
-  public get<T>(endpoint: string, queryParams?: { key: string, value: string }[], showDialogOnError: boolean = false): Observable<T> {
+  public get<T>(endpoint: string, queryParams?: {
+    key: string,
+    value: string
+  }[], showDialogOnError: boolean = false): Observable<T> {
     let url: string = `${environment.API_URL}${endpoint}`;
 
     if (queryParams)
@@ -36,7 +40,10 @@ export class ApiService {
     );
   }
 
-  public post<T>(endpoint: string, payload: any, queryParams?: { key: string, value: string }[], showDialogOnError: boolean = false) {
+  public post<T>(endpoint: string, payload: any, queryParams?: {
+    key: string,
+    value: string
+  }[], showDialogOnError: boolean = false) {
     let url: string = `${environment.API_URL}${endpoint}`;
 
     if (queryParams)
@@ -50,7 +57,10 @@ export class ApiService {
     );
   }
 
-  public put<T>(endpoint: string, payload: any, queryParams?: { key: string, value: string }[], showDialogOnError: boolean = false) {
+  public put<T>(endpoint: string, payload: any, queryParams?: {
+    key: string,
+    value: string
+  }[], showDialogOnError: boolean = false) {
     let url: string = `${environment.API_URL}${endpoint}`;
 
     if (queryParams)
