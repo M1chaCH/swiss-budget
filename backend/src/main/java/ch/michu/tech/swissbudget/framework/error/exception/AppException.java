@@ -17,9 +17,9 @@ public abstract class AppException extends RuntimeException {
     protected final transient Map<String, String> args;
     protected final String errorKey;
 
-    protected AppException(String message, Status responseStatus) {
+    protected AppException(String serverMessage, Status responseStatus) {
         this.serverError = false;
-        this.serverMessage = message;
+        this.serverMessage = serverMessage;
         this.responseStatus = responseStatus;
         this.rootException = this;
         this.args = new HashMap<>();

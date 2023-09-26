@@ -2,8 +2,8 @@ package ch.michu.tech.swissbudget.app.endpoint;
 
 import ch.michu.tech.swissbudget.app.dto.ContactMessageDto;
 import ch.michu.tech.swissbudget.app.service.mail.MailService;
-import ch.michu.tech.swissbudget.framework.filter.logging.Logged;
-import ch.michu.tech.swissbudget.framework.interceptor.validation.ValidateDtos;
+import ch.michu.tech.swissbudget.framework.logging.Logged;
+import ch.michu.tech.swissbudget.framework.validation.ValidateDtos;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;

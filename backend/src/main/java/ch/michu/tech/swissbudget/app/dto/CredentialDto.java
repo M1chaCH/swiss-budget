@@ -1,7 +1,7 @@
 package ch.michu.tech.swissbudget.app.dto;
 
-import ch.michu.tech.swissbudget.framework.interceptor.validation.ValidateMail;
-import ch.michu.tech.swissbudget.framework.interceptor.validation.ValidatedDto;
+import ch.michu.tech.swissbudget.framework.validation.ValidateMail;
+import ch.michu.tech.swissbudget.framework.validation.ValidatedDto;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;

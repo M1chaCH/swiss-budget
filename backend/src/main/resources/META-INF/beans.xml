@@ -5,7 +5,7 @@
   xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee
                            https://jakarta.ee/xml/ns/jakartaee/beans_3_0.xsd">
   <interceptors>
-    <class>ch.michu.tech.swissbudget.framework.interceptor.validation.DtoValidationInterceptor
+    <class>ch.michu.tech.swissbudget.framework.validation.DtoValidationInterceptor
     </class>
   </interceptors>
 </beans>

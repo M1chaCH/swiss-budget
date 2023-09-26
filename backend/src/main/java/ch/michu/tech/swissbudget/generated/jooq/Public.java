@@ -4,12 +4,12 @@
 package ch.michu.tech.swissbudget.generated.jooq;
 
 
-import ch.michu.tech.swissbudget.generated.jooq.tables.Keywords;
-import ch.michu.tech.swissbudget.generated.jooq.tables.Sessions;
-import ch.michu.tech.swissbudget.generated.jooq.tables.Tags;
-import ch.michu.tech.swissbudget.generated.jooq.tables.TransactionMails;
-import ch.michu.tech.swissbudget.generated.jooq.tables.Transactions;
-import ch.michu.tech.swissbudget.generated.jooq.tables.Users;
+import ch.michu.tech.swissbudget.generated.jooq.tables.Keyword;
+import ch.michu.tech.swissbudget.generated.jooq.tables.RegisteredUser;
+import ch.michu.tech.swissbudget.generated.jooq.tables.Session;
+import ch.michu.tech.swissbudget.generated.jooq.tables.Tag;
+import ch.michu.tech.swissbudget.generated.jooq.tables.Transaction;
+import ch.michu.tech.swissbudget.generated.jooq.tables.TransactionMail;
 import java.util.Arrays;
 import java.util.List;
 import org.jooq.Catalog;
@@ -29,34 +29,34 @@ public class Public extends SchemaImpl {
     public static final Public PUBLIC = new Public();
     private static final long serialVersionUID = 1L;
     /**
-     * The table <code>public.keywords</code>.
+     * The table <code>public.keyword</code>.
      */
-    public final Keywords KEYWORDS = Keywords.KEYWORDS;
+    public final Keyword KEYWORD = Keyword.KEYWORD;
 
     /**
-     * The table <code>public.sessions</code>.
+     * The table <code>public.registered_user</code>.
      */
-    public final Sessions SESSIONS = Sessions.SESSIONS;
+    public final RegisteredUser REGISTERED_USER = RegisteredUser.REGISTERED_USER;
 
     /**
-     * The table <code>public.tags</code>.
+     * The table <code>public.session</code>.
      */
-    public final Tags TAGS = Tags.TAGS;
+    public final Session SESSION = Session.SESSION;
 
     /**
-     * The table <code>public.transaction_mails</code>.
+     * The table <code>public.tag</code>.
      */
-    public final TransactionMails TRANSACTION_MAILS = TransactionMails.TRANSACTION_MAILS;
+    public final Tag TAG = Tag.TAG;
 
     /**
-     * The table <code>public.transactions</code>.
+     * The table <code>public.transaction</code>.
      */
-    public final Transactions TRANSACTIONS = Transactions.TRANSACTIONS;
+    public final Transaction TRANSACTION = Transaction.TRANSACTION;
 
     /**
-     * The table <code>public.users</code>.
+     * The table <code>public.transaction_mail</code>.
      */
-    public final Users USERS = Users.USERS;
+    public final TransactionMail TRANSACTION_MAIL = TransactionMail.TRANSACTION_MAIL;
 
     /**
      * No further instances allowed
@@ -74,12 +74,12 @@ public class Public extends SchemaImpl {
     @Override
     public final List<Table<?>> getTables() {
         return Arrays.asList(
-            Keywords.KEYWORDS,
-            Sessions.SESSIONS,
-            Tags.TAGS,
-            TransactionMails.TRANSACTION_MAILS,
-            Transactions.TRANSACTIONS,
-            Users.USERS
+            Keyword.KEYWORD,
+            RegisteredUser.REGISTERED_USER,
+            Session.SESSION,
+            Tag.TAG,
+            Transaction.TRANSACTION,
+            TransactionMail.TRANSACTION_MAIL
         );
     }
 }

@@ -4,18 +4,18 @@
 package ch.michu.tech.swissbudget.generated.jooq;
 
 
-import ch.michu.tech.swissbudget.generated.jooq.tables.Keywords;
-import ch.michu.tech.swissbudget.generated.jooq.tables.Sessions;
-import ch.michu.tech.swissbudget.generated.jooq.tables.Tags;
-import ch.michu.tech.swissbudget.generated.jooq.tables.TransactionMails;
-import ch.michu.tech.swissbudget.generated.jooq.tables.Transactions;
-import ch.michu.tech.swissbudget.generated.jooq.tables.Users;
-import ch.michu.tech.swissbudget.generated.jooq.tables.records.KeywordsRecord;
-import ch.michu.tech.swissbudget.generated.jooq.tables.records.SessionsRecord;
-import ch.michu.tech.swissbudget.generated.jooq.tables.records.TagsRecord;
-import ch.michu.tech.swissbudget.generated.jooq.tables.records.TransactionMailsRecord;
-import ch.michu.tech.swissbudget.generated.jooq.tables.records.TransactionsRecord;
-import ch.michu.tech.swissbudget.generated.jooq.tables.records.UsersRecord;
+import ch.michu.tech.swissbudget.generated.jooq.tables.Keyword;
+import ch.michu.tech.swissbudget.generated.jooq.tables.RegisteredUser;
+import ch.michu.tech.swissbudget.generated.jooq.tables.Session;
+import ch.michu.tech.swissbudget.generated.jooq.tables.Tag;
+import ch.michu.tech.swissbudget.generated.jooq.tables.Transaction;
+import ch.michu.tech.swissbudget.generated.jooq.tables.TransactionMail;
+import ch.michu.tech.swissbudget.generated.jooq.tables.records.KeywordRecord;
+import ch.michu.tech.swissbudget.generated.jooq.tables.records.RegisteredUserRecord;
+import ch.michu.tech.swissbudget.generated.jooq.tables.records.SessionRecord;
+import ch.michu.tech.swissbudget.generated.jooq.tables.records.TagRecord;
+import ch.michu.tech.swissbudget.generated.jooq.tables.records.TransactionMailRecord;
+import ch.michu.tech.swissbudget.generated.jooq.tables.records.TransactionRecord;
 import org.jooq.ForeignKey;
 import org.jooq.TableField;
 import org.jooq.UniqueKey;
@@ -33,66 +33,52 @@ public class Keys {
     // UNIQUE and PRIMARY KEY definitions
     // -------------------------------------------------------------------------
 
-    public static final UniqueKey<KeywordsRecord> KEYWORDS_PKEY = Internal.createUniqueKey(
-        Keywords.KEYWORDS, DSL.name("keywords_pkey"), new TableField[]{Keywords.KEYWORDS.ID}, true);
-    public static final UniqueKey<SessionsRecord> SESSIONS_PKEY = Internal.createUniqueKey(
-        Sessions.SESSIONS, DSL.name("sessions_pkey"), new TableField[]{Sessions.SESSIONS.ID}, true);
-    public static final UniqueKey<SessionsRecord> SESSIONS_SESSION_ID_KEY = Internal.createUniqueKey(
-        Sessions.SESSIONS, DSL.name("sessions_session_id_key"),
-        new TableField[]{Sessions.SESSIONS.SESSION_ID}, true);
-    public static final UniqueKey<SessionsRecord> SESSIONS_USER_ID_KEY = Internal.createUniqueKey(
-        Sessions.SESSIONS, DSL.name("sessions_user_id_key"),
-        new TableField[]{Sessions.SESSIONS.USER_ID}, true);
-    public static final UniqueKey<TagsRecord> TAGS_PKEY = Internal.createUniqueKey(Tags.TAGS,
-        DSL.name("tags_pkey"), new TableField[]{Tags.TAGS.ID}, true);
-    public static final UniqueKey<TransactionMailsRecord> TRANSACTION_MAILS_PKEY = Internal.createUniqueKey(
-        TransactionMails.TRANSACTION_MAILS, DSL.name("transaction_mails_pkey"),
-        new TableField[]{TransactionMails.TRANSACTION_MAILS.ID}, true);
-    public static final UniqueKey<TransactionsRecord> TRANSACTIONS_PKEY = Internal.createUniqueKey(
-        Transactions.TRANSACTIONS, DSL.name("transactions_pkey"),
-        new TableField[]{Transactions.TRANSACTIONS.ID}, true);
-    public static final UniqueKey<UsersRecord> USERS_MAIL_KEY = Internal.createUniqueKey(
-        Users.USERS, DSL.name("users_mail_key"), new TableField[]{Users.USERS.MAIL}, true);
-    public static final UniqueKey<UsersRecord> USERS_PKEY = Internal.createUniqueKey(Users.USERS,
-        DSL.name("users_pkey"), new TableField[]{Users.USERS.ID}, true);
+    public static final UniqueKey<KeywordRecord> KEYWORD_PKEY = Internal.createUniqueKey(
+        Keyword.KEYWORD, DSL.name("keyword_pkey"), new TableField[]{Keyword.KEYWORD.ID}, true);
+    public static final UniqueKey<RegisteredUserRecord> REGISTERED_USER_MAIL_KEY = Internal.createUniqueKey(
+        RegisteredUser.REGISTERED_USER, DSL.name("registered_user_mail_key"),
+        new TableField[]{RegisteredUser.REGISTERED_USER.MAIL}, true);
+    public static final UniqueKey<RegisteredUserRecord> REGISTERED_USER_PKEY = Internal.createUniqueKey(
+        RegisteredUser.REGISTERED_USER, DSL.name("registered_user_pkey"),
+        new TableField[]{RegisteredUser.REGISTERED_USER.ID}, true);
+    public static final UniqueKey<SessionRecord> SESSION_PKEY = Internal.createUniqueKey(
+        Session.SESSION, DSL.name("session_pkey"), new TableField[]{Session.SESSION.ID}, true);
+    public static final UniqueKey<SessionRecord> SESSION_SESSION_TOKEN_KEY = Internal.createUniqueKey(
+        Session.SESSION, DSL.name("session_session_token_key"),
+        new TableField[]{Session.SESSION.SESSION_TOKEN}, true);
+    public static final UniqueKey<SessionRecord> SESSION_USER_ID_KEY = Internal.createUniqueKey(
+        Session.SESSION, DSL.name("session_user_id_key"), new TableField[]{Session.SESSION.USER_ID},
+        true);
+    public static final UniqueKey<TagRecord> TAG_PKEY = Internal.createUniqueKey(Tag.TAG,
+        DSL.name("tag_pkey"), new TableField[]{Tag.TAG.ID}, true);
+    public static final UniqueKey<TransactionRecord> TRANSACTION_PKEY = Internal.createUniqueKey(
+        Transaction.TRANSACTION, DSL.name("transaction_pkey"),
+        new TableField[]{Transaction.TRANSACTION.ID}, true);
+    public static final UniqueKey<TransactionMailRecord> TRANSACTION_MAIL_PKEY = Internal.createUniqueKey(
+        TransactionMail.TRANSACTION_MAIL, DSL.name("transaction_mail_pkey"),
+        new TableField[]{TransactionMail.TRANSACTION_MAIL.ID}, true);
 
     // -------------------------------------------------------------------------
     // FOREIGN KEY definitions
     // -------------------------------------------------------------------------
 
-    public static final ForeignKey<KeywordsRecord, TagsRecord> KEYWORDS__KEYWORDS_TAG_ID_FKEY = Internal.createForeignKey(
-        Keywords.KEYWORDS, DSL.name("keywords_tag_id_fkey"),
-        new TableField[]{Keywords.KEYWORDS.TAG_ID}, Keys.TAGS_PKEY, new TableField[]{Tags.TAGS.ID},
-        true);
-    public static final ForeignKey<KeywordsRecord, UsersRecord> KEYWORDS__KEYWORDS_USER_ID_FKEY = Internal.createForeignKey(
-        Keywords.KEYWORDS, DSL.name("keywords_user_id_fkey"),
-        new TableField[]{Keywords.KEYWORDS.USER_ID}, Keys.USERS_PKEY,
-        new TableField[]{Users.USERS.ID}, true);
-    public static final ForeignKey<SessionsRecord, UsersRecord> SESSIONS__SESSIONS_USER_ID_FKEY = Internal.createForeignKey(
-        Sessions.SESSIONS, DSL.name("sessions_user_id_fkey"),
-        new TableField[]{Sessions.SESSIONS.USER_ID}, Keys.USERS_PKEY,
-        new TableField[]{Users.USERS.ID}, true);
-    public static final ForeignKey<TagsRecord, UsersRecord> TAGS__TAGS_USER_ID_FKEY = Internal.createForeignKey(
-        Tags.TAGS, DSL.name("tags_user_id_fkey"), new TableField[]{Tags.TAGS.USER_ID},
-        Keys.USERS_PKEY, new TableField[]{Users.USERS.ID}, true);
-    public static final ForeignKey<TransactionMailsRecord, TransactionsRecord> TRANSACTION_MAILS__TRANSACTION_MAILS_TRANSACTION_ID_FKEY = Internal.createForeignKey(
-        TransactionMails.TRANSACTION_MAILS, DSL.name("transaction_mails_transaction_id_fkey"),
-        new TableField[]{TransactionMails.TRANSACTION_MAILS.TRANSACTION_ID}, Keys.TRANSACTIONS_PKEY,
-        new TableField[]{Transactions.TRANSACTIONS.ID}, true);
-    public static final ForeignKey<TransactionMailsRecord, UsersRecord> TRANSACTION_MAILS__TRANSACTION_MAILS_USER_ID_FKEY = Internal.createForeignKey(
-        TransactionMails.TRANSACTION_MAILS, DSL.name("transaction_mails_user_id_fkey"),
-        new TableField[]{TransactionMails.TRANSACTION_MAILS.USER_ID}, Keys.USERS_PKEY,
-        new TableField[]{Users.USERS.ID}, true);
-    public static final ForeignKey<TransactionsRecord, KeywordsRecord> TRANSACTIONS__TRANSACTIONS_MATCHING_KEYWORD_ID_FKEY = Internal.createForeignKey(
-        Transactions.TRANSACTIONS, DSL.name("transactions_matching_keyword_id_fkey"),
-        new TableField[]{Transactions.TRANSACTIONS.MATCHING_KEYWORD_ID}, Keys.KEYWORDS_PKEY,
-        new TableField[]{Keywords.KEYWORDS.ID}, true);
-    public static final ForeignKey<TransactionsRecord, TagsRecord> TRANSACTIONS__TRANSACTIONS_TAG_ID_FKEY = Internal.createForeignKey(
-        Transactions.TRANSACTIONS, DSL.name("transactions_tag_id_fkey"),
-        new TableField[]{Transactions.TRANSACTIONS.TAG_ID}, Keys.TAGS_PKEY,
-        new TableField[]{Tags.TAGS.ID}, true);
-    public static final ForeignKey<TransactionsRecord, UsersRecord> TRANSACTIONS__TRANSACTIONS_USER_ID_FKEY = Internal.createForeignKey(
-        Transactions.TRANSACTIONS, DSL.name("transactions_user_id_fkey"),
-        new TableField[]{Transactions.TRANSACTIONS.USER_ID}, Keys.USERS_PKEY,
-        new TableField[]{Users.USERS.ID}, true);
+    public static final ForeignKey<KeywordRecord, TagRecord> KEYWORD__KEYWORD_TAG_ID_FKEY = Internal.createForeignKey(
+        Keyword.KEYWORD, DSL.name("keyword_tag_id_fkey"), new TableField[]{Keyword.KEYWORD.TAG_ID},
+        Keys.TAG_PKEY, new TableField[]{Tag.TAG.ID}, true);
+    public static final ForeignKey<SessionRecord, RegisteredUserRecord> SESSION__SESSION_USER_ID_FKEY = Internal.createForeignKey(
+        Session.SESSION, DSL.name("session_user_id_fkey"),
+        new TableField[]{Session.SESSION.USER_ID}, Keys.REGISTERED_USER_PKEY,
+        new TableField[]{RegisteredUser.REGISTERED_USER.ID}, true);
+    public static final ForeignKey<TransactionRecord, KeywordRecord> TRANSACTION__TRANSACTION_MATCHING_KEYWORD_ID_FKEY = Internal.createForeignKey(
+        Transaction.TRANSACTION, DSL.name("transaction_matching_keyword_id_fkey"),
+        new TableField[]{Transaction.TRANSACTION.MATCHING_KEYWORD_ID}, Keys.KEYWORD_PKEY,
+        new TableField[]{Keyword.KEYWORD.ID}, true);
+    public static final ForeignKey<TransactionRecord, TagRecord> TRANSACTION__TRANSACTION_TAG_ID_FKEY = Internal.createForeignKey(
+        Transaction.TRANSACTION, DSL.name("transaction_tag_id_fkey"),
+        new TableField[]{Transaction.TRANSACTION.TAG_ID}, Keys.TAG_PKEY,
+        new TableField[]{Tag.TAG.ID}, true);
+    public static final ForeignKey<TransactionMailRecord, TransactionRecord> TRANSACTION_MAIL__TRANSACTION_MAIL_TRANSACTION_ID_FKEY = Internal.createForeignKey(
+        TransactionMail.TRANSACTION_MAIL, DSL.name("transaction_mail_transaction_id_fkey"),
+        new TableField[]{TransactionMail.TRANSACTION_MAIL.TRANSACTION_ID}, Keys.TRANSACTION_PKEY,
+        new TableField[]{Transaction.TRANSACTION.ID}, true);
 }

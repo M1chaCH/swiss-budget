@@ -4,12 +4,12 @@
 package ch.michu.tech.swissbudget.generated.jooq;
 
 
-import ch.michu.tech.swissbudget.generated.jooq.tables.Keywords;
-import ch.michu.tech.swissbudget.generated.jooq.tables.Sessions;
-import ch.michu.tech.swissbudget.generated.jooq.tables.Tags;
-import ch.michu.tech.swissbudget.generated.jooq.tables.TransactionMails;
-import ch.michu.tech.swissbudget.generated.jooq.tables.Transactions;
-import ch.michu.tech.swissbudget.generated.jooq.tables.Users;
+import ch.michu.tech.swissbudget.generated.jooq.tables.Keyword;
+import ch.michu.tech.swissbudget.generated.jooq.tables.RegisteredUser;
+import ch.michu.tech.swissbudget.generated.jooq.tables.Session;
+import ch.michu.tech.swissbudget.generated.jooq.tables.Tag;
+import ch.michu.tech.swissbudget.generated.jooq.tables.Transaction;
+import ch.michu.tech.swissbudget.generated.jooq.tables.TransactionMail;
 
 
 /**
@@ -19,32 +19,32 @@ import ch.michu.tech.swissbudget.generated.jooq.tables.Users;
 public class Tables {
 
     /**
-     * The table <code>public.keywords</code>.
+     * The table <code>public.keyword</code>.
      */
-    public static final Keywords KEYWORDS = Keywords.KEYWORDS;
+    public static final Keyword KEYWORD = Keyword.KEYWORD;
 
     /**
-     * The table <code>public.sessions</code>.
+     * The table <code>public.registered_user</code>.
      */
-    public static final Sessions SESSIONS = Sessions.SESSIONS;
+    public static final RegisteredUser REGISTERED_USER = RegisteredUser.REGISTERED_USER;
 
     /**
-     * The table <code>public.tags</code>.
+     * The table <code>public.session</code>.
      */
-    public static final Tags TAGS = Tags.TAGS;
+    public static final Session SESSION = Session.SESSION;
 
     /**
-     * The table <code>public.transaction_mails</code>.
+     * The table <code>public.tag</code>.
      */
-    public static final TransactionMails TRANSACTION_MAILS = TransactionMails.TRANSACTION_MAILS;
+    public static final Tag TAG = Tag.TAG;
 
     /**
-     * The table <code>public.transactions</code>.
+     * The table <code>public.transaction</code>.
      */
-    public static final Transactions TRANSACTIONS = Transactions.TRANSACTIONS;
+    public static final Transaction TRANSACTION = Transaction.TRANSACTION;
 
     /**
-     * The table <code>public.users</code>.
+     * The table <code>public.transaction_mail</code>.
      */
-    public static final Users USERS = Users.USERS;
+    public static final TransactionMail TRANSACTION_MAIL = TransactionMail.TRANSACTION_MAIL;
 }
