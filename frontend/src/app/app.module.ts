@@ -25,6 +25,7 @@ import {ClickThrottlerDirective} from './components/button/click-throttler.direc
 import {CookieService} from "ngx-cookie-service";
 import {AuthService} from "./services/auth.service";
 import {MfaSubpageComponent} from './pages/welcome.page/mfa.subpage/mfa.subpage.component';
+import {CheckboxComponent} from './components/checkbox/checkbox.component';
 
 @NgModule({
   declarations: [
@@ -44,7 +45,8 @@ import {MfaSubpageComponent} from './pages/welcome.page/mfa.subpage/mfa.subpage.
     TextAreaComponent,
     SelectComponent,
     ClickThrottlerDirective,
-    MfaSubpageComponent
+    MfaSubpageComponent,
+    CheckboxComponent
   ],
   imports: [
     BrowserModule,

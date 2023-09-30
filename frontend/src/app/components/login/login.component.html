@@ -10,8 +10,11 @@
                     errorText="password required"
                     placeholder="Password">
     </app-text-input>
-    <p *ngIf="errorMessage" class="form-error-message">{{errorMessage}}</p>
-    <div></div>
+    <app-checkbox [value]="form.stay" label="Stay?"></app-checkbox>
+    <p *ngIf="errorMessage else emtpy" class="form-error-message">{{errorMessage}}</p>
+    <ng-template #emtpy>
+        <div></div>
+    </ng-template>
     <app-button (onClick)="login()" [disabled]="form.group.invalid" [loading]="loading"
                 rightIcon="login">
         Sign In
