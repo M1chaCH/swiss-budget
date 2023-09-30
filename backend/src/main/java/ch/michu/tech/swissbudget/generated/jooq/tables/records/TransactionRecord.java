@@ -18,7 +18,7 @@ import org.jooq.impl.UpdatableRecordImpl;
  */
 @SuppressWarnings({"all", "unchecked", "rawtypes"})
 public class TransactionRecord extends UpdatableRecordImpl<TransactionRecord> implements
-    Record11<Integer, Boolean, LocalDate, String, Double, String, Integer, Integer, String, String, Integer> {
+    Record11<Integer, Boolean, LocalDate, String, Double, String, Integer, Integer, String, String, String> {
 
     private static final long serialVersionUID = 1L;
 
@@ -34,7 +34,7 @@ public class TransactionRecord extends UpdatableRecordImpl<TransactionRecord> im
      */
     public TransactionRecord(Integer id, Boolean expense, LocalDate transactionDate,
         String bankaccount, Double amount, String receiver, Integer tagId,
-        Integer matchingKeywordId, String alias, String note, Integer userId) {
+        Integer matchingKeywordId, String alias, String note, String userId) {
         super(Transaction.TRANSACTION);
 
         setId(id);
@@ -135,20 +135,6 @@ public class TransactionRecord extends UpdatableRecordImpl<TransactionRecord> im
     }
 
     /**
-     * Getter for <code>public.transaction.tag_id</code>.
-     */
-    public Integer getTagId() {
-        return (Integer) get(6);
-    }
-
-    /**
-     * Setter for <code>public.transaction.tag_id</code>.
-     */
-    public void setTagId(Integer value) {
-        set(6, value);
-    }
-
-    /**
      * Getter for <code>public.transaction.matching_keyword_id</code>.
      */
     public Integer getMatchingKeywordId() {
@@ -160,6 +146,20 @@ public class TransactionRecord extends UpdatableRecordImpl<TransactionRecord> im
      */
     public void setMatchingKeywordId(Integer value) {
         set(7, value);
+    }
+
+    /**
+     * Getter for <code>public.transaction.tag_id</code>.
+     */
+    public Integer getTagId() {
+        return (Integer) get(6);
+    }
+
+    /**
+     * Setter for <code>public.transaction.tag_id</code>.
+     */
+    public void setTagId(Integer value) {
+        set(6, value);
     }
 
     /**
@@ -197,8 +197,8 @@ public class TransactionRecord extends UpdatableRecordImpl<TransactionRecord> im
     /**
      * Getter for <code>public.transaction.user_id</code>.
      */
-    public Integer getUserId() {
-        return (Integer) get(10);
+    public String getUserId() {
+        return (String) get(10);
     }
 
     // -------------------------------------------------------------------------
@@ -208,23 +208,13 @@ public class TransactionRecord extends UpdatableRecordImpl<TransactionRecord> im
     /**
      * Setter for <code>public.transaction.user_id</code>.
      */
-    public void setUserId(Integer value) {
+    public void setUserId(String value) {
         set(10, value);
     }
 
     @Override
     public Record1<Integer> key() {
         return (Record1) super.key();
-    }
-
-    @Override
-    public Row11<Integer, Boolean, LocalDate, String, Double, String, Integer, Integer, String, String, Integer> fieldsRow() {
-        return (Row11) super.fieldsRow();
-    }
-
-    @Override
-    public Row11<Integer, Boolean, LocalDate, String, Double, String, Integer, Integer, String, String, Integer> valuesRow() {
-        return (Row11) super.valuesRow();
     }
 
     @Override
@@ -278,8 +268,8 @@ public class TransactionRecord extends UpdatableRecordImpl<TransactionRecord> im
     }
 
     @Override
-    public Field<Integer> field11() {
-        return Transaction.TRANSACTION.USER_ID;
+    public Row11<Integer, Boolean, LocalDate, String, Double, String, Integer, Integer, String, String, String> fieldsRow() {
+        return (Row11) super.fieldsRow();
     }
 
     @Override
@@ -333,8 +323,8 @@ public class TransactionRecord extends UpdatableRecordImpl<TransactionRecord> im
     }
 
     @Override
-    public Integer component11() {
-        return getUserId();
+    public Row11<Integer, Boolean, LocalDate, String, Double, String, Integer, Integer, String, String, String> valuesRow() {
+        return (Row11) super.valuesRow();
     }
 
     @Override
@@ -388,8 +378,8 @@ public class TransactionRecord extends UpdatableRecordImpl<TransactionRecord> im
     }
 
     @Override
-    public Integer value11() {
-        return getUserId();
+    public Field<String> field11() {
+        return Transaction.TRANSACTION.USER_ID;
     }
 
     @Override
@@ -452,12 +442,22 @@ public class TransactionRecord extends UpdatableRecordImpl<TransactionRecord> im
         return this;
     }
 
+    @Override
+    public String component11() {
+        return getUserId();
+    }
+
+    @Override
+    public String value11() {
+        return getUserId();
+    }
+
     // -------------------------------------------------------------------------
     // Constructors
     // -------------------------------------------------------------------------
 
     @Override
-    public TransactionRecord value11(Integer value) {
+    public TransactionRecord value11(String value) {
         setUserId(value);
         return this;
     }
@@ -465,7 +465,7 @@ public class TransactionRecord extends UpdatableRecordImpl<TransactionRecord> im
     @Override
     public TransactionRecord values(Integer value1, Boolean value2, LocalDate value3, String value4,
         Double value5, String value6, Integer value7, Integer value8, String value9, String value10,
-        Integer value11) {
+        String value11) {
         value1(value1);
         value2(value2);
         value3(value3);

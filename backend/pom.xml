@@ -110,6 +110,21 @@
       <groupId>commons-validator</groupId>
       <version>1.7</version>
     </dependency>
+    <dependency>
+      <artifactId>jjwt</artifactId>
+      <groupId>io.jsonwebtoken</groupId>
+      <version>0.9.1</version>
+    </dependency>
+    <dependency>
+      <artifactId>jaxb-api</artifactId>
+      <groupId>javax.xml.bind</groupId>
+      <version>2.3.1</version>
+    </dependency>
+    <dependency>
+      <artifactId>activation</artifactId>
+      <groupId>javax.activation</groupId>
+      <version>1.1.1</version>
+    </dependency>
 
 
     <!--    Test -->

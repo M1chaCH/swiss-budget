@@ -1,13 +1,13 @@
 package ch.michu.tech.swissbudget.app.service.mail;
 
+import ch.michu.tech.swissbudget.framework.data.RequestSupport;
 import ch.michu.tech.swissbudget.framework.error.exception.mail.MailConnectionException;
 import ch.michu.tech.swissbudget.framework.mail.MailReader;
 import ch.michu.tech.swissbudget.framework.mail.TemplatedMailSender;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.inject.Provider;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.mail.Folder;
 import javax.mail.MessagingException;
 import javax.mail.Store;
@@ -15,15 +15,16 @@ import javax.mail.Store;
 @ApplicationScoped
 public class MailService {
 
-    private static final Logger LOGGER = Logger.getLogger(MailService.class.getSimpleName());
-
     private final MailReader mailReader;
     private final TemplatedMailSender templatedMailSender;
+    private final Provider<RequestSupport> supportProvider;
 
     @Inject
-    public MailService(MailReader mailReader, TemplatedMailSender templatedMailSender) {
+    public MailService(MailReader mailReader, TemplatedMailSender templatedMailSender,
+        Provider<RequestSupport> supportProvider) {
         this.mailReader = mailReader;
         this.templatedMailSender = templatedMailSender;
+        this.supportProvider = supportProvider;
     }
 
     public void testMailConnection(String mail, String password) {
@@ -31,7 +32,8 @@ public class MailService {
         try {
             connectedStore.close();
         } catch (MessagingException e) {
-            LOGGER.log(Level.FINE, "could not close connection store after testing connection", e);
+            supportProvider.get()
+                .logFine(this, "could not close connection store after testing connection", e);
         }
     }
 
@@ -57,7 +59,8 @@ public class MailService {
             "sender", sourceAddress,
             "message", message
         ));
-        LOGGER.log(Level.INFO, "successfully sent user message to admin from {0} with subject {1}",
-            new Object[]{sourceAddress, subject});
+        supportProvider.get()
+            .logInfo(this, "successfully sent user message to admin from %s with subject %s",
+                sourceAddress, subject);
     }
 }

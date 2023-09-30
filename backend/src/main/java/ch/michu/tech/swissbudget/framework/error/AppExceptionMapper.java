@@ -1,29 +1,34 @@
 package ch.michu.tech.swissbudget.framework.error;
 
+import ch.michu.tech.swissbudget.framework.data.RequestSupport;
 import ch.michu.tech.swissbudget.framework.error.exception.AppException;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.ExceptionMapper;
 import jakarta.ws.rs.ext.Provider;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 @Provider
 @ApplicationScoped
 public class AppExceptionMapper implements ExceptionMapper<AppException> {
 
-    private static final Logger LOGGER = Logger.getLogger(AppExceptionMapper.class.getSimpleName());
+    private final RequestSupport support;
+
+    @Inject
+    public AppExceptionMapper(RequestSupport support) {
+        this.support = support;
+    }
 
     @Override
     public Response toResponse(AppException exception) {
         if (exception.isServerError()) {
-            LOGGER.log(Level.SEVERE, "Server error!", exception);
+            support.logError(this, "Server error!", exception);
         } else {
             Exception e =
                 exception.getRootException() == null ? exception : exception.getRootException();
 
-            LOGGER.log(Level.INFO, "caught exception --> {0}: {1}",
-                new Object[]{e.getClass().getSimpleName(), exception.getServerMessage()});
+            support.logInfo(this, "caught exception -> %s: %s", e.getClass().getSimpleName(),
+                exception.getServerMessage());
         }
 
         return exception.buildResponse();

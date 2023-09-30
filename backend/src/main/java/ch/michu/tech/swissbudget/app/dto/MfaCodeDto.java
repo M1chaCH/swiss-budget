@@ -1,7 +1,6 @@
 package ch.michu.tech.swissbudget.app.dto;
 
-import ch.michu.tech.swissbudget.framework.validation.ValidateLength;
-import ch.michu.tech.swissbudget.framework.validation.ValidateMail;
+import ch.michu.tech.swissbudget.framework.validation.ValidateAmount;
 import ch.michu.tech.swissbudget.framework.validation.ValidatedDto;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -17,14 +16,10 @@ import lombok.ToString;
 @ToString
 @EqualsAndHashCode
 @ValidatedDto
-public class RegisterDto {
+public class MfaCodeDto {
 
-    @ValidateLength(min = 3, max = 32)
-    private String folderName;
-    private String bank;
-
-    @ValidateMail
-    private String mail;
-    private String password;
-    private String mailPassword;
+    private String processId;
+    private String userId;
+    @ValidateAmount(min = 100000, max = 999999)
+    private int code;
 }

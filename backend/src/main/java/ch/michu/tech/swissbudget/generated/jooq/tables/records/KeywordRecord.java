@@ -17,7 +17,7 @@ import org.jooq.impl.UpdatableRecordImpl;
  */
 @SuppressWarnings({"all", "unchecked", "rawtypes"})
 public class KeywordRecord extends UpdatableRecordImpl<KeywordRecord> implements
-    Record4<Integer, String, Integer, Integer> {
+    Record4<Integer, String, Integer, String> {
 
     private static final long serialVersionUID = 1L;
 
@@ -31,7 +31,7 @@ public class KeywordRecord extends UpdatableRecordImpl<KeywordRecord> implements
     /**
      * Create a detached, initialised KeywordRecord
      */
-    public KeywordRecord(Integer id, String keyword, Integer tagId, Integer userId) {
+    public KeywordRecord(Integer id, String keyword, Integer tagId, String userId) {
         super(Keyword.KEYWORD);
 
         setId(id);
@@ -86,11 +86,9 @@ public class KeywordRecord extends UpdatableRecordImpl<KeywordRecord> implements
     // Primary key information
     // -------------------------------------------------------------------------
 
-    /**
-     * Getter for <code>public.keyword.user_id</code>.
-     */
-    public Integer getUserId() {
-        return (Integer) get(3);
+    @Override
+    public Record1<Integer> key() {
+        return (Record1) super.key();
     }
 
     // -------------------------------------------------------------------------
@@ -98,25 +96,17 @@ public class KeywordRecord extends UpdatableRecordImpl<KeywordRecord> implements
     // -------------------------------------------------------------------------
 
     /**
+     * Getter for <code>public.keyword.user_id</code>.
+     */
+    public String getUserId() {
+        return (String) get(3);
+    }
+
+    /**
      * Setter for <code>public.keyword.user_id</code>.
      */
-    public void setUserId(Integer value) {
+    public void setUserId(String value) {
         set(3, value);
-    }
-
-    @Override
-    public Record1<Integer> key() {
-        return (Record1) super.key();
-    }
-
-    @Override
-    public Row4<Integer, String, Integer, Integer> fieldsRow() {
-        return (Row4) super.fieldsRow();
-    }
-
-    @Override
-    public Row4<Integer, String, Integer, Integer> valuesRow() {
-        return (Row4) super.valuesRow();
     }
 
     @Override
@@ -135,8 +125,8 @@ public class KeywordRecord extends UpdatableRecordImpl<KeywordRecord> implements
     }
 
     @Override
-    public Field<Integer> field4() {
-        return Keyword.KEYWORD.USER_ID;
+    public Row4<Integer, String, Integer, String> fieldsRow() {
+        return (Row4) super.fieldsRow();
     }
 
     @Override
@@ -155,8 +145,8 @@ public class KeywordRecord extends UpdatableRecordImpl<KeywordRecord> implements
     }
 
     @Override
-    public Integer component4() {
-        return getUserId();
+    public Row4<Integer, String, Integer, String> valuesRow() {
+        return (Row4) super.valuesRow();
     }
 
     @Override
@@ -175,8 +165,8 @@ public class KeywordRecord extends UpdatableRecordImpl<KeywordRecord> implements
     }
 
     @Override
-    public Integer value4() {
-        return getUserId();
+    public Field<String> field4() {
+        return Keyword.KEYWORD.USER_ID;
     }
 
     @Override
@@ -197,18 +187,28 @@ public class KeywordRecord extends UpdatableRecordImpl<KeywordRecord> implements
         return this;
     }
 
+    @Override
+    public String component4() {
+        return getUserId();
+    }
+
+    @Override
+    public String value4() {
+        return getUserId();
+    }
+
     // -------------------------------------------------------------------------
     // Constructors
     // -------------------------------------------------------------------------
 
     @Override
-    public KeywordRecord value4(Integer value) {
+    public KeywordRecord value4(String value) {
         setUserId(value);
         return this;
     }
 
     @Override
-    public KeywordRecord values(Integer value1, String value2, Integer value3, Integer value4) {
+    public KeywordRecord values(Integer value1, String value2, Integer value3, String value4) {
         value1(value1);
         value2(value2);
         value3(value3);

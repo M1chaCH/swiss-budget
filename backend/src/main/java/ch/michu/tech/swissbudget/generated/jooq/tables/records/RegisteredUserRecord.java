@@ -8,8 +8,8 @@ import ch.michu.tech.swissbudget.generated.jooq.tables.RegisteredUser;
 import java.time.LocalDateTime;
 import org.jooq.Field;
 import org.jooq.Record1;
-import org.jooq.Record8;
-import org.jooq.Row8;
+import org.jooq.Record10;
+import org.jooq.Row10;
 import org.jooq.impl.UpdatableRecordImpl;
 
 
@@ -18,7 +18,7 @@ import org.jooq.impl.UpdatableRecordImpl;
  */
 @SuppressWarnings({"all", "unchecked", "rawtypes"})
 public class RegisteredUserRecord extends UpdatableRecordImpl<RegisteredUserRecord> implements
-    Record8<Integer, String, String, String, String, Boolean, LocalDateTime, LocalDateTime> {
+    Record10<String, String, String, String, String, String, Boolean, LocalDateTime, LocalDateTime, String> {
 
     private static final long serialVersionUID = 1L;
 
@@ -32,31 +32,34 @@ public class RegisteredUserRecord extends UpdatableRecordImpl<RegisteredUserReco
     /**
      * Create a detached, initialised RegisteredUserRecord
      */
-    public RegisteredUserRecord(Integer id, String mail, String password, String salt,
-        String username, Boolean disabled, LocalDateTime createdAt, LocalDateTime lastLogin) {
+    public RegisteredUserRecord(String id, String mail, String password, String salt,
+        String mailPassword, String username, Boolean disabled, LocalDateTime createdAt,
+        LocalDateTime lastLogin, String currentSession) {
         super(RegisteredUser.REGISTERED_USER);
 
         setId(id);
         setMail(mail);
         setPassword(password);
         setSalt(salt);
+        setMailPassword(mailPassword);
         setUsername(username);
         setDisabled(disabled);
         setCreatedAt(createdAt);
         setLastLogin(lastLogin);
+        setCurrentSession(currentSession);
     }
 
     /**
      * Getter for <code>public.registered_user.id</code>.
      */
-    public Integer getId() {
-        return (Integer) get(0);
+    public String getId() {
+        return (String) get(0);
     }
 
     /**
      * Setter for <code>public.registered_user.id</code>.
      */
-    public void setId(Integer value) {
+    public void setId(String value) {
         set(0, value);
     }
 
@@ -103,45 +106,73 @@ public class RegisteredUserRecord extends UpdatableRecordImpl<RegisteredUserReco
     }
 
     /**
+     * Getter for <code>public.registered_user.mail_password</code>.
+     */
+    public String getMailPassword() {
+        return (String) get(4);
+    }
+
+    /**
+     * Setter for <code>public.registered_user.mail_password</code>.
+     */
+    public void setMailPassword(String value) {
+        set(4, value);
+    }
+
+    /**
      * Getter for <code>public.registered_user.username</code>.
      */
     public String getUsername() {
-        return (String) get(4);
+        return (String) get(5);
     }
 
     /**
      * Setter for <code>public.registered_user.username</code>.
      */
     public void setUsername(String value) {
-        set(4, value);
+        set(5, value);
     }
 
     /**
      * Getter for <code>public.registered_user.disabled</code>.
      */
     public Boolean getDisabled() {
-        return (Boolean) get(5);
+        return (Boolean) get(6);
     }
 
     /**
      * Setter for <code>public.registered_user.disabled</code>.
      */
     public void setDisabled(Boolean value) {
-        set(5, value);
+        set(6, value);
     }
 
     /**
      * Getter for <code>public.registered_user.created_at</code>.
      */
     public LocalDateTime getCreatedAt() {
-        return (LocalDateTime) get(6);
+        return (LocalDateTime) get(7);
     }
 
     /**
      * Setter for <code>public.registered_user.created_at</code>.
      */
     public void setCreatedAt(LocalDateTime value) {
-        set(6, value);
+        set(7, value);
+    }
+
+    /**
+     * Getter for <code>public.registered_user.last_login</code>.
+     */
+    public LocalDateTime getLastLogin() {
+        return (LocalDateTime) get(8);
+    }
+
+    /**
+     * Setter for <code>public.registered_user.last_login</code>.
+     */
+    public void setLastLogin(LocalDateTime value) {
+        set(8, value);
     }
 
     // -------------------------------------------------------------------------
@@ -149,41 +180,31 @@ public class RegisteredUserRecord extends UpdatableRecordImpl<RegisteredUserReco
     // -------------------------------------------------------------------------
 
     /**
-     * Getter for <code>public.registered_user.last_login</code>.
+     * Getter for <code>public.registered_user.current_session</code>.
      */
-    public LocalDateTime getLastLogin() {
-        return (LocalDateTime) get(7);
+    public String getCurrentSession() {
+        return (String) get(9);
     }
 
     // -------------------------------------------------------------------------
-    // Record8 type implementation
+    // Record10 type implementation
     // -------------------------------------------------------------------------
 
     /**
-     * Setter for <code>public.registered_user.last_login</code>.
+     * Setter for <code>public.registered_user.current_session</code>.
      */
-    public void setLastLogin(LocalDateTime value) {
-        set(7, value);
+    public void setCurrentSession(String value) {
+        set(9, value);
     }
 
     @Override
-    public Record1<Integer> key() {
+    public Record1<String> key() {
         return (Record1) super.key();
     }
 
     @Override
-    public Row8<Integer, String, String, String, String, Boolean, LocalDateTime, LocalDateTime> fieldsRow() {
-        return (Row8) super.fieldsRow();
-    }
-
-    @Override
-    public Row8<Integer, String, String, String, String, Boolean, LocalDateTime, LocalDateTime> valuesRow() {
-        return (Row8) super.valuesRow();
-    }
-
-    @Override
-    public Field<Integer> field1() {
-        return RegisteredUser.REGISTERED_USER.ID;
+    public Row10<String, String, String, String, String, String, Boolean, LocalDateTime, LocalDateTime, String> fieldsRow() {
+        return (Row10) super.fieldsRow();
     }
 
     @Override
@@ -202,28 +223,38 @@ public class RegisteredUserRecord extends UpdatableRecordImpl<RegisteredUserReco
     }
 
     @Override
+    public Row10<String, String, String, String, String, String, Boolean, LocalDateTime, LocalDateTime, String> valuesRow() {
+        return (Row10) super.valuesRow();
+    }
+
+    @Override
+    public Field<String> field1() {
+        return RegisteredUser.REGISTERED_USER.ID;
+    }
+
+    @Override
     public Field<String> field5() {
+        return RegisteredUser.REGISTERED_USER.MAIL_PASSWORD;
+    }
+
+    @Override
+    public Field<String> field6() {
         return RegisteredUser.REGISTERED_USER.USERNAME;
     }
 
     @Override
-    public Field<Boolean> field6() {
+    public Field<Boolean> field7() {
         return RegisteredUser.REGISTERED_USER.DISABLED;
     }
 
     @Override
-    public Field<LocalDateTime> field7() {
+    public Field<LocalDateTime> field8() {
         return RegisteredUser.REGISTERED_USER.CREATED_AT;
     }
 
     @Override
-    public Field<LocalDateTime> field8() {
+    public Field<LocalDateTime> field9() {
         return RegisteredUser.REGISTERED_USER.LAST_LOGIN;
-    }
-
-    @Override
-    public Integer component1() {
-        return getId();
     }
 
     @Override
@@ -242,28 +273,38 @@ public class RegisteredUserRecord extends UpdatableRecordImpl<RegisteredUserReco
     }
 
     @Override
+    public Field<String> field10() {
+        return RegisteredUser.REGISTERED_USER.CURRENT_SESSION;
+    }
+
+    @Override
+    public String component1() {
+        return getId();
+    }
+
+    @Override
     public String component5() {
+        return getMailPassword();
+    }
+
+    @Override
+    public String component6() {
         return getUsername();
     }
 
     @Override
-    public Boolean component6() {
+    public Boolean component7() {
         return getDisabled();
     }
 
     @Override
-    public LocalDateTime component7() {
+    public LocalDateTime component8() {
         return getCreatedAt();
     }
 
     @Override
-    public LocalDateTime component8() {
+    public LocalDateTime component9() {
         return getLastLogin();
-    }
-
-    @Override
-    public Integer value1() {
-        return getId();
     }
 
     @Override
@@ -282,29 +323,38 @@ public class RegisteredUserRecord extends UpdatableRecordImpl<RegisteredUserReco
     }
 
     @Override
+    public String component10() {
+        return getCurrentSession();
+    }
+
+    @Override
+    public String value1() {
+        return getId();
+    }
+
+    @Override
     public String value5() {
+        return getMailPassword();
+    }
+
+    @Override
+    public String value6() {
         return getUsername();
     }
 
     @Override
-    public Boolean value6() {
+    public Boolean value7() {
         return getDisabled();
     }
 
     @Override
-    public LocalDateTime value7() {
+    public LocalDateTime value8() {
         return getCreatedAt();
     }
 
     @Override
-    public LocalDateTime value8() {
+    public LocalDateTime value9() {
         return getLastLogin();
-    }
-
-    @Override
-    public RegisteredUserRecord value1(Integer value) {
-        setId(value);
-        return this;
     }
 
     @Override
@@ -326,20 +376,43 @@ public class RegisteredUserRecord extends UpdatableRecordImpl<RegisteredUserReco
     }
 
     @Override
+    public String value10() {
+        return getCurrentSession();
+    }
+
+    @Override
+    public RegisteredUserRecord value1(String value) {
+        setId(value);
+        return this;
+    }
+
+    @Override
     public RegisteredUserRecord value5(String value) {
+        setMailPassword(value);
+        return this;
+    }
+
+    @Override
+    public RegisteredUserRecord value6(String value) {
         setUsername(value);
         return this;
     }
 
     @Override
-    public RegisteredUserRecord value6(Boolean value) {
+    public RegisteredUserRecord value7(Boolean value) {
         setDisabled(value);
         return this;
     }
 
     @Override
-    public RegisteredUserRecord value7(LocalDateTime value) {
+    public RegisteredUserRecord value8(LocalDateTime value) {
         setCreatedAt(value);
+        return this;
+    }
+
+    @Override
+    public RegisteredUserRecord value9(LocalDateTime value) {
+        setLastLogin(value);
         return this;
     }
 
@@ -348,14 +421,15 @@ public class RegisteredUserRecord extends UpdatableRecordImpl<RegisteredUserReco
     // -------------------------------------------------------------------------
 
     @Override
-    public RegisteredUserRecord value8(LocalDateTime value) {
-        setLastLogin(value);
+    public RegisteredUserRecord value10(String value) {
+        setCurrentSession(value);
         return this;
     }
 
     @Override
-    public RegisteredUserRecord values(Integer value1, String value2, String value3, String value4,
-        String value5, Boolean value6, LocalDateTime value7, LocalDateTime value8) {
+    public RegisteredUserRecord values(String value1, String value2, String value3, String value4,
+        String value5, String value6, Boolean value7, LocalDateTime value8, LocalDateTime value9,
+        String value10) {
         value1(value1);
         value2(value2);
         value3(value3);
@@ -364,6 +438,8 @@ public class RegisteredUserRecord extends UpdatableRecordImpl<RegisteredUserReco
         value6(value6);
         value7(value7);
         value8(value8);
+        value9(value9);
+        value10(value10);
         return this;
     }
 }

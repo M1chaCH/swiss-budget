@@ -6,14 +6,12 @@ import ch.michu.tech.swissbudget.app.dto.RegisterDto;
 import ch.michu.tech.swissbudget.app.service.RegistrationService;
 import ch.michu.tech.swissbudget.framework.logging.Logged;
 import ch.michu.tech.swissbudget.framework.validation.ValidateDtos;
-import io.helidon.webserver.ServerRequest;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
-import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.Status;
@@ -52,7 +50,8 @@ public class RegisterEndpoint {
     @POST()
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response postRegister(RegisterDto dto, @Context ServerRequest request) {
-        return Response.status(Status.OK).entity(service.register(dto, request)).build();
+    public Response postRegister(RegisterDto dto) {
+        return Response.status(Status.OK).entity(service.register(dto))
+            .build();
     }
 }

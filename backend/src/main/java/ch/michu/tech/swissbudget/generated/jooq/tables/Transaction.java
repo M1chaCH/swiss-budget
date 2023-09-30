@@ -44,62 +44,73 @@ public class Transaction extends TableImpl<TransactionRecord> {
     public static final Transaction TRANSACTION = new Transaction();
     private static final long serialVersionUID = 1L;
     /**
+     * The column <code>public.transaction.user_id</code>.
+     */
+    public final TableField<TransactionRecord, String> USER_ID = createField(DSL.name("user_id"),
+        SQLDataType.VARCHAR(250).nullable(false), this, "");
+
+    /**
      * The column <code>public.transaction.id</code>.
      */
     public final TableField<TransactionRecord, Integer> ID = createField(DSL.name("id"),
         SQLDataType.INTEGER.nullable(false).identity(true), this, "");
+
     /**
      * The column <code>public.transaction.expense</code>.
      */
     public final TableField<TransactionRecord, Boolean> EXPENSE = createField(DSL.name("expense"),
         SQLDataType.BOOLEAN.nullable(false), this, "");
+
     /**
      * The column <code>public.transaction.transaction_date</code>.
      */
     public final TableField<TransactionRecord, LocalDate> TRANSACTION_DATE = createField(
         DSL.name("transaction_date"), SQLDataType.LOCALDATE.nullable(false), this, "");
+
     /**
      * The column <code>public.transaction.bankaccount</code>.
      */
     public final TableField<TransactionRecord, String> BANKACCOUNT = createField(
         DSL.name("bankaccount"), SQLDataType.VARCHAR(250).nullable(false), this, "");
+
     /**
      * The column <code>public.transaction.amount</code>.
      */
     public final TableField<TransactionRecord, Double> AMOUNT = createField(DSL.name("amount"),
         SQLDataType.DOUBLE.nullable(false), this, "");
+
     /**
      * The column <code>public.transaction.receiver</code>.
      */
     public final TableField<TransactionRecord, String> RECEIVER = createField(DSL.name("receiver"),
         SQLDataType.VARCHAR(250).nullable(false), this, "");
+
     /**
      * The column <code>public.transaction.tag_id</code>.
      */
     public final TableField<TransactionRecord, Integer> TAG_ID = createField(DSL.name("tag_id"),
         SQLDataType.INTEGER, this, "");
+
     /**
      * The column <code>public.transaction.matching_keyword_id</code>.
      */
     public final TableField<TransactionRecord, Integer> MATCHING_KEYWORD_ID = createField(
         DSL.name("matching_keyword_id"), SQLDataType.INTEGER, this, "");
+
     /**
      * The column <code>public.transaction.alias</code>.
      */
     public final TableField<TransactionRecord, String> ALIAS = createField(DSL.name("alias"),
         SQLDataType.VARCHAR(250), this, "");
+
     /**
      * The column <code>public.transaction.note</code>.
      */
     public final TableField<TransactionRecord, String> NOTE = createField(DSL.name("note"),
         SQLDataType.VARCHAR(250), this, "");
-    /**
-     * The column <code>public.transaction.user_id</code>.
-     */
-    public final TableField<TransactionRecord, Integer> USER_ID = createField(DSL.name("user_id"),
-        SQLDataType.INTEGER.nullable(false), this, "");
     private transient Tag _tag;
     private transient Keyword _keyword;
+    private transient RegisteredUser _registeredUser;
 
     private Transaction(Name alias, Table<TransactionRecord> aliased) {
         this(alias, aliased, null);
@@ -134,14 +145,6 @@ public class Transaction extends TableImpl<TransactionRecord> {
         super(child, key, TRANSACTION);
     }
 
-    /**
-     * The class holding records for this type
-     */
-    @Override
-    public Class<TransactionRecord> getRecordType() {
-        return TransactionRecord.class;
-    }
-
     @Override
     public Schema getSchema() {
         return aliased() ? null : Public.PUBLIC;
@@ -157,10 +160,19 @@ public class Transaction extends TableImpl<TransactionRecord> {
         return Keys.TRANSACTION_PKEY;
     }
 
+    /**
+     * The class holding records for this type
+     */
+    @Override
+    public Class<TransactionRecord> getRecordType() {
+        return TransactionRecord.class;
+    }
+
     @Override
     public List<ForeignKey<TransactionRecord, ?>> getReferences() {
         return Arrays.asList(Keys.TRANSACTION__TRANSACTION_TAG_ID_FKEY,
-            Keys.TRANSACTION__TRANSACTION_MATCHING_KEYWORD_ID_FKEY);
+            Keys.TRANSACTION__TRANSACTION_MATCHING_KEYWORD_ID_FKEY,
+            Keys.TRANSACTION__TRANSACTION_USER_ID_FKEY);
     }
 
     /**
@@ -183,6 +195,17 @@ public class Transaction extends TableImpl<TransactionRecord> {
         }
 
         return _keyword;
+    }
+
+    /**
+     * Get the implicit join path to the <code>public.registered_user</code> table.
+     */
+    public RegisteredUser registeredUser() {
+        if (_registeredUser == null) {
+            _registeredUser = new RegisteredUser(this, Keys.TRANSACTION__TRANSACTION_USER_ID_FKEY);
+        }
+
+        return _registeredUser;
     }
 
     @Override
@@ -237,7 +260,7 @@ public class Transaction extends TableImpl<TransactionRecord> {
     // -------------------------------------------------------------------------
 
     @Override
-    public Row11<Integer, Boolean, LocalDate, String, Double, String, Integer, Integer, String, String, Integer> fieldsRow() {
+    public Row11<Integer, Boolean, LocalDate, String, Double, String, Integer, Integer, String, String, String> fieldsRow() {
         return (Row11) super.fieldsRow();
     }
 
@@ -245,7 +268,7 @@ public class Transaction extends TableImpl<TransactionRecord> {
      * Convenience mapping calling {@link SelectField#convertFrom(Function)}.
      */
     public <U> SelectField<U> mapping(
-        Function11<? super Integer, ? super Boolean, ? super LocalDate, ? super String, ? super Double, ? super String, ? super Integer, ? super Integer, ? super String, ? super String, ? super Integer, ? extends U> from) {
+        Function11<? super Integer, ? super Boolean, ? super LocalDate, ? super String, ? super Double, ? super String, ? super Integer, ? super Integer, ? super String, ? super String, ? super String, ? extends U> from) {
         return convertFrom(Records.mapping(from));
     }
 
@@ -253,7 +276,7 @@ public class Transaction extends TableImpl<TransactionRecord> {
      * Convenience mapping calling {@link SelectField#convertFrom(Class, Function)}.
      */
     public <U> SelectField<U> mapping(Class<U> toType,
-        Function11<? super Integer, ? super Boolean, ? super LocalDate, ? super String, ? super Double, ? super String, ? super Integer, ? super Integer, ? super String, ? super String, ? super Integer, ? extends U> from) {
+        Function11<? super Integer, ? super Boolean, ? super LocalDate, ? super String, ? super Double, ? super String, ? super Integer, ? super Integer, ? super String, ? super String, ? super String, ? extends U> from) {
         return convertFrom(toType, Records.mapping(from));
     }
 }

@@ -1,33 +1,39 @@
 package ch.michu.tech.swissbudget.framework.logging;
 
+import ch.michu.tech.swissbudget.framework.data.RequestSupport;
 import jakarta.annotation.Priority;
+import jakarta.inject.Inject;
 import jakarta.ws.rs.Priorities;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.container.ContainerResponseContext;
 import jakarta.ws.rs.container.ContainerResponseFilter;
 import jakarta.ws.rs.ext.Provider;
 import java.time.Instant;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.Optional;
 
 @Logged
 @Provider
 @Priority(Priorities.HEADER_DECORATOR)
 public class ResponseFilter implements ContainerResponseFilter {
 
-    private final Logger logger = Logger.getLogger(ResponseFilter.class.getSimpleName());
+    @Inject
+    private jakarta.inject.Provider<RequestSupport> supportProvider;
 
     @Override
     public void filter(ContainerRequestContext requestContext,
         ContainerResponseContext responseContext) {
-        Instant startTime = (Instant) requestContext.getProperty(RequestFilter.REQUEST_START_TIME);
+        RequestSupport support = supportProvider.get();
+        Optional<Instant> startTime = support.loadProperty(RequestFilter.REQUEST_START_TIME,
+            Instant.class);
+        long duration = startTime.map(
+                instant -> Instant.now().toEpochMilli() - instant.toEpochMilli())
+            .orElse(-1L);
 
-        logger.log(Level.INFO, "responding to {0}:{1} with {2} - {3} after {4}ms", new Object[]{
+        support.logInfo(this, "<- outgoing %s:%s (%s - %s) took %sms",
             requestContext.getMethod(),
             requestContext.getUriInfo().getAbsolutePath().getPath(),
             responseContext.getStatus(),
             responseContext.getStatusInfo().getReasonPhrase(),
-            Instant.now().toEpochMilli() - startTime.toEpochMilli()
-        });
+            duration);
     }
 }

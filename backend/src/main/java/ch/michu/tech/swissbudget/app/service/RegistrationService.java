@@ -8,31 +8,30 @@ import ch.michu.tech.swissbudget.app.service.mail.MailService;
 import ch.michu.tech.swissbudget.framework.EncodingUtil;
 import ch.michu.tech.swissbudget.framework.authentication.AuthenticationService;
 import ch.michu.tech.swissbudget.framework.data.DataProvider;
+import ch.michu.tech.swissbudget.framework.data.RequestSupport;
 import ch.michu.tech.swissbudget.framework.dto.MessageDto;
 import ch.michu.tech.swissbudget.generated.jooq.tables.RegisteredUser;
 import ch.michu.tech.swissbudget.generated.jooq.tables.records.RegisteredUserRecord;
-import io.helidon.webserver.ServerRequest;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import jakarta.inject.Provider;
+import java.util.UUID;
 
 @ApplicationScoped
 public class RegistrationService {
 
-    private static final Logger LOGGER = Logger.getLogger(
-        RegistrationService.class.getSimpleName());
-
     private final MailService mailService;
     private final DataProvider data;
     private final AuthenticationService authService;
+    private final Provider<RequestSupport> supportProvider;
 
     @Inject
     public RegistrationService(MailService mailService, DataProvider dataProvider,
-        AuthenticationService authService) {
+        AuthenticationService authService, Provider<RequestSupport> supportProvider) {
         this.mailService = mailService;
         this.data = dataProvider;
         this.authService = authService;
+        this.supportProvider = supportProvider;
     }
 
     public void checkMailCredentials(CredentialDto credentials) {
@@ -48,7 +47,7 @@ public class RegistrationService {
             dto.getFolderName());
     }
 
-    public MessageDto register(RegisterDto dto, ServerRequest request) {
+    public MessageDto register(RegisterDto dto) {
         if (doesUserExist(dto.getMail())) {
             throw new UserAlreadyExistsException(dto.getMail());
         }
@@ -57,14 +56,17 @@ public class RegistrationService {
         String hashedPassword = EncodingUtil.hashString(dto.getPassword(), passwordSalt);
 
         RegisteredUserRecord user = data.getContext().newRecord(RegisteredUser.REGISTERED_USER);
+        user.setId(UUID.randomUUID().toString());
         user.setMail(dto.getMail());
         user.setSalt(passwordSalt);
         user.setPassword(hashedPassword);
+        // TODO find better way than storing this in plain text
+        user.setMailPassword(dto.getMailPassword());
         user.store();
 
-        LOGGER.log(Level.INFO, "created user {0}", new Object[]{dto.getMail()});
+        supportProvider.get().logInfo("created user %s", dto.getMail());
 
-        String sessionToken = authService.login(dto.getMail(), dto.getPassword(), false, request);
+        String sessionToken = authService.login(dto.getMail(), dto.getPassword(), false);
         return new MessageDto(sessionToken);
     }
 

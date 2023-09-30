@@ -18,7 +18,7 @@ import org.jooq.impl.UpdatableRecordImpl;
  */
 @SuppressWarnings({"all", "unchecked", "rawtypes"})
 public class TransactionMailRecord extends UpdatableRecordImpl<TransactionMailRecord> implements
-    Record9<Integer, Integer, String, String, LocalDate, String, String, Integer, Integer> {
+    Record9<Integer, Integer, String, String, LocalDate, String, String, Integer, String> {
 
     private static final long serialVersionUID = 1L;
 
@@ -34,7 +34,7 @@ public class TransactionMailRecord extends UpdatableRecordImpl<TransactionMailRe
      */
     public TransactionMailRecord(Integer id, Integer messageNumber, String fromMail, String toMail,
         LocalDate receivedDate, String subject, String rawMessage, Integer transactionId,
-        Integer userId) {
+        String userId) {
         super(TransactionMail.TRANSACTION_MAIL);
 
         setId(id);
@@ -119,20 +119,6 @@ public class TransactionMailRecord extends UpdatableRecordImpl<TransactionMailRe
     }
 
     /**
-     * Getter for <code>public.transaction_mail.subject</code>.
-     */
-    public String getSubject() {
-        return (String) get(5);
-    }
-
-    /**
-     * Setter for <code>public.transaction_mail.subject</code>.
-     */
-    public void setSubject(String value) {
-        set(5, value);
-    }
-
-    /**
      * Getter for <code>public.transaction_mail.raw_message</code>.
      */
     public String getRawMessage() {
@@ -144,6 +130,20 @@ public class TransactionMailRecord extends UpdatableRecordImpl<TransactionMailRe
      */
     public void setRawMessage(String value) {
         set(6, value);
+    }
+
+    /**
+     * Getter for <code>public.transaction_mail.subject</code>.
+     */
+    public String getSubject() {
+        return (String) get(5);
+    }
+
+    /**
+     * Setter for <code>public.transaction_mail.subject</code>.
+     */
+    public void setSubject(String value) {
+        set(5, value);
     }
 
     /**
@@ -167,8 +167,8 @@ public class TransactionMailRecord extends UpdatableRecordImpl<TransactionMailRe
     /**
      * Getter for <code>public.transaction_mail.user_id</code>.
      */
-    public Integer getUserId() {
-        return (Integer) get(8);
+    public String getUserId() {
+        return (String) get(8);
     }
 
     // -------------------------------------------------------------------------
@@ -178,23 +178,13 @@ public class TransactionMailRecord extends UpdatableRecordImpl<TransactionMailRe
     /**
      * Setter for <code>public.transaction_mail.user_id</code>.
      */
-    public void setUserId(Integer value) {
+    public void setUserId(String value) {
         set(8, value);
     }
 
     @Override
     public Record1<Integer> key() {
         return (Record1) super.key();
-    }
-
-    @Override
-    public Row9<Integer, Integer, String, String, LocalDate, String, String, Integer, Integer> fieldsRow() {
-        return (Row9) super.fieldsRow();
-    }
-
-    @Override
-    public Row9<Integer, Integer, String, String, LocalDate, String, String, Integer, Integer> valuesRow() {
-        return (Row9) super.valuesRow();
     }
 
     @Override
@@ -238,8 +228,8 @@ public class TransactionMailRecord extends UpdatableRecordImpl<TransactionMailRe
     }
 
     @Override
-    public Field<Integer> field9() {
-        return TransactionMail.TRANSACTION_MAIL.USER_ID;
+    public Row9<Integer, Integer, String, String, LocalDate, String, String, Integer, String> fieldsRow() {
+        return (Row9) super.fieldsRow();
     }
 
     @Override
@@ -283,8 +273,8 @@ public class TransactionMailRecord extends UpdatableRecordImpl<TransactionMailRe
     }
 
     @Override
-    public Integer component9() {
-        return getUserId();
+    public Row9<Integer, Integer, String, String, LocalDate, String, String, Integer, String> valuesRow() {
+        return (Row9) super.valuesRow();
     }
 
     @Override
@@ -328,8 +318,8 @@ public class TransactionMailRecord extends UpdatableRecordImpl<TransactionMailRe
     }
 
     @Override
-    public Integer value9() {
-        return getUserId();
+    public Field<String> field9() {
+        return TransactionMail.TRANSACTION_MAIL.USER_ID;
     }
 
     @Override
@@ -380,12 +370,22 @@ public class TransactionMailRecord extends UpdatableRecordImpl<TransactionMailRe
         return this;
     }
 
+    @Override
+    public String component9() {
+        return getUserId();
+    }
+
+    @Override
+    public String value9() {
+        return getUserId();
+    }
+
     // -------------------------------------------------------------------------
     // Constructors
     // -------------------------------------------------------------------------
 
     @Override
-    public TransactionMailRecord value9(Integer value) {
+    public TransactionMailRecord value9(String value) {
         setUserId(value);
         return this;
     }
@@ -393,7 +393,7 @@ public class TransactionMailRecord extends UpdatableRecordImpl<TransactionMailRe
     @Override
     public TransactionMailRecord values(Integer value1, Integer value2, String value3,
         String value4, LocalDate value5, String value6, String value7, Integer value8,
-        Integer value9) {
+        String value9) {
         value1(value1);
         value2(value2);
         value3(value3);

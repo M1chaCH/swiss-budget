@@ -42,51 +42,60 @@ public class TransactionMail extends TableImpl<TransactionMailRecord> {
     public static final TransactionMail TRANSACTION_MAIL = new TransactionMail();
     private static final long serialVersionUID = 1L;
     /**
+     * The column <code>public.transaction_mail.user_id</code>.
+     */
+    public final TableField<TransactionMailRecord, String> USER_ID = createField(
+        DSL.name("user_id"), SQLDataType.VARCHAR(250).nullable(false), this, "");
+
+    /**
      * The column <code>public.transaction_mail.id</code>.
      */
     public final TableField<TransactionMailRecord, Integer> ID = createField(DSL.name("id"),
         SQLDataType.INTEGER.nullable(false).identity(true), this, "");
+
     /**
      * The column <code>public.transaction_mail.message_number</code>.
      */
     public final TableField<TransactionMailRecord, Integer> MESSAGE_NUMBER = createField(
         DSL.name("message_number"), SQLDataType.INTEGER.nullable(false), this, "");
+
     /**
      * The column <code>public.transaction_mail.from_mail</code>.
      */
     public final TableField<TransactionMailRecord, String> FROM_MAIL = createField(
         DSL.name("from_mail"), SQLDataType.VARCHAR(250).nullable(false), this, "");
+
     /**
      * The column <code>public.transaction_mail.to_mail</code>.
      */
     public final TableField<TransactionMailRecord, String> TO_MAIL = createField(
         DSL.name("to_mail"), SQLDataType.VARCHAR(250).nullable(false), this, "");
+
     /**
      * The column <code>public.transaction_mail.received_date</code>.
      */
     public final TableField<TransactionMailRecord, LocalDate> RECEIVED_DATE = createField(
         DSL.name("received_date"), SQLDataType.LOCALDATE.nullable(false), this, "");
+
     /**
      * The column <code>public.transaction_mail.subject</code>.
      */
     public final TableField<TransactionMailRecord, String> SUBJECT = createField(
         DSL.name("subject"), SQLDataType.VARCHAR(250).nullable(false), this, "");
+
     /**
      * The column <code>public.transaction_mail.raw_message</code>.
      */
     public final TableField<TransactionMailRecord, String> RAW_MESSAGE = createField(
         DSL.name("raw_message"), SQLDataType.CLOB.nullable(false), this, "");
+
     /**
      * The column <code>public.transaction_mail.transaction_id</code>.
      */
     public final TableField<TransactionMailRecord, Integer> TRANSACTION_ID = createField(
         DSL.name("transaction_id"), SQLDataType.INTEGER, this, "");
-    /**
-     * The column <code>public.transaction_mail.user_id</code>.
-     */
-    public final TableField<TransactionMailRecord, Integer> USER_ID = createField(
-        DSL.name("user_id"), SQLDataType.INTEGER.nullable(false), this, "");
     private transient Transaction _transaction;
+    private transient RegisteredUser _registeredUser;
 
     private TransactionMail(Name alias, Table<TransactionMailRecord> aliased) {
         this(alias, aliased, null);
@@ -123,14 +132,6 @@ public class TransactionMail extends TableImpl<TransactionMailRecord> {
         super(child, key, TRANSACTION_MAIL);
     }
 
-    /**
-     * The class holding records for this type
-     */
-    @Override
-    public Class<TransactionMailRecord> getRecordType() {
-        return TransactionMailRecord.class;
-    }
-
     @Override
     public Schema getSchema() {
         return aliased() ? null : Public.PUBLIC;
@@ -146,9 +147,18 @@ public class TransactionMail extends TableImpl<TransactionMailRecord> {
         return Keys.TRANSACTION_MAIL_PKEY;
     }
 
+    /**
+     * The class holding records for this type
+     */
+    @Override
+    public Class<TransactionMailRecord> getRecordType() {
+        return TransactionMailRecord.class;
+    }
+
     @Override
     public List<ForeignKey<TransactionMailRecord, ?>> getReferences() {
-        return Arrays.asList(Keys.TRANSACTION_MAIL__TRANSACTION_MAIL_TRANSACTION_ID_FKEY);
+        return Arrays.asList(Keys.TRANSACTION_MAIL__TRANSACTION_MAIL_TRANSACTION_ID_FKEY,
+            Keys.TRANSACTION_MAIL__TRANSACTION_MAIL_USER_ID_FKEY);
     }
 
     /**
@@ -161,6 +171,18 @@ public class TransactionMail extends TableImpl<TransactionMailRecord> {
         }
 
         return _transaction;
+    }
+
+    /**
+     * Get the implicit join path to the <code>public.registered_user</code> table.
+     */
+    public RegisteredUser registeredUser() {
+        if (_registeredUser == null) {
+            _registeredUser = new RegisteredUser(this,
+                Keys.TRANSACTION_MAIL__TRANSACTION_MAIL_USER_ID_FKEY);
+        }
+
+        return _registeredUser;
     }
 
     @Override
@@ -207,7 +229,7 @@ public class TransactionMail extends TableImpl<TransactionMailRecord> {
     // -------------------------------------------------------------------------
 
     @Override
-    public Row9<Integer, Integer, String, String, LocalDate, String, String, Integer, Integer> fieldsRow() {
+    public Row9<Integer, Integer, String, String, LocalDate, String, String, Integer, String> fieldsRow() {
         return (Row9) super.fieldsRow();
     }
 
@@ -215,7 +237,7 @@ public class TransactionMail extends TableImpl<TransactionMailRecord> {
      * Convenience mapping calling {@link SelectField#convertFrom(Function)}.
      */
     public <U> SelectField<U> mapping(
-        Function9<? super Integer, ? super Integer, ? super String, ? super String, ? super LocalDate, ? super String, ? super String, ? super Integer, ? super Integer, ? extends U> from) {
+        Function9<? super Integer, ? super Integer, ? super String, ? super String, ? super LocalDate, ? super String, ? super String, ? super Integer, ? super String, ? extends U> from) {
         return convertFrom(Records.mapping(from));
     }
 
@@ -223,7 +245,7 @@ public class TransactionMail extends TableImpl<TransactionMailRecord> {
      * Convenience mapping calling {@link SelectField#convertFrom(Class, Function)}.
      */
     public <U> SelectField<U> mapping(Class<U> toType,
-        Function9<? super Integer, ? super Integer, ? super String, ? super String, ? super LocalDate, ? super String, ? super String, ? super Integer, ? super Integer, ? extends U> from) {
+        Function9<? super Integer, ? super Integer, ? super String, ? super String, ? super LocalDate, ? super String, ? super String, ? super Integer, ? super String, ? extends U> from) {
         return convertFrom(toType, Records.mapping(from));
     }
 }

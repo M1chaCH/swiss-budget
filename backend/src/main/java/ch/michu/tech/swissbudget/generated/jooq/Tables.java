@@ -5,11 +5,12 @@ package ch.michu.tech.swissbudget.generated.jooq;
 
 
 import ch.michu.tech.swissbudget.generated.jooq.tables.Keyword;
+import ch.michu.tech.swissbudget.generated.jooq.tables.MfaCode;
 import ch.michu.tech.swissbudget.generated.jooq.tables.RegisteredUser;
-import ch.michu.tech.swissbudget.generated.jooq.tables.Session;
 import ch.michu.tech.swissbudget.generated.jooq.tables.Tag;
 import ch.michu.tech.swissbudget.generated.jooq.tables.Transaction;
 import ch.michu.tech.swissbudget.generated.jooq.tables.TransactionMail;
+import ch.michu.tech.swissbudget.generated.jooq.tables.VerifiedDevice;
 
 
 /**
@@ -24,14 +25,14 @@ public class Tables {
     public static final Keyword KEYWORD = Keyword.KEYWORD;
 
     /**
+     * The table <code>public.mfa_code</code>.
+     */
+    public static final MfaCode MFA_CODE = MfaCode.MFA_CODE;
+
+    /**
      * The table <code>public.registered_user</code>.
      */
     public static final RegisteredUser REGISTERED_USER = RegisteredUser.REGISTERED_USER;
-
-    /**
-     * The table <code>public.session</code>.
-     */
-    public static final Session SESSION = Session.SESSION;
 
     /**
      * The table <code>public.tag</code>.
@@ -47,4 +48,9 @@ public class Tables {
      * The table <code>public.transaction_mail</code>.
      */
     public static final TransactionMail TRANSACTION_MAIL = TransactionMail.TRANSACTION_MAIL;
+
+    /**
+     * The table <code>public.verified_device</code>.
+     */
+    public static final VerifiedDevice VERIFIED_DEVICE = VerifiedDevice.VERIFIED_DEVICE;
 }

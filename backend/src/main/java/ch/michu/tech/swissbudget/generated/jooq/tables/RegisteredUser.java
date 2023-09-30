@@ -13,12 +13,11 @@ import java.util.List;
 import java.util.function.Function;
 import org.jooq.Field;
 import org.jooq.ForeignKey;
-import org.jooq.Function8;
-import org.jooq.Identity;
+import org.jooq.Function10;
 import org.jooq.Name;
 import org.jooq.Record;
 import org.jooq.Records;
-import org.jooq.Row8;
+import org.jooq.Row10;
 import org.jooq.Schema;
 import org.jooq.SelectField;
 import org.jooq.Table;
@@ -44,28 +43,43 @@ public class RegisteredUser extends TableImpl<RegisteredUserRecord> {
     /**
      * The column <code>public.registered_user.id</code>.
      */
-    public final TableField<RegisteredUserRecord, Integer> ID = createField(DSL.name("id"),
-        SQLDataType.INTEGER.nullable(false).identity(true), this, "");
+    public final TableField<RegisteredUserRecord, String> ID = createField(DSL.name("id"),
+        SQLDataType.VARCHAR(250).nullable(false), this, "");
+    /**
+     * The column <code>public.registered_user.mail_password</code>.
+     */
+    public final TableField<RegisteredUserRecord, String> MAIL_PASSWORD = createField(
+        DSL.name("mail_password"), SQLDataType.VARCHAR(250).nullable(false), this, "");
+
     /**
      * The column <code>public.registered_user.mail</code>.
      */
     public final TableField<RegisteredUserRecord, String> MAIL = createField(DSL.name("mail"),
         SQLDataType.VARCHAR(250).nullable(false), this, "");
+
     /**
      * The column <code>public.registered_user.password</code>.
      */
     public final TableField<RegisteredUserRecord, String> PASSWORD = createField(
         DSL.name("password"), SQLDataType.VARCHAR(250).nullable(false), this, "");
+
     /**
      * The column <code>public.registered_user.salt</code>.
      */
     public final TableField<RegisteredUserRecord, String> SALT = createField(DSL.name("salt"),
         SQLDataType.VARCHAR(20).nullable(false), this, "");
     /**
+     * The column <code>public.registered_user.current_session</code>.
+     */
+    public final TableField<RegisteredUserRecord, String> CURRENT_SESSION = createField(
+        DSL.name("current_session"), SQLDataType.VARCHAR(250), this, "");
+
+    /**
      * The column <code>public.registered_user.username</code>.
      */
     public final TableField<RegisteredUserRecord, String> USERNAME = createField(
         DSL.name("username"), SQLDataType.VARCHAR(250), this, "");
+
     /**
      * The column <code>public.registered_user.disabled</code>.
      */
@@ -73,12 +87,14 @@ public class RegisteredUser extends TableImpl<RegisteredUserRecord> {
         DSL.name("disabled"),
         SQLDataType.BOOLEAN.nullable(false).defaultValue(DSL.field("false", SQLDataType.BOOLEAN)),
         this, "");
+
     /**
      * The column <code>public.registered_user.created_at</code>.
      */
     public final TableField<RegisteredUserRecord, LocalDateTime> CREATED_AT = createField(
         DSL.name("created_at"), SQLDataType.LOCALDATETIME(6).nullable(false)
             .defaultValue(DSL.field("CURRENT_TIMESTAMP", SQLDataType.LOCALDATETIME)), this, "");
+
     /**
      * The column <code>public.registered_user.last_login</code>.
      */
@@ -134,11 +150,6 @@ public class RegisteredUser extends TableImpl<RegisteredUserRecord> {
     }
 
     @Override
-    public Identity<RegisteredUserRecord, Integer> getIdentity() {
-        return (Identity<RegisteredUserRecord, Integer>) super.getIdentity();
-    }
-
-    @Override
     public UniqueKey<RegisteredUserRecord> getPrimaryKey() {
         return Keys.REGISTERED_USER_PKEY;
     }
@@ -188,19 +199,19 @@ public class RegisteredUser extends TableImpl<RegisteredUserRecord> {
     }
 
     // -------------------------------------------------------------------------
-    // Row8 type methods
+    // Row10 type methods
     // -------------------------------------------------------------------------
 
     @Override
-    public Row8<Integer, String, String, String, String, Boolean, LocalDateTime, LocalDateTime> fieldsRow() {
-        return (Row8) super.fieldsRow();
+    public Row10<String, String, String, String, String, String, Boolean, LocalDateTime, LocalDateTime, String> fieldsRow() {
+        return (Row10) super.fieldsRow();
     }
 
     /**
      * Convenience mapping calling {@link SelectField#convertFrom(Function)}.
      */
     public <U> SelectField<U> mapping(
-        Function8<? super Integer, ? super String, ? super String, ? super String, ? super String, ? super Boolean, ? super LocalDateTime, ? super LocalDateTime, ? extends U> from) {
+        Function10<? super String, ? super String, ? super String, ? super String, ? super String, ? super String, ? super Boolean, ? super LocalDateTime, ? super LocalDateTime, ? super String, ? extends U> from) {
         return convertFrom(Records.mapping(from));
     }
 
@@ -208,7 +219,7 @@ public class RegisteredUser extends TableImpl<RegisteredUserRecord> {
      * Convenience mapping calling {@link SelectField#convertFrom(Class, Function)}.
      */
     public <U> SelectField<U> mapping(Class<U> toType,
-        Function8<? super Integer, ? super String, ? super String, ? super String, ? super String, ? super Boolean, ? super LocalDateTime, ? super LocalDateTime, ? extends U> from) {
+        Function10<? super String, ? super String, ? super String, ? super String, ? super String, ? super String, ? super Boolean, ? super LocalDateTime, ? super LocalDateTime, ? super String, ? extends U> from) {
         return convertFrom(toType, Records.mapping(from));
     }
 }

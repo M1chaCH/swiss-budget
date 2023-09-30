@@ -1,24 +1,32 @@
 CREATE TABLE IF NOT EXISTS registered_user
 (
-    id         serial primary key,
-    mail       varchar(250) not null unique,
-    password   varchar(250) not null,
-    salt       varchar(20)  not null,
-    username   varchar(250),
-    disabled   bool         not null default false,
-    created_at timestamp    not null default CURRENT_TIMESTAMP,
-    last_login timestamp    not null default CURRENT_TIMESTAMP
+    id              varchar(250) primary key,
+    mail            varchar(250) not null unique,
+    password        varchar(250) not null,
+    salt            varchar(20)  not null,
+    mail_password   varchar(250) not null,
+    username        varchar(250),
+    disabled        bool         not null default false,
+    created_at      timestamp    not null default CURRENT_TIMESTAMP,
+    last_login      timestamp    not null default CURRENT_TIMESTAMP,
+    current_session varchar(250)
 );
 
-CREATE TABLE IF NOT EXISTS session
+CREATE TABLE IF NOT EXISTS verified_device
 (
-    id             serial primary key,
-    session_token  varchar(50) not null unique,
-    created_at     timestamp   not null default CURRENT_TIMESTAMP,
-    user_id        int          not null unique,
-    user_agent     varchar(250) not null,
-    remote_address varchar(50) not null,
-    stay           bool        not null default false,
+    id         serial primary key,
+    user_id    varchar(250) not null,
+    user_agent varchar(250) not null,
+    FOREIGN KEY (user_id) REFERENCES registered_user (id)
+);
+
+CREATE TABLE IF NOT EXISTS mfa_code
+(
+    id         varchar(250) not null primary key,
+    code       int unique,
+    user_id    varchar(250) not null,
+    expires_at timestamp    not null,
+    user_agent varchar(250) not null,
     FOREIGN KEY (user_id) REFERENCES registered_user (id)
 );
 
@@ -31,7 +39,7 @@ CREATE TABLE IF NOT EXISTS tag
     icon    varchar(50),
     color   varchar(10),
     name    varchar(250) not null,
-    user_id int          not null,
+    user_id varchar(250) not null,
     FOREIGN KEY (user_id) REFERENCES registered_user (id) ON DELETE CASCADE
 );
 
@@ -44,7 +52,7 @@ CREATE TABLE IF NOT EXISTS keyword
     id      serial primary key,
     keyword varchar(250) not null,
     tag_id  int,
-    user_id int          not null,
+    user_id varchar(250) not null,
     FOREIGN KEY (user_id) REFERENCES registered_user (id) ON DELETE CASCADE,
     FOREIGN KEY (tag_id) REFERENCES tag (id) ON DELETE SET NULL
 );
@@ -64,7 +72,7 @@ CREATE TABLE IF NOT EXISTS transaction
     matching_keyword_id int,
     alias               varchar(250),
     note                varchar(250),
-    user_id             int              not null,
+    user_id varchar(250) not null,
     FOREIGN KEY (user_id) REFERENCES registered_user (id) ON DELETE CASCADE,
     FOREIGN KEY (tag_id) REFERENCES tag (id) ON DELETE SET NULL,
     FOREIGN KEY (matching_keyword_id) REFERENCES keyword (id) ON DELETE SET NULL
@@ -82,7 +90,7 @@ CREATE TABLE IF NOT EXISTS transaction_mail
     subject        varchar(250) not null,
     raw_message    text         not null,
     transaction_id int,
-    user_id        int          not null,
+    user_id varchar(250) not null,
     FOREIGN KEY (transaction_id) REFERENCES transaction (id) ON DELETE SET NULL,
     FOREIGN KEY (user_id) REFERENCES registered_user (id) ON DELETE CASCADE
 );

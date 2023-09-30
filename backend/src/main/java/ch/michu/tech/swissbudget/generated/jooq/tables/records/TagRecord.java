@@ -17,7 +17,7 @@ import org.jooq.impl.UpdatableRecordImpl;
  */
 @SuppressWarnings({"all", "unchecked", "rawtypes"})
 public class TagRecord extends UpdatableRecordImpl<TagRecord> implements
-    Record5<Integer, String, String, String, Integer> {
+    Record5<Integer, String, String, String, String> {
 
     private static final long serialVersionUID = 1L;
 
@@ -31,7 +31,7 @@ public class TagRecord extends UpdatableRecordImpl<TagRecord> implements
     /**
      * Create a detached, initialised TagRecord
      */
-    public TagRecord(Integer id, String icon, String color, String name, Integer userId) {
+    public TagRecord(Integer id, String icon, String color, String name, String userId) {
         super(Tag.TAG);
 
         setId(id);
@@ -101,11 +101,9 @@ public class TagRecord extends UpdatableRecordImpl<TagRecord> implements
     // Primary key information
     // -------------------------------------------------------------------------
 
-    /**
-     * Getter for <code>public.tag.user_id</code>.
-     */
-    public Integer getUserId() {
-        return (Integer) get(4);
+    @Override
+    public Record1<Integer> key() {
+        return (Record1) super.key();
     }
 
     // -------------------------------------------------------------------------
@@ -113,25 +111,17 @@ public class TagRecord extends UpdatableRecordImpl<TagRecord> implements
     // -------------------------------------------------------------------------
 
     /**
+     * Getter for <code>public.tag.user_id</code>.
+     */
+    public String getUserId() {
+        return (String) get(4);
+    }
+
+    /**
      * Setter for <code>public.tag.user_id</code>.
      */
-    public void setUserId(Integer value) {
+    public void setUserId(String value) {
         set(4, value);
-    }
-
-    @Override
-    public Record1<Integer> key() {
-        return (Record1) super.key();
-    }
-
-    @Override
-    public Row5<Integer, String, String, String, Integer> fieldsRow() {
-        return (Row5) super.fieldsRow();
-    }
-
-    @Override
-    public Row5<Integer, String, String, String, Integer> valuesRow() {
-        return (Row5) super.valuesRow();
     }
 
     @Override
@@ -155,8 +145,8 @@ public class TagRecord extends UpdatableRecordImpl<TagRecord> implements
     }
 
     @Override
-    public Field<Integer> field5() {
-        return Tag.TAG.USER_ID;
+    public Row5<Integer, String, String, String, String> fieldsRow() {
+        return (Row5) super.fieldsRow();
     }
 
     @Override
@@ -180,8 +170,8 @@ public class TagRecord extends UpdatableRecordImpl<TagRecord> implements
     }
 
     @Override
-    public Integer component5() {
-        return getUserId();
+    public Row5<Integer, String, String, String, String> valuesRow() {
+        return (Row5) super.valuesRow();
     }
 
     @Override
@@ -205,8 +195,8 @@ public class TagRecord extends UpdatableRecordImpl<TagRecord> implements
     }
 
     @Override
-    public Integer value5() {
-        return getUserId();
+    public Field<String> field5() {
+        return Tag.TAG.USER_ID;
     }
 
     @Override
@@ -233,19 +223,29 @@ public class TagRecord extends UpdatableRecordImpl<TagRecord> implements
         return this;
     }
 
+    @Override
+    public String component5() {
+        return getUserId();
+    }
+
+    @Override
+    public String value5() {
+        return getUserId();
+    }
+
     // -------------------------------------------------------------------------
     // Constructors
     // -------------------------------------------------------------------------
 
     @Override
-    public TagRecord value5(Integer value) {
+    public TagRecord value5(String value) {
         setUserId(value);
         return this;
     }
 
     @Override
     public TagRecord values(Integer value1, String value2, String value3, String value4,
-        Integer value5) {
+        String value5) {
         value1(value1);
         value2(value2);
         value3(value3);

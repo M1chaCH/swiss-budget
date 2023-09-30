@@ -7,6 +7,8 @@ package ch.michu.tech.swissbudget.generated.jooq.tables;
 import ch.michu.tech.swissbudget.generated.jooq.Keys;
 import ch.michu.tech.swissbudget.generated.jooq.Public;
 import ch.michu.tech.swissbudget.generated.jooq.tables.records.TagRecord;
+import java.util.Arrays;
+import java.util.List;
 import java.util.function.Function;
 import org.jooq.Field;
 import org.jooq.ForeignKey;
@@ -39,30 +41,35 @@ public class Tag extends TableImpl<TagRecord> {
     public static final Tag TAG = new Tag();
     private static final long serialVersionUID = 1L;
     /**
+     * The column <code>public.tag.user_id</code>.
+     */
+    public final TableField<TagRecord, String> USER_ID = createField(DSL.name("user_id"),
+        SQLDataType.VARCHAR(250).nullable(false), this, "");
+
+    /**
      * The column <code>public.tag.id</code>.
      */
     public final TableField<TagRecord, Integer> ID = createField(DSL.name("id"),
         SQLDataType.INTEGER.nullable(false).identity(true), this, "");
+
     /**
      * The column <code>public.tag.icon</code>.
      */
     public final TableField<TagRecord, String> ICON = createField(DSL.name("icon"),
         SQLDataType.VARCHAR(50), this, "");
+
     /**
      * The column <code>public.tag.color</code>.
      */
     public final TableField<TagRecord, String> COLOR = createField(DSL.name("color"),
         SQLDataType.VARCHAR(10), this, "");
+
     /**
      * The column <code>public.tag.name</code>.
      */
     public final TableField<TagRecord, String> NAME = createField(DSL.name("name"),
         SQLDataType.VARCHAR(250).nullable(false), this, "");
-    /**
-     * The column <code>public.tag.user_id</code>.
-     */
-    public final TableField<TagRecord, Integer> USER_ID = createField(DSL.name("user_id"),
-        SQLDataType.INTEGER.nullable(false), this, "");
+    private transient RegisteredUser _registeredUser;
 
     private Tag(Name alias, Table<TagRecord> aliased) {
         this(alias, aliased, null);
@@ -97,14 +104,6 @@ public class Tag extends TableImpl<TagRecord> {
         super(child, key, TAG);
     }
 
-    /**
-     * The class holding records for this type
-     */
-    @Override
-    public Class<TagRecord> getRecordType() {
-        return TagRecord.class;
-    }
-
     @Override
     public Schema getSchema() {
         return aliased() ? null : Public.PUBLIC;
@@ -118,6 +117,30 @@ public class Tag extends TableImpl<TagRecord> {
     @Override
     public UniqueKey<TagRecord> getPrimaryKey() {
         return Keys.TAG_PKEY;
+    }
+
+    /**
+     * The class holding records for this type
+     */
+    @Override
+    public Class<TagRecord> getRecordType() {
+        return TagRecord.class;
+    }
+
+    @Override
+    public List<ForeignKey<TagRecord, ?>> getReferences() {
+        return Arrays.asList(Keys.TAG__TAG_USER_ID_FKEY);
+    }
+
+    /**
+     * Get the implicit join path to the <code>public.registered_user</code> table.
+     */
+    public RegisteredUser registeredUser() {
+        if (_registeredUser == null) {
+            _registeredUser = new RegisteredUser(this, Keys.TAG__TAG_USER_ID_FKEY);
+        }
+
+        return _registeredUser;
     }
 
     @Override
@@ -164,7 +187,7 @@ public class Tag extends TableImpl<TagRecord> {
     // -------------------------------------------------------------------------
 
     @Override
-    public Row5<Integer, String, String, String, Integer> fieldsRow() {
+    public Row5<Integer, String, String, String, String> fieldsRow() {
         return (Row5) super.fieldsRow();
     }
 
@@ -172,7 +195,7 @@ public class Tag extends TableImpl<TagRecord> {
      * Convenience mapping calling {@link SelectField#convertFrom(Function)}.
      */
     public <U> SelectField<U> mapping(
-        Function5<? super Integer, ? super String, ? super String, ? super String, ? super Integer, ? extends U> from) {
+        Function5<? super Integer, ? super String, ? super String, ? super String, ? super String, ? extends U> from) {
         return convertFrom(Records.mapping(from));
     }
 
@@ -180,7 +203,7 @@ public class Tag extends TableImpl<TagRecord> {
      * Convenience mapping calling {@link SelectField#convertFrom(Class, Function)}.
      */
     public <U> SelectField<U> mapping(Class<U> toType,
-        Function5<? super Integer, ? super String, ? super String, ? super String, ? super Integer, ? extends U> from) {
+        Function5<? super Integer, ? super String, ? super String, ? super String, ? super String, ? extends U> from) {
         return convertFrom(toType, Records.mapping(from));
     }
 }
