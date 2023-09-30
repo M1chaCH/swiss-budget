@@ -35,11 +35,12 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({"all", "unchecked", "rawtypes"})
 public class Keyword extends TableImpl<KeywordRecord> {
 
+    private static final long serialVersionUID = 1L;
+
     /**
      * The reference instance of <code>public.keyword</code>
      */
     public static final Keyword KEYWORD = new Keyword();
-    private static final long serialVersionUID = 1L;
     /**
      * The column <code>public.keyword.user_id</code>.
      */
@@ -64,7 +65,6 @@ public class Keyword extends TableImpl<KeywordRecord> {
     public final TableField<KeywordRecord, Integer> TAG_ID = createField(DSL.name("tag_id"),
         SQLDataType.INTEGER, this, "");
     private transient Tag _tag;
-    private transient RegisteredUser _registeredUser;
 
     private Keyword(Name alias, Table<KeywordRecord> aliased) {
         this(alias, aliased, null);
@@ -114,6 +114,12 @@ public class Keyword extends TableImpl<KeywordRecord> {
         return Keys.KEYWORD_PKEY;
     }
 
+    @Override
+    public List<ForeignKey<KeywordRecord, ?>> getReferences() {
+        return Arrays.asList(Keys.KEYWORD__KEYWORD_TAG_ID_FKEY, Keys.KEYWORD__KEYWORD_USER_ID_FKEY);
+    }
+    private transient RegisteredUser _registeredUser;
+
     /**
      * The class holding records for this type
      */
@@ -122,29 +128,23 @@ public class Keyword extends TableImpl<KeywordRecord> {
         return KeywordRecord.class;
     }
 
-    @Override
-    public List<ForeignKey<KeywordRecord, ?>> getReferences() {
-        return Arrays.asList(Keys.KEYWORD__KEYWORD_TAG_ID_FKEY, Keys.KEYWORD__KEYWORD_USER_ID_FKEY);
-    }
-
     /**
      * Get the implicit join path to the <code>public.tag</code> table.
      */
     public Tag tag() {
-        if (_tag == null) {
+        if (_tag == null)
             _tag = new Tag(this, Keys.KEYWORD__KEYWORD_TAG_ID_FKEY);
-        }
 
         return _tag;
     }
 
     /**
-     * Get the implicit join path to the <code>public.registered_user</code> table.
+     * Get the implicit join path to the <code>public.registered_user</code>
+     * table.
      */
     public RegisteredUser registeredUser() {
-        if (_registeredUser == null) {
+        if (_registeredUser == null)
             _registeredUser = new RegisteredUser(this, Keys.KEYWORD__KEYWORD_USER_ID_FKEY);
-        }
 
         return _registeredUser;
     }
@@ -206,7 +206,8 @@ public class Keyword extends TableImpl<KeywordRecord> {
     }
 
     /**
-     * Convenience mapping calling {@link SelectField#convertFrom(Class, Function)}.
+     * Convenience mapping calling {@link SelectField#convertFrom(Class,
+     * Function)}.
      */
     public <U> SelectField<U> mapping(Class<U> toType,
         Function4<? super Integer, ? super String, ? super Integer, ? super String, ? extends U> from) {

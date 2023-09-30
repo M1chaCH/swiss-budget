@@ -24,6 +24,7 @@
                     <li>Enter bank name</li>
                     <li>Configure E-Mail notifications in E-Banking</li>
                     <li>(optional) Move transaction mails to folder (rule)</li>
+                    <li>Define password</li>
                     <li>Done 🎉</li>
                 </ol>
 
@@ -37,18 +38,16 @@
                 <h3>E-Mail Account</h3>
                 <p>Enter your mail address and password. We need these credentials to import your
                     transaction notifications.</p>
-                <p>This will automatically also be the login to this application. If you change your
-                    password in the mail account it will NOT be changed here.</p>
                 <form [formGroup]="form.group" class="controls">
                     <app-text-input (submit)="checkMailCredentials()" [value]="form.mail"
                                     errorText="not valid mail address"
                                     height="60px"
                                     placeholder="E-Mail"></app-text-input>
                     <app-text-input (submit)="checkMailCredentials()" [password]="true"
-                                    [value]="form.password"
+                                    [value]="form.mailPassword"
                                     errorText="password required"
                                     height="60px"
-                                    placeholder="Password"></app-text-input>
+                                    placeholder="Password to mail"></app-text-input>
                     <p *ngIf="errorMessage" class="form-error-message"
                        style="margin-top: 10px;">{{errorMessage}}</p>
                     <app-button (onClick)="checkMailCredentials()"
@@ -137,21 +136,43 @@
                                 *ngIf="!folderCreated else folderCreatedTpl"
                                 [disabled]="!form.folderName.value || form.folderName.invalid"
                                 class="wide-control"
-                                rightIcon="folder">Create
-                        folder
+                                rightIcon="folder">
+                        Create folder
                     </app-button>
                     <ng-template #folderCreatedTpl>
                         <p class="wide-control">Folder {{form.folderName.value}} created!</p>
                     </ng-template>
                     <app-button (onClick)="continueAfterCreateFolder(true)"
-                                [disabled]="form.group.invalid || folderCreated"
+                                [disabled]="folderCreated"
                                 design="secondary" rightIcon="chevron_right">no folder
                     </app-button>
                     <app-button (onClick)="continueAfterCreateFolder(false)"
-                                [disabled]="form.group.invalid"
-                                rightIcon="chevron_right">Continue
+                                [disabled]="!form.folderName.value || form.folderName.invalid"
+                                rightIcon="chevron_right">
+                        Last
                     </app-button>
                 </div>
+            </div>
+            <div *appPanelStep class="steps-panel-step">
+                <h3>Define password</h3>
+                <p>Your last step is to define a password for the application.</p>
+                <app-text-input [password]="true"
+                                [value]="form.password"
+                                errorText="password required"
+                                height="60px"
+                                placeholder="Password">
+                </app-text-input>
+                <app-text-input [password]="true"
+                                [value]="secondPasswordControl"
+                                errorText="password required & must match"
+                                height="60px"
+                                placeholder="Repeat password">
+                </app-text-input>
+                <app-button (onClick)="cursor = cursor + 1" [disabled]="arePasswordsInvalid()"
+                            height="60px"
+                            rightIcon="chevron_right">
+                    Continue
+                </app-button>
             </div>
             <div *appPanelStep class="steps-panel-step">
                 <h3>Setup completed</h3>
@@ -160,13 +181,14 @@
                     button.</p>
                 <app-button (onClick)="completeSetup()" [disabled]="form.group.invalid"
                             height="60px"
-                            rightIcon="check">Start
+                            rightIcon="check">
+                    Start
                 </app-button>
             </div>
         </app-steps-panel>
         <div
             style="align-self: flex-start; margin-top: 10px; display: flex; flex-flow: row nowrap; justify-content: space-between;">
-            <app-button [useAnchor]="true" height="60px" routerLink="login" width="125px">
+            <app-button [useAnchor]="true" height="60px" routerLink="/login" width="125px">
                 Cancel
             </app-button>
             <app-help></app-help>

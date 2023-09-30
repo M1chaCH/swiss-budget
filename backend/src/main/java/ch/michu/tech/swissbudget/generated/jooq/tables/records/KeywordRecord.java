@@ -22,10 +22,24 @@ public class KeywordRecord extends UpdatableRecordImpl<KeywordRecord> implements
     private static final long serialVersionUID = 1L;
 
     /**
+     * Setter for <code>public.keyword.id</code>.
+     */
+    public void setId(Integer value) {
+        set(0, value);
+    }
+
+    /**
      * Create a detached KeywordRecord
      */
     public KeywordRecord() {
         super(Keyword.KEYWORD);
+    }
+
+    /**
+     * Setter for <code>public.keyword.keyword</code>.
+     */
+    public void setKeyword(String value) {
+        set(1, value);
     }
 
     /**
@@ -41,17 +55,17 @@ public class KeywordRecord extends UpdatableRecordImpl<KeywordRecord> implements
     }
 
     /**
+     * Setter for <code>public.keyword.tag_id</code>.
+     */
+    public void setTagId(Integer value) {
+        set(2, value);
+    }
+
+    /**
      * Getter for <code>public.keyword.id</code>.
      */
     public Integer getId() {
         return (Integer) get(0);
-    }
-
-    /**
-     * Setter for <code>public.keyword.id</code>.
-     */
-    public void setId(Integer value) {
-        set(0, value);
     }
 
     /**
@@ -62,24 +76,10 @@ public class KeywordRecord extends UpdatableRecordImpl<KeywordRecord> implements
     }
 
     /**
-     * Setter for <code>public.keyword.keyword</code>.
-     */
-    public void setKeyword(String value) {
-        set(1, value);
-    }
-
-    /**
      * Getter for <code>public.keyword.tag_id</code>.
      */
     public Integer getTagId() {
         return (Integer) get(2);
-    }
-
-    /**
-     * Setter for <code>public.keyword.tag_id</code>.
-     */
-    public void setTagId(Integer value) {
-        set(2, value);
     }
 
     // -------------------------------------------------------------------------
@@ -188,20 +188,6 @@ public class KeywordRecord extends UpdatableRecordImpl<KeywordRecord> implements
     }
 
     @Override
-    public String component4() {
-        return getUserId();
-    }
-
-    @Override
-    public String value4() {
-        return getUserId();
-    }
-
-    // -------------------------------------------------------------------------
-    // Constructors
-    // -------------------------------------------------------------------------
-
-    @Override
     public KeywordRecord value4(String value) {
         setUserId(value);
         return this;
@@ -214,5 +200,19 @@ public class KeywordRecord extends UpdatableRecordImpl<KeywordRecord> implements
         value3(value3);
         value4(value4);
         return this;
+    }
+
+    // -------------------------------------------------------------------------
+    // Constructors
+    // -------------------------------------------------------------------------
+
+    @Override
+    public String component4() {
+        return getUserId();
+    }
+
+    @Override
+    public String value4() {
+        return getUserId();
     }
 }

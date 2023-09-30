@@ -29,6 +29,13 @@ public class VerifiedDeviceRecord extends UpdatableRecordImpl<VerifiedDeviceReco
     }
 
     /**
+     * Getter for <code>public.verified_device.id</code>.
+     */
+    public Integer getId() {
+        return (Integer) get(0);
+    }
+
+    /**
      * Create a detached, initialised VerifiedDeviceRecord
      */
     public VerifiedDeviceRecord(Integer id, String userId, String userAgent) {
@@ -40,10 +47,10 @@ public class VerifiedDeviceRecord extends UpdatableRecordImpl<VerifiedDeviceReco
     }
 
     /**
-     * Getter for <code>public.verified_device.id</code>.
+     * Getter for <code>public.verified_device.user_id</code>.
      */
-    public Integer getId() {
-        return (Integer) get(0);
+    public String getUserId() {
+        return (String) get(1);
     }
 
     /**
@@ -54,24 +61,6 @@ public class VerifiedDeviceRecord extends UpdatableRecordImpl<VerifiedDeviceReco
     }
 
     /**
-     * Getter for <code>public.verified_device.user_id</code>.
-     */
-    public String getUserId() {
-        return (String) get(1);
-    }
-
-    /**
-     * Setter for <code>public.verified_device.user_id</code>.
-     */
-    public void setUserId(String value) {
-        set(1, value);
-    }
-
-    // -------------------------------------------------------------------------
-    // Primary key information
-    // -------------------------------------------------------------------------
-
-    /**
      * Getter for <code>public.verified_device.user_agent</code>.
      */
     public String getUserAgent() {
@@ -79,20 +68,17 @@ public class VerifiedDeviceRecord extends UpdatableRecordImpl<VerifiedDeviceReco
     }
 
     // -------------------------------------------------------------------------
-    // Record3 type implementation
+    // Primary key information
     // -------------------------------------------------------------------------
-
-    /**
-     * Setter for <code>public.verified_device.user_agent</code>.
-     */
-    public void setUserAgent(String value) {
-        set(2, value);
-    }
 
     @Override
     public Record1<Integer> key() {
         return (Record1) super.key();
     }
+
+    // -------------------------------------------------------------------------
+    // Record3 type implementation
+    // -------------------------------------------------------------------------
 
     @Override
     public Row3<Integer, String, String> fieldsRow() {
@@ -161,10 +147,6 @@ public class VerifiedDeviceRecord extends UpdatableRecordImpl<VerifiedDeviceReco
         return this;
     }
 
-    // -------------------------------------------------------------------------
-    // Constructors
-    // -------------------------------------------------------------------------
-
     @Override
     public VerifiedDeviceRecord value3(String value) {
         setUserAgent(value);
@@ -177,5 +159,23 @@ public class VerifiedDeviceRecord extends UpdatableRecordImpl<VerifiedDeviceReco
         value2(value2);
         value3(value3);
         return this;
+    }
+
+    // -------------------------------------------------------------------------
+    // Constructors
+    // -------------------------------------------------------------------------
+
+    /**
+     * Setter for <code>public.verified_device.user_id</code>.
+     */
+    public void setUserId(String value) {
+        set(1, value);
+    }
+
+    /**
+     * Setter for <code>public.verified_device.user_agent</code>.
+     */
+    public void setUserAgent(String value) {
+        set(2, value);
     }
 }

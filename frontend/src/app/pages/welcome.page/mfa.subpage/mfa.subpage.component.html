@@ -1,0 +1,12 @@
+<div class="mfa-subpage">
+    <h3>Verify account</h3>
+    <p>
+        We have sent you a mail with a 6 number code. Please enter this code here.
+        <br>
+        (You might have to check your spam folder)
+    </p>
+    <app-text-input [value]="codeControl" errorText="code not valid" height="60px"
+                    placeholder="Code">
+    </app-text-input>
+    <p *ngIf="errorMessage" class="form-error-message">{{errorMessage}}</p>
+</div>

@@ -1,6 +1,6 @@
 import {Component} from '@angular/core';
 import {FormControl, FormGroup, Validators} from "@angular/forms";
-import {Subject} from "rxjs";
+import {AuthService} from "../../services/auth.service";
 
 @Component({
   selector: 'app-login',
@@ -9,13 +9,25 @@ import {Subject} from "rxjs";
 })
 export class LoginComponent {
   form: LoginForm;
+  errorMessage: string | undefined;
+  loading: boolean = false;
 
-  constructor() {
-    this.form = new LoginForm()
+  constructor(
+      private auth: AuthService,
+  ) {
+    this.form = new LoginForm();
+  }
 
-    this.form.subscribe(form => {
-      console.log(form.mail.value, form.password.value)
-    })
+  login() {
+    if (this.form.group.valid) {
+      this.loading = true;
+      this.errorMessage = undefined;
+      this.auth.login(this.form.mail.value, this.form.password.value).subscribe(response => {
+        this.loading = false;
+        if (response)
+          this.errorMessage = response;
+      });
+    }
   }
 }
 
@@ -24,11 +36,9 @@ export class LoginForm {
   password: FormControl;
   group: FormGroup;
 
-  private submitEvent: Subject<LoginForm> = new Subject<LoginForm>();
-
   constructor(
-    mail: string = "",
-    password: string = "") {
+      mail: string = "",
+      password: string = "") {
     this.mail = new FormControl(mail, [Validators.email, Validators.minLength(5), Validators.required]);
     this.password = new FormControl(password, [Validators.required],);
 
@@ -36,14 +46,5 @@ export class LoginForm {
       mail: this.mail,
       password: this.password,
     })
-  }
-
-  submit() {
-    if (this.group.valid)
-      this.submitEvent.next(this)
-  }
-
-  subscribe(obs: (form: LoginForm) => void) {
-    this.submitEvent.subscribe(obs);
   }
 }

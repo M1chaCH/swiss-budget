@@ -23,10 +23,24 @@ public class MfaCodeRecord extends UpdatableRecordImpl<MfaCodeRecord> implements
     private static final long serialVersionUID = 1L;
 
     /**
+     * Setter for <code>public.mfa_code.id</code>.
+     */
+    public void setId(String value) {
+        set(0, value);
+    }
+
+    /**
      * Create a detached MfaCodeRecord
      */
     public MfaCodeRecord() {
         super(MfaCode.MFA_CODE);
+    }
+
+    /**
+     * Setter for <code>public.mfa_code.code</code>.
+     */
+    public void setCode(Integer value) {
+        set(1, value);
     }
 
     /**
@@ -51,10 +65,17 @@ public class MfaCodeRecord extends UpdatableRecordImpl<MfaCodeRecord> implements
     }
 
     /**
-     * Setter for <code>public.mfa_code.id</code>.
+     * Getter for <code>public.mfa_code.user_id</code>.
      */
-    public void setId(String value) {
-        set(0, value);
+    public String getUserId() {
+        return (String) get(2);
+    }
+
+    /**
+     * Setter for <code>public.mfa_code.expires_at</code>.
+     */
+    public void setExpiresAt(LocalDateTime value) {
+        set(3, value);
     }
 
     /**
@@ -65,43 +86,11 @@ public class MfaCodeRecord extends UpdatableRecordImpl<MfaCodeRecord> implements
     }
 
     /**
-     * Setter for <code>public.mfa_code.code</code>.
-     */
-    public void setCode(Integer value) {
-        set(1, value);
-    }
-
-    /**
-     * Getter for <code>public.mfa_code.user_id</code>.
-     */
-    public String getUserId() {
-        return (String) get(2);
-    }
-
-    /**
      * Setter for <code>public.mfa_code.user_id</code>.
      */
     public void setUserId(String value) {
         set(2, value);
     }
-
-    /**
-     * Getter for <code>public.mfa_code.expires_at</code>.
-     */
-    public LocalDateTime getExpiresAt() {
-        return (LocalDateTime) get(3);
-    }
-
-    /**
-     * Setter for <code>public.mfa_code.expires_at</code>.
-     */
-    public void setExpiresAt(LocalDateTime value) {
-        set(3, value);
-    }
-
-    // -------------------------------------------------------------------------
-    // Primary key information
-    // -------------------------------------------------------------------------
 
     /**
      * Getter for <code>public.mfa_code.user_agent</code>.
@@ -111,20 +100,17 @@ public class MfaCodeRecord extends UpdatableRecordImpl<MfaCodeRecord> implements
     }
 
     // -------------------------------------------------------------------------
-    // Record5 type implementation
+    // Primary key information
     // -------------------------------------------------------------------------
-
-    /**
-     * Setter for <code>public.mfa_code.user_agent</code>.
-     */
-    public void setUserAgent(String value) {
-        set(4, value);
-    }
 
     @Override
     public Record1<String> key() {
         return (Record1) super.key();
     }
+
+    // -------------------------------------------------------------------------
+    // Record5 type implementation
+    // -------------------------------------------------------------------------
 
     @Override
     public Row5<String, Integer, String, LocalDateTime, String> fieldsRow() {
@@ -235,10 +221,6 @@ public class MfaCodeRecord extends UpdatableRecordImpl<MfaCodeRecord> implements
         return this;
     }
 
-    // -------------------------------------------------------------------------
-    // Constructors
-    // -------------------------------------------------------------------------
-
     @Override
     public MfaCodeRecord value5(String value) {
         setUserAgent(value);
@@ -254,5 +236,23 @@ public class MfaCodeRecord extends UpdatableRecordImpl<MfaCodeRecord> implements
         value4(value4);
         value5(value5);
         return this;
+    }
+
+    // -------------------------------------------------------------------------
+    // Constructors
+    // -------------------------------------------------------------------------
+
+    /**
+     * Getter for <code>public.mfa_code.expires_at</code>.
+     */
+    public LocalDateTime getExpiresAt() {
+        return (LocalDateTime) get(3);
+    }
+
+    /**
+     * Setter for <code>public.mfa_code.user_agent</code>.
+     */
+    public void setUserAgent(String value) {
+        set(4, value);
     }
 }

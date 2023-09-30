@@ -22,10 +22,24 @@ public class TagRecord extends UpdatableRecordImpl<TagRecord> implements
     private static final long serialVersionUID = 1L;
 
     /**
+     * Setter for <code>public.tag.id</code>.
+     */
+    public void setId(Integer value) {
+        set(0, value);
+    }
+
+    /**
      * Create a detached TagRecord
      */
     public TagRecord() {
         super(Tag.TAG);
+    }
+
+    /**
+     * Setter for <code>public.tag.icon</code>.
+     */
+    public void setIcon(String value) {
+        set(1, value);
     }
 
     /**
@@ -42,6 +56,13 @@ public class TagRecord extends UpdatableRecordImpl<TagRecord> implements
     }
 
     /**
+     * Setter for <code>public.tag.color</code>.
+     */
+    public void setColor(String value) {
+        set(2, value);
+    }
+
+    /**
      * Getter for <code>public.tag.id</code>.
      */
     public Integer getId() {
@@ -49,10 +70,10 @@ public class TagRecord extends UpdatableRecordImpl<TagRecord> implements
     }
 
     /**
-     * Setter for <code>public.tag.id</code>.
+     * Setter for <code>public.tag.name</code>.
      */
-    public void setId(Integer value) {
-        set(0, value);
+    public void setName(String value) {
+        set(3, value);
     }
 
     /**
@@ -63,13 +84,6 @@ public class TagRecord extends UpdatableRecordImpl<TagRecord> implements
     }
 
     /**
-     * Setter for <code>public.tag.icon</code>.
-     */
-    public void setIcon(String value) {
-        set(1, value);
-    }
-
-    /**
      * Getter for <code>public.tag.color</code>.
      */
     public String getColor() {
@@ -77,24 +91,10 @@ public class TagRecord extends UpdatableRecordImpl<TagRecord> implements
     }
 
     /**
-     * Setter for <code>public.tag.color</code>.
-     */
-    public void setColor(String value) {
-        set(2, value);
-    }
-
-    /**
      * Getter for <code>public.tag.name</code>.
      */
     public String getName() {
         return (String) get(3);
-    }
-
-    /**
-     * Setter for <code>public.tag.name</code>.
-     */
-    public void setName(String value) {
-        set(3, value);
     }
 
     // -------------------------------------------------------------------------
@@ -224,20 +224,6 @@ public class TagRecord extends UpdatableRecordImpl<TagRecord> implements
     }
 
     @Override
-    public String component5() {
-        return getUserId();
-    }
-
-    @Override
-    public String value5() {
-        return getUserId();
-    }
-
-    // -------------------------------------------------------------------------
-    // Constructors
-    // -------------------------------------------------------------------------
-
-    @Override
     public TagRecord value5(String value) {
         setUserId(value);
         return this;
@@ -252,5 +238,19 @@ public class TagRecord extends UpdatableRecordImpl<TagRecord> implements
         value4(value4);
         value5(value5);
         return this;
+    }
+
+    // -------------------------------------------------------------------------
+    // Constructors
+    // -------------------------------------------------------------------------
+
+    @Override
+    public String component5() {
+        return getUserId();
+    }
+
+    @Override
+    public String value5() {
+        return getUserId();
     }
 }

@@ -67,6 +67,10 @@ public class SessionTokenService {
     }
 
     public SessionToken parseJwt(String jwt) {
+        if (jwt == null || jwt.isBlank()) {
+            throw new InvalidSessionTokenException();
+        }
+
         SessionToken token = new SessionToken();
         try {
             Claims claims = Jwts.parser().setSigningKey(tokenKey).parseClaimsJws(jwt).getBody();

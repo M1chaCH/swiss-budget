@@ -15,12 +15,16 @@ import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {TextInputComponent} from './components/text-input/text-input.component';
 import {StepsPanelComponent} from './components/steps-panel/steps-panel.component';
 import {PanelStepDirective} from './components/steps-panel/panel-step.directive';
-import {HttpClientModule} from "@angular/common/http";
+import {HTTP_INTERCEPTORS, HttpClientModule} from "@angular/common/http";
 import {DialogComponent} from './components/dialog/dialog.component';
 import {HelpComponent} from './components/help/help.component';
 import {DialogDirective} from './components/dialog/dialog.directive';
 import {TextAreaComponent} from './components/text-area/text-area.component';
 import {SelectComponent} from './components/select/select.component';
+import {ClickThrottlerDirective} from './components/button/click-throttler.directive';
+import {CookieService} from "ngx-cookie-service";
+import {AuthService} from "./services/auth.service";
+import {MfaSubpageComponent} from './pages/welcome.page/mfa.subpage/mfa.subpage.component';
 
 @NgModule({
   declarations: [
@@ -38,7 +42,9 @@ import {SelectComponent} from './components/select/select.component';
     HelpComponent,
     DialogDirective,
     TextAreaComponent,
-    SelectComponent
+    SelectComponent,
+    ClickThrottlerDirective,
+    MfaSubpageComponent
   ],
   imports: [
     BrowserModule,
@@ -49,7 +55,10 @@ import {SelectComponent} from './components/select/select.component';
     ReactiveFormsModule,
     HttpClientModule,
   ],
-  providers: [],
+  providers: [
+    {provide: HTTP_INTERCEPTORS, useClass: AuthService, multi: true},
+    CookieService,
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule {

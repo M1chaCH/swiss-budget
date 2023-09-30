@@ -28,7 +28,7 @@ public class AuthenticationFilter implements ContainerRequestFilter {
     @Override
     public void filter(ContainerRequestContext requestContext) {
         String jwt = requestContext.getHeaderString(AuthenticationService.HEADER_AUTH_TOKEN);
-        if (jwt == null) {
+        if (jwt == null || jwt.isBlank()) {
             throw new InvalidSessionTokenException();
         }
 

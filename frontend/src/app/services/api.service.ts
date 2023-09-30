@@ -9,6 +9,8 @@ export const endpoint = {
   CHECK_MAIL: "/register/mail",
   CREATE_MAIL_FOLDER: "/register/mail/folder",
   CONTACT: "/contact",
+  AUTH: "/auth",
+  MFA: "/auth/mfa"
 }
 
 
@@ -86,7 +88,7 @@ export class ApiService {
   }
 
   private handleError<T>(err: any, _: Observable<T>, showDialogOnError: boolean): Observable<T> {
-    if (!this.errorService.handleAuthenticationError(err)) {
+    if (!this.errorService.handleIfGlobalError(err)) {
       if (showDialogOnError) this.errorService.showErrorDialog(err.error);
       else throw err;
     }

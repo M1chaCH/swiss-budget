@@ -35,21 +35,23 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({"all", "unchecked", "rawtypes"})
 public class RegisteredUser extends TableImpl<RegisteredUserRecord> {
 
+    private static final long serialVersionUID = 1L;
+
     /**
      * The reference instance of <code>public.registered_user</code>
      */
     public static final RegisteredUser REGISTERED_USER = new RegisteredUser();
-    private static final long serialVersionUID = 1L;
-    /**
-     * The column <code>public.registered_user.id</code>.
-     */
-    public final TableField<RegisteredUserRecord, String> ID = createField(DSL.name("id"),
-        SQLDataType.VARCHAR(250).nullable(false), this, "");
     /**
      * The column <code>public.registered_user.mail_password</code>.
      */
     public final TableField<RegisteredUserRecord, String> MAIL_PASSWORD = createField(
         DSL.name("mail_password"), SQLDataType.VARCHAR(250).nullable(false), this, "");
+
+    /**
+     * The column <code>public.registered_user.id</code>.
+     */
+    public final TableField<RegisteredUserRecord, String> ID = createField(DSL.name("id"),
+        SQLDataType.VARCHAR(250).nullable(false), this, "");
 
     /**
      * The column <code>public.registered_user.mail</code>.
@@ -102,6 +104,14 @@ public class RegisteredUser extends TableImpl<RegisteredUserRecord> {
         DSL.name("last_login"), SQLDataType.LOCALDATETIME(6).nullable(false)
             .defaultValue(DSL.field("CURRENT_TIMESTAMP", SQLDataType.LOCALDATETIME)), this, "");
 
+    /**
+     * The class holding records for this type
+     */
+    @Override
+    public Class<RegisteredUserRecord> getRecordType() {
+        return RegisteredUserRecord.class;
+    }
+
     private RegisteredUser(Name alias, Table<RegisteredUserRecord> aliased) {
         this(alias, aliased, null);
     }
@@ -134,14 +144,6 @@ public class RegisteredUser extends TableImpl<RegisteredUserRecord> {
     public <O extends Record> RegisteredUser(Table<O> child,
         ForeignKey<O, RegisteredUserRecord> key) {
         super(child, key, REGISTERED_USER);
-    }
-
-    /**
-     * The class holding records for this type
-     */
-    @Override
-    public Class<RegisteredUserRecord> getRecordType() {
-        return RegisteredUserRecord.class;
     }
 
     @Override
@@ -216,7 +218,8 @@ public class RegisteredUser extends TableImpl<RegisteredUserRecord> {
     }
 
     /**
-     * Convenience mapping calling {@link SelectField#convertFrom(Class, Function)}.
+     * Convenience mapping calling {@link SelectField#convertFrom(Class,
+     * Function)}.
      */
     public <U> SelectField<U> mapping(Class<U> toType,
         Function10<? super String, ? super String, ? super String, ? super String, ? super String, ? super String, ? super Boolean, ? super LocalDateTime, ? super LocalDateTime, ? super String, ? extends U> from) {

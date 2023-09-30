@@ -1,15 +1,23 @@
-<form (submit)="form.submit()"
-      [formGroup]="form.group">
-  <app-text-input [value]="form.mail" errorText="not valid mail address"
-                  placeholder="Mail"></app-text-input>
-  <app-text-input [password]="true" [value]="form.password" errorText="password required"
-                  placeholder="Password"></app-text-input>
-  <div></div>
-  <app-button [disabled]="form.group.invalid" rightIcon="login">
-    Sign In
-  </app-button>
-  <app-button [useAnchor]="true" design="secondary"
-              routerLink="setup">
-    Get started
-  </app-button>
+<form [formGroup]="form.group">
+    <app-text-input (submit)="login()"
+                    [value]="form.mail"
+                    errorText="not valid mail address"
+                    placeholder="Mail">
+    </app-text-input>
+    <app-text-input (submit)="login()"
+                    [password]="true"
+                    [value]="form.password"
+                    errorText="password required"
+                    placeholder="Password">
+    </app-text-input>
+    <p *ngIf="errorMessage" class="form-error-message">{{errorMessage}}</p>
+    <div></div>
+    <app-button (onClick)="login()" [disabled]="form.group.invalid" [loading]="loading"
+                rightIcon="login">
+        Sign In
+    </app-button>
+    <app-button [useAnchor]="true" design="secondary"
+                routerLink="setup">
+        Get started
+    </app-button>
 </form>

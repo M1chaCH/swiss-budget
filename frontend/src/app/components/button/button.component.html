@@ -1,5 +1,5 @@
 <ng-container *ngIf="useAnchor else useButton">
-    <a (click)="onClick.emit($event)"
+    <a (onThrottledClick)="onClick.emit($event)"
        [class.disabled]="disabled"
        [class.flex-button]="!rightIcon && !leftIcon"
        [class.icon-grid]="rightIcon || leftIcon"
@@ -8,13 +8,14 @@
        [style.height]="height"
        [style.width]="width"
        [target]="target"
+       appClickThrottler
        class="button">
         <ng-container *ngTemplateOutlet="content"></ng-container>
     </a>
 </ng-container>
 
 <ng-template #useButton>
-    <button (click)="onClick.emit($event)"
+    <button (onThrottledClick)="onClick.emit($event)"
             [class.flex-button]="!rightIcon && !leftIcon"
             [class.icon-grid]="rightIcon || leftIcon"
             [class.loading]="loading"
@@ -23,6 +24,7 @@
             [disabled]="disabled || loading"
             [style.height]="height"
             [style.width]="width"
+            appClickThrottler
             class="button"
             type="button">
         <ng-container *ngTemplateOutlet="content"></ng-container>

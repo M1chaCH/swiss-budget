@@ -35,11 +35,12 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({"all", "unchecked", "rawtypes"})
 public class Tag extends TableImpl<TagRecord> {
 
+    private static final long serialVersionUID = 1L;
+
     /**
      * The reference instance of <code>public.tag</code>
      */
     public static final Tag TAG = new Tag();
-    private static final long serialVersionUID = 1L;
     /**
      * The column <code>public.tag.user_id</code>.
      */
@@ -119,6 +120,11 @@ public class Tag extends TableImpl<TagRecord> {
         return Keys.TAG_PKEY;
     }
 
+    @Override
+    public List<ForeignKey<TagRecord, ?>> getReferences() {
+        return Arrays.asList(Keys.TAG__TAG_USER_ID_FKEY);
+    }
+
     /**
      * The class holding records for this type
      */
@@ -127,18 +133,13 @@ public class Tag extends TableImpl<TagRecord> {
         return TagRecord.class;
     }
 
-    @Override
-    public List<ForeignKey<TagRecord, ?>> getReferences() {
-        return Arrays.asList(Keys.TAG__TAG_USER_ID_FKEY);
-    }
-
     /**
-     * Get the implicit join path to the <code>public.registered_user</code> table.
+     * Get the implicit join path to the <code>public.registered_user</code>
+     * table.
      */
     public RegisteredUser registeredUser() {
-        if (_registeredUser == null) {
+        if (_registeredUser == null)
             _registeredUser = new RegisteredUser(this, Keys.TAG__TAG_USER_ID_FKEY);
-        }
 
         return _registeredUser;
     }
@@ -200,7 +201,8 @@ public class Tag extends TableImpl<TagRecord> {
     }
 
     /**
-     * Convenience mapping calling {@link SelectField#convertFrom(Class, Function)}.
+     * Convenience mapping calling {@link SelectField#convertFrom(Class,
+     * Function)}.
      */
     public <U> SelectField<U> mapping(Class<U> toType,
         Function5<? super Integer, ? super String, ? super String, ? super String, ? super String, ? extends U> from) {
