@@ -1,15 +1,68 @@
-<div class="root">
+<div *ngIf="currentPage$ | async as currentPage" class="root">
     <header *ngIf="!fullscreenPage">
-        <p>header</p>
+        <ng-template #menuButton>
+            <button (click)="sideMenuOpen = true"
+                    class="icon-button">
+                <span class="material-symbols-rounded">menu</span>
+            </button>
+        </ng-template>
+        <button (click)="sideMenuOpen = false" *ngIf="sideMenuOpen else menuButton"
+                class="icon-button">
+            <span class="material-symbols-rounded">menu_open</span>
+        </button>
+        <h2 class="page-header" id="swiss-budget">Swiss Budget</h2>
+        <!--        TODO animate change, new one flies in, use angular anim x translateY x overflow hidden -->
+        <h2 class="current-page-title">{{currentPage.title}}</h2>
+        <button (click)="logout()" class="icon-button">
+            <span class="material-symbols-rounded">logout</span>
+        </button>
     </header>
 
-    <div [style.height]="fullscreenPage ? 'calc(100%)' : 'calc(100% - 20px - 80px)'"
-         class="center">
+    <div
+        [style.height]="fullscreenPage ? 'calc(100%)' : 'calc(100% - 20px - 80px)'"
+        class="center">
         <nav *ngIf="!fullscreenPage"
-             [style.width]="sideMenuOpen ? '300px' : '0px'">
-            <p>nav</p>
-            <button (click)="sideMenuOpen = false">close</button>
+             [style.width]="sideMenuOpen ? 'var(--nav-open-width)' : '0px'">
+            <div class="menu-container">
+                <a [class.active-menu-item]="currentPage.route === pages.HOME"
+                   [routerLink]="'app/' + pages.HOME"
+                   class="menu-item">
+                    <span>Home</span>
+                    <span class="material-symbols-rounded">account_balance</span>
+                </a>
+                <a [class.active-menu-item]="currentPage.route === pages.BUDGET"
+                   [routerLink]="'app/' + pages.BUDGET"
+                   class="menu-item">
+                    <span>Budget</span>
+                    <span class="material-symbols-rounded">trending_up</span>
+                </a>
+                <a [class.active-menu-item]="currentPage.route === pages.TRANSACTIONS"
+                   [routerLink]="'app/' + pages.TRANSACTIONS"
+                   class="menu-item">
+                    <span>Transactions</span>
+                    <span class="material-symbols-rounded">payments</span>
+                </a>
+                <a [class.active-menu-item]="currentPage.route === pages.SAVE"
+                   [routerLink]="'app/' + pages.SAVE"
+                   class="menu-item">
+                    <span>Save</span>
+                    <span class="material-symbols-rounded">savings</span>
+                </a>
+                <a [class.active-menu-item]="currentPage.route === pages.CONFIGURATION"
+                   [routerLink]="'app/' + pages.CONFIGURATION"
+                   class="menu-item">
+                    <span>Configuration</span>
+                    <span class="material-symbols-rounded">tune</span>
+                </a>
+                <a [class.active-menu-item]="currentPage.route === pages.PROFILE"
+                   [routerLink]="'app/' + pages.PROFILE"
+                   class="menu-item">
+                    <span>Profile</span>
+                    <span class="material-symbols-rounded">account_circle</span>
+                </a>
+            </div>
         </nav>
+        <div (click)="sideMenuOpen = false" *ngIf="sideMenuOpen" class="nav-overlay"></div>
 
         <main [@routeChangeTrigger]="currentRoute"
               [style.width]="!sideMenuOpen || fullscreenPage ? '100%' : 'calc(100% - 300px)'"

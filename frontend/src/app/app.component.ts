@@ -3,6 +3,10 @@ import {fadePageTransition} from "./animations";
 import {NavigationStart, Router} from "@angular/router";
 import {PageStateService} from "./services/page-state.service";
 import {ThemeService} from "./services/theme.service";
+import {AuthService} from "./services/auth.service";
+import {CurrentPage, CurrentPageService} from "./services/current-page.service";
+import {pages} from "./app-routing.module";
+import {Observable} from "rxjs";
 
 @Component({
   selector: 'app-root',
@@ -13,14 +17,19 @@ import {ThemeService} from "./services/theme.service";
 export class AppComponent implements OnInit {
   currentRoute: string = ""
   fullscreenPage: boolean = false;
-  sideMenuOpen: boolean = true;
+  sideMenuOpen: boolean = window.innerWidth > 1000;
+  currentPage$: Observable<CurrentPage>;
+  protected readonly pages = pages;
 
   constructor(
-    private router: Router,
-    private pageState: PageStateService,
-    private theme: ThemeService,
+      private router: Router,
+      private pageState: PageStateService,
+      private theme: ThemeService,
+      private auth: AuthService,
+      currentPageService: CurrentPageService,
   ) {
     this.theme.init();
+    this.currentPage$ = currentPageService.pageChanges();
   }
 
   ngOnInit(): void {
@@ -32,5 +41,9 @@ export class AppComponent implements OnInit {
     this.pageState.subscribe(fullscreen => {
       this.fullscreenPage = fullscreen;
     });
+  }
+
+  logout() {
+    this.auth.logout();
   }
 }

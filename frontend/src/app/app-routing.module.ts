@@ -5,6 +5,7 @@ import {LoginPageComponent} from "./pages/welcome.page/login.page.component";
 import {SetupSubpageComponent} from "./pages/welcome.page/setup.subpage/setup.subpage.component";
 import {authenticationGuard} from "./services/auth.service";
 import {MfaSubpageComponent} from "./pages/welcome.page/mfa.subpage/mfa.subpage.component";
+import {BudgetPageComponent} from "./pages/budget.page/budget.page.component";
 
 export const pages = {
   LOGIN: "login",
@@ -13,6 +14,11 @@ export const pages = {
     MFA: "mfa",
   },
   HOME: "home",
+  BUDGET: "budget",
+  TRANSACTIONS: "transactions",
+  SAVE: "save",
+  CONFIGURATION: "configuration",
+  PROFILE: "profile",
 }
 
 export const APP_ROOT = "app"
@@ -33,6 +39,7 @@ const routes: Routes = [
     canActivate: [authenticationGuard],
     children: [
       {path: pages.HOME, component: HomePageComponent},
+      {path: pages.BUDGET, component: BudgetPageComponent},
     ]
   },
   {path: "**", redirectTo: `${APP_ROOT}/${pages.HOME}`, pathMatch: "full"},

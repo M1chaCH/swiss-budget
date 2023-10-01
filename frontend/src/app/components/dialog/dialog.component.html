@@ -1,7 +1,7 @@
 <div (click)="closeDialog($event)" [class.closed]="!(open | async)" id="dialog-container">
     <div *ngIf="(open | async) && dialogContent" class="dialog">
         <ng-container *ngTemplateOutlet="dialogContent"></ng-container>
-        <button (click)="closeDialog()" class="close">
+        <button (click)="closeDialog()" class="close icon-button">
             <span class="material-symbols-rounded">close</span>
         </button>
     </div>

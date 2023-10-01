@@ -59,6 +59,14 @@ export class AuthService implements HttpInterceptor, OnInit {
     );
   }
 
+  logout() {
+    this.loggedIn = false;
+    this.authToken = undefined;
+    //FIXME, cookie is not deleted
+    this.cookie.delete(AuthService.AUTH_TOKEN);
+    this.router.navigate([pages.LOGIN]).then();
+  }
+
   isLoggedIn(): Observable<boolean> {
     const loginSubject: BehaviorSubject<boolean> = new BehaviorSubject(true);
     if (this.loggedIn) {
@@ -108,6 +116,7 @@ export class AuthService implements HttpInterceptor, OnInit {
     const token = tokenMessage.message;
     this.authToken = token;
     this.loggedIn = true;
+    // FIXME, expires at is still session ):
     this.cookie.set(AuthService.AUTH_TOKEN, token, new Date().setDate(new Date().getDate() + 300), "/", environment.DOMAIN, true, "Strict")
   }
 }
