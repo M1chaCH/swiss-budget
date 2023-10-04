@@ -36,12 +36,11 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({"all", "unchecked", "rawtypes"})
 public class TransactionMail extends TableImpl<TransactionMailRecord> {
 
-    private static final long serialVersionUID = 1L;
-
     /**
      * The reference instance of <code>public.transaction_mail</code>
      */
     public static final TransactionMail TRANSACTION_MAIL = new TransactionMail();
+    private static final long serialVersionUID = 1L;
     /**
      * The column <code>public.transaction_mail.user_id</code>.
      */
@@ -96,6 +95,7 @@ public class TransactionMail extends TableImpl<TransactionMailRecord> {
     public final TableField<TransactionMailRecord, Integer> TRANSACTION_ID = createField(
         DSL.name("transaction_id"), SQLDataType.INTEGER, this, "");
     private transient Transaction _transaction;
+    private transient RegisteredUser _registeredUser;
 
     private TransactionMail(Name alias, Table<TransactionMailRecord> aliased) {
         this(alias, aliased, null);
@@ -152,7 +152,6 @@ public class TransactionMail extends TableImpl<TransactionMailRecord> {
         return Arrays.asList(Keys.TRANSACTION_MAIL__TRANSACTION_MAIL_TRANSACTION_ID_FKEY,
             Keys.TRANSACTION_MAIL__TRANSACTION_MAIL_USER_ID_FKEY);
     }
-    private transient RegisteredUser _registeredUser;
 
     /**
      * The class holding records for this type
@@ -175,8 +174,7 @@ public class TransactionMail extends TableImpl<TransactionMailRecord> {
     }
 
     /**
-     * Get the implicit join path to the <code>public.registered_user</code>
-     * table.
+     * Get the implicit join path to the <code>public.registered_user</code> table.
      */
     public RegisteredUser registeredUser() {
         if (_registeredUser == null) {
@@ -244,8 +242,7 @@ public class TransactionMail extends TableImpl<TransactionMailRecord> {
     }
 
     /**
-     * Convenience mapping calling {@link SelectField#convertFrom(Class,
-     * Function)}.
+     * Convenience mapping calling {@link SelectField#convertFrom(Class, Function)}.
      */
     public <U> SelectField<U> mapping(Class<U> toType,
         Function9<? super Integer, ? super Integer, ? super String, ? super String, ? super LocalDate, ? super String, ? super String, ? super Integer, ? super String, ? extends U> from) {

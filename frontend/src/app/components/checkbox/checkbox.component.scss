@@ -6,8 +6,8 @@
 
 .checkbox {
   display: block;
-  width: 56px;
-  height: 32px;
+  width: 42px;
+  height: 24px;
   cursor: pointer;
   position: relative;
 
@@ -34,8 +34,8 @@
     position: absolute;
     transition: all 150ms ease-out;
 
-    width: calc(32px - 6px);
-    height: calc(32px - 6px);
+    width: calc(24px - 6px);
+    height: calc(24px - 6px);
     left: 3px;
     top: 3px;
     background-color: var(--michu-tech-accent);
@@ -46,7 +46,7 @@
     background-color: var(--michu-tech-accent);
 
     .knob {
-      left: calc(100% - 26px - 3px);
+      left: calc(100% - 18px - 3px);
       background-color: var(--michu-tech-primary);
     }
   }

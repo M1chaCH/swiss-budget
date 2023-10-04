@@ -38,12 +38,11 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({"all", "unchecked", "rawtypes"})
 public class Transaction extends TableImpl<TransactionRecord> {
 
-    private static final long serialVersionUID = 1L;
-
     /**
      * The reference instance of <code>public.transaction</code>
      */
     public static final Transaction TRANSACTION = new Transaction();
+    private static final long serialVersionUID = 1L;
     /**
      * The column <code>public.transaction.user_id</code>.
      */
@@ -110,6 +109,8 @@ public class Transaction extends TableImpl<TransactionRecord> {
     public final TableField<TransactionRecord, String> NOTE = createField(DSL.name("note"),
         SQLDataType.VARCHAR(250), this, "");
     private transient Tag _tag;
+    private transient Keyword _keyword;
+    private transient RegisteredUser _registeredUser;
 
     private Transaction(Name alias, Table<TransactionRecord> aliased) {
         this(alias, aliased, null);
@@ -165,8 +166,6 @@ public class Transaction extends TableImpl<TransactionRecord> {
             Keys.TRANSACTION__TRANSACTION_MATCHING_KEYWORD_ID_FKEY,
             Keys.TRANSACTION__TRANSACTION_USER_ID_FKEY);
     }
-    private transient Keyword _keyword;
-    private transient RegisteredUser _registeredUser;
 
     /**
      * The class holding records for this type
@@ -180,8 +179,9 @@ public class Transaction extends TableImpl<TransactionRecord> {
      * Get the implicit join path to the <code>public.tag</code> table.
      */
     public Tag tag() {
-        if (_tag == null)
+        if (_tag == null) {
             _tag = new Tag(this, Keys.TRANSACTION__TRANSACTION_TAG_ID_FKEY);
+        }
 
         return _tag;
     }
@@ -190,19 +190,20 @@ public class Transaction extends TableImpl<TransactionRecord> {
      * Get the implicit join path to the <code>public.keyword</code> table.
      */
     public Keyword keyword() {
-        if (_keyword == null)
+        if (_keyword == null) {
             _keyword = new Keyword(this, Keys.TRANSACTION__TRANSACTION_MATCHING_KEYWORD_ID_FKEY);
+        }
 
         return _keyword;
     }
 
     /**
-     * Get the implicit join path to the <code>public.registered_user</code>
-     * table.
+     * Get the implicit join path to the <code>public.registered_user</code> table.
      */
     public RegisteredUser registeredUser() {
-        if (_registeredUser == null)
+        if (_registeredUser == null) {
             _registeredUser = new RegisteredUser(this, Keys.TRANSACTION__TRANSACTION_USER_ID_FKEY);
+        }
 
         return _registeredUser;
     }
@@ -272,8 +273,7 @@ public class Transaction extends TableImpl<TransactionRecord> {
     }
 
     /**
-     * Convenience mapping calling {@link SelectField#convertFrom(Class,
-     * Function)}.
+     * Convenience mapping calling {@link SelectField#convertFrom(Class, Function)}.
      */
     public <U> SelectField<U> mapping(Class<U> toType,
         Function11<? super Integer, ? super Boolean, ? super LocalDate, ? super String, ? super Double, ? super String, ? super Integer, ? super Integer, ? super String, ? super String, ? super String, ? extends U> from) {

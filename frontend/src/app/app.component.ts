@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {fadePageTransition} from "./animations";
+import {fadePageTransition, switchAnimation} from "./animations";
 import {NavigationStart, Router} from "@angular/router";
 import {PageStateService} from "./services/page-state.service";
 import {ThemeService} from "./services/theme.service";
@@ -12,7 +12,7 @@ import {Observable} from "rxjs";
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
-  animations: [fadePageTransition]
+  animations: [fadePageTransition, switchAnimation]
 })
 export class AppComponent implements OnInit {
   currentRoute: string = ""

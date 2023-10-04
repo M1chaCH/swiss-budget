@@ -24,13 +24,11 @@ import org.jooq.impl.SchemaImpl;
 @SuppressWarnings({"all", "unchecked", "rawtypes"})
 public class Public extends SchemaImpl {
 
-    private static final long serialVersionUID = 1L;
-
     /**
      * The reference instance of <code>public</code>
      */
     public static final Public PUBLIC = new Public();
-
+    private static final long serialVersionUID = 1L;
     /**
      * The table <code>public.keyword</code>.
      */

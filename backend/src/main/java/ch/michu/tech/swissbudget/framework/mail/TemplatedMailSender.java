@@ -45,6 +45,8 @@ public class TemplatedMailSender {
 
         try {
             String messageContent = loadTemplatedContent(internalMessageId, templateName, content);
+            LOGGER.log(Level.FINE, "sending templated mail to {0}: {1}",
+                new Object[]{recipient.getAddress(), messageContent});
             MimeBodyPart body = new MimeBodyPart();
             body.setContent(messageContent, MailSender.HTML_MESSAGE_TYPE);
             sender.sendMessage(internalMessageId, recipient, subject, new MimeMultipart(body));

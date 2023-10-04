@@ -35,31 +35,27 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({"all", "unchecked", "rawtypes"})
 public class VerifiedDevice extends TableImpl<VerifiedDeviceRecord> {
 
-    private static final long serialVersionUID = 1L;
-
     /**
      * The reference instance of <code>public.verified_device</code>
      */
     public static final VerifiedDevice VERIFIED_DEVICE = new VerifiedDevice();
-    private transient RegisteredUser _registeredUser;
-
+    private static final long serialVersionUID = 1L;
     /**
      * The column <code>public.verified_device.id</code>.
      */
     public final TableField<VerifiedDeviceRecord, Integer> ID = createField(DSL.name("id"),
         SQLDataType.INTEGER.nullable(false).identity(true), this, "");
-
     /**
      * The column <code>public.verified_device.user_id</code>.
      */
     public final TableField<VerifiedDeviceRecord, String> USER_ID = createField(DSL.name("user_id"),
         SQLDataType.VARCHAR(250).nullable(false), this, "");
-
     /**
      * The column <code>public.verified_device.user_agent</code>.
      */
     public final TableField<VerifiedDeviceRecord, String> USER_AGENT = createField(
         DSL.name("user_agent"), SQLDataType.VARCHAR(250).nullable(false), this, "");
+    private transient RegisteredUser _registeredUser;
 
     private VerifiedDevice(Name alias, Table<VerifiedDeviceRecord> aliased) {
         this(alias, aliased, null);
@@ -124,8 +120,7 @@ public class VerifiedDevice extends TableImpl<VerifiedDeviceRecord> {
     }
 
     /**
-     * Get the implicit join path to the <code>public.registered_user</code>
-     * table.
+     * Get the implicit join path to the <code>public.registered_user</code> table.
      */
     public RegisteredUser registeredUser() {
         if (_registeredUser == null) {
@@ -193,8 +188,7 @@ public class VerifiedDevice extends TableImpl<VerifiedDeviceRecord> {
     }
 
     /**
-     * Convenience mapping calling {@link SelectField#convertFrom(Class,
-     * Function)}.
+     * Convenience mapping calling {@link SelectField#convertFrom(Class, Function)}.
      */
     public <U> SelectField<U> mapping(Class<U> toType,
         Function3<? super Integer, ? super String, ? super String, ? extends U> from) {

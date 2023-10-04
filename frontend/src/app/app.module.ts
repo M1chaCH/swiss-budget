@@ -28,6 +28,7 @@ import {MfaSubpageComponent} from './pages/welcome.page/mfa.subpage/mfa.subpage.
 import {CheckboxComponent} from './components/checkbox/checkbox.component';
 import {BudgetPageComponent} from './pages/budget.page/budget.page.component';
 import {PageDirective} from './pages/page.directive';
+import {ContentReplacerDirective} from "./animations";
 
 @NgModule({
   declarations: [
@@ -50,7 +51,8 @@ import {PageDirective} from './pages/page.directive';
     MfaSubpageComponent,
     CheckboxComponent,
     BudgetPageComponent,
-    PageDirective
+    PageDirective,
+    ContentReplacerDirective,
   ],
   imports: [
     BrowserModule,

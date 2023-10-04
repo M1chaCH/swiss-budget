@@ -23,24 +23,10 @@ public class RegisteredUserRecord extends UpdatableRecordImpl<RegisteredUserReco
     private static final long serialVersionUID = 1L;
 
     /**
-     * Setter for <code>public.registered_user.id</code>.
-     */
-    public void setId(String value) {
-        set(0, value);
-    }
-
-    /**
      * Create a detached RegisteredUserRecord
      */
     public RegisteredUserRecord() {
         super(RegisteredUser.REGISTERED_USER);
-    }
-
-    /**
-     * Setter for <code>public.registered_user.mail</code>.
-     */
-    public void setMail(String value) {
-        set(1, value);
     }
 
     /**
@@ -64,13 +50,6 @@ public class RegisteredUserRecord extends UpdatableRecordImpl<RegisteredUserReco
     }
 
     /**
-     * Setter for <code>public.registered_user.password</code>.
-     */
-    public void setPassword(String value) {
-        set(2, value);
-    }
-
-    /**
      * Getter for <code>public.registered_user.id</code>.
      */
     public String getId() {
@@ -78,10 +57,10 @@ public class RegisteredUserRecord extends UpdatableRecordImpl<RegisteredUserReco
     }
 
     /**
-     * Setter for <code>public.registered_user.salt</code>.
+     * Setter for <code>public.registered_user.id</code>.
      */
-    public void setSalt(String value) {
-        set(3, value);
+    public void setId(String value) {
+        set(0, value);
     }
 
     /**
@@ -92,10 +71,10 @@ public class RegisteredUserRecord extends UpdatableRecordImpl<RegisteredUserReco
     }
 
     /**
-     * Setter for <code>public.registered_user.mail_password</code>.
+     * Setter for <code>public.registered_user.mail</code>.
      */
-    public void setMailPassword(String value) {
-        set(4, value);
+    public void setMail(String value) {
+        set(1, value);
     }
 
     /**
@@ -106,10 +85,10 @@ public class RegisteredUserRecord extends UpdatableRecordImpl<RegisteredUserReco
     }
 
     /**
-     * Setter for <code>public.registered_user.username</code>.
+     * Setter for <code>public.registered_user.password</code>.
      */
-    public void setUsername(String value) {
-        set(5, value);
+    public void setPassword(String value) {
+        set(2, value);
     }
 
     /**
@@ -120,10 +99,10 @@ public class RegisteredUserRecord extends UpdatableRecordImpl<RegisteredUserReco
     }
 
     /**
-     * Setter for <code>public.registered_user.disabled</code>.
+     * Setter for <code>public.registered_user.salt</code>.
      */
-    public void setDisabled(Boolean value) {
-        set(6, value);
+    public void setSalt(String value) {
+        set(3, value);
     }
 
     /**
@@ -134,10 +113,10 @@ public class RegisteredUserRecord extends UpdatableRecordImpl<RegisteredUserReco
     }
 
     /**
-     * Setter for <code>public.registered_user.created_at</code>.
+     * Setter for <code>public.registered_user.mail_password</code>.
      */
-    public void setCreatedAt(LocalDateTime value) {
-        set(7, value);
+    public void setMailPassword(String value) {
+        set(4, value);
     }
 
     /**
@@ -148,10 +127,10 @@ public class RegisteredUserRecord extends UpdatableRecordImpl<RegisteredUserReco
     }
 
     /**
-     * Setter for <code>public.registered_user.last_login</code>.
+     * Setter for <code>public.registered_user.username</code>.
      */
-    public void setLastLogin(LocalDateTime value) {
-        set(8, value);
+    public void setUsername(String value) {
+        set(5, value);
     }
 
     /**
@@ -162,6 +141,13 @@ public class RegisteredUserRecord extends UpdatableRecordImpl<RegisteredUserReco
     }
 
     /**
+     * Setter for <code>public.registered_user.disabled</code>.
+     */
+    public void setDisabled(Boolean value) {
+        set(6, value);
+    }
+
+    /**
      * Getter for <code>public.registered_user.created_at</code>.
      */
     public LocalDateTime getCreatedAt() {
@@ -169,10 +155,24 @@ public class RegisteredUserRecord extends UpdatableRecordImpl<RegisteredUserReco
     }
 
     /**
+     * Setter for <code>public.registered_user.created_at</code>.
+     */
+    public void setCreatedAt(LocalDateTime value) {
+        set(7, value);
+    }
+
+    /**
      * Getter for <code>public.registered_user.current_session</code>.
      */
     public String getCurrentSession() {
         return (String) get(9);
+    }
+
+    /**
+     * Setter for <code>public.registered_user.current_session</code>.
+     */
+    public void setCurrentSession(String value) {
+        set(9, value);
     }
 
     // -------------------------------------------------------------------------
@@ -201,10 +201,10 @@ public class RegisteredUserRecord extends UpdatableRecordImpl<RegisteredUserReco
     }
 
     /**
-     * Setter for <code>public.registered_user.current_session</code>.
+     * Setter for <code>public.registered_user.last_login</code>.
      */
-    public void setCurrentSession(String value) {
-        set(9, value);
+    public void setLastLogin(LocalDateTime value) {
+        set(8, value);
     }
 
     @Override
