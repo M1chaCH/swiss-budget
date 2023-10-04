@@ -27,37 +27,43 @@
         <nav *ngIf="!fullscreenPage"
              [style.width]="sideMenuOpen ? 'var(--nav-open-width)' : '0px'">
             <div class="menu-container">
-                <a [class.active-menu-item]="currentPage.route === pages.HOME"
+                <a (click)="closeMenuIfOverlayMode()"
+                   [class.active-menu-item]="currentPage.route === pages.HOME"
                    [routerLink]="'app/' + pages.HOME"
                    class="menu-item">
                     <span>Home</span>
                     <span class="material-symbols-rounded">account_balance</span>
                 </a>
-                <a [class.active-menu-item]="currentPage.route === pages.BUDGET"
+                <a (click)="closeMenuIfOverlayMode()"
+                   [class.active-menu-item]="currentPage.route === pages.BUDGET"
                    [routerLink]="'app/' + pages.BUDGET"
                    class="menu-item">
                     <span>Budget</span>
                     <span class="material-symbols-rounded">trending_up</span>
                 </a>
-                <a [class.active-menu-item]="currentPage.route === pages.TRANSACTIONS"
+                <a (click)="closeMenuIfOverlayMode()"
+                   [class.active-menu-item]="currentPage.route === pages.TRANSACTIONS"
                    [routerLink]="'app/' + pages.TRANSACTIONS"
                    class="menu-item">
                     <span>Transactions</span>
                     <span class="material-symbols-rounded">payments</span>
                 </a>
-                <a [class.active-menu-item]="currentPage.route === pages.SAVE"
+                <a (click)="closeMenuIfOverlayMode()"
+                   [class.active-menu-item]="currentPage.route === pages.SAVE"
                    [routerLink]="'app/' + pages.SAVE"
                    class="menu-item">
                     <span>Save</span>
                     <span class="material-symbols-rounded">savings</span>
                 </a>
-                <a [class.active-menu-item]="currentPage.route === pages.CONFIGURATION"
+                <a (click)="closeMenuIfOverlayMode()"
+                   [class.active-menu-item]="currentPage.route === pages.CONFIGURATION"
                    [routerLink]="'app/' + pages.CONFIGURATION"
                    class="menu-item">
                     <span>Configuration</span>
                     <span class="material-symbols-rounded">tune</span>
                 </a>
-                <a [class.active-menu-item]="currentPage.route === pages.PROFILE"
+                <a (click)="closeMenuIfOverlayMode()"
+                   [class.active-menu-item]="currentPage.route === pages.PROFILE"
                    [routerLink]="'app/' + pages.PROFILE"
                    class="menu-item">
                     <span>Profile</span>

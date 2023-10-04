@@ -43,6 +43,11 @@ export class AppComponent implements OnInit {
     });
   }
 
+  closeMenuIfOverlayMode() {
+    if (window.innerWidth < 1001)
+      this.sideMenuOpen = false;
+  }
+
   logout() {
     this.auth.logout();
   }
