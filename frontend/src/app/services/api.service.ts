@@ -10,7 +10,9 @@ export const endpoint = {
   CREATE_MAIL_FOLDER: "/register/mail/folder",
   CONTACT: "/contact",
   AUTH: "/auth",
-  MFA: "/auth/mfa"
+  MFA: "/auth/mfa",
+  SUPPORTED_BANK: "/register/bank",
+  TRANSACTIONS: "/transaction",
 }
 
 

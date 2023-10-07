@@ -7,18 +7,17 @@ package ch.michu.tech.swissbudget.generated.jooq.tables;
 import ch.michu.tech.swissbudget.generated.jooq.Keys;
 import ch.michu.tech.swissbudget.generated.jooq.Public;
 import ch.michu.tech.swissbudget.generated.jooq.tables.records.TransactionMailRecord;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 import org.jooq.Field;
 import org.jooq.ForeignKey;
-import org.jooq.Function9;
-import org.jooq.Identity;
+import org.jooq.Function10;
 import org.jooq.Name;
 import org.jooq.Record;
 import org.jooq.Records;
-import org.jooq.Row9;
+import org.jooq.Row10;
 import org.jooq.Schema;
 import org.jooq.SelectField;
 import org.jooq.Table;
@@ -36,75 +35,68 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({"all", "unchecked", "rawtypes"})
 public class TransactionMail extends TableImpl<TransactionMailRecord> {
 
+    private static final long serialVersionUID = 1L;
+
     /**
      * The reference instance of <code>public.transaction_mail</code>
      */
     public static final TransactionMail TRANSACTION_MAIL = new TransactionMail();
-    private static final long serialVersionUID = 1L;
-    /**
-     * The column <code>public.transaction_mail.user_id</code>.
-     */
-    public final TableField<TransactionMailRecord, String> USER_ID = createField(
-        DSL.name("user_id"), SQLDataType.VARCHAR(250).nullable(false), this, "");
-
     /**
      * The column <code>public.transaction_mail.id</code>.
      */
-    public final TableField<TransactionMailRecord, Integer> ID = createField(DSL.name("id"),
-        SQLDataType.INTEGER.nullable(false).identity(true), this, "");
-
+    public final TableField<TransactionMailRecord, String> ID = createField(DSL.name("id"), SQLDataType.VARCHAR(250).nullable(false), this,
+        "");
     /**
      * The column <code>public.transaction_mail.message_number</code>.
      */
-    public final TableField<TransactionMailRecord, Integer> MESSAGE_NUMBER = createField(
-        DSL.name("message_number"), SQLDataType.INTEGER.nullable(false), this, "");
-
+    public final TableField<TransactionMailRecord, Integer> MESSAGE_NUMBER = createField(DSL.name("message_number"),
+        SQLDataType.INTEGER.nullable(false), this, "");
     /**
      * The column <code>public.transaction_mail.from_mail</code>.
      */
-    public final TableField<TransactionMailRecord, String> FROM_MAIL = createField(
-        DSL.name("from_mail"), SQLDataType.VARCHAR(250).nullable(false), this, "");
-
+    public final TableField<TransactionMailRecord, String> FROM_MAIL = createField(DSL.name("from_mail"),
+        SQLDataType.VARCHAR(250).nullable(false), this, "");
     /**
      * The column <code>public.transaction_mail.to_mail</code>.
      */
-    public final TableField<TransactionMailRecord, String> TO_MAIL = createField(
-        DSL.name("to_mail"), SQLDataType.VARCHAR(250).nullable(false), this, "");
-
+    public final TableField<TransactionMailRecord, String> TO_MAIL = createField(DSL.name("to_mail"),
+        SQLDataType.VARCHAR(250).nullable(false), this, "");
     /**
      * The column <code>public.transaction_mail.received_date</code>.
      */
-    public final TableField<TransactionMailRecord, LocalDate> RECEIVED_DATE = createField(
-        DSL.name("received_date"), SQLDataType.LOCALDATE.nullable(false), this, "");
-
+    public final TableField<TransactionMailRecord, LocalDateTime> RECEIVED_DATE = createField(DSL.name("received_date"),
+        SQLDataType.LOCALDATETIME(6).nullable(false), this, "");
     /**
      * The column <code>public.transaction_mail.subject</code>.
      */
-    public final TableField<TransactionMailRecord, String> SUBJECT = createField(
-        DSL.name("subject"), SQLDataType.VARCHAR(250).nullable(false), this, "");
-
+    public final TableField<TransactionMailRecord, String> SUBJECT = createField(DSL.name("subject"),
+        SQLDataType.VARCHAR(250).nullable(false), this, "");
     /**
      * The column <code>public.transaction_mail.raw_message</code>.
      */
-    public final TableField<TransactionMailRecord, String> RAW_MESSAGE = createField(
-        DSL.name("raw_message"), SQLDataType.CLOB.nullable(false), this, "");
-
+    public final TableField<TransactionMailRecord, String> RAW_MESSAGE = createField(DSL.name("raw_message"),
+        SQLDataType.CLOB.nullable(false), this, "");
     /**
      * The column <code>public.transaction_mail.transaction_id</code>.
      */
-    public final TableField<TransactionMailRecord, Integer> TRANSACTION_ID = createField(
-        DSL.name("transaction_id"), SQLDataType.INTEGER, this, "");
+    public final TableField<TransactionMailRecord, String> TRANSACTION_ID = createField(DSL.name("transaction_id"),
+        SQLDataType.VARCHAR(250).nullable(false), this, "");
+    /**
+     * The column <code>public.transaction_mail.user_id</code>.
+     */
+    public final TableField<TransactionMailRecord, String> USER_ID = createField(DSL.name("user_id"),
+        SQLDataType.VARCHAR(250).nullable(false), this, "");
+    /**
+     * The column <code>public.transaction_mail.bank</code>.
+     */
+    public final TableField<TransactionMailRecord, String> BANK = createField(DSL.name("bank"), SQLDataType.VARCHAR(250).nullable(false),
+        this, "");
     private transient Transaction _transaction;
-    private transient RegisteredUser _registeredUser;
 
     private TransactionMail(Name alias, Table<TransactionMailRecord> aliased) {
         this(alias, aliased, null);
     }
-
-    private TransactionMail(Name alias, Table<TransactionMailRecord> aliased,
-        Field<?>[] parameters) {
-        super(alias, null, aliased, parameters, DSL.comment(""), TableOptions.table());
-    }
+    private transient RegisteredUser _registeredUser;
 
     /**
      * Create an aliased <code>public.transaction_mail</code> table reference
@@ -127,19 +119,13 @@ public class TransactionMail extends TableImpl<TransactionMailRecord> {
         this(DSL.name("transaction_mail"), null);
     }
 
-    public <O extends Record> TransactionMail(Table<O> child,
-        ForeignKey<O, TransactionMailRecord> key) {
-        super(child, key, TRANSACTION_MAIL);
+    private TransactionMail(Name alias, Table<TransactionMailRecord> aliased, Field<?>[] parameters) {
+        super(alias, null, aliased, parameters, DSL.comment(""), TableOptions.table());
     }
 
     @Override
     public Schema getSchema() {
         return aliased() ? null : Public.PUBLIC;
-    }
-
-    @Override
-    public Identity<TransactionMailRecord, Integer> getIdentity() {
-        return (Identity<TransactionMailRecord, Integer>) super.getIdentity();
     }
 
     @Override
@@ -151,6 +137,10 @@ public class TransactionMail extends TableImpl<TransactionMailRecord> {
     public List<ForeignKey<TransactionMailRecord, ?>> getReferences() {
         return Arrays.asList(Keys.TRANSACTION_MAIL__TRANSACTION_MAIL_TRANSACTION_ID_FKEY,
             Keys.TRANSACTION_MAIL__TRANSACTION_MAIL_USER_ID_FKEY);
+    }
+
+    public <O extends Record> TransactionMail(Table<O> child, ForeignKey<O, TransactionMailRecord> key) {
+        super(child, key, TRANSACTION_MAIL);
     }
 
     /**
@@ -166,20 +156,19 @@ public class TransactionMail extends TableImpl<TransactionMailRecord> {
      */
     public Transaction transaction() {
         if (_transaction == null) {
-            _transaction = new Transaction(this,
-                Keys.TRANSACTION_MAIL__TRANSACTION_MAIL_TRANSACTION_ID_FKEY);
+            _transaction = new Transaction(this, Keys.TRANSACTION_MAIL__TRANSACTION_MAIL_TRANSACTION_ID_FKEY);
         }
 
         return _transaction;
     }
 
     /**
-     * Get the implicit join path to the <code>public.registered_user</code> table.
+     * Get the implicit join path to the <code>public.registered_user</code>
+     * table.
      */
     public RegisteredUser registeredUser() {
         if (_registeredUser == null) {
-            _registeredUser = new RegisteredUser(this,
-                Keys.TRANSACTION_MAIL__TRANSACTION_MAIL_USER_ID_FKEY);
+            _registeredUser = new RegisteredUser(this, Keys.TRANSACTION_MAIL__TRANSACTION_MAIL_USER_ID_FKEY);
         }
 
         return _registeredUser;
@@ -225,27 +214,28 @@ public class TransactionMail extends TableImpl<TransactionMailRecord> {
     }
 
     // -------------------------------------------------------------------------
-    // Row9 type methods
+    // Row10 type methods
     // -------------------------------------------------------------------------
 
     @Override
-    public Row9<Integer, Integer, String, String, LocalDate, String, String, Integer, String> fieldsRow() {
-        return (Row9) super.fieldsRow();
+    public Row10<String, Integer, String, String, LocalDateTime, String, String, String, String, String> fieldsRow() {
+        return (Row10) super.fieldsRow();
     }
 
     /**
      * Convenience mapping calling {@link SelectField#convertFrom(Function)}.
      */
     public <U> SelectField<U> mapping(
-        Function9<? super Integer, ? super Integer, ? super String, ? super String, ? super LocalDate, ? super String, ? super String, ? super Integer, ? super String, ? extends U> from) {
+        Function10<? super String, ? super Integer, ? super String, ? super String, ? super LocalDateTime, ? super String, ? super String, ? super String, ? super String, ? super String, ? extends U> from) {
         return convertFrom(Records.mapping(from));
     }
 
     /**
-     * Convenience mapping calling {@link SelectField#convertFrom(Class, Function)}.
+     * Convenience mapping calling {@link SelectField#convertFrom(Class,
+     * Function)}.
      */
     public <U> SelectField<U> mapping(Class<U> toType,
-        Function9<? super Integer, ? super Integer, ? super String, ? super String, ? super LocalDate, ? super String, ? super String, ? super Integer, ? super String, ? extends U> from) {
+        Function10<? super String, ? super Integer, ? super String, ? super String, ? super LocalDateTime, ? super String, ? super String, ? super String, ? super String, ? super String, ? extends U> from) {
         return convertFrom(toType, Records.mapping(from));
     }
 }

@@ -10,14 +10,20 @@ export class SelectComponent implements OnInit {
 
   @Input() value!: FormControl<string | null>;
   @Input() placeholder: string = "";
-  @Input() options: string[] = [];
   @Input() errorMessage: string = "Selection is invalid";
 
   open: boolean = false;
   filteredOptions: string[] = [];
 
+  private _options: string[] = [];
+
+  @Input() set options(value: string[] | null) {
+    this._options = value ?? [];
+    this.filteredOptions = this._options;
+    console.log(this._options)
+  }
+
   ngOnInit(): void {
-    this.filteredOptions = this.options;
     this.value.valueChanges.subscribe(_ => this.handleValueChange(this.value))
     this.handleValueChange(this.value);
   }
@@ -50,8 +56,8 @@ export class SelectComponent implements OnInit {
 
     this.filteredOptions = this.filteredOptions.filter(o => o.toLowerCase().includes(currentValue.toLowerCase()));
 
-    if (!currentValue || this.options.includes(currentValue)) {
-      this.filteredOptions = this.options;
+    if (!currentValue || this._options.includes(currentValue)) {
+      this.filteredOptions = this._options ?? [];
     } else {
       control.setErrors({notAnOption: true});
     }

@@ -18,7 +18,7 @@ import org.jooq.impl.UpdatableRecordImpl;
  */
 @SuppressWarnings({"all", "unchecked", "rawtypes"})
 public class TransactionRecord extends UpdatableRecordImpl<TransactionRecord> implements
-    Record11<Integer, Boolean, LocalDate, String, Double, String, Integer, Integer, String, String, String> {
+    Record11<String, Boolean, LocalDate, String, Double, String, Integer, Integer, String, String, String> {
 
     private static final long serialVersionUID = 1L;
 
@@ -32,9 +32,8 @@ public class TransactionRecord extends UpdatableRecordImpl<TransactionRecord> im
     /**
      * Create a detached, initialised TransactionRecord
      */
-    public TransactionRecord(Integer id, Boolean expense, LocalDate transactionDate,
-        String bankaccount, Double amount, String receiver, Integer tagId,
-        Integer matchingKeywordId, String alias, String note, String userId) {
+    public TransactionRecord(String id, Boolean expense, LocalDate transactionDate, String bankaccount, Double amount, String receiver,
+        Integer tagId, Integer matchingKeywordId, String alias, String note, String userId) {
         super(Transaction.TRANSACTION);
 
         setId(id);
@@ -51,27 +50,6 @@ public class TransactionRecord extends UpdatableRecordImpl<TransactionRecord> im
     }
 
     /**
-     * Getter for <code>public.transaction.id</code>.
-     */
-    public Integer getId() {
-        return (Integer) get(0);
-    }
-
-    /**
-     * Setter for <code>public.transaction.id</code>.
-     */
-    public void setId(Integer value) {
-        set(0, value);
-    }
-
-    /**
-     * Getter for <code>public.transaction.expense</code>.
-     */
-    public Boolean getExpense() {
-        return (Boolean) get(1);
-    }
-
-    /**
      * Setter for <code>public.transaction.expense</code>.
      */
     public void setExpense(Boolean value) {
@@ -79,10 +57,10 @@ public class TransactionRecord extends UpdatableRecordImpl<TransactionRecord> im
     }
 
     /**
-     * Getter for <code>public.transaction.transaction_date</code>.
+     * Getter for <code>public.transaction.id</code>.
      */
-    public LocalDate getTransactionDate() {
-        return (LocalDate) get(2);
+    public String getId() {
+        return (String) get(0);
     }
 
     /**
@@ -93,10 +71,10 @@ public class TransactionRecord extends UpdatableRecordImpl<TransactionRecord> im
     }
 
     /**
-     * Getter for <code>public.transaction.bankaccount</code>.
+     * Setter for <code>public.transaction.id</code>.
      */
-    public String getBankaccount() {
-        return (String) get(3);
+    public void setId(String value) {
+        set(0, value);
     }
 
     /**
@@ -107,10 +85,10 @@ public class TransactionRecord extends UpdatableRecordImpl<TransactionRecord> im
     }
 
     /**
-     * Getter for <code>public.transaction.amount</code>.
+     * Getter for <code>public.transaction.expense</code>.
      */
-    public Double getAmount() {
-        return (Double) get(4);
+    public Boolean getExpense() {
+        return (Boolean) get(1);
     }
 
     /**
@@ -121,10 +99,10 @@ public class TransactionRecord extends UpdatableRecordImpl<TransactionRecord> im
     }
 
     /**
-     * Getter for <code>public.transaction.receiver</code>.
+     * Getter for <code>public.transaction.transaction_date</code>.
      */
-    public String getReceiver() {
-        return (String) get(5);
+    public LocalDate getTransactionDate() {
+        return (LocalDate) get(2);
     }
 
     /**
@@ -135,24 +113,10 @@ public class TransactionRecord extends UpdatableRecordImpl<TransactionRecord> im
     }
 
     /**
-     * Getter for <code>public.transaction.matching_keyword_id</code>.
+     * Getter for <code>public.transaction.bankaccount</code>.
      */
-    public Integer getMatchingKeywordId() {
-        return (Integer) get(7);
-    }
-
-    /**
-     * Setter for <code>public.transaction.matching_keyword_id</code>.
-     */
-    public void setMatchingKeywordId(Integer value) {
-        set(7, value);
-    }
-
-    /**
-     * Getter for <code>public.transaction.tag_id</code>.
-     */
-    public Integer getTagId() {
-        return (Integer) get(6);
+    public String getBankaccount() {
+        return (String) get(3);
     }
 
     /**
@@ -163,10 +127,24 @@ public class TransactionRecord extends UpdatableRecordImpl<TransactionRecord> im
     }
 
     /**
-     * Getter for <code>public.transaction.alias</code>.
+     * Getter for <code>public.transaction.amount</code>.
      */
-    public String getAlias() {
-        return (String) get(8);
+    public Double getAmount() {
+        return (Double) get(4);
+    }
+
+    /**
+     * Getter for <code>public.transaction.receiver</code>.
+     */
+    public String getReceiver() {
+        return (String) get(5);
+    }
+
+    /**
+     * Getter for <code>public.transaction.tag_id</code>.
+     */
+    public Integer getTagId() {
+        return (Integer) get(6);
     }
 
     /**
@@ -177,10 +155,10 @@ public class TransactionRecord extends UpdatableRecordImpl<TransactionRecord> im
     }
 
     /**
-     * Getter for <code>public.transaction.note</code>.
+     * Getter for <code>public.transaction.matching_keyword_id</code>.
      */
-    public String getNote() {
-        return (String) get(9);
+    public Integer getMatchingKeywordId() {
+        return (Integer) get(7);
     }
 
     /**
@@ -190,15 +168,36 @@ public class TransactionRecord extends UpdatableRecordImpl<TransactionRecord> im
         set(9, value);
     }
 
-    // -------------------------------------------------------------------------
-    // Primary key information
-    // -------------------------------------------------------------------------
+    /**
+     * Setter for <code>public.transaction.matching_keyword_id</code>.
+     */
+    public void setMatchingKeywordId(Integer value) {
+        set(7, value);
+    }
+
+    /**
+     * Getter for <code>public.transaction.alias</code>.
+     */
+    public String getAlias() {
+        return (String) get(8);
+    }
 
     /**
      * Getter for <code>public.transaction.user_id</code>.
      */
     public String getUserId() {
         return (String) get(10);
+    }
+
+    // -------------------------------------------------------------------------
+    // Primary key information
+    // -------------------------------------------------------------------------
+
+    /**
+     * Getter for <code>public.transaction.note</code>.
+     */
+    public String getNote() {
+        return (String) get(9);
     }
 
     // -------------------------------------------------------------------------
@@ -213,13 +212,13 @@ public class TransactionRecord extends UpdatableRecordImpl<TransactionRecord> im
     }
 
     @Override
-    public Record1<Integer> key() {
+    public Record1<String> key() {
         return (Record1) super.key();
     }
 
     @Override
-    public Field<Integer> field1() {
-        return Transaction.TRANSACTION.ID;
+    public Row11<String, Boolean, LocalDate, String, Double, String, Integer, Integer, String, String, String> fieldsRow() {
+        return (Row11) super.fieldsRow();
     }
 
     @Override
@@ -268,13 +267,13 @@ public class TransactionRecord extends UpdatableRecordImpl<TransactionRecord> im
     }
 
     @Override
-    public Row11<Integer, Boolean, LocalDate, String, Double, String, Integer, Integer, String, String, String> fieldsRow() {
-        return (Row11) super.fieldsRow();
+    public Row11<String, Boolean, LocalDate, String, Double, String, Integer, Integer, String, String, String> valuesRow() {
+        return (Row11) super.valuesRow();
     }
 
     @Override
-    public Integer component1() {
-        return getId();
+    public Field<String> field1() {
+        return Transaction.TRANSACTION.ID;
     }
 
     @Override
@@ -323,12 +322,12 @@ public class TransactionRecord extends UpdatableRecordImpl<TransactionRecord> im
     }
 
     @Override
-    public Row11<Integer, Boolean, LocalDate, String, Double, String, Integer, Integer, String, String, String> valuesRow() {
-        return (Row11) super.valuesRow();
+    public Field<String> field11() {
+        return Transaction.TRANSACTION.USER_ID;
     }
 
     @Override
-    public Integer value1() {
+    public String component1() {
         return getId();
     }
 
@@ -378,14 +377,13 @@ public class TransactionRecord extends UpdatableRecordImpl<TransactionRecord> im
     }
 
     @Override
-    public Field<String> field11() {
-        return Transaction.TRANSACTION.USER_ID;
+    public String component11() {
+        return getUserId();
     }
 
     @Override
-    public TransactionRecord value1(Integer value) {
-        setId(value);
-        return this;
+    public String value1() {
+        return getId();
     }
 
     @Override
@@ -449,9 +447,23 @@ public class TransactionRecord extends UpdatableRecordImpl<TransactionRecord> im
     }
 
     @Override
-    public TransactionRecord values(Integer value1, Boolean value2, LocalDate value3, String value4,
-        Double value5, String value6, Integer value7, Integer value8, String value9, String value10,
-        String value11) {
+    public String value11() {
+        return getUserId();
+    }
+
+    // -------------------------------------------------------------------------
+    // Constructors
+    // -------------------------------------------------------------------------
+
+    @Override
+    public TransactionRecord value1(String value) {
+        setId(value);
+        return this;
+    }
+
+    @Override
+    public TransactionRecord values(String value1, Boolean value2, LocalDate value3, String value4, Double value5, String value6,
+        Integer value7, Integer value8, String value9, String value10, String value11) {
         value1(value1);
         value2(value2);
         value3(value3);
@@ -464,19 +476,5 @@ public class TransactionRecord extends UpdatableRecordImpl<TransactionRecord> im
         value10(value10);
         value11(value11);
         return this;
-    }
-
-    // -------------------------------------------------------------------------
-    // Constructors
-    // -------------------------------------------------------------------------
-
-    @Override
-    public String component11() {
-        return getUserId();
-    }
-
-    @Override
-    public String value11() {
-        return getUserId();
     }
 }

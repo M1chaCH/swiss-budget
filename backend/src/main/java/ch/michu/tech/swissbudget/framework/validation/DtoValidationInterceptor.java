@@ -13,16 +13,14 @@ import java.util.regex.Pattern;
 @Interceptor
 public class DtoValidationInterceptor {
 
-    private static final Logger LOGGER = Logger.getLogger(
-        DtoValidationInterceptor.class.getSimpleName());
+    private static final Logger LOGGER = Logger.getLogger(DtoValidationInterceptor.class.getSimpleName());
 
     private final Pattern mailPattern = Pattern.compile("^[A-Za-z0-9+_.-]+@(.+)$");
 
     @AroundInvoke
     public Object intercept(InvocationContext context) throws Exception {
         LOGGER.log(Level.INFO, "validating parameters of {0}->{1}",
-            new Object[]{context.getTarget().getClass().getSimpleName(),
-                context.getMethod().getName()});
+            new Object[]{context.getTarget().getClass().getSimpleName(), context.getMethod().getName()});
         for (Object arg : context.getParameters()) {
             if (arg.getClass().isAnnotationPresent(ValidatedDto.class)) {
                 validateArg(arg);
@@ -34,8 +32,7 @@ public class DtoValidationInterceptor {
 
     @SuppressWarnings("java:S3011") // don't care about access warning
     protected void validateArg(Object arg) {
-        LOGGER.log(Level.FINE, "validating parameter: {0}",
-            new Object[]{arg.getClass().getSimpleName()});
+        LOGGER.log(Level.FINE, "validating parameter: {0}", new Object[]{arg.getClass().getSimpleName()});
         for (Field field : arg.getClass().getDeclaredFields()) {
             try {
                 field.setAccessible(true);
@@ -53,15 +50,13 @@ public class DtoValidationInterceptor {
 
                 String fieldValue = fieldObject.toString();
 
-                if (field.isAnnotationPresent(ValidateMail.class) && !mailPattern.matcher(
-                    fieldValue).matches()) {
+                if (field.isAnnotationPresent(ValidateMail.class) && !mailPattern.matcher(fieldValue).matches()) {
                     throw new DtoValidationException(arg, field, ValidateMail.class);
                 }
 
                 ValidateLength validateLengthAnnotation = field.getAnnotation(ValidateLength.class);
-                if (validateLengthAnnotation != null && (
-                    fieldValue.length() < validateLengthAnnotation.min()
-                        || fieldValue.length() > validateLengthAnnotation.max())) {
+                if (validateLengthAnnotation != null && (fieldValue.length() < validateLengthAnnotation.min()
+                    || fieldValue.length() > validateLengthAnnotation.max())) {
                     throw new DtoValidationException(arg, field, ValidateLength.class);
                 }
 
@@ -70,8 +65,7 @@ public class DtoValidationInterceptor {
                 }
 
             } catch (IllegalAccessException e) {
-                LOGGER.log(Level.WARNING,
-                    "IllegalAccess while trying to validate field {0} of type {1}",
+                LOGGER.log(Level.WARNING, "IllegalAccess while trying to validate field {0} of type {1}",
                     new Object[]{field.getName(), arg.getClass().getSimpleName()});
             }
         }
@@ -83,8 +77,7 @@ public class DtoValidationInterceptor {
         if (validateAmountAnnotation != null) {
             try {
                 double value = Double.parseDouble(fieldValue);
-                if (value < validateAmountAnnotation.min()
-                    || value > validateAmountAnnotation.max()) {
+                if (value < validateAmountAnnotation.min() || value > validateAmountAnnotation.max()) {
                     return false;
                 }
             } catch (NumberFormatException e) {

@@ -6,6 +6,8 @@ import {ErrorService} from "../../../services/error.service";
 import {AuthService} from "../../../services/auth.service";
 import {Router} from "@angular/router";
 import {pages} from "../../../app-routing.module";
+import {Observable, of, shareReplay, switchMap} from "rxjs";
+import {SupportedBankDto} from "../../../dtos/SupportedBankDto";
 
 @Component({
   selector: 'app-setup-subpage',
@@ -23,13 +25,17 @@ export class SetupSubpageComponent {
   createFolderErrorMessage: string | undefined;
   folderCreated: boolean = false;
   secondPasswordControl: FormControl = new FormControl(null, [Validators.required]);
-  readonly supportedBanks = ["Raiffeisen"]; // todo load them from the backend
+  supportedBanks$: Observable<string[]>;
 
   constructor(
       private api: ApiService,
       private router: Router,
   ) {
     this.form.mail.valueChanges.subscribe(v => this.showGoogleMessage = v.includes("gmail"));
+    this.supportedBanks$ = this.api.get<SupportedBankDto[]>(endpoint.SUPPORTED_BANK).pipe(
+        switchMap(response => of(response.map(dto => dto.key))),
+        shareReplay(1),
+    );
   }
 
   isMailAndPasswordInvalid() {

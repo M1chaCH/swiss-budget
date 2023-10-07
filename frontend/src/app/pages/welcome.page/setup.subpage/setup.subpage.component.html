@@ -88,7 +88,7 @@
                     different. So the app needs to know what to expect. <br>If your Bank is not
                     listed in the
                     selector, click help and tell me about it. I'll do my best to add it. </p>
-                <app-select [options]="supportedBanks" [value]="form.bank"
+                <app-select [options]="supportedBanks$ | async" [value]="form.bank"
                             errorMessage="Not a supported bank"
                             placeholder="Bank"></app-select>
                 <app-button (onClick)="cursor = cursor + 1"
@@ -105,7 +105,7 @@
                     href="https://www.raiffeisen.ch/region-zofingen/de/privatkunden/e-banking/e-banking-nutzen-und-vorteile/push-benachrichtigungen.html"
                     target="_blank">here</a> for a tutorial on how to setup notifications in the
                     raiffeisen e-banking. Make sure to enable <strong>E-Mail</strong> notifications
-                    for <strong>all changes</strong> on your account.
+                    for <strong>all changes</strong> on your account and enable the option for detailed mail.
                 </p>
                 <p>If you don't do this step, automatic transaction import wont work and you'll have
                     to enter all the values by hand. ):</p>

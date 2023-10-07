@@ -29,6 +29,7 @@ import {CheckboxComponent} from './components/checkbox/checkbox.component';
 import {BudgetPageComponent} from './pages/budget.page/budget.page.component';
 import {PageDirective} from './pages/page.directive';
 import {ContentReplacerDirective} from "./animations";
+import {TransactionPageComponent} from './pages/transaction.page/transaction.page.component';
 
 @NgModule({
   declarations: [
@@ -53,6 +54,7 @@ import {ContentReplacerDirective} from "./animations";
     BudgetPageComponent,
     PageDirective,
     ContentReplacerDirective,
+    TransactionPageComponent,
   ],
   imports: [
     BrowserModule,

@@ -10,6 +10,7 @@ import ch.michu.tech.swissbudget.generated.jooq.tables.RegisteredUser;
 import ch.michu.tech.swissbudget.generated.jooq.tables.Tag;
 import ch.michu.tech.swissbudget.generated.jooq.tables.Transaction;
 import ch.michu.tech.swissbudget.generated.jooq.tables.TransactionMail;
+import ch.michu.tech.swissbudget.generated.jooq.tables.TransactionMetaData;
 import ch.michu.tech.swissbudget.generated.jooq.tables.VerifiedDevice;
 
 
@@ -48,6 +49,11 @@ public class Tables {
      * The table <code>public.transaction_mail</code>.
      */
     public static final TransactionMail TRANSACTION_MAIL = TransactionMail.TRANSACTION_MAIL;
+
+    /**
+     * The table <code>public.transaction_meta_data</code>.
+     */
+    public static final TransactionMetaData TRANSACTION_META_DATA = TransactionMetaData.TRANSACTION_META_DATA;
 
     /**
      * The table <code>public.verified_device</code>.

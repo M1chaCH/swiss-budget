@@ -35,26 +35,29 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({"all", "unchecked", "rawtypes"})
 public class VerifiedDevice extends TableImpl<VerifiedDeviceRecord> {
 
+    private static final long serialVersionUID = 1L;
+
     /**
      * The reference instance of <code>public.verified_device</code>
      */
     public static final VerifiedDevice VERIFIED_DEVICE = new VerifiedDevice();
-    private static final long serialVersionUID = 1L;
+    /**
+     * The column <code>public.verified_device.user_agent</code>.
+     */
+    public final TableField<VerifiedDeviceRecord, String> USER_AGENT = createField(DSL.name("user_agent"),
+        SQLDataType.VARCHAR(250).nullable(false), this, "");
+
     /**
      * The column <code>public.verified_device.id</code>.
      */
     public final TableField<VerifiedDeviceRecord, Integer> ID = createField(DSL.name("id"),
         SQLDataType.INTEGER.nullable(false).identity(true), this, "");
+
     /**
      * The column <code>public.verified_device.user_id</code>.
      */
     public final TableField<VerifiedDeviceRecord, String> USER_ID = createField(DSL.name("user_id"),
         SQLDataType.VARCHAR(250).nullable(false), this, "");
-    /**
-     * The column <code>public.verified_device.user_agent</code>.
-     */
-    public final TableField<VerifiedDeviceRecord, String> USER_AGENT = createField(
-        DSL.name("user_agent"), SQLDataType.VARCHAR(250).nullable(false), this, "");
     private transient RegisteredUser _registeredUser;
 
     private VerifiedDevice(Name alias, Table<VerifiedDeviceRecord> aliased) {
@@ -86,8 +89,7 @@ public class VerifiedDevice extends TableImpl<VerifiedDeviceRecord> {
         this(DSL.name("verified_device"), null);
     }
 
-    public <O extends Record> VerifiedDevice(Table<O> child,
-        ForeignKey<O, VerifiedDeviceRecord> key) {
+    public <O extends Record> VerifiedDevice(Table<O> child, ForeignKey<O, VerifiedDeviceRecord> key) {
         super(child, key, VERIFIED_DEVICE);
     }
 
@@ -120,12 +122,12 @@ public class VerifiedDevice extends TableImpl<VerifiedDeviceRecord> {
     }
 
     /**
-     * Get the implicit join path to the <code>public.registered_user</code> table.
+     * Get the implicit join path to the <code>public.registered_user</code>
+     * table.
      */
     public RegisteredUser registeredUser() {
         if (_registeredUser == null) {
-            _registeredUser = new RegisteredUser(this,
-                Keys.VERIFIED_DEVICE__VERIFIED_DEVICE_USER_ID_FKEY);
+            _registeredUser = new RegisteredUser(this, Keys.VERIFIED_DEVICE__VERIFIED_DEVICE_USER_ID_FKEY);
         }
 
         return _registeredUser;
@@ -182,16 +184,15 @@ public class VerifiedDevice extends TableImpl<VerifiedDeviceRecord> {
     /**
      * Convenience mapping calling {@link SelectField#convertFrom(Function)}.
      */
-    public <U> SelectField<U> mapping(
-        Function3<? super Integer, ? super String, ? super String, ? extends U> from) {
+    public <U> SelectField<U> mapping(Function3<? super Integer, ? super String, ? super String, ? extends U> from) {
         return convertFrom(Records.mapping(from));
     }
 
     /**
-     * Convenience mapping calling {@link SelectField#convertFrom(Class, Function)}.
+     * Convenience mapping calling {@link SelectField#convertFrom(Class,
+     * Function)}.
      */
-    public <U> SelectField<U> mapping(Class<U> toType,
-        Function3<? super Integer, ? super String, ? super String, ? extends U> from) {
+    public <U> SelectField<U> mapping(Class<U> toType, Function3<? super Integer, ? super String, ? super String, ? extends U> from) {
         return convertFrom(toType, Records.mapping(from));
     }
 }

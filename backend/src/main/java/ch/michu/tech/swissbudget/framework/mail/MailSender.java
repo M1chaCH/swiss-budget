@@ -4,6 +4,9 @@ import ch.michu.tech.swissbudget.framework.error.exception.mail.MailSendExceptio
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import java.util.Properties;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -35,6 +38,7 @@ public class MailSender {
 
     private final Session session;
     private final AtomicInteger mailIdCounter = new AtomicInteger(0);
+    private final ExecutorService sendExecutor = Executors.newSingleThreadExecutor();
 
     @Inject
     public MailSender(
@@ -53,6 +57,17 @@ public class MailSender {
         this.smtpServer = smtpServer;
 
         session = createSession();
+    }
+
+    public Future<Boolean> asyncSendMessageToAdmin(String subject, MimeMultipart content) {
+        return sendExecutor.submit(() -> {
+            try {
+                sendMessageToAdmin(subject, content);
+                return true;
+            } catch (Exception e) {
+                return false;
+            }
+        });
     }
 
     public void sendMessageToAdmin(String subject, MimeMultipart content) throws MailSendException {

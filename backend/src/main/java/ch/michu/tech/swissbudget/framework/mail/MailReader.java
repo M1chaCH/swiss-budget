@@ -8,20 +8,34 @@ import ch.michu.tech.swissbudget.framework.event.OnAppStartupListener;
 import jakarta.enterprise.context.ApplicationScoped;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.mail.Folder;
+import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.Store;
+import javax.mail.search.ComparisonTerm;
+import javax.mail.search.ReceivedDateTerm;
+import javax.mail.search.SearchTerm;
 
 @ApplicationScoped
 public class MailReader implements OnAppStartupListener {
 
     private static final Logger LOGGER = Logger.getLogger(MailReader.class.getSimpleName());
     private final Properties mailProperties = new Properties();
+
+    private final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
+    private final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(
+        "dd.MM.yyyy HH:mm:ss");
 
     @Override
     @EventHandlerPriority(HandlerPriority.NOT_APPLICABLE)
@@ -75,5 +89,22 @@ public class MailReader implements OnAppStartupListener {
         } catch (MessagingException e) {
             throw new MailConnectionException(mail, imapServerUrl, e);
         }
+    }
+
+    public Message[] findMessages(Store store, String folderName, LocalDateTime since)
+        throws MessagingException {
+        final SearchTerm dateFilter = new ReceivedDateTerm(
+            ComparisonTerm.GT, Date.from(since.atZone(ZoneId.systemDefault()).toInstant()));
+
+        LOGGER.log(Level.FINE, "searching mails in folder {0}",
+            new Object[]{folderName});
+
+        Folder folder = store.getFolder(folderName);
+        folder.open(Folder.READ_ONLY);
+
+        Message[] messages = folder.search(dateFilter);
+        LOGGER.log(Level.FINE, "found {0} messages in {1} since {2}",
+            new Object[]{messages.length, folderName, since});
+        return messages;
     }
 }

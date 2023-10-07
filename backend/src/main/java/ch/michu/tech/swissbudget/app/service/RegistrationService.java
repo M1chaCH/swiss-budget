@@ -3,18 +3,24 @@ package ch.michu.tech.swissbudget.app.service;
 import ch.michu.tech.swissbudget.app.dto.CreateMailFolderDto;
 import ch.michu.tech.swissbudget.app.dto.CredentialDto;
 import ch.michu.tech.swissbudget.app.dto.RegisterDto;
+import ch.michu.tech.swissbudget.app.exception.BankNotSupportedException;
 import ch.michu.tech.swissbudget.app.exception.UserAlreadyExistsException;
 import ch.michu.tech.swissbudget.app.service.mail.MailService;
+import ch.michu.tech.swissbudget.app.transaction.SupportedBank;
 import ch.michu.tech.swissbudget.framework.EncodingUtil;
 import ch.michu.tech.swissbudget.framework.authentication.AuthenticationService;
 import ch.michu.tech.swissbudget.framework.data.DataProvider;
 import ch.michu.tech.swissbudget.framework.data.RequestSupport;
 import ch.michu.tech.swissbudget.framework.dto.MessageDto;
 import ch.michu.tech.swissbudget.generated.jooq.tables.RegisteredUser;
+import ch.michu.tech.swissbudget.generated.jooq.tables.TransactionMetaData;
 import ch.michu.tech.swissbudget.generated.jooq.tables.records.RegisteredUserRecord;
+import ch.michu.tech.swissbudget.generated.jooq.tables.records.TransactionMetaDataRecord;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Provider;
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 @ApplicationScoped
@@ -47,6 +53,10 @@ public class RegistrationService {
             dto.getFolderName());
     }
 
+    public List<String> getSupportedBanks() {
+        return Arrays.stream(SupportedBank.values()).map(SupportedBank::getKey).toList();
+    }
+
     public MessageDto register(RegisterDto dto) {
         if (doesUserExist(dto.getMail())) {
             throw new UserAlreadyExistsException(dto.getMail());
@@ -63,6 +73,17 @@ public class RegistrationService {
         // TODO find better way than storing this in plain text
         user.setMailPassword(dto.getMailPassword());
         user.store();
+
+        SupportedBank bank = SupportedBank.fromKey(dto.getBank())
+            .orElseThrow(() -> new BankNotSupportedException(
+                dto.getMail(), dto.getBank()));
+
+        TransactionMetaDataRecord metaData = data.getContext()
+            .newRecord(TransactionMetaData.TRANSACTION_META_DATA);
+        metaData.setUserId(user.getId());
+        metaData.setBank(bank.getKey());
+        metaData.setTransactionsFolder(dto.getFolderName());
+        metaData.store();
 
         supportProvider.get().logInfo("created user %s", dto.getMail());
 

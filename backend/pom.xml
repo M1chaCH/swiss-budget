@@ -54,6 +54,10 @@
       <groupId>io.helidon.microprofile</groupId>
     </dependency>
     <dependency>
+      <artifactId>helidon-microprofile-scheduling</artifactId>
+      <groupId>io.helidon.microprofile.scheduling</groupId>
+    </dependency>
+    <dependency>
       <artifactId>jakarta.json.bind-api</artifactId>
       <groupId>jakarta.json.bind</groupId>
     </dependency>

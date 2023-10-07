@@ -1,0 +1,14 @@
+<div appPage class="page-container" pageRoute="transactions" pageTitle="Transactions">
+    <ng-container *ngIf="transactions$ | async as transctions else loadingTransactions">
+        <div *ngFor="let transaction of transctions">
+            {{transaction.amount}}
+        </div>
+    </ng-container>
+    <ng-template #loadingTransactions>
+        <!--        TODO extract into directive instead of async pipe (give option for fullscreen or 100%) -->
+        <div class="loading-banner">
+            <span class="material-symbols-rounded loading-icon">sync</span>
+            <span class="label">Importing transactions ...</span>
+        </div>
+    </ng-template>
+</div>

@@ -6,6 +6,7 @@ import {SetupSubpageComponent} from "./pages/welcome.page/setup.subpage/setup.su
 import {authenticationGuard} from "./services/auth.service";
 import {MfaSubpageComponent} from "./pages/welcome.page/mfa.subpage/mfa.subpage.component";
 import {BudgetPageComponent} from "./pages/budget.page/budget.page.component";
+import {TransactionPageComponent} from "./pages/transaction.page/transaction.page.component";
 
 export const pages = {
   LOGIN: "login",
@@ -40,6 +41,7 @@ const routes: Routes = [
     children: [
       {path: pages.HOME, component: HomePageComponent},
       {path: pages.BUDGET, component: BudgetPageComponent},
+      {path: pages.TRANSACTIONS, component: TransactionPageComponent},
     ]
   },
   {path: "**", redirectTo: `${APP_ROOT}/${pages.HOME}`, pathMatch: "full"},

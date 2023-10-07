@@ -16,8 +16,10 @@ public abstract class AppException extends RuntimeException {
     protected final Exception rootException;
     protected final transient Map<String, String> args;
     protected final String errorKey;
+    protected boolean reportToAdmin = false;
 
     protected AppException(String serverMessage, Status responseStatus) {
+        super(serverMessage);
         this.serverError = false;
         this.serverMessage = serverMessage;
         this.responseStatus = responseStatus;
@@ -27,6 +29,7 @@ public abstract class AppException extends RuntimeException {
     }
 
     protected AppException(String serverMessage, Status responseStatus, Map<String, String> args) {
+        super(serverMessage);
         this.serverError = false;
         this.serverMessage = serverMessage;
         this.responseStatus = responseStatus;
@@ -52,5 +55,9 @@ public abstract class AppException extends RuntimeException {
 
     public Object getResponseBody() {
         return new ErrorDto(errorKey, args);
+    }
+
+    protected void toggleReportToAdmin() {
+        reportToAdmin = !reportToAdmin;
     }
 }

@@ -121,7 +121,7 @@ export class AuthService implements HttpInterceptor, OnInit {
   }
 }
 
-export const authenticationGuard: CanActivateFn = (): Observable<UrlTree | boolean> => {
+export const authenticationGuard: CanActivateFn = (): Observable<UrlTree | boolean> => { // FIXME doesnt work if token exists but is invalid
   const authService = inject(AuthService);
   const router = inject(Router);
 

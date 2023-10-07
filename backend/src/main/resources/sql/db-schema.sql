@@ -12,6 +12,15 @@ CREATE TABLE IF NOT EXISTS registered_user
     current_session varchar(250)
 );
 
+CREATE TABLE IF NOT EXISTS transaction_meta_data
+(
+    user_id                 varchar(250) primary key,
+    bank                    varchar(250) not null,
+    last_transaction_import timestamp,
+    transactions_folder     varchar(250) not null default 'INBOX',
+    FOREIGN KEY (user_id) REFERENCES registered_user (id)
+);
+
 CREATE TABLE IF NOT EXISTS verified_device
 (
     id         serial primary key,
@@ -62,7 +71,7 @@ CREATE TABLE IF NOT EXISTS keyword
 --      in the DB, BUT we need to keep in mind to then also delete the tag foreign key in the transaction
 CREATE TABLE IF NOT EXISTS transaction
 (
-    id                  serial primary key,
+    id      varchar(250) primary key,
     expense             bool             not null,
     transaction_date    date             not null,
     bankAccount         varchar(250)     not null,
@@ -82,15 +91,16 @@ CREATE TABLE IF NOT EXISTS transaction
 -- actual mail
 CREATE TABLE IF NOT EXISTS transaction_mail
 (
-    id             serial primary key,
+    id             varchar(250) primary key,
     message_number int          not null,
     from_mail      varchar(250) not null,
     to_mail        varchar(250) not null,
-    received_date  date         not null,
+    received_date  timestamp    not null,
     subject        varchar(250) not null,
     raw_message    text         not null,
-    transaction_id int,
-    user_id varchar(250) not null,
+    transaction_id varchar(250) not null,
+    user_id        varchar(250) not null,
+    bank           varchar(250) not null,
     FOREIGN KEY (transaction_id) REFERENCES transaction (id) ON DELETE SET NULL,
     FOREIGN KEY (user_id) REFERENCES registered_user (id) ON DELETE CASCADE
 );
