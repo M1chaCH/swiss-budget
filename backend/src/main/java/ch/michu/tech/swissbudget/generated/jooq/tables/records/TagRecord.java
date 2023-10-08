@@ -76,6 +76,13 @@ public class TagRecord extends UpdatableRecordImpl<TagRecord> implements Record5
     }
 
     /**
+     * Getter for <code>public.tag.name</code>.
+     */
+    public String getName() {
+        return (String) get(3);
+    }
+
+    /**
      * Setter for <code>public.tag.icon</code>.
      */
     public void setIcon(String value) {
@@ -87,13 +94,6 @@ public class TagRecord extends UpdatableRecordImpl<TagRecord> implements Record5
      */
     public void setColor(String value) {
         set(2, value);
-    }
-
-    /**
-     * Getter for <code>public.tag.name</code>.
-     */
-    public String getName() {
-        return (String) get(3);
     }
 
     // -------------------------------------------------------------------------
@@ -229,20 +229,6 @@ public class TagRecord extends UpdatableRecordImpl<TagRecord> implements Record5
     }
 
     @Override
-    public String component5() {
-        return getUserId();
-    }
-
-    // -------------------------------------------------------------------------
-    // Constructors
-    // -------------------------------------------------------------------------
-
-    @Override
-    public String value5() {
-        return getUserId();
-    }
-
-    @Override
     public TagRecord values(Integer value1, String value2, String value3, String value4, String value5) {
         value1(value1);
         value2(value2);
@@ -250,5 +236,19 @@ public class TagRecord extends UpdatableRecordImpl<TagRecord> implements Record5
         value4(value4);
         value5(value5);
         return this;
+    }
+
+    // -------------------------------------------------------------------------
+    // Constructors
+    // -------------------------------------------------------------------------
+
+    @Override
+    public String component5() {
+        return getUserId();
+    }
+
+    @Override
+    public String value5() {
+        return getUserId();
     }
 }

@@ -1,7 +1,7 @@
 import {Component} from '@angular/core';
-import {Observable, of} from "rxjs";
+import {Observable} from "rxjs";
 import {TransactionDto} from "../../dtos/TransactionDtos";
-import {ApiService, endpoint} from "../../services/api.service";
+import {TransactionService} from "../../services/transaction.service";
 
 @Component({
   selector: 'app-transaction.page',
@@ -9,12 +9,11 @@ import {ApiService, endpoint} from "../../services/api.service";
   styleUrls: ['./transaction.page.component.scss']
 })
 export class TransactionPageComponent {
-  transactions$: Observable<TransactionDto[]> = of();
+  transactions$: Observable<TransactionDto[]>;
 
   constructor(
-      private api: ApiService,
+      private service: TransactionService,
   ) {
-    // TODO move to service and cache in ram
-    this.transactions$ = this.api.get<TransactionDto[]>(endpoint.TRANSACTIONS, [{key: "import", value: "true"}]);
+    this.transactions$ = service.transactions$;
   }
 }

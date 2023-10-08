@@ -41,29 +41,35 @@ public class Tag extends TableImpl<TagRecord> {
      * The reference instance of <code>public.tag</code>
      */
     public static final Tag TAG = new Tag();
+
+    private transient RegisteredUser _registeredUser;
+
     /**
      * The column <code>public.tag.id</code>.
      */
     public final TableField<TagRecord, Integer> ID = createField(DSL.name("id"), SQLDataType.INTEGER.nullable(false).identity(true), this,
         "");
+
     /**
      * The column <code>public.tag.icon</code>.
      */
     public final TableField<TagRecord, String> ICON = createField(DSL.name("icon"), SQLDataType.VARCHAR(50), this, "");
+
     /**
      * The column <code>public.tag.color</code>.
      */
     public final TableField<TagRecord, String> COLOR = createField(DSL.name("color"), SQLDataType.VARCHAR(10), this, "");
+
     /**
      * The column <code>public.tag.name</code>.
      */
     public final TableField<TagRecord, String> NAME = createField(DSL.name("name"), SQLDataType.VARCHAR(250).nullable(false), this, "");
+
     /**
      * The column <code>public.tag.user_id</code>.
      */
     public final TableField<TagRecord, String> USER_ID = createField(DSL.name("user_id"), SQLDataType.VARCHAR(250).nullable(false), this,
         "");
-    private transient RegisteredUser _registeredUser;
 
     private Tag(Name alias, Table<TagRecord> aliased) {
         this(alias, aliased, null);

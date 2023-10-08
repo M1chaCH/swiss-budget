@@ -1,6 +1,6 @@
 package ch.michu.tech.swissbudget.app.transaction.mail;
 
-import ch.michu.tech.swissbudget.app.exception.InvalidTransactionMailFromatException;
+import ch.michu.tech.swissbudget.app.exception.InvalidTransactionMailFormatException;
 import ch.michu.tech.swissbudget.app.transaction.SupportedBank;
 import ch.michu.tech.swissbudget.generated.jooq.tables.records.TransactionMailRecord;
 import ch.michu.tech.swissbudget.generated.jooq.tables.records.TransactionRecord;
@@ -33,9 +33,9 @@ public abstract class MailContentHandler {
             entity.setRawMessage(content.getBodyPart(0).getContent().toString());
             entity.setBank(getSupportedBank().getKey());
         } catch (MessagingException | IndexOutOfBoundsException | NullPointerException | ClassCastException e) {
-            throw new InvalidTransactionMailFromatException(getSupportedBank().name(), "mail has invalid attribute");
+            throw new InvalidTransactionMailFormatException(getSupportedBank().name(), "mail has invalid attribute");
         } catch (IOException e) {
-            throw new InvalidTransactionMailFromatException(getSupportedBank().name(), "failed to read body");
+            throw new InvalidTransactionMailFormatException(getSupportedBank().name(), "failed to read body");
         }
     }
 

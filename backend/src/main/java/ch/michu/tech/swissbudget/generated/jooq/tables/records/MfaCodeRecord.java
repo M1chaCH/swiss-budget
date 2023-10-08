@@ -29,6 +29,13 @@ public class MfaCodeRecord extends UpdatableRecordImpl<MfaCodeRecord> implements
     }
 
     /**
+     * Getter for <code>public.mfa_code.id</code>.
+     */
+    public String getId() {
+        return (String) get(0);
+    }
+
+    /**
      * Create a detached, initialised MfaCodeRecord
      */
     public MfaCodeRecord(String id, Integer code, String userId, LocalDateTime expiresAt, String userAgent) {
@@ -39,13 +46,6 @@ public class MfaCodeRecord extends UpdatableRecordImpl<MfaCodeRecord> implements
         setUserId(userId);
         setExpiresAt(expiresAt);
         setUserAgent(userAgent);
-    }
-
-    /**
-     * Getter for <code>public.mfa_code.id</code>.
-     */
-    public String getId() {
-        return (String) get(0);
     }
 
     /**
@@ -63,17 +63,17 @@ public class MfaCodeRecord extends UpdatableRecordImpl<MfaCodeRecord> implements
     }
 
     /**
+     * Getter for <code>public.mfa_code.user_id</code>.
+     */
+    public String getUserId() {
+        return (String) get(2);
+    }
+
+    /**
      * Setter for <code>public.mfa_code.id</code>.
      */
     public void setId(String value) {
         set(0, value);
-    }
-
-    /**
-     * Setter for <code>public.mfa_code.expires_at</code>.
-     */
-    public void setExpiresAt(LocalDateTime value) {
-        set(3, value);
     }
 
     /**
@@ -84,10 +84,10 @@ public class MfaCodeRecord extends UpdatableRecordImpl<MfaCodeRecord> implements
     }
 
     /**
-     * Getter for <code>public.mfa_code.user_id</code>.
+     * Getter for <code>public.mfa_code.expires_at</code>.
      */
-    public String getUserId() {
-        return (String) get(2);
+    public LocalDateTime getExpiresAt() {
+        return (LocalDateTime) get(3);
     }
 
     /**
@@ -225,24 +225,6 @@ public class MfaCodeRecord extends UpdatableRecordImpl<MfaCodeRecord> implements
         return this;
     }
 
-    /**
-     * Getter for <code>public.mfa_code.expires_at</code>.
-     */
-    public LocalDateTime getExpiresAt() {
-        return (LocalDateTime) get(3);
-    }
-
-    // -------------------------------------------------------------------------
-    // Constructors
-    // -------------------------------------------------------------------------
-
-    /**
-     * Setter for <code>public.mfa_code.user_agent</code>.
-     */
-    public void setUserAgent(String value) {
-        set(4, value);
-    }
-
     @Override
     public MfaCodeRecord values(String value1, Integer value2, String value3, LocalDateTime value4, String value5) {
         value1(value1);
@@ -251,5 +233,23 @@ public class MfaCodeRecord extends UpdatableRecordImpl<MfaCodeRecord> implements
         value4(value4);
         value5(value5);
         return this;
+    }
+
+    // -------------------------------------------------------------------------
+    // Constructors
+    // -------------------------------------------------------------------------
+
+    /**
+     * Setter for <code>public.mfa_code.expires_at</code>.
+     */
+    public void setExpiresAt(LocalDateTime value) {
+        set(3, value);
+    }
+
+    /**
+     * Setter for <code>public.mfa_code.user_agent</code>.
+     */
+    public void setUserAgent(String value) {
+        set(4, value);
     }
 }

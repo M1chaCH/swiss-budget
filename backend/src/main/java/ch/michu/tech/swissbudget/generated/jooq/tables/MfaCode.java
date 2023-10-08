@@ -41,25 +41,30 @@ public class MfaCode extends TableImpl<MfaCodeRecord> {
      * The reference instance of <code>public.mfa_code</code>
      */
     public static final MfaCode MFA_CODE = new MfaCode();
+
+    private transient RegisteredUser _registeredUser;
+
     /**
      * The column <code>public.mfa_code.id</code>.
      */
     public final TableField<MfaCodeRecord, String> ID = createField(DSL.name("id"), SQLDataType.VARCHAR(250).nullable(false), this, "");
+
     /**
      * The column <code>public.mfa_code.code</code>.
      */
     public final TableField<MfaCodeRecord, Integer> CODE = createField(DSL.name("code"), SQLDataType.INTEGER, this, "");
+
     /**
      * The column <code>public.mfa_code.user_id</code>.
      */
     public final TableField<MfaCodeRecord, String> USER_ID = createField(DSL.name("user_id"), SQLDataType.VARCHAR(250).nullable(false),
         this, "");
+
     /**
      * The column <code>public.mfa_code.expires_at</code>.
      */
     public final TableField<MfaCodeRecord, LocalDateTime> EXPIRES_AT = createField(DSL.name("expires_at"),
         SQLDataType.LOCALDATETIME(6).nullable(false), this, "");
-    private transient RegisteredUser _registeredUser;
 
     /**
      * The column <code>public.mfa_code.user_agent</code>.

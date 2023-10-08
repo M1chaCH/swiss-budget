@@ -41,57 +41,68 @@ public class TransactionMail extends TableImpl<TransactionMailRecord> {
      * The reference instance of <code>public.transaction_mail</code>
      */
     public static final TransactionMail TRANSACTION_MAIL = new TransactionMail();
+
+    private transient Transaction _transaction;
+
     /**
      * The column <code>public.transaction_mail.id</code>.
      */
     public final TableField<TransactionMailRecord, String> ID = createField(DSL.name("id"), SQLDataType.VARCHAR(250).nullable(false), this,
         "");
+
     /**
      * The column <code>public.transaction_mail.message_number</code>.
      */
     public final TableField<TransactionMailRecord, Integer> MESSAGE_NUMBER = createField(DSL.name("message_number"),
         SQLDataType.INTEGER.nullable(false), this, "");
+
     /**
      * The column <code>public.transaction_mail.from_mail</code>.
      */
     public final TableField<TransactionMailRecord, String> FROM_MAIL = createField(DSL.name("from_mail"),
         SQLDataType.VARCHAR(250).nullable(false), this, "");
+
     /**
      * The column <code>public.transaction_mail.to_mail</code>.
      */
     public final TableField<TransactionMailRecord, String> TO_MAIL = createField(DSL.name("to_mail"),
         SQLDataType.VARCHAR(250).nullable(false), this, "");
+
     /**
      * The column <code>public.transaction_mail.received_date</code>.
      */
     public final TableField<TransactionMailRecord, LocalDateTime> RECEIVED_DATE = createField(DSL.name("received_date"),
         SQLDataType.LOCALDATETIME(6).nullable(false), this, "");
+
     /**
      * The column <code>public.transaction_mail.subject</code>.
      */
     public final TableField<TransactionMailRecord, String> SUBJECT = createField(DSL.name("subject"),
         SQLDataType.VARCHAR(250).nullable(false), this, "");
+
     /**
      * The column <code>public.transaction_mail.raw_message</code>.
      */
     public final TableField<TransactionMailRecord, String> RAW_MESSAGE = createField(DSL.name("raw_message"),
         SQLDataType.CLOB.nullable(false), this, "");
+
     /**
      * The column <code>public.transaction_mail.transaction_id</code>.
      */
     public final TableField<TransactionMailRecord, String> TRANSACTION_ID = createField(DSL.name("transaction_id"),
         SQLDataType.VARCHAR(250).nullable(false), this, "");
+
     /**
      * The column <code>public.transaction_mail.user_id</code>.
      */
     public final TableField<TransactionMailRecord, String> USER_ID = createField(DSL.name("user_id"),
         SQLDataType.VARCHAR(250).nullable(false), this, "");
+
     /**
      * The column <code>public.transaction_mail.bank</code>.
      */
     public final TableField<TransactionMailRecord, String> BANK = createField(DSL.name("bank"), SQLDataType.VARCHAR(250).nullable(false),
         this, "");
-    private transient Transaction _transaction;
 
     private TransactionMail(Name alias, Table<TransactionMailRecord> aliased) {
         this(alias, aliased, null);
@@ -155,9 +166,8 @@ public class TransactionMail extends TableImpl<TransactionMailRecord> {
      * Get the implicit join path to the <code>public.transaction</code> table.
      */
     public Transaction transaction() {
-        if (_transaction == null) {
+        if (_transaction == null)
             _transaction = new Transaction(this, Keys.TRANSACTION_MAIL__TRANSACTION_MAIL_TRANSACTION_ID_FKEY);
-        }
 
         return _transaction;
     }
@@ -167,9 +177,8 @@ public class TransactionMail extends TableImpl<TransactionMailRecord> {
      * table.
      */
     public RegisteredUser registeredUser() {
-        if (_registeredUser == null) {
+        if (_registeredUser == null)
             _registeredUser = new RegisteredUser(this, Keys.TRANSACTION_MAIL__TRANSACTION_MAIL_USER_ID_FKEY);
-        }
 
         return _registeredUser;
     }

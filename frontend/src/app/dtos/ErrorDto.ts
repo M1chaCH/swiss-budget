@@ -10,6 +10,10 @@ export type ErrorDto = {
       | "RemoteAddressNotPresentException"
       | "MailSendException"
       | "MailTemplateNotFoundException"
-      | "LoginFailedException",
+      | "LoginFailedException"
+      | "ResourceNotFoundException"
+      | "UnexpectedServerException"
+      | "InvalidTransactionMailFormatException"
+      | "UnexpectedDbException",
   args: any,
 }

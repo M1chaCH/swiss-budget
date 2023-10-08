@@ -24,7 +24,7 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jooq.DSLContext;
 
 @ApplicationScoped
-public class MfaService {
+public class MfaService { // TODO schedule cleanup of expired MFA Tokens
 
     private final TemplatedMailSender mailSender;
     private final DataProvider data;

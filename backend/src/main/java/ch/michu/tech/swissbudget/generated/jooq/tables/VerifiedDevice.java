@@ -41,6 +41,7 @@ public class VerifiedDevice extends TableImpl<VerifiedDeviceRecord> {
      * The reference instance of <code>public.verified_device</code>
      */
     public static final VerifiedDevice VERIFIED_DEVICE = new VerifiedDevice();
+
     /**
      * The column <code>public.verified_device.user_agent</code>.
      */
@@ -126,9 +127,8 @@ public class VerifiedDevice extends TableImpl<VerifiedDeviceRecord> {
      * table.
      */
     public RegisteredUser registeredUser() {
-        if (_registeredUser == null) {
+        if (_registeredUser == null)
             _registeredUser = new RegisteredUser(this, Keys.VERIFIED_DEVICE__VERIFIED_DEVICE_USER_ID_FKEY);
-        }
 
         return _registeredUser;
     }

@@ -36,21 +36,26 @@ export class ErrorService {
         return "This type of mail is not configured properly, contact admin and tell him he needs to get his shit together"
       case "LoginFailedException":
         return "Login failed, check credentials"
+      case "ResourceNotFoundException":
+        return `We could not find a ${error.args.entity} by ${error.args.value}`
+      case "UnexpectedDbException":
+        return "There was an unexpected error in the DB, either try again later or contact the admin."
+      case "UnexpectedServerException":
+        return "There is an issue with the server. Please contact the admin."
+      case "InvalidTransactionMailFormatException":
+        return "Could not parse your transactions mails, please contact the admin or make sure that you have configured the correct bank."
       default:
         return "Failed, please contact admin.";
     }
   }
 
-  public handleIfGlobalError(e: ErrorDto): boolean {
+  public handleIfGlobalError(e: ErrorDto): boolean { // TODO implement
     switch (e.errorKey) {
       case "AgentNotRegisteredException":
         console.warn("should handle agent not registered, but not implemented")
         return true;
       case "InvalidSessionTokenException":
         console.warn("should handle invalid token, but not implemented")
-        return true;
-      case "LoginFromNewClientException":
-        console.warn("should show message that other client logged in")
         return true;
       default:
         return false;

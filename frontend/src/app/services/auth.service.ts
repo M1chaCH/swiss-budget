@@ -1,6 +1,6 @@
 import {inject, Injectable, OnInit} from '@angular/core';
 import {CanActivateFn, Router, UrlTree} from "@angular/router";
-import {BehaviorSubject, catchError, concatMap, Observable, of, tap} from "rxjs";
+import {catchError, concatMap, firstValueFrom, Observable, of, tap} from "rxjs";
 import {pages} from "../app-routing.module";
 import {ApiService, endpoint} from "./api.service";
 import {CookieService} from "ngx-cookie-service";
@@ -9,6 +9,7 @@ import {ErrorService} from "./error.service";
 import {MessageDto} from "../dtos/MessageDto";
 import {ErrorDto} from "../dtos/ErrorDto";
 import {environment} from "../../environments/environment";
+import * as moment from 'moment';
 
 @Injectable({
   providedIn: 'root',
@@ -62,32 +63,33 @@ export class AuthService implements HttpInterceptor, OnInit {
   logout() {
     this.loggedIn = false;
     this.authToken = undefined;
-    //FIXME, cookie is not deleted
-    this.cookie.delete(AuthService.AUTH_TOKEN);
-    this.router.navigate([pages.LOGIN]).then();
+    this.deleteToken();
+    location.reload();
   }
 
   isLoggedIn(): Observable<boolean> {
-    const loginSubject: BehaviorSubject<boolean> = new BehaviorSubject(true);
-    if (this.loggedIn) {
-      loginSubject.next(true);
-      return loginSubject;
-    }
+    return new Observable<boolean>(obs => {
+      if (this.loggedIn) {
+        obs.next(true)
+        obs.complete();
+        return;
+      }
 
-    this.authToken ??= this.cookie.get(AuthService.AUTH_TOKEN);
-    if (!!this.authToken) {
-      this.validateToken().subscribe(() => {
-        loginSubject.next(true);
-      })
-    } else {
-      loginSubject.next(false);
-    }
-
-    return loginSubject;
-  }
-
-  validateToken(): Observable<void> {
-    return this.api.get(endpoint.AUTH);
+      this.authToken ??= this.cookie.get(AuthService.AUTH_TOKEN);
+      if (!!this.authToken) {
+        this.api.getRaw(endpoint.AUTH).subscribe({
+          next: _ => obs.next(true),
+          error: _ => {
+            this.deleteToken();
+            obs.next(false);
+          },
+          complete: () => obs.complete()
+        });
+      } else {
+        obs.next(false);
+        obs.complete();
+      }
+    });
   }
 
   validateMfaToken(processId: string, userId: string, code: number): Observable<boolean> {
@@ -116,21 +118,22 @@ export class AuthService implements HttpInterceptor, OnInit {
     const token = tokenMessage.message;
     this.authToken = token;
     this.loggedIn = true;
-    // FIXME, expires at is still session ):
-    this.cookie.set(AuthService.AUTH_TOKEN, token, new Date().setDate(new Date().getDate() + 300), "/", environment.DOMAIN, true, "Strict")
+    let expires = moment(new Date()).add(300, "days");
+    this.cookie.set(AuthService.AUTH_TOKEN, token, expires.toDate(), "/", environment.DOMAIN, true, "Strict")
+  }
+
+  private deleteToken() {
+    this.cookie.delete(AuthService.AUTH_TOKEN, "/", environment.DOMAIN, true, "Strict");
   }
 }
 
-export const authenticationGuard: CanActivateFn = (): Observable<UrlTree | boolean> => { // FIXME doesnt work if token exists but is invalid
+export const authenticationGuard: CanActivateFn = async (): Promise<UrlTree | boolean> => {
   const authService = inject(AuthService);
   const router = inject(Router);
 
-  return new Observable<boolean | UrlTree>(sub => {
-    authService.isLoggedIn().subscribe(loggedIn => {
-      if (loggedIn)
-        sub.next(true);
-      else
-        sub.next(router.parseUrl(pages.LOGIN))
-    });
-  });
+  const loggedIn: boolean = await firstValueFrom(authService.isLoggedIn());
+  if (loggedIn)
+    return true;
+  else
+    return router.parseUrl(pages.LOGIN);
 }

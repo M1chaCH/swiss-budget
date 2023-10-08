@@ -41,26 +41,31 @@ public class Keyword extends TableImpl<KeywordRecord> {
      * The reference instance of <code>public.keyword</code>
      */
     public static final Keyword KEYWORD = new Keyword();
+
+    private transient Tag _tag;
+
     /**
      * The column <code>public.keyword.id</code>.
      */
     public final TableField<KeywordRecord, Integer> ID = createField(DSL.name("id"), SQLDataType.INTEGER.nullable(false).identity(true),
         this, "");
+
     /**
      * The column <code>public.keyword.keyword</code>.
      */
     public final TableField<KeywordRecord, String> KEYWORD_ = createField(DSL.name("keyword"), SQLDataType.VARCHAR(250).nullable(false),
         this, "");
+
     /**
      * The column <code>public.keyword.tag_id</code>.
      */
     public final TableField<KeywordRecord, Integer> TAG_ID = createField(DSL.name("tag_id"), SQLDataType.INTEGER, this, "");
+
     /**
      * The column <code>public.keyword.user_id</code>.
      */
     public final TableField<KeywordRecord, String> USER_ID = createField(DSL.name("user_id"), SQLDataType.VARCHAR(250).nullable(false),
         this, "");
-    private transient Tag _tag;
 
     private Keyword(Name alias, Table<KeywordRecord> aliased) {
         this(alias, aliased, null);
@@ -114,7 +119,6 @@ public class Keyword extends TableImpl<KeywordRecord> {
     public List<ForeignKey<KeywordRecord, ?>> getReferences() {
         return Arrays.asList(Keys.KEYWORD__KEYWORD_TAG_ID_FKEY, Keys.KEYWORD__KEYWORD_USER_ID_FKEY);
     }
-    private transient RegisteredUser _registeredUser;
 
     /**
      * The class holding records for this type
@@ -123,6 +127,7 @@ public class Keyword extends TableImpl<KeywordRecord> {
     public Class<KeywordRecord> getRecordType() {
         return KeywordRecord.class;
     }
+    private transient RegisteredUser _registeredUser;
 
     /**
      * Get the implicit join path to the <code>public.tag</code> table.

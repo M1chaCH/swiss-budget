@@ -35,33 +35,38 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({"all", "unchecked", "rawtypes"})
 public class TransactionMetaData extends TableImpl<TransactionMetaDataRecord> {
 
+    private static final long serialVersionUID = 1L;
+
     /**
      * The reference instance of <code>public.transaction_meta_data</code>
      */
     public static final TransactionMetaData TRANSACTION_META_DATA = new TransactionMetaData();
-    private static final long serialVersionUID = 1L;
+    private transient RegisteredUser _registeredUser;
+
     /**
      * The column <code>public.transaction_meta_data.user_id</code>.
      */
     public final TableField<TransactionMetaDataRecord, String> USER_ID = createField(DSL.name("user_id"),
         SQLDataType.VARCHAR(250).nullable(false), this, "");
+
     /**
      * The column <code>public.transaction_meta_data.bank</code>.
      */
     public final TableField<TransactionMetaDataRecord, String> BANK = createField(DSL.name("bank"),
         SQLDataType.VARCHAR(250).nullable(false), this, "");
+
     /**
      * The column
      * <code>public.transaction_meta_data.last_transaction_import</code>.
      */
     public final TableField<TransactionMetaDataRecord, LocalDateTime> LAST_TRANSACTION_IMPORT = createField(
         DSL.name("last_transaction_import"), SQLDataType.LOCALDATETIME(6), this, "");
+
     /**
      * The column <code>public.transaction_meta_data.transactions_folder</code>.
      */
     public final TableField<TransactionMetaDataRecord, String> TRANSACTIONS_FOLDER = createField(DSL.name("transactions_folder"),
         SQLDataType.VARCHAR(250).nullable(false).defaultValue(DSL.field("'INBOX'::character varying", SQLDataType.VARCHAR)), this, "");
-    private transient RegisteredUser _registeredUser;
 
     private TransactionMetaData(Name alias, Table<TransactionMetaDataRecord> aliased) {
         this(alias, aliased, null);
@@ -72,14 +77,16 @@ public class TransactionMetaData extends TableImpl<TransactionMetaDataRecord> {
     }
 
     /**
-     * Create an aliased <code>public.transaction_meta_data</code> table reference
+     * Create an aliased <code>public.transaction_meta_data</code> table
+     * reference
      */
     public TransactionMetaData(String alias) {
         this(DSL.name(alias), TRANSACTION_META_DATA);
     }
 
     /**
-     * Create an aliased <code>public.transaction_meta_data</code> table reference
+     * Create an aliased <code>public.transaction_meta_data</code> table
+     * reference
      */
     public TransactionMetaData(Name alias) {
         this(alias, TRANSACTION_META_DATA);
@@ -94,14 +101,6 @@ public class TransactionMetaData extends TableImpl<TransactionMetaDataRecord> {
 
     public <O extends Record> TransactionMetaData(Table<O> child, ForeignKey<O, TransactionMetaDataRecord> key) {
         super(child, key, TRANSACTION_META_DATA);
-    }
-
-    /**
-     * The class holding records for this type
-     */
-    @Override
-    public Class<TransactionMetaDataRecord> getRecordType() {
-        return TransactionMetaDataRecord.class;
     }
 
     @Override
@@ -120,12 +119,20 @@ public class TransactionMetaData extends TableImpl<TransactionMetaDataRecord> {
     }
 
     /**
-     * Get the implicit join path to the <code>public.registered_user</code> table.
+     * The class holding records for this type
+     */
+    @Override
+    public Class<TransactionMetaDataRecord> getRecordType() {
+        return TransactionMetaDataRecord.class;
+    }
+
+    /**
+     * Get the implicit join path to the <code>public.registered_user</code>
+     * table.
      */
     public RegisteredUser registeredUser() {
-        if (_registeredUser == null) {
+        if (_registeredUser == null)
             _registeredUser = new RegisteredUser(this, Keys.TRANSACTION_META_DATA__TRANSACTION_META_DATA_USER_ID_FKEY);
-        }
 
         return _registeredUser;
     }
@@ -186,7 +193,8 @@ public class TransactionMetaData extends TableImpl<TransactionMetaDataRecord> {
     }
 
     /**
-     * Convenience mapping calling {@link SelectField#convertFrom(Class, Function)}.
+     * Convenience mapping calling {@link SelectField#convertFrom(Class,
+     * Function)}.
      */
     public <U> SelectField<U> mapping(Class<U> toType,
         Function4<? super String, ? super String, ? super LocalDateTime, ? super String, ? extends U> from) {

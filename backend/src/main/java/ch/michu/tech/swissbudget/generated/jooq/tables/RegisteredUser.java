@@ -41,59 +41,69 @@ public class RegisteredUser extends TableImpl<RegisteredUserRecord> {
      * The reference instance of <code>public.registered_user</code>
      */
     public static final RegisteredUser REGISTERED_USER = new RegisteredUser();
+
+    public <O extends Record> RegisteredUser(Table<O> child, ForeignKey<O, RegisteredUserRecord> key) {
+        super(child, key, REGISTERED_USER);
+    }
+
     /**
      * The column <code>public.registered_user.id</code>.
      */
     public final TableField<RegisteredUserRecord, String> ID = createField(DSL.name("id"), SQLDataType.VARCHAR(250).nullable(false), this,
         "");
+
     /**
      * The column <code>public.registered_user.mail</code>.
      */
     public final TableField<RegisteredUserRecord, String> MAIL = createField(DSL.name("mail"), SQLDataType.VARCHAR(250).nullable(false),
         this, "");
+
     /**
      * The column <code>public.registered_user.password</code>.
      */
     public final TableField<RegisteredUserRecord, String> PASSWORD = createField(DSL.name("password"),
         SQLDataType.VARCHAR(250).nullable(false), this, "");
+
     /**
      * The column <code>public.registered_user.salt</code>.
      */
     public final TableField<RegisteredUserRecord, String> SALT = createField(DSL.name("salt"), SQLDataType.VARCHAR(20).nullable(false),
         this, "");
+
     /**
      * The column <code>public.registered_user.mail_password</code>.
      */
     public final TableField<RegisteredUserRecord, String> MAIL_PASSWORD = createField(DSL.name("mail_password"),
         SQLDataType.VARCHAR(250).nullable(false), this, "");
+
     /**
      * The column <code>public.registered_user.username</code>.
      */
     public final TableField<RegisteredUserRecord, String> USERNAME = createField(DSL.name("username"), SQLDataType.VARCHAR(250), this, "");
+
     /**
      * The column <code>public.registered_user.disabled</code>.
      */
     public final TableField<RegisteredUserRecord, Boolean> DISABLED = createField(DSL.name("disabled"),
         SQLDataType.BOOLEAN.nullable(false).defaultValue(DSL.field("false", SQLDataType.BOOLEAN)), this, "");
+
     /**
      * The column <code>public.registered_user.created_at</code>.
      */
     public final TableField<RegisteredUserRecord, LocalDateTime> CREATED_AT = createField(DSL.name("created_at"),
         SQLDataType.LOCALDATETIME(6).nullable(false).defaultValue(DSL.field("CURRENT_TIMESTAMP", SQLDataType.LOCALDATETIME)), this, "");
+
     /**
      * The column <code>public.registered_user.last_login</code>.
      */
     public final TableField<RegisteredUserRecord, LocalDateTime> LAST_LOGIN = createField(DSL.name("last_login"),
         SQLDataType.LOCALDATETIME(6).nullable(false).defaultValue(DSL.field("CURRENT_TIMESTAMP", SQLDataType.LOCALDATETIME)), this, "");
+
     /**
      * The column <code>public.registered_user.current_session</code>.
      */
     public final TableField<RegisteredUserRecord, String> CURRENT_SESSION = createField(DSL.name("current_session"),
         SQLDataType.VARCHAR(250), this, "");
-
-    public <O extends Record> RegisteredUser(Table<O> child, ForeignKey<O, RegisteredUserRecord> key) {
-        super(child, key, REGISTERED_USER);
-    }
 
     private RegisteredUser(Name alias, Table<RegisteredUserRecord> aliased) {
         this(alias, aliased, null);

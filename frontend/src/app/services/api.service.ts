@@ -44,6 +44,12 @@ export class ApiService {
     );
   }
 
+  public getRaw(url: string): Observable<any> {
+    let fullUrl: string = `${environment.API_URL}${url}`;
+    this.logRequest("RAW-GET", fullUrl);
+    return this.http.get(fullUrl);
+  }
+
   public post<T>(endpoint: string, payload: any, queryParams?: {
     key: string,
     value: string
@@ -90,7 +96,7 @@ export class ApiService {
   }
 
   private handleError<T>(err: any, _: Observable<T>, showDialogOnError: boolean): Observable<T> {
-    if (!this.errorService.handleIfGlobalError(err)) {
+    if (!this.errorService.handleIfGlobalError(err.error)) {
       if (showDialogOnError) this.errorService.showErrorDialog(err.error);
       else throw err;
     }
