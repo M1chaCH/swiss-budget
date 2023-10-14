@@ -2,6 +2,7 @@ package ch.michu.tech.swissbudget.app.dto;
 
 import static ch.michu.tech.swissbudget.generated.jooq.tables.Transaction.TRANSACTION;
 
+import ch.michu.tech.swissbudget.app.entity.CompleteTransactionEntity;
 import ch.michu.tech.swissbudget.framework.validation.Nullable;
 import ch.michu.tech.swissbudget.framework.validation.ValidateAmount;
 import ch.michu.tech.swissbudget.framework.validation.ValidateLength;
@@ -36,8 +37,12 @@ public class TransactionDto {
     @ValidateAmount(min = 0)
     private int tagId;
     @Nullable
+    private TagDto tag;
+    @Nullable
     @ValidateAmount(min = 0)
     private int matchingKeywordId;
+    @Nullable
+    private KeywordDto matchingKeyword;
     @Nullable
     @ValidateLength(min = 2, max = 20)
     private String alias;
@@ -73,6 +78,36 @@ public class TransactionDto {
         }
         if (entity.get(TRANSACTION.NOTE) != null) {
             note = entity.getNote();
+        }
+    }
+
+    public TransactionDto(CompleteTransactionEntity entity) {
+        final TransactionRecord transaction = entity.getTransaction();
+        id = transaction.getId();
+        expense = transaction.getExpense();
+        amount = transaction.getAmount();
+        transactionDate = transaction.getTransactionDate();
+        bankAccount = transaction.getBankaccount();
+        receiver = transaction.getReceiver();
+
+        if (transaction.get(TRANSACTION.TAG_ID) != null) {
+            tagId = transaction.getTagId();
+        }
+        if (transaction.get(TRANSACTION.MATCHING_KEYWORD_ID) != null) {
+            matchingKeywordId = transaction.getMatchingKeywordId();
+        }
+        if (transaction.get(TRANSACTION.ALIAS) != null) {
+            alias = transaction.getAlias();
+        }
+        if (transaction.get(TRANSACTION.NOTE) != null) {
+            note = transaction.getNote();
+        }
+
+        if (entity.getTag() != null) {
+            tag = new TagDto(entity.getTag());
+        }
+        if (entity.getMatchingKeyword() != null) {
+            matchingKeyword = new KeywordDto(entity.getMatchingKeyword());
         }
     }
 }

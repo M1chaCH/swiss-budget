@@ -11,7 +11,7 @@ import jakarta.ws.rs.ext.Provider;
 import java.time.Instant;
 import java.util.Optional;
 
-@Logged
+@LoggedRequest
 @Provider
 @Priority(Priorities.HEADER_DECORATOR)
 public class ResponseFilter implements ContainerResponseFilter {

@@ -20,7 +20,6 @@ export class SelectComponent implements OnInit {
   @Input() set options(value: string[] | null) {
     this._options = value ?? [];
     this.filteredOptions = this._options;
-    console.log(this._options)
   }
 
   ngOnInit(): void {

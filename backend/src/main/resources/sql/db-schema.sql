@@ -14,10 +14,11 @@ CREATE TABLE IF NOT EXISTS registered_user
 
 CREATE TABLE IF NOT EXISTS transaction_meta_data
 (
-    user_id                 varchar(250) primary key,
-    bank                    varchar(250) not null,
-    last_transaction_import timestamp,
-    transactions_folder     varchar(250) not null default 'INBOX',
+    user_id                   varchar(250) primary key,
+    bank                      varchar(250) not null,
+    last_import_check         timestamp,
+    last_imported_transaction timestamp,
+    transactions_folder       varchar(250) not null default 'INBOX',
     FOREIGN KEY (user_id) REFERENCES registered_user (id)
 );
 
@@ -44,11 +45,12 @@ CREATE TABLE IF NOT EXISTS mfa_code
 -- a tag is also a budget "topic"
 CREATE TABLE IF NOT EXISTS tag
 (
-    id      serial primary key,
-    icon    varchar(50),
-    color   varchar(10),
-    name    varchar(250) not null,
-    user_id varchar(250) not null,
+    id          serial primary key,
+    icon        varchar(50)  not null,
+    color       varchar(10)  not null,
+    name        varchar(250) not null,
+    user_id     varchar(250) not null,
+    default_tag bool         not null default false,
     FOREIGN KEY (user_id) REFERENCES registered_user (id) ON DELETE CASCADE
 );
 

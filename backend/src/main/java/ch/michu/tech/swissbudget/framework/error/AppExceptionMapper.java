@@ -28,11 +28,9 @@ public class AppExceptionMapper implements ExceptionMapper<AppException> {
             support.logError(this, "Server error!", exception);
             errorReporter.reportError(exception);
         } else {
-            Exception e =
-                exception.getRootException() == null ? exception : exception.getRootException();
+            Exception e = exception.getRootException() == null ? exception : exception.getRootException();
 
-            support.logInfo(this, "caught exception -> %s: %s", e.getClass().getSimpleName(),
-                exception.getServerMessage());
+            support.logInfo(this, "caught exception -> %s: %s", e.getClass().getSimpleName(), exception.getServerMessage());
 
             if (exception.isReportToAdmin()) {
                 errorReporter.reportError(exception);

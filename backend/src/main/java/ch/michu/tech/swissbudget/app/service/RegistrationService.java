@@ -30,14 +30,16 @@ public class RegistrationService {
     private final DataProvider data;
     private final AuthenticationService authService;
     private final Provider<RequestSupport> supportProvider;
+    private final DefaultDataService defaultData;
 
     @Inject
     public RegistrationService(MailService mailService, DataProvider dataProvider,
-        AuthenticationService authService, Provider<RequestSupport> supportProvider) {
+        AuthenticationService authService, Provider<RequestSupport> supportProvider, DefaultDataService defaultData) {
         this.mailService = mailService;
         this.data = dataProvider;
         this.authService = authService;
         this.supportProvider = supportProvider;
+        this.defaultData = defaultData;
     }
 
     public void checkMailCredentials(CredentialDto credentials) {
@@ -84,6 +86,8 @@ public class RegistrationService {
         metaData.setBank(bank.getKey());
         metaData.setTransactionsFolder(dto.getFolderName());
         metaData.store();
+
+        defaultData.insertDefaultTagsAndKeywords(user.getId());
 
         supportProvider.get().logInfo("created user %s", dto.getMail());
 

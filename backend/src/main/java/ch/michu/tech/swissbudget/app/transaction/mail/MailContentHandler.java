@@ -14,8 +14,18 @@ import javax.mail.Message.RecipientType;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMultipart;
 
+/**
+ * this class is responsible for the parsing of an email
+ */
 public abstract class MailContentHandler {
 
+    /**
+     * parses the content of an email into a TransactionMailRecord (changes are not stored in the DB)
+     *
+     * @param entity  the entity to fill with values
+     * @param message the original message from the IMAP server
+     * @throws InvalidTransactionMailFormatException if there was any error while parsing the message, can't really be handled
+     */
     public void parseMail(TransactionMailRecord entity, Message message) {
         try {
             entity.setMessageNumber(message.getMessageNumber());
@@ -39,9 +49,21 @@ public abstract class MailContentHandler {
         }
     }
 
+    /**
+     * check if the mail is actually a transaction mail from the current bank
+     *
+     * @param mail the TransactionMailRecord to analyze
+     * @return true: the mail can be parsed into a TransactionRecord
+     */
     public abstract boolean validateFromBank(TransactionMailRecord mail);
 
-    public abstract void parseTransaction(TransactionRecord record, TransactionMailRecord mail);
+    /**
+     * parses the content of the given mail into a TransactionRecord <br> changes are not stored in the DB
+     *
+     * @param transaction the record to modify
+     * @param mail        the mail to analyze
+     */
+    public abstract void parseTransaction(TransactionRecord transaction, TransactionMailRecord mail);
 
     public abstract SupportedBank getSupportedBank();
 }

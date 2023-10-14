@@ -17,6 +17,23 @@ public class DtoValidationInterceptor {
 
     private final Pattern mailPattern = Pattern.compile("^[A-Za-z0-9+_.-]+@(.+)$");
 
+    /**
+     * how to use:
+     * <ol>
+     *     <li>annotate method where parameters should be validated with {@link ValidateDtos}</li>
+     *     <li>annotate class of parameter (dto parameter) with {@link ValidatedDto}</li>
+     *     <li>annotate fields in dto class with validator annotations</li>
+     *
+     * </ol>
+     * this will intercept all methods annotated with {@link ValidateDtos} and validate all parameters of these methods where the class of
+     * the parameter is annotated with {@link ValidatedDto}.
+     * if the validation fails then a {@link DtoValidationException} is thrown
+     *
+     * @param context the CDI InvocationContext
+     * @return the return object of the originally called method
+     * @throws DtoValidationException if the validation fails
+     * @throws Exception              the exceptions thrown in the original method
+     */
     @AroundInvoke
     public Object intercept(InvocationContext context) throws Exception {
         LOGGER.log(Level.INFO, "validating parameters of {0}->{1}",
@@ -30,43 +47,48 @@ public class DtoValidationInterceptor {
         return context.proceed();
     }
 
+    /**
+     * validates an argument of a method. it is expected that the argument's class is annotated with {@link ValidatedDto}
+     *
+     * @param arg the argument annotated with {@link ValidatedDto} to validate
+     */
     @SuppressWarnings("java:S3011") // don't care about access warning
     protected void validateArg(Object arg) {
-        LOGGER.log(Level.FINE, "validating parameter: {0}", new Object[]{arg.getClass().getSimpleName()});
-        for (Field field : arg.getClass().getDeclaredFields()) {
+        LOGGER.log(Level.FINE, "validating argument: {0}", new Object[]{arg.getClass().getSimpleName()});
+        for (Field fieldInArg : arg.getClass().getDeclaredFields()) {
             try {
-                field.setAccessible(true);
+                fieldInArg.setAccessible(true);
 
-                boolean nullable = field.isAnnotationPresent(Nullable.class);
+                boolean nullable = fieldInArg.isAnnotationPresent(Nullable.class);
 
-                Object fieldObject = field.get(arg);
-                if (fieldObject == null) {
+                Object fieldValue = fieldInArg.get(arg);
+                if (fieldValue == null) {
                     if (!nullable) {
-                        throw new DtoValidationException(arg, field, Nullable.class);
+                        throw new DtoValidationException(arg, fieldInArg, Nullable.class);
                     }
 
                     continue;
                 }
 
-                String fieldValue = fieldObject.toString();
+                String fieldStringValue = fieldValue.toString();
 
-                if (field.isAnnotationPresent(ValidateMail.class) && !mailPattern.matcher(fieldValue).matches()) {
-                    throw new DtoValidationException(arg, field, ValidateMail.class);
+                if (fieldInArg.isAnnotationPresent(ValidateMail.class) && !mailPattern.matcher(fieldStringValue).matches()) {
+                    throw new DtoValidationException(arg, fieldInArg, ValidateMail.class);
                 }
 
-                ValidateLength validateLengthAnnotation = field.getAnnotation(ValidateLength.class);
-                if (validateLengthAnnotation != null && (fieldValue.length() < validateLengthAnnotation.min()
-                    || fieldValue.length() > validateLengthAnnotation.max())) {
-                    throw new DtoValidationException(arg, field, ValidateLength.class);
+                ValidateLength validateLengthAnnotation = fieldInArg.getAnnotation(ValidateLength.class);
+                if (validateLengthAnnotation != null && (fieldStringValue.length() < validateLengthAnnotation.min()
+                    || fieldStringValue.length() > validateLengthAnnotation.max())) {
+                    throw new DtoValidationException(arg, fieldInArg, ValidateLength.class);
                 }
 
-                if (!validateAmount(field, fieldValue)) {
-                    throw new DtoValidationException(arg, field, ValidateAmount.class);
+                if (!validateAmount(fieldInArg, fieldStringValue)) {
+                    throw new DtoValidationException(arg, fieldInArg, ValidateAmount.class);
                 }
 
             } catch (IllegalAccessException e) {
                 LOGGER.log(Level.WARNING, "IllegalAccess while trying to validate field {0} of type {1}",
-                    new Object[]{field.getName(), arg.getClass().getSimpleName()});
+                    new Object[]{fieldInArg.getName(), arg.getClass().getSimpleName()});
             }
         }
         LOGGER.log(Level.FINE, "{0} is valid", new Object[]{arg.getClass().getSimpleName()});

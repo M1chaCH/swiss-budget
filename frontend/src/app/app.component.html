@@ -82,4 +82,7 @@
 
     <footer *ngIf="!fullscreenPage"></footer>
 </div>
+<ng-container *ngIf="auth.isLoggedIn$ | async as loggedIn">
+    <app-transaction-importer *ngIf="loggedIn === 'in'"></app-transaction-importer>
+</ng-container>
 <app-dialog></app-dialog>

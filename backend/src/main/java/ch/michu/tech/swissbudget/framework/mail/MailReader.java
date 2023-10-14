@@ -8,10 +8,8 @@ import ch.michu.tech.swissbudget.framework.event.OnAppStartupListener;
 import jakarta.enterprise.context.ApplicationScoped;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Objects;
@@ -33,15 +31,12 @@ public class MailReader implements OnAppStartupListener {
     private static final Logger LOGGER = Logger.getLogger(MailReader.class.getSimpleName());
     private final Properties mailProperties = new Properties();
 
-    private final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
-    private final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(
-        "dd.MM.yyyy HH:mm:ss");
-
     @Override
     @EventHandlerPriority(HandlerPriority.NOT_APPLICABLE)
     public void onAppStartup() {
         LOGGER.log(Level.INFO, "initializing mail reader", new Object[]{});
 
+        // read mail properties
         String pathToMailProps = Objects.requireNonNull(
                 getClass()
                     .getClassLoader()
@@ -59,8 +54,16 @@ public class MailReader implements OnAppStartupListener {
         }
     }
 
-    public Store openConnection(String mail, String password)
-        throws IllegalArgumentException, MailProviderNotSupportedException {
+    /**
+     * connect to an SMTP account
+     *
+     * @param mail     the mail of the account
+     * @param password the password to the account
+     * @return the store with an open connection <b>NEEDS TO BE CLOSED LATER</b>
+     * @throws IllegalArgumentException          if the mail is not in a valid format
+     * @throws MailProviderNotSupportedException if the server has no configure SMTP host for the given provider.
+     */
+    public Store openConnection(String mail, String password) throws IllegalArgumentException, MailProviderNotSupportedException {
         String mailProvider;
         try {
             mailProvider = mail.split("@")[1].split("\\.")[0].toLowerCase(Locale.ROOT);
@@ -68,13 +71,11 @@ public class MailReader implements OnAppStartupListener {
             throw new IllegalArgumentException(mail + " is not a valid mail address");
         }
 
-        String imapServerUrl = mailProperties.getProperty(
-            String.format("mail.reader.%s.url", mailProvider));
+        String imapServerUrl = mailProperties.getProperty(String.format("mail.reader.%s.url", mailProvider));
         if (imapServerUrl == null) {
             throw new MailProviderNotSupportedException(mailProvider);
         }
-        int imapServerPort = Integer.parseInt(
-            mailProperties.getProperty(String.format("mail.reader.%s.port", mailProvider), "993"));
+        int imapServerPort = Integer.parseInt(mailProperties.getProperty(String.format("mail.reader.%s.port", mailProvider), "993"));
 
         Properties storeProperties = new Properties();
         storeProperties.put("mail.imap.host", imapServerUrl);
@@ -91,20 +92,23 @@ public class MailReader implements OnAppStartupListener {
         }
     }
 
-    public Message[] findMessages(Store store, String folderName, LocalDateTime since)
-        throws MessagingException {
-        final SearchTerm dateFilter = new ReceivedDateTerm(
-            ComparisonTerm.GT, Date.from(since.atZone(ZoneId.systemDefault()).toInstant()));
+    /**
+     * @param store      an open SMTP Store
+     * @param folderName the name of the folder to find the messages in
+     * @param since      from when to start the search (GT)
+     * @return all messages since a given date
+     * @throws MessagingException if one of the steps fails (store closed, folder not found, ...)
+     */
+    public Message[] findMessages(Store store, String folderName, LocalDateTime since) throws MessagingException {
+        final SearchTerm dateFilter = new ReceivedDateTerm(ComparisonTerm.GT, Date.from(since.atZone(ZoneId.systemDefault()).toInstant()));
 
-        LOGGER.log(Level.FINE, "searching mails in folder {0}",
-            new Object[]{folderName});
+        LOGGER.log(Level.FINE, "searching mails in folder {0}", new Object[]{folderName});
 
         Folder folder = store.getFolder(folderName);
         folder.open(Folder.READ_ONLY);
 
         Message[] messages = folder.search(dateFilter);
-        LOGGER.log(Level.FINE, "found {0} messages in {1} since {2}",
-            new Object[]{messages.length, folderName, since});
+        LOGGER.log(Level.FINE, "found {0} messages in {1} since {2}", new Object[]{messages.length, folderName, since});
         return messages;
     }
 }

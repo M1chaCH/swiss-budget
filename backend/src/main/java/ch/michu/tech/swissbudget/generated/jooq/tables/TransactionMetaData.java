@@ -13,11 +13,11 @@ import java.util.List;
 import java.util.function.Function;
 import org.jooq.Field;
 import org.jooq.ForeignKey;
-import org.jooq.Function4;
+import org.jooq.Function5;
 import org.jooq.Name;
 import org.jooq.Record;
 import org.jooq.Records;
-import org.jooq.Row4;
+import org.jooq.Row5;
 import org.jooq.Schema;
 import org.jooq.SelectField;
 import org.jooq.Table;
@@ -41,7 +41,12 @@ public class TransactionMetaData extends TableImpl<TransactionMetaDataRecord> {
      * The reference instance of <code>public.transaction_meta_data</code>
      */
     public static final TransactionMetaData TRANSACTION_META_DATA = new TransactionMetaData();
-    private transient RegisteredUser _registeredUser;
+
+    /**
+     * The column <code>public.transaction_meta_data.last_import_check</code>.
+     */
+    public final TableField<TransactionMetaDataRecord, LocalDateTime> LAST_IMPORT_CHECK = createField(DSL.name("last_import_check"),
+        SQLDataType.LOCALDATETIME(6), this, "");
 
     /**
      * The column <code>public.transaction_meta_data.user_id</code>.
@@ -54,13 +59,13 @@ public class TransactionMetaData extends TableImpl<TransactionMetaDataRecord> {
      */
     public final TableField<TransactionMetaDataRecord, String> BANK = createField(DSL.name("bank"),
         SQLDataType.VARCHAR(250).nullable(false), this, "");
-
     /**
      * The column
-     * <code>public.transaction_meta_data.last_transaction_import</code>.
+     * <code>public.transaction_meta_data.last_imported_transaction</code>.
      */
-    public final TableField<TransactionMetaDataRecord, LocalDateTime> LAST_TRANSACTION_IMPORT = createField(
-        DSL.name("last_transaction_import"), SQLDataType.LOCALDATETIME(6), this, "");
+    public final TableField<TransactionMetaDataRecord, LocalDateTime> LAST_IMPORTED_TRANSACTION = createField(
+        DSL.name("last_imported_transaction"), SQLDataType.LOCALDATETIME(6), this, "");
+    private transient RegisteredUser _registeredUser;
 
     /**
      * The column <code>public.transaction_meta_data.transactions_folder</code>.
@@ -177,18 +182,19 @@ public class TransactionMetaData extends TableImpl<TransactionMetaDataRecord> {
     }
 
     // -------------------------------------------------------------------------
-    // Row4 type methods
+    // Row5 type methods
     // -------------------------------------------------------------------------
 
     @Override
-    public Row4<String, String, LocalDateTime, String> fieldsRow() {
-        return (Row4) super.fieldsRow();
+    public Row5<String, String, LocalDateTime, LocalDateTime, String> fieldsRow() {
+        return (Row5) super.fieldsRow();
     }
 
     /**
      * Convenience mapping calling {@link SelectField#convertFrom(Function)}.
      */
-    public <U> SelectField<U> mapping(Function4<? super String, ? super String, ? super LocalDateTime, ? super String, ? extends U> from) {
+    public <U> SelectField<U> mapping(
+        Function5<? super String, ? super String, ? super LocalDateTime, ? super LocalDateTime, ? super String, ? extends U> from) {
         return convertFrom(Records.mapping(from));
     }
 
@@ -197,7 +203,7 @@ public class TransactionMetaData extends TableImpl<TransactionMetaDataRecord> {
      * Function)}.
      */
     public <U> SelectField<U> mapping(Class<U> toType,
-        Function4<? super String, ? super String, ? super LocalDateTime, ? super String, ? extends U> from) {
+        Function5<? super String, ? super String, ? super LocalDateTime, ? super LocalDateTime, ? super String, ? extends U> from) {
         return convertFrom(toType, Records.mapping(from));
     }
 }

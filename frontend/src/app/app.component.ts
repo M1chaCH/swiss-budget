@@ -25,7 +25,7 @@ export class AppComponent implements OnInit {
       private router: Router,
       private pageState: PageStateService,
       private theme: ThemeService,
-      private auth: AuthService,
+      public auth: AuthService,
       currentPageService: CurrentPageService,
   ) {
     this.theme.init();

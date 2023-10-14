@@ -1,6 +1,6 @@
 import {inject, Injectable, OnInit} from '@angular/core';
-import {CanActivateFn, Router, UrlTree} from "@angular/router";
-import {catchError, concatMap, firstValueFrom, Observable, of, tap} from "rxjs";
+import {ActivatedRouteSnapshot, CanActivateFn, Router, RouterStateSnapshot, UrlTree} from "@angular/router";
+import {BehaviorSubject, catchError, concatMap, Observable, of, tap} from "rxjs";
 import {pages} from "../app-routing.module";
 import {ApiService, endpoint} from "./api.service";
 import {CookieService} from "ngx-cookie-service";
@@ -11,29 +11,33 @@ import {ErrorDto} from "../dtos/ErrorDto";
 import {environment} from "../../environments/environment";
 import * as moment from 'moment';
 
+export type LoginState = "in" | "out" | "loading";
+
 @Injectable({
   providedIn: 'root',
 })
-export class AuthService implements HttpInterceptor, OnInit {
+export class AuthService implements OnInit {
   static readonly AUTH_TOKEN = "Auth-Token";
   static readonly MFA_PROCESS_ID = "mfa";
   static readonly USER_ID = "user";
+
+  private loginSubject: BehaviorSubject<LoginState> = new BehaviorSubject<LoginState>("loading");
+  public isLoggedIn$: Observable<LoginState> = this.loginSubject.asObservable();
   private authToken: string | undefined;
-  private loggedIn: boolean | undefined;
 
   constructor(
       private api: ApiService,
       private cookie: CookieService,
       private router: Router,
   ) {
+    this.authToken = this.cookie.get(AuthService.AUTH_TOKEN);
+    this.loadLoginState();
   }
 
   ngOnInit() {
-    this.authToken = this.cookie.get(AuthService.AUTH_TOKEN);
   }
 
   login(mail: string, password: string, stay: boolean = true): Observable<string> {
-    this.loggedIn = false;
     this.authToken = undefined;
     return this.api.post<MessageDto | ErrorDto>(endpoint.AUTH, {
       credentials: {
@@ -56,40 +60,18 @@ export class AuthService implements HttpInterceptor, OnInit {
           }
         }),
         concatMap(_ => of("")),
-        catchError(err => of(ErrorService.parseErrorMessage(err.error))),
+        catchError(err => {
+          this.loginSubject.next("out");
+          return of(ErrorService.parseErrorMessage(err.error));
+        }),
     );
   }
 
   logout() {
-    this.loggedIn = false;
+    this.loginSubject.next("out");
     this.authToken = undefined;
     this.deleteToken();
     location.reload();
-  }
-
-  isLoggedIn(): Observable<boolean> {
-    return new Observable<boolean>(obs => {
-      if (this.loggedIn) {
-        obs.next(true)
-        obs.complete();
-        return;
-      }
-
-      this.authToken ??= this.cookie.get(AuthService.AUTH_TOKEN);
-      if (!!this.authToken) {
-        this.api.getRaw(endpoint.AUTH).subscribe({
-          next: _ => obs.next(true),
-          error: _ => {
-            this.deleteToken();
-            obs.next(false);
-          },
-          complete: () => obs.complete()
-        });
-      } else {
-        obs.next(false);
-        obs.complete();
-      }
-    });
   }
 
   validateMfaToken(processId: string, userId: string, code: number): Observable<boolean> {
@@ -106,18 +88,26 @@ export class AuthService implements HttpInterceptor, OnInit {
     );
   }
 
-  intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    this.authToken ??= this.cookie.get(AuthService.AUTH_TOKEN);
-    const requestWithHeaders = req.clone({
-      setHeaders: {[AuthService.AUTH_TOKEN]: this.authToken},
-    });
-    return next.handle(requestWithHeaders);
+  private loadLoginState(): void {
+    if (!this.authToken)
+      this.authToken = this.cookie.get(AuthService.AUTH_TOKEN);
+    if (!!this.authToken) {
+      this.api.getRaw(endpoint.AUTH).subscribe({
+        next: _ => this.loginSubject.next("in"),
+        error: _ => {
+          this.deleteToken();
+          this.loginSubject.next("out");
+        }
+      });
+    } else {
+      this.loginSubject.next("out");
+    }
   }
 
   private storeToken(tokenMessage: MessageDto) {
     const token = tokenMessage.message;
     this.authToken = token;
-    this.loggedIn = true;
+    this.loginSubject.next("in");
     let expires = moment(new Date()).add(300, "days");
     this.cookie.set(AuthService.AUTH_TOKEN, token, expires.toDate(), "/", environment.DOMAIN, true, "Strict")
   }
@@ -127,13 +117,41 @@ export class AuthService implements HttpInterceptor, OnInit {
   }
 }
 
-export const authenticationGuard: CanActivateFn = async (): Promise<UrlTree | boolean> => {
+@Injectable({
+  providedIn: 'root',
+})
+export class AuthTokenInterceptor implements HttpInterceptor {
+  private authToken: string | undefined;
+
+  constructor(
+      private cookie: CookieService,
+  ) {
+  }
+
+  intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+    if (!this.authToken) {
+      this.authToken = this.cookie.get(AuthService.AUTH_TOKEN);
+    }
+    const requestWithHeaders = req.clone({
+      setHeaders: {[AuthService.AUTH_TOKEN]: this.authToken},
+    });
+    return next.handle(requestWithHeaders);
+  }
+}
+
+export const authenticationGuard: CanActivateFn = (_route: ActivatedRouteSnapshot, _state: RouterStateSnapshot): Observable<UrlTree | boolean> => {
   const authService = inject(AuthService);
   const router = inject(Router);
 
-  const loggedIn: boolean = await firstValueFrom(authService.isLoggedIn());
-  if (loggedIn)
-    return true;
-  else
-    return router.parseUrl(pages.LOGIN);
+  return new Observable(obs => {
+    authService.isLoggedIn$.subscribe(loggedIn => {
+      if (loggedIn === "loading")
+        return;
+
+      if (loggedIn === "in")
+        obs.next(true);
+      else
+        obs.next(router.parseUrl(pages.LOGIN));
+    });
+  });
 }

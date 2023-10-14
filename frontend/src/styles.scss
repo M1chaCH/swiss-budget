@@ -1,8 +1,10 @@
 /* https://coolors.co/EAEBEA-140D03-3C3E3C-E28521-C13D2B */
 :root,
 [color-theme="default"] {
-  --michu-tech-background: #EAEBEA;
-  --michu-tech-foreground: #140D03;
+  --michu-tech-white: #EAEBEA;
+  --michu-tech-black: #140D03;
+  --michu-tech-background: var(--michu-tech-white);
+  --michu-tech-foreground: var(--michu-tech-black);
   --michu-tech-primary: #3C3E3C;
   --michu-tech-accent: #E28521;
   --michu-tech-warn: #C13D2B;
@@ -12,8 +14,10 @@
 
 /* https://coolors.co/1C1917-D5D7D5-4C4F4C-E59238-D34936 */
 [color-theme="dark"] {
-  --michu-tech-background: #1C1917;
-  --michu-tech-foreground: #D5D7D5;
+  --michu-tech-white: #D5D7D5;
+  --michu-tech-black: #1C1917;
+  --michu-tech-background: var(--michu-tech-black);
+  --michu-tech-foreground: var(--michu-tech-white);
   --michu-tech-primary: #4C4F4C;
   --michu-tech-accent: #E59238;
   --michu-tech-warn: #D34936;
@@ -98,6 +102,16 @@ a:visited {
   opacity: 0.6;
 }
 
+.loading-icon {
+  rotate: 90deg;
+  animation-name: rotate;
+  animation-duration: 1500ms;
+  animation-timing-function: ease-in-out;
+  animation-fill-mode: forwards;
+  animation-direction: reverse;
+  animation-iteration-count: infinite;
+}
+
 @keyframes flyIn {
   0% {
     transform: translateY(-12px);
@@ -125,3 +139,11 @@ a:visited {
   }
 }
 
+@keyframes rotate {
+  0% {
+    rotate: 90deg;
+  }
+  100% {
+    rotate: 450deg;
+  }
+}

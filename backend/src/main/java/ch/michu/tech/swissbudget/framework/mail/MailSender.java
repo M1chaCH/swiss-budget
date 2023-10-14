@@ -59,6 +59,13 @@ public class MailSender {
         session = createSession();
     }
 
+    /**
+     * sends a mail to the configured admin mail
+     *
+     * @param subject the subject of the mail
+     * @param content the content of the mail
+     * @return true: the mail was sent successfully
+     */
     public Future<Boolean> asyncSendMessageToAdmin(String subject, MimeMultipart content) {
         return sendExecutor.submit(() -> {
             try {
@@ -70,12 +77,18 @@ public class MailSender {
         });
     }
 
+    /**
+     * sends mail to the configured admin mail
+     *
+     * @param subject the subject of the mail
+     * @param content the content of the mail
+     * @throws MailSendException if a messaging exception was thrown in the process
+     */
     public void sendMessageToAdmin(String subject, MimeMultipart content) throws MailSendException {
         sendMessage(getNextId(), adminReceiver, subject, content);
     }
 
-    public void sendMessage(String internalMessageId, InternetAddress recipient, String subject,
-        MimeMultipart content)
+    public void sendMessage(String internalMessageId, InternetAddress recipient, String subject, MimeMultipart content)
         throws MailSendException {
         if (subject == null) {
             subject = "SwissBudget message";

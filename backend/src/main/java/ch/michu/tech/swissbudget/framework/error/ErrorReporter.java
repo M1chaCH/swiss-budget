@@ -31,14 +31,19 @@ public class ErrorReporter {
         this.production = production;
     }
 
+    /**
+     * sends an email to the admin which tells him about the error (not an internal server log) <br> all exceptions thrown by this method
+     * are caught and logged (also if mail sending failed) <br>
+     * <b>NOTE</b> mails are only sent if flag "ch.michu.tech.production" is true (default is "true")
+     *
+     * @param e the error (class, message & stack trace will be read)
+     */
     public void reportError(Throwable e) {
         if (production) {
             try {
-                LOGGER.log(Level.FINE, "notifying admin about exception: {0}",
-                    new Object[]{e.getClass().getSimpleName()});
+                LOGGER.log(Level.FINE, "notifying admin about exception: {0}", new Object[]{e.getClass().getSimpleName()});
 
-                String subject = String.format("SwissBudget Exception: %s",
-                    e.getClass().getSimpleName());
+                String subject = String.format("SwissBudget Exception: %s", e.getClass().getSimpleName());
                 MimeBodyPart body = new MimeBodyPart();
                 body.setContent(buildMessage(e), MailSender.HTML_MESSAGE_TYPE);
                 mailSender.asyncSendMessageToAdmin(subject, new MimeMultipart(body));

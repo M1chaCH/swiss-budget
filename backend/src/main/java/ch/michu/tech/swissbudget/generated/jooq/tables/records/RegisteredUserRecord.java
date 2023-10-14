@@ -44,6 +44,13 @@ public class RegisteredUserRecord extends UpdatableRecordImpl<RegisteredUserReco
     }
 
     /**
+     * Getter for <code>public.registered_user.mail</code>.
+     */
+    public String getMail() {
+        return (String) get(1);
+    }
+
+    /**
      * Create a detached, initialised RegisteredUserRecord
      */
     public RegisteredUserRecord(String id, String mail, String password, String salt, String mailPassword, String username,
@@ -74,13 +81,6 @@ public class RegisteredUserRecord extends UpdatableRecordImpl<RegisteredUserReco
      */
     public String getPassword() {
         return (String) get(2);
-    }
-
-    /**
-     * Getter for <code>public.registered_user.mail</code>.
-     */
-    public String getMail() {
-        return (String) get(1);
     }
 
     /**
@@ -147,17 +147,17 @@ public class RegisteredUserRecord extends UpdatableRecordImpl<RegisteredUserReco
     }
 
     /**
+     * Setter for <code>public.registered_user.last_login</code>.
+     */
+    public void setLastLogin(LocalDateTime value) {
+        set(8, value);
+    }
+
+    /**
      * Getter for <code>public.registered_user.username</code>.
      */
     public String getUsername() {
         return (String) get(5);
-    }
-
-    /**
-     * Getter for <code>public.registered_user.last_login</code>.
-     */
-    public LocalDateTime getLastLogin() {
-        return (LocalDateTime) get(8);
     }
 
     /**
@@ -168,10 +168,10 @@ public class RegisteredUserRecord extends UpdatableRecordImpl<RegisteredUserReco
     }
 
     /**
-     * Setter for <code>public.registered_user.last_login</code>.
+     * Getter for <code>public.registered_user.last_login</code>.
      */
-    public void setLastLogin(LocalDateTime value) {
-        set(8, value);
+    public LocalDateTime getLastLogin() {
+        return (LocalDateTime) get(8);
     }
 
     // -------------------------------------------------------------------------

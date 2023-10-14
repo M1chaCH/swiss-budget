@@ -4,7 +4,7 @@ import ch.michu.tech.swissbudget.app.dto.CreateMailFolderDto;
 import ch.michu.tech.swissbudget.app.dto.CredentialDto;
 import ch.michu.tech.swissbudget.app.dto.RegisterDto;
 import ch.michu.tech.swissbudget.app.service.RegistrationService;
-import ch.michu.tech.swissbudget.framework.logging.Logged;
+import ch.michu.tech.swissbudget.framework.logging.LoggedRequest;
 import ch.michu.tech.swissbudget.framework.validation.ValidateDtos;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
@@ -20,7 +20,7 @@ import java.util.List;
 
 @Path("/register")
 @RequestScoped
-@Logged
+@LoggedRequest
 @ValidateDtos
 public class RegisterEndpoint {
 

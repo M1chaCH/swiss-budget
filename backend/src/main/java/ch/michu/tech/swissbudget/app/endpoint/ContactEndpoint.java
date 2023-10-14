@@ -2,7 +2,7 @@ package ch.michu.tech.swissbudget.app.endpoint;
 
 import ch.michu.tech.swissbudget.app.dto.ContactMessageDto;
 import ch.michu.tech.swissbudget.app.service.mail.MailService;
-import ch.michu.tech.swissbudget.framework.logging.Logged;
+import ch.michu.tech.swissbudget.framework.logging.LoggedRequest;
 import ch.michu.tech.swissbudget.framework.validation.ValidateDtos;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
@@ -15,7 +15,7 @@ import jakarta.ws.rs.core.Response.Status;
 
 @Path("/contact")
 @RequestScoped
-@Logged
+@LoggedRequest
 @ValidateDtos
 public class ContactEndpoint {
 

@@ -1,0 +1,20 @@
+<div *ngIf="state" [ngSwitch]="state" class="transaction-importer-banner">
+    <div *ngSwitchCase="'started'" class="state">
+        <span class="material-symbols-rounded loading-icon">sync</span>
+        <span>Importing transactions ...</span>
+    </div>
+    <div *ngSwitchCase="'error'" class="state">
+        <span class="material-symbols-rounded" style="color: var(--michu-tech-warn);">error</span>
+        <span style="font-weight: 600;">Importing transactions failed!</span>
+        <button (click)="state = undefined" class="icon-button">
+            <span class="material-symbols-rounded" style="color: var(--michu-tech-background)">close</span>
+        </button>
+    </div>
+    <div *ngSwitchCase="'success'" class="state">
+        <span class="material-symbols-rounded" style="color: var(--michu-tech-accent);">done</span>
+        <span style="font-weight: 600;">Importing transactions completed</span>
+        <button (click)="state = undefined" class="icon-button">
+            <span class="material-symbols-rounded" style="color: var(--michu-tech-background)">close</span>
+        </button>
+    </div>
+</div>

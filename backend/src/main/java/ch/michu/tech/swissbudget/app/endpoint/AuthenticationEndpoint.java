@@ -5,7 +5,7 @@ import ch.michu.tech.swissbudget.app.dto.MfaCodeDto;
 import ch.michu.tech.swissbudget.framework.authentication.Authenticated;
 import ch.michu.tech.swissbudget.framework.authentication.AuthenticationService;
 import ch.michu.tech.swissbudget.framework.dto.MessageDto;
-import ch.michu.tech.swissbudget.framework.logging.Logged;
+import ch.michu.tech.swissbudget.framework.logging.LoggedRequest;
 import ch.michu.tech.swissbudget.framework.validation.ValidateDtos;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
@@ -20,7 +20,7 @@ import jakarta.ws.rs.core.Response.Status;
 
 @Path("/auth")
 @RequestScoped
-@Logged
+@LoggedRequest
 @ValidateDtos
 public class AuthenticationEndpoint {
 

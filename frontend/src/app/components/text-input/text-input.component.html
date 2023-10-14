@@ -7,6 +7,7 @@
         (change)="edited = true"
         (keydown.enter)="submit.emit()"
         (keydown.escape)="cancel.emit()"
+        [autocomplete]="password ? 'current-password' : ''"
         [formControl]="value"
         [placeholder]="value.hasValidator(Validators.required) ? placeholder + '*' : placeholder"
         [type]="password ? 'password' : 'text'"

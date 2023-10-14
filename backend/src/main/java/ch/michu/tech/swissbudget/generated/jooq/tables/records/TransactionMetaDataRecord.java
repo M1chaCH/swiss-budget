@@ -8,8 +8,8 @@ import ch.michu.tech.swissbudget.generated.jooq.tables.TransactionMetaData;
 import java.time.LocalDateTime;
 import org.jooq.Field;
 import org.jooq.Record1;
-import org.jooq.Record4;
-import org.jooq.Row4;
+import org.jooq.Record5;
+import org.jooq.Row5;
 import org.jooq.impl.UpdatableRecordImpl;
 
 
@@ -18,7 +18,7 @@ import org.jooq.impl.UpdatableRecordImpl;
  */
 @SuppressWarnings({"all", "unchecked", "rawtypes"})
 public class TransactionMetaDataRecord extends UpdatableRecordImpl<TransactionMetaDataRecord> implements
-    Record4<String, String, LocalDateTime, String> {
+    Record5<String, String, LocalDateTime, LocalDateTime, String> {
 
     private static final long serialVersionUID = 1L;
 
@@ -44,23 +44,24 @@ public class TransactionMetaDataRecord extends UpdatableRecordImpl<TransactionMe
     }
 
     /**
+     * Getter for <code>public.transaction_meta_data.bank</code>.
+     */
+    public String getBank() {
+        return (String) get(1);
+    }
+
+    /**
      * Create a detached, initialised TransactionMetaDataRecord
      */
-    public TransactionMetaDataRecord(String userId, String bank, LocalDateTime lastTransactionImport, String transactionsFolder) {
+    public TransactionMetaDataRecord(String userId, String bank, LocalDateTime lastImportCheck, LocalDateTime lastImportedTransaction,
+        String transactionsFolder) {
         super(TransactionMetaData.TRANSACTION_META_DATA);
 
         setUserId(userId);
         setBank(bank);
-        setLastTransactionImport(lastTransactionImport);
+        setLastImportCheck(lastImportCheck);
+        setLastImportedTransaction(lastImportedTransaction);
         setTransactionsFolder(transactionsFolder);
-    }
-
-    /**
-     * Setter for
-     * <code>public.transaction_meta_data.last_transaction_import</code>.
-     */
-    public void setLastTransactionImport(LocalDateTime value) {
-        set(2, value);
     }
 
     /**
@@ -71,17 +72,33 @@ public class TransactionMetaDataRecord extends UpdatableRecordImpl<TransactionMe
     }
 
     /**
-     * Getter for <code>public.transaction_meta_data.bank</code>.
+     * Getter for <code>public.transaction_meta_data.last_import_check</code>.
      */
-    public String getBank() {
-        return (String) get(1);
+    public LocalDateTime getLastImportCheck() {
+        return (LocalDateTime) get(2);
     }
 
     /**
-     * Getter for <code>public.transaction_meta_data.transactions_folder</code>.
+     * Setter for <code>public.transaction_meta_data.last_import_check</code>.
      */
-    public String getTransactionsFolder() {
-        return (String) get(3);
+    public void setLastImportCheck(LocalDateTime value) {
+        set(2, value);
+    }
+
+    /**
+     * Getter for
+     * <code>public.transaction_meta_data.last_imported_transaction</code>.
+     */
+    public LocalDateTime getLastImportedTransaction() {
+        return (LocalDateTime) get(3);
+    }
+
+    /**
+     * Setter for
+     * <code>public.transaction_meta_data.last_imported_transaction</code>.
+     */
+    public void setLastImportedTransaction(LocalDateTime value) {
+        set(3, value);
     }
 
     // -------------------------------------------------------------------------
@@ -94,17 +111,21 @@ public class TransactionMetaDataRecord extends UpdatableRecordImpl<TransactionMe
     }
 
     // -------------------------------------------------------------------------
-    // Record4 type implementation
+    // Record5 type implementation
     // -------------------------------------------------------------------------
 
-    @Override
-    public Row4<String, String, LocalDateTime, String> fieldsRow() {
-        return (Row4) super.fieldsRow();
+    /**
+     * Getter for <code>public.transaction_meta_data.transactions_folder</code>.
+     */
+    public String getTransactionsFolder() {
+        return (String) get(4);
     }
 
-    @Override
-    public Row4<String, String, LocalDateTime, String> valuesRow() {
-        return (Row4) super.valuesRow();
+    /**
+     * Setter for <code>public.transaction_meta_data.transactions_folder</code>.
+     */
+    public void setTransactionsFolder(String value) {
+        set(4, value);
     }
 
     @Override
@@ -118,13 +139,18 @@ public class TransactionMetaDataRecord extends UpdatableRecordImpl<TransactionMe
     }
 
     @Override
-    public Field<LocalDateTime> field3() {
-        return TransactionMetaData.TRANSACTION_META_DATA.LAST_TRANSACTION_IMPORT;
+    public Row5<String, String, LocalDateTime, LocalDateTime, String> fieldsRow() {
+        return (Row5) super.fieldsRow();
     }
 
     @Override
-    public Field<String> field4() {
-        return TransactionMetaData.TRANSACTION_META_DATA.TRANSACTIONS_FOLDER;
+    public Row5<String, String, LocalDateTime, LocalDateTime, String> valuesRow() {
+        return (Row5) super.valuesRow();
+    }
+
+    @Override
+    public Field<LocalDateTime> field3() {
+        return TransactionMetaData.TRANSACTION_META_DATA.LAST_IMPORT_CHECK;
     }
 
     @Override
@@ -138,13 +164,18 @@ public class TransactionMetaDataRecord extends UpdatableRecordImpl<TransactionMe
     }
 
     @Override
-    public LocalDateTime component3() {
-        return getLastTransactionImport();
+    public Field<LocalDateTime> field4() {
+        return TransactionMetaData.TRANSACTION_META_DATA.LAST_IMPORTED_TRANSACTION;
     }
 
     @Override
-    public String component4() {
-        return getTransactionsFolder();
+    public Field<String> field5() {
+        return TransactionMetaData.TRANSACTION_META_DATA.TRANSACTIONS_FOLDER;
+    }
+
+    @Override
+    public LocalDateTime component3() {
+        return getLastImportCheck();
     }
 
     @Override
@@ -158,13 +189,18 @@ public class TransactionMetaDataRecord extends UpdatableRecordImpl<TransactionMe
     }
 
     @Override
-    public LocalDateTime value3() {
-        return getLastTransactionImport();
+    public LocalDateTime component4() {
+        return getLastImportedTransaction();
     }
 
     @Override
-    public String value4() {
+    public String component5() {
         return getTransactionsFolder();
+    }
+
+    @Override
+    public LocalDateTime value3() {
+        return getLastImportCheck();
     }
 
     @Override
@@ -180,23 +216,24 @@ public class TransactionMetaDataRecord extends UpdatableRecordImpl<TransactionMe
     }
 
     @Override
+    public LocalDateTime value4() {
+        return getLastImportedTransaction();
+    }
+
+    @Override
+    public String value5() {
+        return getTransactionsFolder();
+    }
+
+    @Override
     public TransactionMetaDataRecord value3(LocalDateTime value) {
-        setLastTransactionImport(value);
+        setLastImportCheck(value);
         return this;
     }
 
     @Override
-    public TransactionMetaDataRecord value4(String value) {
-        setTransactionsFolder(value);
-        return this;
-    }
-
-    @Override
-    public TransactionMetaDataRecord values(String value1, String value2, LocalDateTime value3, String value4) {
-        value1(value1);
-        value2(value2);
-        value3(value3);
-        value4(value4);
+    public TransactionMetaDataRecord value4(LocalDateTime value) {
+        setLastImportedTransaction(value);
         return this;
     }
 
@@ -204,18 +241,19 @@ public class TransactionMetaDataRecord extends UpdatableRecordImpl<TransactionMe
     // Constructors
     // -------------------------------------------------------------------------
 
-    /**
-     * Getter for
-     * <code>public.transaction_meta_data.last_transaction_import</code>.
-     */
-    public LocalDateTime getLastTransactionImport() {
-        return (LocalDateTime) get(2);
+    @Override
+    public TransactionMetaDataRecord value5(String value) {
+        setTransactionsFolder(value);
+        return this;
     }
 
-    /**
-     * Setter for <code>public.transaction_meta_data.transactions_folder</code>.
-     */
-    public void setTransactionsFolder(String value) {
-        set(3, value);
+    @Override
+    public TransactionMetaDataRecord values(String value1, String value2, LocalDateTime value3, LocalDateTime value4, String value5) {
+        value1(value1);
+        value2(value2);
+        value3(value3);
+        value4(value4);
+        value5(value5);
+        return this;
     }
 }

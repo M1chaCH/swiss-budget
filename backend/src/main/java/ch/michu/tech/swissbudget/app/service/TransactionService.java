@@ -1,10 +1,8 @@
 package ch.michu.tech.swissbudget.app.service;
 
-import static ch.michu.tech.swissbudget.generated.jooq.tables.Transaction.TRANSACTION;
-
 import ch.michu.tech.swissbudget.app.dto.TransactionDto;
+import ch.michu.tech.swissbudget.app.provider.TransactionProvider;
 import ch.michu.tech.swissbudget.app.transaction.TransactionImporter;
-import ch.michu.tech.swissbudget.framework.data.DataProvider;
 import ch.michu.tech.swissbudget.framework.data.RequestSupport;
 import ch.michu.tech.swissbudget.framework.error.exception.InvalidSessionTokenException;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -16,30 +14,25 @@ import java.util.List;
 public class TransactionService {
 
     private final Provider<RequestSupport> supportProvider;
-    private final TransactionImporter transactionImporter;
-    private final DataProvider db;
+    private final TransactionImporter importer;
+    private final TransactionProvider provider;
 
     @Inject
-    public TransactionService(Provider<RequestSupport> supportProvider, TransactionImporter transactionImporter, DataProvider db) {
+    public TransactionService(Provider<RequestSupport> supportProvider, TransactionImporter importer, TransactionProvider provider) {
         this.supportProvider = supportProvider;
-        this.transactionImporter = transactionImporter;
-        this.db = db;
+        this.importer = importer;
+        this.provider = provider;
     }
 
-    public List<TransactionDto> getTransactions(boolean includeImport) {
+    public List<TransactionDto> getTransactions() {
         RequestSupport support = supportProvider.get();
         String userId = support.getSessionToken().orElseThrow(InvalidSessionTokenException::new).getUserId();
+        return provider.selectTransactionsWithDependenciesByUserIdAsDto(userId);
+    }
 
-        if (includeImport) {
-            transactionImporter.importTransactions(userId);
-        }
-
-        List<TransactionDto> transactions = db.getContext()
-            .selectFrom(TRANSACTION)
-            .where(TRANSACTION.USER_ID.eq(userId))
-            .orderBy(TRANSACTION.TRANSACTION_DATE.desc())
-            .fetch().map(TransactionDto::new);
-        support.logFine(this, "selected %s transactions", transactions.size());
-        return transactions;
+    public List<TransactionDto> importTransactions() {
+        RequestSupport support = supportProvider.get();
+        String userId = support.getSessionToken().orElseThrow(InvalidSessionTokenException::new).getUserId();
+        return importer.importTransactions(userId).stream().map(TransactionDto::new).toList();
     }
 }

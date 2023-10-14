@@ -18,6 +18,10 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMultipart;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
+/**
+ * sends mails where the content is built from a template. the template path can be configured here: ch.michu.tech.mail.templates.dir
+ * template name is the file name either with or without .html, but file has to be HTML
+ */
 @ApplicationScoped
 public class TemplatedMailSender {
 
@@ -28,9 +32,7 @@ public class TemplatedMailSender {
     private final Path templatesDir;
 
     @Inject
-    public TemplatedMailSender(
-        @ConfigProperty(name = "ch.michu.tech.mail.templates.dir") String templatesUrl,
-        MailSender sender) {
+    public TemplatedMailSender(@ConfigProperty(name = "ch.michu.tech.mail.templates.dir") String templatesUrl, MailSender sender) {
         this.sender = sender;
         this.templatesDir = Path.of(templatesUrl);
     }
@@ -39,14 +41,12 @@ public class TemplatedMailSender {
         sendMail(sender.getAdminReceiver(), subject, templateName, content);
     }
 
-    public void sendMail(InternetAddress recipient, String subject, String templateName,
-        Map<String, String> content) {
+    public void sendMail(InternetAddress recipient, String subject, String templateName, Map<String, String> content) {
         String internalMessageId = sender.getNextId();
 
         try {
             String messageContent = loadTemplatedContent(internalMessageId, templateName, content);
-            LOGGER.log(Level.FINE, "sending templated mail to {0}: {1}",
-                new Object[]{recipient.getAddress(), messageContent});
+            LOGGER.log(Level.FINE, "sending templated mail to {0}: {1}", new Object[]{recipient.getAddress(), messageContent});
             MimeBodyPart body = new MimeBodyPart();
             body.setContent(messageContent, MailSender.HTML_MESSAGE_TYPE);
             sender.sendMessage(internalMessageId, recipient, subject, new MimeMultipart(body));
@@ -55,8 +55,7 @@ public class TemplatedMailSender {
         }
     }
 
-    protected String loadTemplatedContent(String id, String templateName,
-        Map<String, String> values) {
+    protected String loadTemplatedContent(String id, String templateName, Map<String, String> values) {
         String template = readTemplate(id, templateName);
         return fillTemplate(id, template, values);
     }

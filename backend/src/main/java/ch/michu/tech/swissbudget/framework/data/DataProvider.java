@@ -15,6 +15,9 @@ import org.jooq.DSLContext;
 import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
 
+/**
+ * simple provider for a global db connections via jOOQ.
+ */
 @ApplicationScoped
 public class DataProvider implements OnAppStartupListener {
 

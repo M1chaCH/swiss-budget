@@ -1,0 +1,38 @@
+package ch.michu.tech.swissbudget.app.dto;
+
+import static ch.michu.tech.swissbudget.generated.jooq.tables.Keyword.KEYWORD;
+
+import ch.michu.tech.swissbudget.framework.validation.Nullable;
+import ch.michu.tech.swissbudget.framework.validation.ValidatedDto;
+import ch.michu.tech.swissbudget.generated.jooq.tables.records.KeywordRecord;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
+@EqualsAndHashCode
+@ValidatedDto
+public class KeywordDto {
+
+    private Integer id;
+    private String keyword;
+    @Nullable
+    private Integer tagId;
+    private String userId;
+
+    public KeywordDto(KeywordRecord entity) {
+        this.id = entity.getId();
+        this.keyword = entity.getKeyword();
+        this.userId = entity.getUserId();
+        if (entity.get(KEYWORD.TAG_ID) != null) {
+            this.tagId = entity.getTagId();
+        }
+    }
+}

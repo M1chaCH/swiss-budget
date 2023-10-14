@@ -77,17 +77,17 @@ public class MfaCodeRecord extends UpdatableRecordImpl<MfaCodeRecord> implements
     }
 
     /**
-     * Setter for <code>public.mfa_code.code</code>.
-     */
-    public void setCode(Integer value) {
-        set(1, value);
-    }
-
-    /**
      * Getter for <code>public.mfa_code.expires_at</code>.
      */
     public LocalDateTime getExpiresAt() {
         return (LocalDateTime) get(3);
+    }
+
+    /**
+     * Setter for <code>public.mfa_code.code</code>.
+     */
+    public void setCode(Integer value) {
+        set(1, value);
     }
 
     /**

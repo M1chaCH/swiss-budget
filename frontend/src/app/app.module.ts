@@ -1,4 +1,4 @@
-import {NgModule} from '@angular/core';
+import {DEFAULT_CURRENCY_CODE, NgModule} from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
 
 import {AppRoutingModule} from './app-routing.module';
@@ -23,13 +23,15 @@ import {TextAreaComponent} from './components/text-area/text-area.component';
 import {SelectComponent} from './components/select/select.component';
 import {ClickThrottlerDirective} from './components/button/click-throttler.directive';
 import {CookieService} from "ngx-cookie-service";
-import {AuthService} from "./services/auth.service";
+import {AuthTokenInterceptor} from "./services/auth.service";
 import {MfaSubpageComponent} from './pages/welcome.page/mfa.subpage/mfa.subpage.component';
 import {CheckboxComponent} from './components/checkbox/checkbox.component';
 import {BudgetPageComponent} from './pages/budget.page/budget.page.component';
 import {PageDirective} from './pages/page.directive';
 import {ContentReplacerDirective} from "./animations";
 import {TransactionPageComponent} from './pages/transaction.page/transaction.page.component';
+import {TransactionComponent} from './components/transactions/transaction/transaction.component';
+import {TransactionImporterComponent} from './components/transactions/transaction-importer/transaction-importer.component';
 
 @NgModule({
   declarations: [
@@ -55,6 +57,8 @@ import {TransactionPageComponent} from './pages/transaction.page/transaction.pag
     PageDirective,
     ContentReplacerDirective,
     TransactionPageComponent,
+    TransactionComponent,
+    TransactionImporterComponent,
   ],
   imports: [
     BrowserModule,
@@ -66,7 +70,8 @@ import {TransactionPageComponent} from './pages/transaction.page/transaction.pag
     HttpClientModule,
   ],
   providers: [
-    {provide: HTTP_INTERCEPTORS, useClass: AuthService, multi: true},
+    {provide: HTTP_INTERCEPTORS, useClass: AuthTokenInterceptor, multi: true},
+    {provide: DEFAULT_CURRENCY_CODE, useValue: ''},
     CookieService,
   ],
   bootstrap: [AppComponent]

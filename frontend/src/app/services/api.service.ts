@@ -13,6 +13,7 @@ export const endpoint = {
   MFA: "/auth/mfa",
   SUPPORTED_BANK: "/register/bank",
   TRANSACTIONS: "/transaction",
+  IMPORT_TRANSACTIONS: "/transaction/import",
 }
 
 
