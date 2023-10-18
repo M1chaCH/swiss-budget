@@ -43,26 +43,24 @@ public class Tag extends TableImpl<TagRecord> {
     public static final Tag TAG = new Tag();
 
     /**
-     * The column <code>public.tag.default_tag</code>.
+     * The column <code>public.tag.icon</code>.
      */
-    public final TableField<TagRecord, Boolean> DEFAULT_TAG = createField(DSL.name("default_tag"),
-        SQLDataType.BOOLEAN.nullable(false).defaultValue(DSL.field("false", SQLDataType.BOOLEAN)), this, "");
+    public final TableField<TagRecord, String> ICON = createField(DSL.name("icon"), SQLDataType.VARCHAR(50).nullable(false), this, "");
 
     /**
      * The column <code>public.tag.id</code>.
      */
     public final TableField<TagRecord, Integer> ID = createField(DSL.name("id"), SQLDataType.INTEGER.nullable(false).identity(true), this,
         "");
-
-    /**
-     * The column <code>public.tag.icon</code>.
-     */
-    public final TableField<TagRecord, String> ICON = createField(DSL.name("icon"), SQLDataType.VARCHAR(50), this, "");
-
     /**
      * The column <code>public.tag.color</code>.
      */
-    public final TableField<TagRecord, String> COLOR = createField(DSL.name("color"), SQLDataType.VARCHAR(10), this, "");
+    public final TableField<TagRecord, String> COLOR = createField(DSL.name("color"), SQLDataType.VARCHAR(10).nullable(false), this, "");
+    /**
+     * The column <code>public.tag.default_tag</code>.
+     */
+    public final TableField<TagRecord, Boolean> DEFAULT_TAG = createField(DSL.name("default_tag"),
+        SQLDataType.BOOLEAN.nullable(false).defaultValue(DSL.field("false", SQLDataType.BOOLEAN)), this, "");
 
     /**
      * The column <code>public.tag.name</code>.

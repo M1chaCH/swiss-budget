@@ -91,17 +91,17 @@ public class TagRecord extends UpdatableRecordImpl<TagRecord> implements Record6
     }
 
     /**
-     * Setter for <code>public.tag.color</code>.
-     */
-    public void setColor(String value) {
-        set(2, value);
-    }
-
-    /**
      * Getter for <code>public.tag.user_id</code>.
      */
     public String getUserId() {
         return (String) get(4);
+    }
+
+    /**
+     * Setter for <code>public.tag.color</code>.
+     */
+    public void setColor(String value) {
+        set(2, value);
     }
 
     /**
@@ -259,20 +259,6 @@ public class TagRecord extends UpdatableRecordImpl<TagRecord> implements Record6
     }
 
     @Override
-    public String value5() {
-        return getUserId();
-    }
-
-    @Override
-    public Boolean value6() {
-        return getDefaultTag();
-    }
-
-    // -------------------------------------------------------------------------
-    // Constructors
-    // -------------------------------------------------------------------------
-
-    @Override
     public TagRecord value6(Boolean value) {
         setDefaultTag(value);
         return this;
@@ -287,5 +273,19 @@ public class TagRecord extends UpdatableRecordImpl<TagRecord> implements Record6
         value5(value5);
         value6(value6);
         return this;
+    }
+
+    // -------------------------------------------------------------------------
+    // Constructors
+    // -------------------------------------------------------------------------
+
+    @Override
+    public String value5() {
+        return getUserId();
+    }
+
+    @Override
+    public Boolean value6() {
+        return getDefaultTag();
     }
 }

@@ -111,6 +111,7 @@ public class TransactionProvider {
             .leftJoin(KEYWORD)
             .on(TRANSACTION.MATCHING_KEYWORD_ID.eq(KEYWORD.ID))
             .where(TRANSACTION.USER_ID.eq(userId))
+            .orderBy(TRANSACTION.TRANSACTION_DATE.desc())
             .fetch();
 
         final List<TransactionDto> dtos = new ArrayList<>();

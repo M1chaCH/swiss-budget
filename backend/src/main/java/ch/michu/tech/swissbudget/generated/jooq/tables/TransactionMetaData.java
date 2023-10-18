@@ -59,13 +59,14 @@ public class TransactionMetaData extends TableImpl<TransactionMetaDataRecord> {
      */
     public final TableField<TransactionMetaDataRecord, String> BANK = createField(DSL.name("bank"),
         SQLDataType.VARCHAR(250).nullable(false), this, "");
+    private transient RegisteredUser _registeredUser;
+
     /**
      * The column
      * <code>public.transaction_meta_data.last_imported_transaction</code>.
      */
     public final TableField<TransactionMetaDataRecord, LocalDateTime> LAST_IMPORTED_TRANSACTION = createField(
         DSL.name("last_imported_transaction"), SQLDataType.LOCALDATETIME(6), this, "");
-    private transient RegisteredUser _registeredUser;
 
     /**
      * The column <code>public.transaction_meta_data.transactions_folder</code>.

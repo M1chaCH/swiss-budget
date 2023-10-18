@@ -1,6 +1,6 @@
 <div class="transaction">
     <span class="smaller-text">
-        {{transaction.transactionDate | date}}
+        {{transaction.transactionDate.toDate() | date}}
     </span>
     <span [style.color]="transaction.expense ? 'var(--michu-tech-warn)' : 'var(--michu-tech-foreground)'">
         <span *ngIf="transaction.expense">-</span>
@@ -14,7 +14,7 @@
             {{transaction.tag.icon}}
         </span>
     </div>
-    <!--    TODO make expandable and allow modifications there-->
+    <!--    TODO make expandable and allow modifications there / maybe integrate with route -> go fullscreen when mobile but expand when pc-->
     <button class="icon-button" style="height: 80%; aspect-ratio: 1 / 1;">
         <span class="material-symbols-rounded">
             expand_more

@@ -1,8 +1,14 @@
 <div appPage class="page-container" pageRoute="transactions" pageTitle="Transactions">
-    <div *ngIf="transactions$ | async as transactions else loadingTransactions" class="transactions">
-        <p *ngIf="!transactions || transactions.length < 1">No transactions imported yet!</p>
-        <app-transaction *ngFor="let transaction of transactions" [transaction]="transaction">
-        </app-transaction>
+    <div *ngIf="transactions$ | async as transactions else loadingTransactions">
+        <p *ngIf="!transactions || transactions.size < 1">No transactions imported yet!</p>
+
+        <div *ngFor="let key of transactions.keys()">
+            <h3>{{key}}</h3>
+            <div class="transactions">
+                <app-transaction *ngFor="let transaction of transactions.get(key)" [transaction]="transaction">
+                </app-transaction>
+            </div>
+        </div>
     </div>
     <ng-template #loadingTransactions>
         <!--        TODO extract into directive instead of async pipe (give option for fullscreen or 100%) -->

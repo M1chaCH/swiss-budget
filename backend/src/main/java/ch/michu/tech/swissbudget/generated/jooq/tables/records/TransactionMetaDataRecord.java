@@ -51,6 +51,13 @@ public class TransactionMetaDataRecord extends UpdatableRecordImpl<TransactionMe
     }
 
     /**
+     * Setter for <code>public.transaction_meta_data.last_import_check</code>.
+     */
+    public void setLastImportCheck(LocalDateTime value) {
+        set(2, value);
+    }
+
+    /**
      * Create a detached, initialised TransactionMetaDataRecord
      */
     public TransactionMetaDataRecord(String userId, String bank, LocalDateTime lastImportCheck, LocalDateTime lastImportedTransaction,
@@ -62,6 +69,14 @@ public class TransactionMetaDataRecord extends UpdatableRecordImpl<TransactionMe
         setLastImportCheck(lastImportCheck);
         setLastImportedTransaction(lastImportedTransaction);
         setTransactionsFolder(transactionsFolder);
+    }
+
+    /**
+     * Setter for
+     * <code>public.transaction_meta_data.last_imported_transaction</code>.
+     */
+    public void setLastImportedTransaction(LocalDateTime value) {
+        set(3, value);
     }
 
     /**
@@ -79,26 +94,11 @@ public class TransactionMetaDataRecord extends UpdatableRecordImpl<TransactionMe
     }
 
     /**
-     * Setter for <code>public.transaction_meta_data.last_import_check</code>.
-     */
-    public void setLastImportCheck(LocalDateTime value) {
-        set(2, value);
-    }
-
-    /**
      * Getter for
      * <code>public.transaction_meta_data.last_imported_transaction</code>.
      */
     public LocalDateTime getLastImportedTransaction() {
         return (LocalDateTime) get(3);
-    }
-
-    /**
-     * Setter for
-     * <code>public.transaction_meta_data.last_imported_transaction</code>.
-     */
-    public void setLastImportedTransaction(LocalDateTime value) {
-        set(3, value);
     }
 
     // -------------------------------------------------------------------------
@@ -113,6 +113,16 @@ public class TransactionMetaDataRecord extends UpdatableRecordImpl<TransactionMe
     // -------------------------------------------------------------------------
     // Record5 type implementation
     // -------------------------------------------------------------------------
+
+    @Override
+    public Row5<String, String, LocalDateTime, LocalDateTime, String> fieldsRow() {
+        return (Row5) super.fieldsRow();
+    }
+
+    @Override
+    public Row5<String, String, LocalDateTime, LocalDateTime, String> valuesRow() {
+        return (Row5) super.valuesRow();
+    }
 
     /**
      * Getter for <code>public.transaction_meta_data.transactions_folder</code>.
@@ -134,18 +144,18 @@ public class TransactionMetaDataRecord extends UpdatableRecordImpl<TransactionMe
     }
 
     @Override
+    public Field<LocalDateTime> field4() {
+        return TransactionMetaData.TRANSACTION_META_DATA.LAST_IMPORTED_TRANSACTION;
+    }
+
+    @Override
+    public Field<String> field5() {
+        return TransactionMetaData.TRANSACTION_META_DATA.TRANSACTIONS_FOLDER;
+    }
+
+    @Override
     public Field<String> field2() {
         return TransactionMetaData.TRANSACTION_META_DATA.BANK;
-    }
-
-    @Override
-    public Row5<String, String, LocalDateTime, LocalDateTime, String> fieldsRow() {
-        return (Row5) super.fieldsRow();
-    }
-
-    @Override
-    public Row5<String, String, LocalDateTime, LocalDateTime, String> valuesRow() {
-        return (Row5) super.valuesRow();
     }
 
     @Override
@@ -159,22 +169,27 @@ public class TransactionMetaDataRecord extends UpdatableRecordImpl<TransactionMe
     }
 
     @Override
+    public LocalDateTime component4() {
+        return getLastImportedTransaction();
+    }
+
+    @Override
+    public String component5() {
+        return getTransactionsFolder();
+    }
+
+    @Override
     public String component2() {
         return getBank();
     }
 
     @Override
-    public Field<LocalDateTime> field4() {
-        return TransactionMetaData.TRANSACTION_META_DATA.LAST_IMPORTED_TRANSACTION;
-    }
-
-    @Override
-    public Field<String> field5() {
-        return TransactionMetaData.TRANSACTION_META_DATA.TRANSACTIONS_FOLDER;
-    }
-
-    @Override
     public LocalDateTime component3() {
+        return getLastImportCheck();
+    }
+
+    @Override
+    public LocalDateTime value3() {
         return getLastImportCheck();
     }
 
@@ -186,21 +201,6 @@ public class TransactionMetaDataRecord extends UpdatableRecordImpl<TransactionMe
     @Override
     public String value2() {
         return getBank();
-    }
-
-    @Override
-    public LocalDateTime component4() {
-        return getLastImportedTransaction();
-    }
-
-    @Override
-    public String component5() {
-        return getTransactionsFolder();
-    }
-
-    @Override
-    public LocalDateTime value3() {
-        return getLastImportCheck();
     }
 
     @Override
@@ -216,16 +216,6 @@ public class TransactionMetaDataRecord extends UpdatableRecordImpl<TransactionMe
     }
 
     @Override
-    public LocalDateTime value4() {
-        return getLastImportedTransaction();
-    }
-
-    @Override
-    public String value5() {
-        return getTransactionsFolder();
-    }
-
-    @Override
     public TransactionMetaDataRecord value3(LocalDateTime value) {
         setLastImportCheck(value);
         return this;
@@ -236,10 +226,6 @@ public class TransactionMetaDataRecord extends UpdatableRecordImpl<TransactionMe
         setLastImportedTransaction(value);
         return this;
     }
-
-    // -------------------------------------------------------------------------
-    // Constructors
-    // -------------------------------------------------------------------------
 
     @Override
     public TransactionMetaDataRecord value5(String value) {
@@ -255,5 +241,19 @@ public class TransactionMetaDataRecord extends UpdatableRecordImpl<TransactionMe
         value4(value4);
         value5(value5);
         return this;
+    }
+
+    // -------------------------------------------------------------------------
+    // Constructors
+    // -------------------------------------------------------------------------
+
+    @Override
+    public LocalDateTime value4() {
+        return getLastImportedTransaction();
+    }
+
+    @Override
+    public String value5() {
+        return getTransactionsFolder();
     }
 }

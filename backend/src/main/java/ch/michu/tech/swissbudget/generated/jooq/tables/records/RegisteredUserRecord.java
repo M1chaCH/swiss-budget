@@ -70,17 +70,17 @@ public class RegisteredUserRecord extends UpdatableRecordImpl<RegisteredUserReco
     }
 
     /**
-     * Setter for <code>public.registered_user.id</code>.
-     */
-    public void setId(String value) {
-        set(0, value);
-    }
-
-    /**
      * Getter for <code>public.registered_user.password</code>.
      */
     public String getPassword() {
         return (String) get(2);
+    }
+
+    /**
+     * Setter for <code>public.registered_user.id</code>.
+     */
+    public void setId(String value) {
+        set(0, value);
     }
 
     /**
@@ -154,6 +154,13 @@ public class RegisteredUserRecord extends UpdatableRecordImpl<RegisteredUserReco
     }
 
     /**
+     * Getter for <code>public.registered_user.last_login</code>.
+     */
+    public LocalDateTime getLastLogin() {
+        return (LocalDateTime) get(8);
+    }
+
+    /**
      * Getter for <code>public.registered_user.username</code>.
      */
     public String getUsername() {
@@ -165,13 +172,6 @@ public class RegisteredUserRecord extends UpdatableRecordImpl<RegisteredUserReco
      */
     public Boolean getDisabled() {
         return (Boolean) get(6);
-    }
-
-    /**
-     * Getter for <code>public.registered_user.last_login</code>.
-     */
-    public LocalDateTime getLastLogin() {
-        return (LocalDateTime) get(8);
     }
 
     // -------------------------------------------------------------------------

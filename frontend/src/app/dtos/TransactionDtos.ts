@@ -1,7 +1,9 @@
+import {Moment} from "moment/moment";
+
 export type TransactionDto = {
   id: string,
   expense: boolean,
-  transactionDate: string,
+  transactionDate: Moment,
   bankAccount: string,
   receiver: string,
   amount: number,
