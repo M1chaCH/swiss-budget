@@ -2,7 +2,7 @@
   width: 100%;
   min-height: 60px;
   border-radius: 2px;
-  background-color: var(--michu-tech-primary);
+  background-color: color-mix(in srgb, var(--michu-tech-primary) 75%, var(--michu-tech-background));
   transition: all 150ms ease-out;
   position: relative;
 

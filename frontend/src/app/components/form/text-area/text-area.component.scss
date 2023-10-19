@@ -3,7 +3,7 @@
 
   transition: all 150ms ease-out;
 
-  background-color: var(--michu-tech-primary);
+  background-color: color-mix(in srgb, var(--michu-tech-primary) 75%, var(--michu-tech-background));
   padding: 10px;
   border-radius: 2px;
   position: relative;
@@ -19,6 +19,7 @@
     height: 90cqh;
     margin: 0;
     box-sizing: border-box;
+    word-break: break-word;
 
     font-weight: 400;
     font-size: 16px;

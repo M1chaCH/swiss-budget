@@ -2,6 +2,7 @@
     <div *ngIf="transactions$ | async as transactions else loadingTransactions">
         <p *ngIf="!transactions || transactions.size < 1">No transactions imported yet!</p>
 
+        <app-expansion-list-toggle topic="transaction"></app-expansion-list-toggle>
         <div *ngFor="let key of transactions.keys()">
             <h3>{{key}}</h3>
             <div class="transactions">

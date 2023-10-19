@@ -1,0 +1,42 @@
+.transaction-details-container {
+  display: grid;
+  grid-template-rows: auto;
+  grid-template-columns: repeat(2, calc(50% - 6px));
+  gap: 12px;
+
+  .transaction-details {
+    display: flex;
+    flex-flow: column;
+
+    pre {
+      max-width: 100%;
+      overflow-x: auto;
+      margin: 0;
+      padding-bottom: 12px;
+      box-sizing: border-box;
+    }
+  }
+}
+
+.tag-container {
+  height: 60px;
+  display: flex;
+  flex-flow: row nowrap;
+  gap: 20px;
+  justify-content: flex-start;
+  align-items: center;
+
+  app-tag-icon {
+    height: 32px;
+  }
+
+  .smaller-text {
+    text-transform: capitalize;
+  }
+}
+
+@container transaction-details (max-width: 650px) {
+  .transaction-details-container {
+    grid-template-columns: 100% !important;
+  }
+}

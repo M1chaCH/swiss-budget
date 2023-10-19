@@ -138,6 +138,7 @@ public class TransactionProvider {
                     result.getValue(i, TAG.COLOR),
                     result.getValue(i, TAG.NAME),
                     result.getValue(i, TAG.USER_ID),
+                    result.getValue(i, TAG.DEFAULT_TAG),
                     List.of()
                 );
             }

@@ -53,14 +53,15 @@ public class Tag extends TableImpl<TagRecord> {
     public final TableField<TagRecord, Integer> ID = createField(DSL.name("id"), SQLDataType.INTEGER.nullable(false).identity(true), this,
         "");
     /**
-     * The column <code>public.tag.color</code>.
-     */
-    public final TableField<TagRecord, String> COLOR = createField(DSL.name("color"), SQLDataType.VARCHAR(10).nullable(false), this, "");
-    /**
      * The column <code>public.tag.default_tag</code>.
      */
     public final TableField<TagRecord, Boolean> DEFAULT_TAG = createField(DSL.name("default_tag"),
         SQLDataType.BOOLEAN.nullable(false).defaultValue(DSL.field("false", SQLDataType.BOOLEAN)), this, "");
+
+    /**
+     * The column <code>public.tag.color</code>.
+     */
+    public final TableField<TagRecord, String> COLOR = createField(DSL.name("color"), SQLDataType.VARCHAR(10).nullable(false), this, "");
 
     /**
      * The column <code>public.tag.name</code>.

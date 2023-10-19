@@ -1,0 +1,17 @@
+<div [class.expansion-panel-open]="open"
+     class="expansion-panel">
+    <div class="header-container">
+        <button (click)="toggleOpen()" class="header-overlay"></button>
+        <div class="header">
+            <ng-content select="[expansion-panel-header]"></ng-content>
+            <button [class.icon-button-open]="open" class="icon-button" style="height: 80%; aspect-ratio: 1 / 1;">
+                <span class="material-symbols-rounded">
+                    expand_more
+                </span>
+            </button>
+        </div>
+    </div>
+    <div [@openClose]="open ? 'open' : 'closed'" [class.open-container-open]="open" class="open-container">
+        <ng-content></ng-content>
+    </div>
+</div>

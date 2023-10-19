@@ -1,0 +1,18 @@
+<div class="expansion-panel-toggle">
+    <button (onThrottledClick)="changeAll(true)"
+            [appClickThrottler]="1000"
+            class="icon-button"
+            style="height: 80%; aspect-ratio: 1 / 1;">
+        <span class="material-symbols-rounded">
+            expand_more
+        </span>
+    </button>
+    <button (onThrottledClick)="changeAll(false)"
+            [appClickThrottler]="1000"
+            class="icon-button"
+            style="height: 80%; aspect-ratio: 1 / 1;">
+        <span class="material-symbols-rounded">
+            expand_less
+        </span>
+    </button>
+</div>

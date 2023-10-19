@@ -11,7 +11,7 @@ import * as moment from "moment";
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TransactionPageComponent {
-  transactions$: Observable<Map<string, TransactionDto[]>>;
+  transactions$: Observable<Map<string, TransactionDto[]>>; // TODO implement lazy loading
 
   constructor(
       service: TransactionService,

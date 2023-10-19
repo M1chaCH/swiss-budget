@@ -33,12 +33,15 @@ public class TagDto {
     private String name;
     private String userId;
     @Nullable
+    private boolean defaultTag;
+    @Nullable
     private List<KeywordDto> keywords;
 
     public TagDto(TagRecord entity) {
         this.id = entity.getId();
         this.name = entity.getName();
         this.userId = entity.getUserId();
+        this.defaultTag = entity.getDefaultTag();
 
         if (entity.get(TAG.ICON) != null) {
             this.icon = entity.getIcon();

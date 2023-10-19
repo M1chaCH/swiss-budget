@@ -22,6 +22,7 @@ export type TagDto = {
   color: string,
   name: string,
   userId: string,
+  defaultTag?: boolean,
   keywords?: KeywordDto[],
 }
 

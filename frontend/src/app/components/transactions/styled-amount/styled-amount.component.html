@@ -1,0 +1,5 @@
+<span [style.color]="expense ? 'var(--michu-tech-warn)' : 'var(--michu-tech-foreground)'">
+    <span *ngIf="expense">-</span>
+    <span *ngIf="!expense">+</span>
+    {{amount | currency}}
+</span>

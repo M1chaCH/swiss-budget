@@ -6,6 +6,7 @@ import {FormControl, Validators} from "@angular/forms";
   templateUrl: './text-input.component.html',
   styleUrls: ['./text-input.component.scss']
 })
+// TODO transform to action angular form control
 export class TextInputComponent {
   @Input() width: string = "100%"
   @Input() height: string = "100%";

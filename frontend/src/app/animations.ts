@@ -1,4 +1,4 @@
-import {animate, animateChild, group, query, style, transition, trigger} from "@angular/animations";
+import {animate, animateChild, group, query, state, style, transition, trigger} from "@angular/animations";
 import {Directive, Input, TemplateRef, ViewContainerRef} from "@angular/core";
 
 
@@ -68,6 +68,26 @@ export const stepSliderAnimation =
           animate("300ms ease-in-out", style({transform: "translateX(0)"}))
         ]),
       ])),
+    ]);
+
+export const openCloseAnimation =
+    trigger("openClose", [
+      state("open", style({
+        height: "*",
+        opacity: 1,
+      })),
+      state("closed", style({
+        height: "0px",
+        opacity: 0.6,
+        padding: 0,
+        margin: 0,
+      })),
+      transition("open => closed", [
+        animate("100ms ease-in"),
+      ]),
+      transition("closed => open", [
+        animate("150ms ease-out"),
+      ]),
     ]);
 
 

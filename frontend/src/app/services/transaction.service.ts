@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import * as moment from 'moment';
-import {BehaviorSubject, firstValueFrom, map, Observable, tap} from "rxjs";
+import {BehaviorSubject, firstValueFrom, map, Observable, of, tap} from "rxjs";
 import {TransactionDto} from "../dtos/TransactionDtos";
 import {ApiService, endpoint} from "./api.service";
 
@@ -25,6 +25,12 @@ export class TransactionService {
 
   async importTransactions(): Promise<void> {
     this.insertTransactions(await firstValueFrom(this.api.get<TransactionDto[]>(endpoint.IMPORT_TRANSACTIONS, [], true)));
+  }
+
+  saveTransaction(transaction: TransactionDto): Observable<void> {
+    console.warn("save transaction is not yet implemented");
+    // use show error dialog
+    return of();
   }
 
   private insertTransactions(toInsert: TransactionDto[]) {

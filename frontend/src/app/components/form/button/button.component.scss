@@ -1,7 +1,7 @@
 .button {
   all: unset;
-  padding: 10px;
-  background-color: var(--michu-tech-primary);
+  padding: 0 10px;
+  background-color: color-mix(in srgb, var(--michu-tech-primary) 75%, var(--michu-tech-background));
   box-sizing: border-box;
   cursor: pointer;
   transition: all 150ms ease-out;

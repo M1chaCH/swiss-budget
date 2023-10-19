@@ -1,23 +1,16 @@
-<div class="transaction">
-    <span class="smaller-text">
-        {{transaction.transactionDate.toDate() | date}}
-    </span>
-    <span [style.color]="transaction.expense ? 'var(--michu-tech-warn)' : 'var(--michu-tech-foreground)'">
-        <span *ngIf="transaction.expense">-</span>
-        {{transaction.amount | currency}}
-    </span>
-    <span class="smaller-text">{{transaction.receiver}}</span>
-    <div [style.background-color]="transaction.tag.color"
-         class="tag">
-        <span [style.color]="useBlackIcon ? 'var(--michu-tech-black)' : 'var(--michu-tech-white)'"
-              class="material-symbols-rounded">
-            {{transaction.tag.icon}}
+<app-expansion-panel topic="transaction">
+    <div class="transaction-header" expansion-panel-header>
+        <app-styled-amount [amount]="transaction.amount"
+                           [expense]="transaction.expense">
+        </app-styled-amount>
+        <span class="smaller-text" id="receiverText">{{transaction.receiver}}</span>
+        <span class="smaller-text">
+            {{transaction.transactionDate.toDate() | date}}
         </span>
+        <app-tag-icon [color]="transaction.tag.color"
+                      [icon]="transaction.tag.icon"
+                      class="tag">
+        </app-tag-icon>
     </div>
-    <!--    TODO make expandable and allow modifications there / maybe integrate with route -> go fullscreen when mobile but expand when pc-->
-    <button class="icon-button" style="height: 80%; aspect-ratio: 1 / 1;">
-        <span class="material-symbols-rounded">
-            expand_more
-        </span>
-    </button>
-</div>
+    <app-transaction-detail [transaction]="transaction"></app-transaction-detail>
+</app-expansion-panel>
