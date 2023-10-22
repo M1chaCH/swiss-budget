@@ -20,7 +20,7 @@ export class TransactionService {
         map(result => this.sortTransactions(result ?? [])),
     );
 
-    this.api.get<TransactionDto[]>(endpoint.TRANSACTIONS).subscribe(transactions => this.transactionUpdater.next(transactions))
+    this.api.get<TransactionDto[]>(endpoint.TRANSACTIONS, [], true).subscribe(transactions => this.transactionUpdater.next(transactions))
   }
 
   async importTransactions(): Promise<void> {

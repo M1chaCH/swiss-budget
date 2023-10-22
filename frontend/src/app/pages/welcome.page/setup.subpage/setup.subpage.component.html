@@ -48,8 +48,8 @@
                                     errorText="password required"
                                     height="60px"
                                     placeholder="Password to mail"></app-text-input>
-                    <p *ngIf="errorMessage" class="form-error-message"
-                       style="margin-top: 10px;">{{errorMessage}}</p>
+                    <p *ngIf="currentError" class="form-error-message"
+                       style="margin-top: 10px;">{{currentError | translateError}}</p>
                     <app-button (onClick)="checkMailCredentials()"
                                 [disabled]="isMailAndPasswordInvalid()"
                                 [loading]="loadingMailTest"
@@ -128,8 +128,8 @@
                 </app-text-input>
                 <p>Should I create the folder for you? (rule won't be created)</p>
 
-                <p *ngIf="createFolderErrorMessage"
-                   class="form-error-message">{{createFolderErrorMessage}}</p>
+                <p *ngIf="currentError"
+                   class="form-error-message">{{currentError | translateError}}</p>
 
                 <div class="folder-controls">
                     <app-button (onClick)="createCustomInbox()"
@@ -191,7 +191,9 @@
             <app-button [useAnchor]="true" height="60px" routerLink="/login" width="125px">
                 Cancel
             </app-button>
-            <app-help></app-help>
+            <app-button (onClick)="openHelpDialog()" height="60px" width="125px">
+                Help
+            </app-button>
         </div>
     </div>
 </div>

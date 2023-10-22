@@ -1,0 +1,11 @@
+<h3>Something went wrong</h3>
+<div *ngIf="data.status >= 500 else showUserError">
+    <p>Actually terribly wrong. This is the error: </p>
+    <h1>{{data.status}} {{data.statusText}}</h1>
+    <p>{{data.error | translateError}}</p>
+</div>
+<ng-template #showUserError>
+    <h2>{{data.error.errorKey}}</h2>
+    <p>{{data.error | translateError}}</p>
+    <p class="smaller-text">{{data.status}} {{data.statusText}}</p>
+</ng-template>

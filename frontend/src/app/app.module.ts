@@ -18,7 +18,6 @@ import {PanelStepDirective} from './components/steps-panel/panel-step.directive'
 import {HTTP_INTERCEPTORS, HttpClientModule} from "@angular/common/http";
 import {DialogComponent} from './components/dialog/dialog.component';
 import {HelpComponent} from './components/help/help.component';
-import {DialogDirective} from './components/dialog/dialog.directive';
 import {TextAreaComponent} from './components/form/text-area/text-area.component';
 import {SelectComponent} from './components/form/select/select.component';
 import {ClickThrottlerDirective} from './components/form/button/click-throttler.directive';
@@ -37,6 +36,9 @@ import {TransactionDetailComponent} from './components/transactions/transaction-
 import {TagIconComponent} from './components/transactions/tag/tag-icon.component';
 import {StyledAmountComponent} from './components/transactions/styled-amount/styled-amount.component';
 import {ExpansionListToggleComponent} from './components/expansion-panel/expansion-panel-toggle/expansion-list-toggle.component';
+import {DisplayErrorComponent} from './components/display-error/display-error.component';
+import {DialogHostDirective} from './components/dialog/dialog-host.directive';
+import {TranslateErrorPipe} from './pipes/translate-error.pipe';
 
 @NgModule({
   declarations: [
@@ -52,7 +54,6 @@ import {ExpansionListToggleComponent} from './components/expansion-panel/expansi
     PanelStepDirective,
     DialogComponent,
     HelpComponent,
-    DialogDirective,
     TextAreaComponent,
     SelectComponent,
     ClickThrottlerDirective,
@@ -69,6 +70,9 @@ import {ExpansionListToggleComponent} from './components/expansion-panel/expansi
     TagIconComponent,
     StyledAmountComponent,
     ExpansionListToggleComponent,
+    DisplayErrorComponent,
+    DialogHostDirective,
+    TranslateErrorPipe,
   ],
   imports: [
     BrowserModule,

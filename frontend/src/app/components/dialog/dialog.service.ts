@@ -1,30 +1,60 @@
-import {Injectable, TemplateRef} from '@angular/core';
-import {Subject} from "rxjs";
+import {Injectable, TemplateRef, Type} from '@angular/core';
+import {DialogComponent} from "./dialog.component";
 
 @Injectable({
   providedIn: 'root'
 })
 export class DialogService {
 
-  private _currentContent: Subject<TemplateRef<any> | undefined> = new Subject<TemplateRef<any> | undefined>();
+  private dialogQueue: AppDialogOpenItem[] = [];
+  private currentDialog: AppDialogOpenItem | undefined;
 
-  get currentContent() {
-    return this._currentContent.asObservable();
+  private _dialogHostComponent!: DialogComponent;
+
+  set dialogHostComponent(component: DialogComponent) {
+    this._dialogHostComponent = component;
   }
 
-  private _open: Subject<boolean> = new Subject();
-
-  get open() {
-    return this._open.asObservable();
+  public openDialog(dialog: Type<any> | TemplateRef<any>, data?: any) {
+    const dialogOpenItem: AppDialogOpenItem = {
+      componentOrTemplate: dialog,
+      data: data,
+    };
+    this.dialogQueue.push(dialogOpenItem);
+    this.openNextDialogIfClosed();
   }
 
-  public openDialog(content: TemplateRef<any>) {
-    this._currentContent.next(content);
-    this._open.next(true)
+  public closeAllDialogs() {
+    this.dialogQueue = [];
+    this.closeCurrentDialog();
   }
 
-  public closeDialog() {
-    this._open.next(false);
-    this._currentContent.next(undefined);
+  public closeCurrentDialog() {
+    this._dialogHostComponent.open = false;
+    setTimeout(() => {
+      this.openNextDialogIfClosed();
+    }, 300); // to let close animation go by, otherwise user won't notice that there is a SECONDS dialog
+  }
+
+  private openNextDialogIfClosed() {
+    if (!this._dialogHostComponent.open) {
+      this.currentDialog = this.dialogQueue.shift();
+
+      if (this.currentDialog) {
+        this._dialogHostComponent.openDialog({
+          componentOrTemplate: this.currentDialog.componentOrTemplate,
+          data: this.currentDialog.data,
+        });
+      }
+    }
   }
 }
+
+export interface AppDialogComponent<T> {
+  data: T,
+}
+
+export type AppDialogOpenItem = {
+  componentOrTemplate: Type<any> | TemplateRef<any>,
+  data: any,
+};

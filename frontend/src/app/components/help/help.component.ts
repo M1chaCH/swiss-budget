@@ -10,16 +10,14 @@ import {ApiService, endpoint} from "../../services/api.service";
   styleUrls: ['./help.component.scss']
 })
 export class HelpComponent {
-  dialogOpen: boolean = false;
   form: HelpForm;
   loading: boolean = false;
 
   constructor(
-      private dialog: DialogService,
+      private dialogService: DialogService,
       private sanitizer: DomSanitizer,
       private api: ApiService,
   ) {
-    this.dialog.open.subscribe(o => this.dialogOpen = o)
     this.form = new HelpForm();
   }
 
@@ -33,7 +31,7 @@ export class HelpComponent {
         message: sanitizedContent
       }, undefined, true).subscribe(() => {
         this.loading = false;
-        this.dialogOpen = false;
+        this.dialogService.closeCurrentDialog();
       });
     }
   }

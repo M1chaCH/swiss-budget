@@ -1,6 +1,7 @@
-import {Component, TemplateRef} from '@angular/core';
-import {DialogService} from "./dialog.service";
-import {Observable} from "rxjs";
+import {Component, TemplateRef, ViewChild} from '@angular/core';
+import {AppDialogOpenItem, DialogService} from "./dialog.service";
+import {DialogHostDirective} from "./dialog-host.directive";
+import {DisplayErrorComponent} from "../display-error/display-error.component";
 
 @Component({
   selector: 'app-dialog',
@@ -8,21 +9,32 @@ import {Observable} from "rxjs";
   styleUrls: ['./dialog.component.scss']
 })
 export class DialogComponent {
-  open: Observable<boolean>;
-  dialogContent: TemplateRef<any> | undefined;
+  open: boolean = false;
+  @ViewChild(DialogHostDirective, {static: true}) host!: DialogHostDirective;
 
   constructor(
       private service: DialogService,
   ) {
-    this.open = this.service.open;
-    this.service.currentContent.subscribe(content =>
-        this.dialogContent = content);
+    service.dialogHostComponent = this;
+  }
+
+  openDialog(dialog: AppDialogOpenItem) {
+    this.open = true;
+
+    const viewContainer = this.host.viewContainerRef;
+    viewContainer.clear();
+    if (dialog.componentOrTemplate instanceof TemplateRef) {
+      viewContainer.createEmbeddedView(dialog.componentOrTemplate);
+    } else {
+      const componentRef = viewContainer.createComponent<DisplayErrorComponent>(dialog.componentOrTemplate)
+      componentRef.instance.data = dialog.data;
+    }
   }
 
   closeDialog(event?: any) {
     const hitDialog = event ? event.target.id === "dialog-container" : true;
     if (hitDialog) {
-      this.service.closeDialog();
+      this.service.closeCurrentDialog();
     }
   }
 }

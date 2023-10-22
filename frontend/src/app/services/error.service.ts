@@ -1,12 +1,17 @@
 import {Injectable} from '@angular/core';
 import {ErrorDto} from "../dtos/ErrorDto";
+import {HttpErrorResponse} from "@angular/common/http";
+import {DisplayErrorComponent} from "../components/display-error/display-error.component";
+import {DialogService} from "../components/dialog/dialog.service";
 
 @Injectable({
   providedIn: 'root'
 })
 export class ErrorService {
 
-  constructor() {
+  constructor(
+      private dialogService: DialogService,
+  ) {
   }
 
   public static parseErrorMessage(error: ErrorDto): string {
@@ -39,7 +44,7 @@ export class ErrorService {
       case "ResourceNotFoundException":
         return `We could not find a ${error.args.entity} by ${error.args.value}`
       case "UnexpectedDbException":
-        return "There was an unexpected error in the DB, either try again later or contact the admin."
+        return "There was an unexpected error in the DB, please try again later. The admin has already been notified."
       case "UnexpectedServerException":
         return "There is an issue with the server. Please contact the admin."
       case "InvalidTransactionMailFormatException":
@@ -62,7 +67,7 @@ export class ErrorService {
     }
   }
 
-  public showErrorDialog(e: ErrorDto): void {
-    console.warn("should show error dialog", e);
+  public showErrorDialog(e: HttpErrorResponse): void {
+    this.dialogService.openDialog(DisplayErrorComponent, e);
   }
 }

@@ -18,17 +18,13 @@
     display: block;
     padding: 24px;
     margin: 10px;
+    min-width: 40vw;
+    min-height: 40vh;
     box-sizing: border-box;
     background-color: var(--michu-tech-background);
     border-radius: 5px;
 
-    animation-name: dialog-open;
-    animation-duration: 350ms;
-    animation-timing-function: ease-out;
-    animation-fill-mode: forwards;
-    animation-direction: normal;
-    animation-iteration-count: 1;
-
+    transition: all 250ms ease-out;
     position: relative;
 
     .close {
@@ -42,18 +38,5 @@
 .closed {
   backdrop-filter: unset !important;
   pointer-events: none;
-}
-
-@keyframes dialog-open {
-  0% {
-    opacity: 0;
-    scale: 0.88;
-  }
-  25% {
-    scale: 0.88;
-  }
-  100% {
-    opacity: 1;
-    scale: 1;
-  }
+  visibility: hidden;
 }

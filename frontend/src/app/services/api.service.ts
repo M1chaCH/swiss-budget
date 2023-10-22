@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {HttpClient} from "@angular/common/http";
+import {HttpClient, HttpErrorResponse} from "@angular/common/http";
 import {catchError, NEVER, Observable} from "rxjs";
 import {environment} from "../../environments/environment";
 import {ErrorService} from "./error.service";
@@ -96,9 +96,9 @@ export class ApiService {
     );
   }
 
-  private handleError<T>(err: any, _: Observable<T>, showDialogOnError: boolean): Observable<T> {
+  private handleError<T>(err: HttpErrorResponse, _: Observable<T>, showDialogOnError: boolean): Observable<T> {
     if (!this.errorService.handleIfGlobalError(err.error)) {
-      if (showDialogOnError) this.errorService.showErrorDialog(err.error);
+      if (showDialogOnError) this.errorService.showErrorDialog(err);
       else throw err;
     }
     return NEVER;

@@ -2,12 +2,13 @@ import {Component} from '@angular/core';
 import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {ApiService, endpoint} from "../../../services/api.service";
 import {ErrorDto} from "../../../dtos/ErrorDto";
-import {ErrorService} from "../../../services/error.service";
 import {AuthService} from "../../../services/auth.service";
 import {Router} from "@angular/router";
 import {pages} from "../../../app-routing.module";
 import {Observable, of, shareReplay, switchMap} from "rxjs";
 import {SupportedBankDto} from "../../../dtos/SupportedBankDto";
+import {DialogService} from "../../../components/dialog/dialog.service";
+import {HelpComponent} from "../../../components/help/help.component";
 
 @Component({
   selector: 'app-setup-subpage',
@@ -18,11 +19,10 @@ export class SetupSubpageComponent {
 
   form: SetupForm = new SetupForm();
   cursor: number = 0;
-  errorMessage: string | undefined;
+  currentError: ErrorDto | undefined;
   showGoogleMessage: boolean = false;
   loadingMailTest: boolean = false;
   loadingCreatingFolder: boolean = false;
-  createFolderErrorMessage: string | undefined;
   folderCreated: boolean = false;
   secondPasswordControl: FormControl = new FormControl(null, [Validators.required]);
   supportedBanks$: Observable<string[]>;
@@ -30,12 +30,17 @@ export class SetupSubpageComponent {
   constructor(
       private api: ApiService,
       private router: Router,
+      private dialogService: DialogService,
   ) {
     this.form.mail.valueChanges.subscribe(v => this.showGoogleMessage = v.includes("gmail"));
     this.supportedBanks$ = this.api.get<SupportedBankDto[]>(endpoint.SUPPORTED_BANK).pipe(
         switchMap(response => of(response.map(dto => dto.key))),
         shareReplay(1),
     );
+  }
+
+  openHelpDialog() {
+    this.dialogService.openDialog(HelpComponent);
   }
 
   isMailAndPasswordInvalid() {
@@ -57,12 +62,12 @@ export class SetupSubpageComponent {
       },
     }).subscribe({
       next: () => {
-        this.createFolderErrorMessage = undefined;
+        this.currentError = undefined;
         this.folderCreated = true;
         this.loadingCreatingFolder = false;
       },
       error: e => {
-        this.createFolderErrorMessage = ErrorService.parseErrorMessage(e.error);
+        this.currentError = e.error;
         this.folderCreated = false;
         this.loadingCreatingFolder = false;
       }
@@ -71,7 +76,7 @@ export class SetupSubpageComponent {
 
   checkMailCredentials() {
     if (!this.isMailAndPasswordInvalid()) {
-      this.errorMessage = "";
+      this.currentError = undefined;
       this.loadingMailTest = true;
 
       this.api.post<null>(endpoint.CHECK_MAIL, {
@@ -84,7 +89,7 @@ export class SetupSubpageComponent {
         },
         error: (err: { error: ErrorDto }) => {
           this.loadingMailTest = false;
-          this.errorMessage = ErrorService.parseErrorMessage(err.error);
+          this.currentError = err.error;
         }
       })
     }
