@@ -53,6 +53,7 @@ public class DataProvider implements OnAppStartupListener {
         }
     }
 
+    // TODO upgrade to connection pool (keep same connection per request) (either use plain hickari connection pool lib or use helidon integration)
     public DSLContext getContext() {
         return dbContext;
     }

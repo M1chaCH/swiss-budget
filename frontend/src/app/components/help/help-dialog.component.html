@@ -1,5 +1,4 @@
-<div class="help-container">
-    <h2>Need help?</h2>
+<app-dialog-content-wrapper title="Need help?">
     <p>
         Don't worry, I am here to help. Just describe your question in the box bellow and enter your
         email so that I can answer your question.
@@ -23,9 +22,10 @@
     </form>
 
     <app-button (onClick)="sendRequest()" [disabled]="form.group.invalid" [loading]="loading"
+                dialogFooter
                 height="60px"
-                rightIcon="send"
-                style="align-self: flex-end" width="125px">
+                rightIcon="send" style="align-self: flex-end"
+                width="125px">
         Send
     </app-button>
-</div>
+</app-dialog-content-wrapper>

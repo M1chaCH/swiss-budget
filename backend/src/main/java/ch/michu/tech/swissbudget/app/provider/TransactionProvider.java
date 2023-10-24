@@ -24,6 +24,7 @@ import jakarta.inject.Inject;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletionStage;
 import org.jooq.DSLContext;
 import org.jooq.Query;
@@ -50,6 +51,14 @@ public class TransactionProvider {
 
     public TransactionMailRecord newTransactionMail() {
         return db.newRecord(TRANSACTION_MAIL);
+    }
+
+    @LoggedStatement
+    public Optional<TransactionRecord> selectTransaction(String userId, String transactionId) {
+        return db.fetch(TRANSACTION,
+                TRANSACTION.USER_ID.eq(userId)
+                    .and(TRANSACTION.ID.eq(transactionId)))
+            .stream().findAny();
     }
 
     @LoggedStatement
@@ -123,8 +132,7 @@ public class TransactionProvider {
                 matchingKeyword = new KeywordDto(
                     result.getValue(i, KEYWORD.ID),
                     result.getValue(i, KEYWORD.KEYWORD_),
-                    result.getValue(i, KEYWORD.TAG_ID),
-                    result.getValue(i, KEYWORD.USER_ID)
+                    result.getValue(i, KEYWORD.TAG_ID)
                 );
             }
 
@@ -137,7 +145,6 @@ public class TransactionProvider {
                     result.getValue(i, TAG.ICON),
                     result.getValue(i, TAG.COLOR),
                     result.getValue(i, TAG.NAME),
-                    result.getValue(i, TAG.USER_ID),
                     result.getValue(i, TAG.DEFAULT_TAG),
                     List.of()
                 );
@@ -198,6 +205,21 @@ public class TransactionProvider {
         }
 
         return importedDbData;
+    }
+
+    @LoggedStatement
+    public void updateTransaction(String transactionId, int tagId, String alias, String note) {
+        db.update(TRANSACTION)
+            .set(TRANSACTION.TAG_ID, tagId)
+            .set(TRANSACTION.ALIAS, alias)
+            .set(TRANSACTION.NOTE, note)
+            .where(TRANSACTION.ID.eq(transactionId))
+            .execute();
+    }
+
+    @LoggedStatement
+    public void updateTransaction(TransactionRecord transaction) {
+        transaction.store(TRANSACTION.TAG_ID, TRANSACTION.MATCHING_KEYWORD_ID, TRANSACTION.ALIAS, TRANSACTION.NOTE);
     }
 
     protected ImportDbData resultToRecord(Result<?> result, int index) {

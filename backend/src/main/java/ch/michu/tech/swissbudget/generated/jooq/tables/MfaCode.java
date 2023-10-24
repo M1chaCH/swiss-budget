@@ -13,11 +13,11 @@ import java.util.List;
 import java.util.function.Function;
 import org.jooq.Field;
 import org.jooq.ForeignKey;
-import org.jooq.Function5;
+import org.jooq.Function6;
 import org.jooq.Name;
 import org.jooq.Record;
 import org.jooq.Records;
-import org.jooq.Row5;
+import org.jooq.Row6;
 import org.jooq.Schema;
 import org.jooq.SelectField;
 import org.jooq.Table;
@@ -42,7 +42,11 @@ public class MfaCode extends TableImpl<MfaCodeRecord> {
      */
     public static final MfaCode MFA_CODE = new MfaCode();
 
-    private transient RegisteredUser _registeredUser;
+    /**
+     * The column <code>public.mfa_code.tries</code>.
+     */
+    public final TableField<MfaCodeRecord, Integer> TRIES = createField(DSL.name("tries"),
+        SQLDataType.INTEGER.defaultValue(DSL.field("0", SQLDataType.INTEGER)), this, "");
 
     /**
      * The column <code>public.mfa_code.id</code>.
@@ -65,6 +69,7 @@ public class MfaCode extends TableImpl<MfaCodeRecord> {
      */
     public final TableField<MfaCodeRecord, LocalDateTime> EXPIRES_AT = createField(DSL.name("expires_at"),
         SQLDataType.LOCALDATETIME(6).nullable(false), this, "");
+    private transient RegisteredUser _registeredUser;
 
     /**
      * The column <code>public.mfa_code.user_agent</code>.
@@ -184,19 +189,19 @@ public class MfaCode extends TableImpl<MfaCodeRecord> {
     }
 
     // -------------------------------------------------------------------------
-    // Row5 type methods
+    // Row6 type methods
     // -------------------------------------------------------------------------
 
     @Override
-    public Row5<String, Integer, String, LocalDateTime, String> fieldsRow() {
-        return (Row5) super.fieldsRow();
+    public Row6<String, Integer, String, LocalDateTime, Integer, String> fieldsRow() {
+        return (Row6) super.fieldsRow();
     }
 
     /**
      * Convenience mapping calling {@link SelectField#convertFrom(Function)}.
      */
     public <U> SelectField<U> mapping(
-        Function5<? super String, ? super Integer, ? super String, ? super LocalDateTime, ? super String, ? extends U> from) {
+        Function6<? super String, ? super Integer, ? super String, ? super LocalDateTime, ? super Integer, ? super String, ? extends U> from) {
         return convertFrom(Records.mapping(from));
     }
 
@@ -205,7 +210,7 @@ public class MfaCode extends TableImpl<MfaCodeRecord> {
      * Function)}.
      */
     public <U> SelectField<U> mapping(Class<U> toType,
-        Function5<? super String, ? super Integer, ? super String, ? super LocalDateTime, ? super String, ? extends U> from) {
+        Function6<? super String, ? super Integer, ? super String, ? super LocalDateTime, ? super Integer, ? super String, ? extends U> from) {
         return convertFrom(toType, Records.mapping(from));
     }
 }

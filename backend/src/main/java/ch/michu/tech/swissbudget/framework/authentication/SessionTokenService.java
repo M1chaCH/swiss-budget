@@ -94,8 +94,7 @@ public class SessionTokenService {
         RequestSupport support = supportProvider.get();
         SessionToken sessionToken = parseJwt(jwt);
 
-        String requiredRemoteAddress = AuthenticationService.extractRemoteAddress(
-            support.getRequest());
+        String requiredRemoteAddress = AuthenticationService.extractRemoteAddress(support.getRequest());
         String requiredUserAgent = AuthenticationService.extractUserAgent(support.getRequest());
 
         if (new Date().after(sessionToken.getExpiresAt())

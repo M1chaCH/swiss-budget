@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import * as moment from 'moment';
-import {BehaviorSubject, firstValueFrom, map, Observable, of, tap} from "rxjs";
+import {BehaviorSubject, firstValueFrom, map, Observable, tap} from "rxjs";
 import {TransactionDto} from "../dtos/TransactionDtos";
 import {ApiService, endpoint} from "./api.service";
 
@@ -28,9 +28,12 @@ export class TransactionService {
   }
 
   saveTransaction(transaction: TransactionDto): Observable<void> {
-    console.warn("save transaction is not yet implemented");
-    // use show error dialog
-    return of();
+    const transactionDateString = transaction.transactionDate.format(ApiService.API_DATE_FORMAT); // todo maybe generic solution?
+    const payload = {
+      ...transaction,
+      transactionDate: transactionDateString,
+    }
+    return this.api.put(endpoint.TRANSACTIONS, payload, [], true);
   }
 
   private insertTransactions(toInsert: TransactionDto[]) {

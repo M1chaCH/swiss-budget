@@ -8,7 +8,6 @@ import {pages} from "../../../app-routing.module";
 import {Observable, of, shareReplay, switchMap} from "rxjs";
 import {SupportedBankDto} from "../../../dtos/SupportedBankDto";
 import {DialogService} from "../../../components/dialog/dialog.service";
-import {HelpComponent} from "../../../components/help/help.component";
 
 @Component({
   selector: 'app-setup-subpage',
@@ -26,6 +25,7 @@ export class SetupSubpageComponent {
   folderCreated: boolean = false;
   secondPasswordControl: FormControl = new FormControl(null, [Validators.required]);
   supportedBanks$: Observable<string[]>;
+  protected readonly pages = pages;
 
   constructor(
       private api: ApiService,
@@ -37,10 +37,6 @@ export class SetupSubpageComponent {
         switchMap(response => of(response.map(dto => dto.key))),
         shareReplay(1),
     );
-  }
-
-  openHelpDialog() {
-    this.dialogService.openDialog(HelpComponent);
   }
 
   isMailAndPasswordInvalid() {

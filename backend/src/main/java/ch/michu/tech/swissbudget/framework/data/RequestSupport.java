@@ -1,6 +1,7 @@
 package ch.michu.tech.swissbudget.framework.data;
 
 import ch.michu.tech.swissbudget.framework.authentication.SessionToken;
+import ch.michu.tech.swissbudget.framework.error.exception.InvalidSessionTokenException;
 import io.helidon.webserver.ServerRequest;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
@@ -52,6 +53,10 @@ public class RequestSupport {
 
     public Optional<SessionToken> getSessionToken() {
         return Optional.of(sessionToken);
+    }
+
+    public String getOrThrowUserId() {
+        return getSessionToken().orElseThrow(InvalidSessionTokenException::new).getUserId();
     }
 
     public void logInfo(Object instance, String formattedMessage, Object... args) {

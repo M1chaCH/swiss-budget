@@ -139,6 +139,11 @@ public class TransactionMetaDataRecord extends UpdatableRecordImpl<TransactionMe
         return TransactionMetaData.TRANSACTION_META_DATA.LAST_IMPORT_CHECK;
     }
 
+    @Override
+    public Field<LocalDateTime> field4() {
+        return TransactionMetaData.TRANSACTION_META_DATA.LAST_IMPORTED_TRANSACTION;
+    }
+
     /**
      * Getter for <code>public.transaction_meta_data.transactions_folder</code>.
      */
@@ -151,11 +156,6 @@ public class TransactionMetaDataRecord extends UpdatableRecordImpl<TransactionMe
      */
     public void setTransactionsFolder(String value) {
         set(4, value);
-    }
-
-    @Override
-    public Field<LocalDateTime> field4() {
-        return TransactionMetaData.TRANSACTION_META_DATA.LAST_IMPORTED_TRANSACTION;
     }
 
     @Override

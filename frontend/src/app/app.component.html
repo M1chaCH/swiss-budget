@@ -69,6 +69,13 @@
                     <span>Profile</span>
                     <span class="material-symbols-rounded">account_circle</span>
                 </a>
+                <a (click)="closeMenuIfOverlayMode()"
+                   [class.active-menu-item]="currentPage.route === pages.HELP"
+                   [routerLink]="'app/' + pages.HELP"
+                   class="menu-item">
+                    <span>Help</span>
+                    <span class="material-symbols-rounded">support_agent</span>
+                </a>
             </div>
         </nav>
         <div (click)="sideMenuOpen = false" *ngIf="sideMenuOpen" class="nav-overlay"></div>

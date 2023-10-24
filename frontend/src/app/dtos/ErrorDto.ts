@@ -14,6 +14,8 @@ export type ErrorDto = {
       | "ResourceNotFoundException"
       | "UnexpectedServerException"
       | "InvalidTransactionMailFormatException"
-      | "UnexpectedDbException",
+      | "UnexpectedDbException"
+      | "WebApplicationException"
+      | "ProcessingException"
   args: any,
 }

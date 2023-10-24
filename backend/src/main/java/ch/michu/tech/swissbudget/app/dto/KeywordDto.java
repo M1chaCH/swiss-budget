@@ -25,12 +25,10 @@ public class KeywordDto {
     private String keyword;
     @Nullable
     private Integer tagId;
-    private String userId;
 
     public KeywordDto(KeywordRecord entity) {
         this.id = entity.getId();
         this.keyword = entity.getKeyword();
-        this.userId = entity.getUserId();
         if (entity.get(KEYWORD.TAG_ID) != null) {
             this.tagId = entity.getTagId();
         }

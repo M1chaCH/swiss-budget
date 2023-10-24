@@ -27,5 +27,6 @@ export class TextAreaComponent implements OnInit {
 
   ngOnInit(): void {
     this.value.valueChanges.subscribe(newValue => this.length = newValue.length)
+    this.length = this.value.value?.length ?? 0;
   }
 }

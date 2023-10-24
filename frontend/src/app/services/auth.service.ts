@@ -37,6 +37,7 @@ export class AuthService implements OnInit {
   ngOnInit() {
   }
 
+  // FIXME: kicked invalid session -> login -> still unauthorised -> refresh -> OK (login after being logged out due to device change does not work, user needs to reload page)
   login(mail: string, password: string, stay: boolean = true): Observable<string> {
     this.authToken = undefined;
     return this.api.post<MessageDto | ErrorDto>(endpoint.AUTH, {
@@ -107,9 +108,9 @@ export class AuthService implements OnInit {
   private storeToken(tokenMessage: MessageDto) {
     const token = tokenMessage.message;
     this.authToken = token;
-    this.loginSubject.next("in");
     let expires = moment(new Date()).add(300, "days");
-    this.cookie.set(AuthService.AUTH_TOKEN, token, expires.toDate(), "/", environment.DOMAIN, true, "Strict")
+    this.cookie.set(AuthService.AUTH_TOKEN, token, expires.toDate(), "/", environment.DOMAIN, true, "Strict");
+    this.loginSubject.next("in");
   }
 
   private deleteToken() {

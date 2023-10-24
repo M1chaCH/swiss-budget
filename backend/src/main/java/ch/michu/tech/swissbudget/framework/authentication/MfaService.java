@@ -24,23 +24,25 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jooq.DSLContext;
 
 @ApplicationScoped
-public class MfaService { // TODO schedule cleanup of expired MFA Tokens
+public class MfaService {
 
     private final TemplatedMailSender mailSender;
     private final DataProvider data;
     private final Provider<RequestSupport> supportProvider;
     private final int mfaCodeLifetime;
+    private final int mfaCodeTryLimit;
 
     private final Random random = new Random();
 
     @Inject
-    public MfaService(TemplatedMailSender mailSender, DataProvider data,
-        Provider<RequestSupport> supportProvider,
-        @ConfigProperty(name = "session.mfa.lifetime", defaultValue = "4") int mfaCodeLifetimeHours) {
+    public MfaService(TemplatedMailSender mailSender, DataProvider data, Provider<RequestSupport> supportProvider,
+        @ConfigProperty(name = "session.mfa.lifetime", defaultValue = "4") int mfaCodeLifetimeHours,
+        @ConfigProperty(name = "session.mfa.tries", defaultValue = "5") int mfaCodeTryLimit) {
         this.mailSender = mailSender;
         this.data = data;
         this.supportProvider = supportProvider;
         this.mfaCodeLifetime = mfaCodeLifetimeHours;
+        this.mfaCodeTryLimit = mfaCodeTryLimit;
     }
 
     public String startMfaProcess(RegisteredUserRecord user) {
@@ -73,16 +75,23 @@ public class MfaService { // TODO schedule cleanup of expired MFA Tokens
         String currentUserAgent = AuthenticationService.extractUserAgent(support.getRequest());
         DSLContext dataContext = data.getContext();
 
-        MfaCodeRecord mfaCodeRecord = dataContext.fetchOne(MfaCode.MFA_CODE,
-            MfaCode.MFA_CODE.ID.eq(mfaProcessId).and(
-                MfaCode.MFA_CODE.USER_ID.eq(userId).and(MfaCode.MFA_CODE.CODE.eq(providedCode))));
+        MfaCodeRecord mfaCodeRecord = dataContext
+            .fetchOne(MfaCode.MFA_CODE,
+                MfaCode.MFA_CODE.ID.eq(mfaProcessId)
+                    .and(MfaCode.MFA_CODE.USER_ID.eq(userId)
+                        .and(MfaCode.MFA_CODE.CODE.eq(providedCode))));
 
-        if (mfaCodeRecord == null || !mfaCodeRecord.getUserAgent().equals(currentUserAgent)) {
+        if (mfaCodeRecord == null || !mfaCodeRecord.getUserAgent().equals(currentUserAgent)
+            || mfaCodeRecord.getTries() >= mfaCodeTryLimit) {
+            if (mfaCodeRecord != null) {
+                mfaCodeRecord.setTries(mfaCodeRecord.getTries() + 1);
+                mfaCodeRecord.store();
+            }
+
             throw new InvalidMfaCodeException();
         }
 
-        VerifiedDeviceRecord verifiedDeviceRecord = dataContext.newRecord(
-            VerifiedDevice.VERIFIED_DEVICE);
+        VerifiedDeviceRecord verifiedDeviceRecord = dataContext.newRecord(VerifiedDevice.VERIFIED_DEVICE);
         verifiedDeviceRecord.setUserAgent(currentUserAgent);
         verifiedDeviceRecord.setUserId(userId);
         verifiedDeviceRecord.store();

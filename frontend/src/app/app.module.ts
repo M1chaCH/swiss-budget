@@ -17,7 +17,7 @@ import {StepsPanelComponent} from './components/steps-panel/steps-panel.componen
 import {PanelStepDirective} from './components/steps-panel/panel-step.directive';
 import {HTTP_INTERCEPTORS, HttpClientModule} from "@angular/common/http";
 import {DialogComponent} from './components/dialog/dialog.component';
-import {HelpComponent} from './components/help/help.component';
+import {HelpDialogComponent} from './components/help/help-dialog.component';
 import {TextAreaComponent} from './components/form/text-area/text-area.component';
 import {SelectComponent} from './components/form/select/select.component';
 import {ClickThrottlerDirective} from './components/form/button/click-throttler.directive';
@@ -36,9 +36,11 @@ import {TransactionDetailComponent} from './components/transactions/transaction-
 import {TagIconComponent} from './components/transactions/tag/tag-icon.component';
 import {StyledAmountComponent} from './components/transactions/styled-amount/styled-amount.component';
 import {ExpansionListToggleComponent} from './components/expansion-panel/expansion-panel-toggle/expansion-list-toggle.component';
-import {DisplayErrorComponent} from './components/display-error/display-error.component';
+import {DisplayErrorDialogComponent} from './components/display-error/display-error-dialog.component';
 import {DialogHostDirective} from './components/dialog/dialog-host.directive';
 import {TranslateErrorPipe} from './pipes/translate-error.pipe';
+import {DialogContentWrapperComponent} from './components/dialog/dialog-wrapper/dialog-content-wrapper.component';
+import {HelpPageComponent} from './pages/help.page/help.page.component';
 
 @NgModule({
   declarations: [
@@ -53,7 +55,7 @@ import {TranslateErrorPipe} from './pipes/translate-error.pipe';
     StepsPanelComponent,
     PanelStepDirective,
     DialogComponent,
-    HelpComponent,
+    HelpDialogComponent,
     TextAreaComponent,
     SelectComponent,
     ClickThrottlerDirective,
@@ -70,9 +72,11 @@ import {TranslateErrorPipe} from './pipes/translate-error.pipe';
     TagIconComponent,
     StyledAmountComponent,
     ExpansionListToggleComponent,
-    DisplayErrorComponent,
+    DisplayErrorDialogComponent,
     DialogHostDirective,
     TranslateErrorPipe,
+    DialogContentWrapperComponent,
+    HelpPageComponent,
   ],
   imports: [
     BrowserModule,

@@ -1,0 +1,30 @@
+<app-dialog-content-wrapper title="Something went wrong">
+    <div *ngIf="data.status >= 500 else showUserError">
+        <p>Actually terribly wrong. This is the error: </p>
+        <h1>{{data.status}} {{data.statusText}}</h1>
+        <p>{{data.error | translateError}}</p>
+    </div>
+    <ng-template #showUserError>
+        <h2>{{data.error?.errorKey}}</h2>
+        <p style="max-width: 40vw;">{{data.error | translateError}}</p>
+    </ng-template>
+    <p class="smaller-text">{{data.status}} {{data.statusText}}</p>
+
+    <ng-container dialogFooter>
+        <app-button (onClick)="openHelpDialog()"
+                    design="secondary"
+                    height="60px"
+                    rightIcon="support_agent"
+                    width="200px">
+            Help
+        </app-button>
+
+        <app-button (onClick)="location.href = '/'"
+                    design="secondary"
+                    height="60px"
+                    rightIcon="refresh"
+                    width="200px">
+            Refresh
+        </app-button>
+    </ng-container>
+</app-dialog-content-wrapper>

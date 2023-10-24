@@ -15,7 +15,7 @@ export class ButtonComponent {
   @Input() loading: boolean = false;
 
   @Input() useAnchor: boolean = false;
-  @Input() target: "_blank" | "_parent" | "_self" | "_top" = "_self"
+  @Input() target: "_blank" | "_parent" | "_self" | "_top" = "_self";
   @Input() routerLink: string | undefined;
 
   @Output() onClick: EventEmitter<Event> = new EventEmitter<Event>();

@@ -1,4 +1,5 @@
 <div appPage class="page-container" pageRoute="transactions" pageTitle="Transactions">
+    <!--    TODO add filter (search, date period & tag filter) and lazy loading -->
     <div *ngIf="transactions$ | async as transactions else loadingTransactions">
         <p *ngIf="!transactions || transactions.size < 1">No transactions imported yet!</p>
 

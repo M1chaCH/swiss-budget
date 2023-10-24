@@ -9,7 +9,7 @@ export class TranslateErrorPipe implements PipeTransform {
 
   transform(error: ErrorDto): string {
     if (!error)
-      return "unexpected error";
+      return "-";
     return ErrorService.parseErrorMessage(error);
   }
 }

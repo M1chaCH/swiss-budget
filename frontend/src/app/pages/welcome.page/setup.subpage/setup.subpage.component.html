@@ -191,7 +191,7 @@
             <app-button [useAnchor]="true" height="60px" routerLink="/login" width="125px">
                 Cancel
             </app-button>
-            <app-button (onClick)="openHelpDialog()" height="60px" width="125px">
+            <app-button [routerLink]="'/app/' + pages.HELP" [useAnchor]="true" height="60px" width="125px">
                 Help
             </app-button>
         </div>

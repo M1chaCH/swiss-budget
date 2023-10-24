@@ -31,7 +31,6 @@ public class TagDto {
     private String color;
     @ValidateLength(min = 3, max = 50)
     private String name;
-    private String userId;
     @Nullable
     private boolean defaultTag;
     @Nullable
@@ -40,7 +39,6 @@ public class TagDto {
     public TagDto(TagRecord entity) {
         this.id = entity.getId();
         this.name = entity.getName();
-        this.userId = entity.getUserId();
         this.defaultTag = entity.getDefaultTag();
 
         if (entity.get(TAG.ICON) != null) {

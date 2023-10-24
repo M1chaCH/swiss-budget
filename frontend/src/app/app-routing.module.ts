@@ -7,6 +7,7 @@ import {authenticationGuard} from "./services/auth.service";
 import {MfaSubpageComponent} from "./pages/welcome.page/mfa.subpage/mfa.subpage.component";
 import {BudgetPageComponent} from "./pages/budget.page/budget.page.component";
 import {TransactionPageComponent} from "./pages/transaction.page/transaction.page.component";
+import {HelpPageComponent} from "./pages/help.page/help.page.component";
 
 export const pages = {
   LOGIN: "login",
@@ -20,6 +21,7 @@ export const pages = {
   SAVE: "save",
   CONFIGURATION: "configuration",
   PROFILE: "profile",
+  HELP: "help",
 }
 
 export const APP_ROOT = "app"
@@ -29,10 +31,9 @@ const routes: Routes = [
   {
     path: pages.LOGIN,
     component: LoginPageComponent,
-    data: {animation: "LoginPage"},
     children: [
-      {path: pages.login.SETUP, component: SetupSubpageComponent, data: {animation: "SetupPage"}},
-      {path: pages.login.MFA, component: MfaSubpageComponent, data: {animation: "MfaPage"}},
+      {path: pages.login.SETUP, component: SetupSubpageComponent},
+      {path: pages.login.MFA, component: MfaSubpageComponent},
     ]
   },
   {
@@ -44,6 +45,7 @@ const routes: Routes = [
       {path: pages.TRANSACTIONS, component: TransactionPageComponent},
     ]
   },
+  {path: `${APP_ROOT}/${pages.HELP}`, component: HelpPageComponent},
   {path: "**", redirectTo: `${APP_ROOT}/${pages.HOME}`, pathMatch: "full"},
 ];
 

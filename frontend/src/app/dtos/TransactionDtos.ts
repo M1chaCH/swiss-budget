@@ -21,7 +21,6 @@ export type TagDto = {
   icon: string,
   color: string,
   name: string,
-  userId: string,
   defaultTag?: boolean,
   keywords?: KeywordDto[],
 }
@@ -30,5 +29,4 @@ export type KeywordDto = {
   id: number,
   keyword: string,
   tagId?: number,
-  userId: string,
 }

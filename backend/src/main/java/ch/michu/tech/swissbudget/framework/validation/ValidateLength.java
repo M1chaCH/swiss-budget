@@ -11,5 +11,5 @@ public @interface ValidateLength {
 
     int max() default Integer.MAX_VALUE;
 
-    int min() default 1;
+    int min() default 0;
 }

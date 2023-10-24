@@ -1,7 +1,6 @@
 import {Component, TemplateRef, ViewChild} from '@angular/core';
 import {AppDialogOpenItem, DialogService} from "./dialog.service";
 import {DialogHostDirective} from "./dialog-host.directive";
-import {DisplayErrorComponent} from "../display-error/display-error.component";
 
 @Component({
   selector: 'app-dialog',
@@ -11,6 +10,8 @@ import {DisplayErrorComponent} from "../display-error/display-error.component";
 export class DialogComponent {
   open: boolean = false;
   @ViewChild(DialogHostDirective, {static: true}) host!: DialogHostDirective;
+
+  // TODO add state / option for not closable
 
   constructor(
       private service: DialogService,
@@ -26,7 +27,7 @@ export class DialogComponent {
     if (dialog.componentOrTemplate instanceof TemplateRef) {
       viewContainer.createEmbeddedView(dialog.componentOrTemplate);
     } else {
-      const componentRef = viewContainer.createComponent<DisplayErrorComponent>(dialog.componentOrTemplate)
+      const componentRef = viewContainer.createComponent(dialog.componentOrTemplate)
       componentRef.instance.data = dialog.data;
     }
   }

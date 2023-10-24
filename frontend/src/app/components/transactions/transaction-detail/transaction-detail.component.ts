@@ -18,7 +18,7 @@ export class TransactionDetailComponent implements OnInit {
   constructor(
       private transactionService: TransactionService,
   ) {
-    this.aliasInput = new FormControl("", [Validators.maxLength(20)]);
+    this.aliasInput = new FormControl("", [Validators.maxLength(50)]);
     this.noteInput = new FormControl("", [Validators.maxLength(250)]);
   }
 

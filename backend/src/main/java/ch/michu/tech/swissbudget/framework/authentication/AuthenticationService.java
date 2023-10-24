@@ -36,6 +36,9 @@ public class AuthenticationService {
     private final SessionTokenService tokenService;
     private final MfaService mfaService;
 
+    /**
+     * map of userId to sessionId
+     */
     private final Map<String, String> userSessionCache = new HashMap<>();
 
     private final Provider<RequestSupport> supportProvider;
@@ -109,6 +112,7 @@ public class AuthenticationService {
         if (isCurrentSession(token.getUserId(), token.getSessionId())) {
             return token;
         }
+
         throw new LoginFromNewClientException();
     }
 
@@ -131,6 +135,7 @@ public class AuthenticationService {
         user.store();
         userSessionCache.put(token.getUserId(), token.getSessionId());
 
+        userSessionCache.put(user.getId(), token.getSessionId());
         supportProvider.get().logInfo(this, "created new session for %s", user.getMail());
         return tokenService.buildJwt(token);
     }

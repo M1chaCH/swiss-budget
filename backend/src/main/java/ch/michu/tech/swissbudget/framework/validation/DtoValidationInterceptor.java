@@ -36,7 +36,7 @@ public class DtoValidationInterceptor {
      */
     @AroundInvoke
     public Object intercept(InvocationContext context) throws Exception {
-        LOGGER.log(Level.INFO, "validating parameters of {0}->{1}",
+        LOGGER.log(Level.FINE, "validating parameters of {0}->{1}",
             new Object[]{context.getTarget().getClass().getSimpleName(), context.getMethod().getName()});
         for (Object arg : context.getParameters()) {
             if (arg.getClass().isAnnotationPresent(ValidatedDto.class)) {

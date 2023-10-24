@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {ErrorDto} from "../dtos/ErrorDto";
 import {HttpErrorResponse} from "@angular/common/http";
-import {DisplayErrorComponent} from "../components/display-error/display-error.component";
+import {DisplayErrorDialogComponent} from "../components/display-error/display-error-dialog.component";
 import {DialogService} from "../components/dialog/dialog.service";
 
 @Injectable({
@@ -15,9 +15,9 @@ export class ErrorService {
   }
 
   public static parseErrorMessage(error: ErrorDto): string {
-    switch (error.errorKey) {
+    switch (error?.errorKey) {
       case "DtoValidationException":
-        return "Invalid Input";
+        return `Validation for '${error.args.field}' failed, specifically '${error.args.validator}' failed.`;
       case "MailConnectionException":
         return "Could not connect to mail server. " +
             "(check password or check IMAP requirements of provider)";
@@ -49,13 +49,17 @@ export class ErrorService {
         return "There is an issue with the server. Please contact the admin."
       case "InvalidTransactionMailFormatException":
         return "Could not parse your transactions mails, please contact the admin or make sure that you have configured the correct bank."
+      case "WebApplicationException":
+        return "Please contact the admin. We will happily help you.";
+      case "ProcessingException":
+        return `Please try again later or contact admin. Reason: ${error.args.cause}: ${error.args.message}`;
       default:
         return "Failed, please contact admin.";
     }
   }
 
   public handleIfGlobalError(e: ErrorDto): boolean { // TODO implement
-    switch (e.errorKey) {
+    switch (e?.errorKey) {
       case "AgentNotRegisteredException":
         console.warn("should handle agent not registered, but not implemented")
         return true;
@@ -68,6 +72,6 @@ export class ErrorService {
   }
 
   public showErrorDialog(e: HttpErrorResponse): void {
-    this.dialogService.openDialog(DisplayErrorComponent, e);
+    this.dialogService.openDialog(DisplayErrorDialogComponent, e);
   }
 }

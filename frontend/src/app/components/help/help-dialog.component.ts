@@ -6,10 +6,10 @@ import {ApiService, endpoint} from "../../services/api.service";
 
 @Component({
   selector: 'app-help',
-  templateUrl: './help.component.html',
-  styleUrls: ['./help.component.scss']
+  templateUrl: './help-dialog.component.html',
+  styleUrls: ['./help-dialog.component.scss']
 })
-export class HelpComponent {
+export class HelpDialogComponent {
   form: HelpForm;
   loading: boolean = false;
 
@@ -44,7 +44,7 @@ export class HelpForm {
   group: FormGroup;
 
   constructor(
-      mail: string = "",
+      mail: string = "", // TODO autofill from current user if logged in
       subject: string = "SwissBudget Question",
       question: string = "",
   ) {

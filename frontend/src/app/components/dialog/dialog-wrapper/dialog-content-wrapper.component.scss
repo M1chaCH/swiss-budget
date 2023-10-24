@@ -1,0 +1,35 @@
+.dialog-wrapper {
+  display: flex;
+  flex-flow: column;
+  gap: 10px;
+  justify-content: space-between;
+
+  min-width: 40vw;
+  min-height: 40vh;
+  max-height: 90vh;
+  width: 100%;
+  max-width: 1000px;
+
+  overflow-y: scroll;
+
+  .dialog-wrapper-body {
+    display: flex;
+    flex-flow: column;
+    justify-content: flex-start;
+
+    h2 {
+      margin: 0;
+    }
+  }
+
+  .dialog-wrapper-footer {
+    display: flex;
+    flex-flow: row wrap;
+    width: 100%;
+    gap: 20px;
+    align-items: center;
+    justify-content: flex-end;
+    align-self: flex-end;
+  }
+}
+

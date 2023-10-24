@@ -4,7 +4,8 @@ import ch.michu.tech.swissbudget.app.dto.TransactionDto;
 import ch.michu.tech.swissbudget.app.provider.TransactionProvider;
 import ch.michu.tech.swissbudget.app.transaction.TransactionImporter;
 import ch.michu.tech.swissbudget.framework.data.RequestSupport;
-import ch.michu.tech.swissbudget.framework.error.exception.InvalidSessionTokenException;
+import ch.michu.tech.swissbudget.framework.error.exception.ResourceNotFoundException;
+import ch.michu.tech.swissbudget.generated.jooq.tables.records.TransactionRecord;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Provider;
@@ -25,14 +26,22 @@ public class TransactionService {
     }
 
     public List<TransactionDto> getTransactions() {
-        RequestSupport support = supportProvider.get();
-        String userId = support.getSessionToken().orElseThrow(InvalidSessionTokenException::new).getUserId();
-        return provider.selectTransactionsWithDependenciesByUserIdAsDto(userId);
+        return provider.selectTransactionsWithDependenciesByUserIdAsDto(supportProvider.get().getOrThrowUserId());
     }
 
     public List<TransactionDto> importTransactions() {
+        return importer.importTransactions(supportProvider.get().getOrThrowUserId()).stream().map(TransactionDto::new).toList();
+    }
+
+    public void updateTransaction(TransactionDto toUpdate) {
         RequestSupport support = supportProvider.get();
-        String userId = support.getSessionToken().orElseThrow(InvalidSessionTokenException::new).getUserId();
-        return importer.importTransactions(userId).stream().map(TransactionDto::new).toList();
+        TransactionRecord transaction = provider.selectTransaction(support.getOrThrowUserId(), toUpdate.getId())
+            .orElseThrow(() -> new ResourceNotFoundException("transaction", toUpdate.getId()));
+
+        transaction.setTagId(toUpdate.getTagId());
+        transaction.setMatchingKeywordId(toUpdate.getMatchingKeywordId());
+        transaction.setAlias(toUpdate.getAlias());
+        transaction.setNote(toUpdate.getNote());
+        provider.updateTransaction(transaction);
     }
 }

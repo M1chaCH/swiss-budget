@@ -21,6 +21,7 @@ export const endpoint = {
   providedIn: 'root'
 })
 export class ApiService {
+  public static readonly API_DATE_FORMAT = "yyyy-MM-DD";
 
   constructor(
       private http: HttpClient,

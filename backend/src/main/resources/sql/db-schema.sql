@@ -36,6 +36,7 @@ CREATE TABLE IF NOT EXISTS mfa_code
     code       int unique,
     user_id    varchar(250) not null,
     expires_at timestamp    not null,
+    tries int default 0,
     user_agent varchar(250) not null,
     FOREIGN KEY (user_id) REFERENCES registered_user (id)
 );

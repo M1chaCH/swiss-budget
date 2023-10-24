@@ -1,12 +1,15 @@
 package ch.michu.tech.swissbudget.app.endpoint;
 
+import ch.michu.tech.swissbudget.app.dto.TransactionDto;
 import ch.michu.tech.swissbudget.app.service.TransactionService;
 import ch.michu.tech.swissbudget.framework.authentication.Authenticated;
 import ch.michu.tech.swissbudget.framework.logging.LoggedRequest;
 import ch.michu.tech.swissbudget.framework.validation.ValidateDtos;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
+import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
+import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
@@ -38,5 +41,13 @@ public class TransactionEndpoint {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getImportTransactions() {
         return Response.status(Status.OK).entity(service.importTransactions()).build();
+    }
+
+    @PUT
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response putTransaction(TransactionDto toUpdate) {
+        service.updateTransaction(toUpdate);
+        return Response.status(Status.NO_CONTENT).build();
     }
 }
