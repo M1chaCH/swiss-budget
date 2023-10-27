@@ -1,6 +1,8 @@
 <div appPage class="page-container" pageRoute="transactions" pageTitle="Transactions">
-    <app-transaction-filter></app-transaction-filter>
-    <div *ngIf="transactions$ | async as transactions else loadingTransactions">
+    <app-page-with-header *ngIf="transactions$ | async as transactions else loadingTransactions">
+        <ng-container pageHeader>
+            <app-transaction-filter></app-transaction-filter>
+        </ng-container>
         <p *ngIf="!transactions || transactions.size < 1">No transactions imported yet!</p>
 
         <app-expansion-list-toggle topic="transaction"></app-expansion-list-toggle>
@@ -15,7 +17,7 @@
         <div #loadMore *ngIf="moreTransactionsAvailable" id="loadMore">
             <ng-template [ngTemplateOutlet]="loadingTransactions"></ng-template>
         </div>
-    </div>
+    </app-page-with-header>
     <ng-template #loadingTransactions>
         <!--        TODO extract into directive instead of async pipe (give option for fullscreen or 100%) -->
         <div class="loading-banner">

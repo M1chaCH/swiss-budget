@@ -47,6 +47,7 @@ import {FieldExtensionDirective} from './components/form/field-extensions/field-
 import {FieldExtensionContentComponent} from './components/form/field-extensions/field-extension-content/field-extension-content.component';
 import {DatePickerComponent} from './components/form/date-picker/date-picker.component';
 import {DatePickerFormComponent} from './components/form/date-picker/picker-form/date-picker-form.component';
+import {PageWithHeaderComponent} from './components/page-with-header/page-with-header.component';
 
 @NgModule({
   declarations: [
@@ -89,6 +90,7 @@ import {DatePickerFormComponent} from './components/form/date-picker/picker-form
     FieldExtensionContentComponent,
     DatePickerComponent,
     DatePickerFormComponent,
+    PageWithHeaderComponent,
   ],
   imports: [
     BrowserModule,

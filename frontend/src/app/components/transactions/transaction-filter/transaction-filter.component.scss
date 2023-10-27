@@ -12,7 +12,7 @@
     gap: 12px;
     grid-template-columns: repeat(2, calc(50% - 6px));
     grid-auto-rows: 60px;
-    justify-items: center;
+    justify-items: flex-start;
     align-items: center;
     max-width: 750px;
 

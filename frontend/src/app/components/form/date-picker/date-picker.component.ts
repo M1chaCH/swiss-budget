@@ -53,7 +53,7 @@ export class DatePickerComponent implements OnInit {
       currentMoment.set("year", this.yearControl.value ?? new Date().getFullYear());
       currentMoment.set("M", (this.monthControl.value ?? 1) - 1);
       const currentDayValue = this.dayControl.value;
-      if (currentDayValue && currentDayValue >= currentMoment.daysInMonth()) {
+      if (currentDayValue && currentDayValue > currentMoment.daysInMonth()) {
         this.errorMessage = "day does not exist";
         this.control.setErrors({day: "invalid"});
         return;

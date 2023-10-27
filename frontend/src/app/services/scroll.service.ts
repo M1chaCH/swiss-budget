@@ -28,6 +28,17 @@ export class ScrollService {
     this.currentElement.addEventListener("scroll", this.handleScrollChange);
   }
 
+  scrollTo(y: number, smooth: boolean = true) {
+    this.currentElement?.scrollTo({
+      top: y,
+      behavior: smooth ? "smooth" : "auto",
+    });
+  }
+
+  currentYScroll() {
+    return this.currentElement?.scrollTop ?? 0;
+  }
+
   private readonly handleScrollChange = () => {
     this.scrollUpdater.next({
       scroll: this.currentElement?.scrollTop ?? 0,
