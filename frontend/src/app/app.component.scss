@@ -115,6 +115,7 @@
       margin: auto;
       height: 100%;
       max-width: 2500px;
+      overflow-y: scroll;
 
       position: relative;
       transition: width 250ms ease-out;

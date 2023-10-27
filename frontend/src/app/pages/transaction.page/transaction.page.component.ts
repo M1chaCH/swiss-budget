@@ -1,8 +1,10 @@
-import {ChangeDetectionStrategy, Component} from '@angular/core';
-import {map, Observable} from "rxjs";
+import {ChangeDetectionStrategy, Component, ElementRef, ViewChild} from '@angular/core';
+import {map, Observable, tap} from "rxjs";
 import {TransactionDto} from "../../dtos/TransactionDtos";
 import {TransactionService} from "../../services/transaction.service";
 import * as moment from "moment";
+import {ScrollService} from "../../services/scroll.service";
+import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
 
 @Component({
   selector: 'app-transaction.page',
@@ -11,15 +13,35 @@ import * as moment from "moment";
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TransactionPageComponent {
+  @ViewChild('loadMore', {static: false}) loadMoreDiv: ElementRef<HTMLDivElement> | undefined;
   transactions$: Observable<Map<string, TransactionDto[]>>; // TODO implement lazy loading
+  moreTransactionsAvailable: boolean = true;
 
   constructor(
-      service: TransactionService,
+      private service: TransactionService,
+      scrollService: ScrollService,
   ) {
     // expects sorted results from backend
     this.transactions$ = service.transactions$.pipe(
         map(t => this.mapTransactionsToDates(t)),
+        tap(() => this.moreTransactionsAvailable = service.hasNextPage()),
     );
+
+    scrollService.scrollChange$.pipe(takeUntilDestroyed())
+    .subscribe(() => this.checkVisibilityOfLoadMore());
+  }
+
+  private checkVisibilityOfLoadMore() {
+    if (!this.loadMoreDiv) {
+      return;
+    }
+
+    const rect = this.loadMoreDiv.nativeElement.getBoundingClientRect();
+    const visiblePercent = Math.max(0, Math.min(rect.bottom, window.innerHeight) - Math.max(rect.top, 0)) / rect.height * 100;
+
+    if (visiblePercent > 60) {
+      this.service.loadNextPage();
+    }
   }
 
   private mapTransactionsToDates(transactions: TransactionDto[] | undefined): Map<string, TransactionDto[]> {

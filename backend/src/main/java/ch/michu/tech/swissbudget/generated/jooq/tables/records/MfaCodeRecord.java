@@ -93,17 +93,17 @@ public class MfaCodeRecord extends UpdatableRecordImpl<MfaCodeRecord> implements
     }
 
     /**
-     * Setter for <code>public.mfa_code.expires_at</code>.
-     */
-    public void setExpiresAt(LocalDateTime value) {
-        set(3, value);
-    }
-
-    /**
      * Getter for <code>public.mfa_code.tries</code>.
      */
     public Integer getTries() {
         return (Integer) get(4);
+    }
+
+    /**
+     * Setter for <code>public.mfa_code.expires_at</code>.
+     */
+    public void setExpiresAt(LocalDateTime value) {
+        set(3, value);
     }
 
     /**
@@ -255,24 +255,10 @@ public class MfaCodeRecord extends UpdatableRecordImpl<MfaCodeRecord> implements
     }
 
     @Override
-    public Integer value5() {
-        return getTries();
-    }
-
-    @Override
-    public String value6() {
-        return getUserAgent();
-    }
-
-    @Override
     public MfaCodeRecord value5(Integer value) {
         setTries(value);
         return this;
     }
-
-    // -------------------------------------------------------------------------
-    // Constructors
-    // -------------------------------------------------------------------------
 
     @Override
     public MfaCodeRecord value6(String value) {
@@ -289,5 +275,19 @@ public class MfaCodeRecord extends UpdatableRecordImpl<MfaCodeRecord> implements
         value5(value5);
         value6(value6);
         return this;
+    }
+
+    // -------------------------------------------------------------------------
+    // Constructors
+    // -------------------------------------------------------------------------
+
+    @Override
+    public Integer value5() {
+        return getTries();
+    }
+
+    @Override
+    public String value6() {
+        return getUserAgent();
     }
 }

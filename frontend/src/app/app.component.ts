@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {fadePageTransition, switchAnimation} from "./animations";
 import {NavigationStart, Router} from "@angular/router";
 import {PageStateService} from "./services/page-state.service";
@@ -7,6 +7,7 @@ import {AuthService} from "./services/auth.service";
 import {CurrentPage, CurrentPageService} from "./services/current-page.service";
 import {pages} from "./app-routing.module";
 import {Observable} from "rxjs";
+import {ScrollService} from "./services/scroll.service";
 
 @Component({
   selector: 'app-root',
@@ -25,11 +26,16 @@ export class AppComponent implements OnInit {
       private router: Router,
       private pageState: PageStateService,
       private theme: ThemeService,
+      private scrollService: ScrollService,
       public auth: AuthService,
       currentPageService: CurrentPageService,
   ) {
     this.theme.init();
     this.currentPage$ = currentPageService.pageChanges();
+  }
+
+  @ViewChild('pageContainer', {static: false}) set scrollPageDiv(div: ElementRef<HTMLDivElement>) {
+    this.scrollService.init(div);
   }
 
   ngOnInit(): void {
@@ -41,6 +47,8 @@ export class AppComponent implements OnInit {
     this.pageState.subscribe(fullscreen => {
       this.fullscreenPage = fullscreen;
     });
+
+    // this.scrollService.init(this.scrollPageDiv);
   }
 
   closeMenuIfOverlayMode() {

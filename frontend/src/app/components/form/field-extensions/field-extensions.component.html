@@ -1,0 +1,7 @@
+<div (click)="closeExtension($event)"
+     [class.closed]="!(open | async)"
+     id="extension-container">
+    <app-field-extension-content *ngIf="(open | async) && extension" [root]="extension.root" [side]="extension.side">
+        <ng-container *ngTemplateOutlet="extension.content"></ng-container>
+    </app-field-extension-content>
+</div>

@@ -1,0 +1,39 @@
+<div class="calendar-container">
+    <div class="month-switcher">
+        <button (click)="addMonth(-1)" class="icon-button">
+            <span class="material-symbols-rounded">chevron_left</span>
+        </button>
+        <button (click)="state = 'year'" class="icon-button current-date">
+            <span>{{value.toDate() | date: "MMM yyyy"}}</span>
+            <span class="material-symbols-rounded">unfold_more</span>
+        </button>
+        <button (click)="addMonth(1)" class="icon-button">
+            <span class="material-symbols-rounded">chevron_right</span>
+        </button>
+    </div>
+
+    <div [ngSwitch]="state" class="calendar">
+        <div *ngSwitchCase="'year'" class="year-grid" id="yearGrid">
+            <button (click)="yearSelected(year)"
+                    *ngFor="let year of years"
+                    [class.current-year]="currentYear === year"
+                    class="icon-button">
+                {{year}}
+            </button>
+        </div>
+        <div *ngSwitchCase="'month'" class="month-grid">
+            <button (click)="monthSelected(i)"
+                    *ngFor="let month of monthNames, index as i"
+                    class="icon-button">
+                {{month}}
+            </button>
+        </div>
+        <div *ngSwitchCase="'day'" class="day-grid">
+            <span *ngFor="let name of dayNames" class="day-name">{{name}}</span>
+
+            <button (click)="daySelected(day)" *ngFor="let day of days" [disabled]="day < 1" class="icon-button">
+                <span *ngIf="day > 0">{{day | number}}</span>
+            </button>
+        </div>
+    </div>
+</div>

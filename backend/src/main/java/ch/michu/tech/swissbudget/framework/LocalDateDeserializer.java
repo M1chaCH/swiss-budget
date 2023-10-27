@@ -16,9 +16,7 @@ public class LocalDateDeserializer implements JsonbDeserializer<LocalDate> {
     public static final String FALLBACK_LOCAL_DATE_PATTERN = "yyyy-MM-dd";
     private static final Logger LOGGER = Logger.getLogger(LocalDateDeserializer.class.getSimpleName());
 
-    @Override
-    public LocalDate deserialize(JsonParser parser, DeserializationContext ctx, Type rtType) {
-        String dateString = parser.getString();
+    public static LocalDate parseLocalDate(String dateString) {
         try {
             return LocalDate.parse(dateString, DateTimeFormatter.ofPattern(DEFAULT_LOCAL_DATE_PATTERN));
         } catch (DateTimeParseException e) {
@@ -31,5 +29,10 @@ public class LocalDateDeserializer implements JsonbDeserializer<LocalDate> {
                 return LocalDate.parse(dateString, DateTimeFormatter.ofPattern(FALLBACK_LOCAL_DATE_PATTERN));
             }
         }
+    }
+
+    @Override
+    public LocalDate deserialize(JsonParser parser, DeserializationContext ctx, Type rtType) {
+        return LocalDateDeserializer.parseLocalDate(parser.getString());
     }
 }

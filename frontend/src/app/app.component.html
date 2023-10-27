@@ -80,9 +80,9 @@
         </nav>
         <div (click)="sideMenuOpen = false" *ngIf="sideMenuOpen" class="nav-overlay"></div>
 
-        <main [@routeChangeTrigger]="currentRoute"
-              [style.width]="!sideMenuOpen || fullscreenPage ? '100%' : 'calc(100% - 300px)'"
-              class="page-container">
+        <main #pageContainer
+              [@routeChangeTrigger]="currentRoute"
+              [style.width]="!sideMenuOpen || fullscreenPage ? '100%' : 'calc(100% - 300px)'" class="page-container">
             <router-outlet></router-outlet>
         </main>
     </div>
@@ -93,3 +93,4 @@
     <app-transaction-importer *ngIf="loggedIn === 'in'"></app-transaction-importer>
 </ng-container>
 <app-dialog></app-dialog>
+<app-field-extensions></app-field-extensions>

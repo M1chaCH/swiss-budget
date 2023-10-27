@@ -1,0 +1,13 @@
+<div class="filter-container">
+    <div class="filter">
+        <app-text-input [value]="queryControl" class="query" hint="Search receiver, alias & note" placeholder="Search">
+        </app-text-input>
+        <div class="tags"></div>
+        <div class="from">
+            <app-date-picker [control]="fromControl" height="60px" hint="Search from"></app-date-picker>
+        </div>
+        <div class="to">
+            <app-date-picker [control]="toControl" height="60px" hint="Search until"></app-date-picker>
+        </div>
+    </div>
+</div>

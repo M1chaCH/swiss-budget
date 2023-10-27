@@ -1,5 +1,5 @@
 <div appPage class="page-container" pageRoute="transactions" pageTitle="Transactions">
-    <!--    TODO add filter (search, date period & tag filter) and lazy loading -->
+    <app-transaction-filter></app-transaction-filter>
     <div *ngIf="transactions$ | async as transactions else loadingTransactions">
         <p *ngIf="!transactions || transactions.size < 1">No transactions imported yet!</p>
 
@@ -10,6 +10,10 @@
                 <app-transaction *ngFor="let transaction of transactions.get(key)" [transaction]="transaction">
                 </app-transaction>
             </div>
+        </div>
+
+        <div #loadMore *ngIf="moreTransactionsAvailable" id="loadMore">
+            <ng-template [ngTemplateOutlet]="loadingTransactions"></ng-template>
         </div>
     </div>
     <ng-template #loadingTransactions>

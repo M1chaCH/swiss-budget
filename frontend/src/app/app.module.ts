@@ -41,6 +41,12 @@ import {DialogHostDirective} from './components/dialog/dialog-host.directive';
 import {TranslateErrorPipe} from './pipes/translate-error.pipe';
 import {DialogContentWrapperComponent} from './components/dialog/dialog-wrapper/dialog-content-wrapper.component';
 import {HelpPageComponent} from './pages/help.page/help.page.component';
+import {TransactionFilterComponent} from './components/transactions/transaction-filter/transaction-filter.component';
+import {FieldExtensionsComponent} from './components/form/field-extensions/field-extensions.component';
+import {FieldExtensionDirective} from './components/form/field-extensions/field-extension.directive';
+import {FieldExtensionContentComponent} from './components/form/field-extensions/field-extension-content/field-extension-content.component';
+import {DatePickerComponent} from './components/form/date-picker/date-picker.component';
+import {DatePickerFormComponent} from './components/form/date-picker/picker-form/date-picker-form.component';
 
 @NgModule({
   declarations: [
@@ -77,6 +83,12 @@ import {HelpPageComponent} from './pages/help.page/help.page.component';
     TranslateErrorPipe,
     DialogContentWrapperComponent,
     HelpPageComponent,
+    TransactionFilterComponent,
+    FieldExtensionsComponent,
+    FieldExtensionDirective,
+    FieldExtensionContentComponent,
+    DatePickerComponent,
+    DatePickerFormComponent,
   ],
   imports: [
     BrowserModule,

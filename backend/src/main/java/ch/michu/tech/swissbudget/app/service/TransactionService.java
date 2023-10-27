@@ -9,6 +9,7 @@ import ch.michu.tech.swissbudget.generated.jooq.tables.records.TransactionRecord
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Provider;
+import java.time.LocalDate;
 import java.util.List;
 
 @ApplicationScoped
@@ -25,8 +26,9 @@ public class TransactionService {
         this.provider = provider;
     }
 
-    public List<TransactionDto> getTransactions() {
-        return provider.selectTransactionsWithDependenciesByUserIdAsDto(supportProvider.get().getOrThrowUserId());
+    public List<TransactionDto> getTransactions(String query, int[] tagIds, LocalDate from, LocalDate to, int page) {
+        return provider.selectTransactionsWithDependenciesWithFilterWithPageAsDto(supportProvider.get().getOrThrowUserId(),
+            query, tagIds, from, to, page);
     }
 
     public List<TransactionDto> importTransactions() {

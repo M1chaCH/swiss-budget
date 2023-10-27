@@ -21,14 +21,18 @@ import ch.michu.tech.swissbudget.generated.jooq.tables.records.TransactionMailRe
 import ch.michu.tech.swissbudget.generated.jooq.tables.records.TransactionRecord;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletionStage;
+import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Query;
 import org.jooq.Result;
+import org.jooq.SelectConditionStep;
+import org.jooq.SelectLimitStep;
 import org.jooq.exception.DataAccessException;
 import org.jooq.impl.UpdatableRecordImpl;
 
@@ -123,6 +127,64 @@ public class TransactionProvider {
             .orderBy(TRANSACTION.TRANSACTION_DATE.desc())
             .fetch();
 
+        return parseDeepResultToDto(result);
+    }
+
+    @LoggedStatement
+    public List<TransactionDto> selectTransactionsWithDependenciesWithFilterWithPageAsDto(
+        String userId,
+        String query,
+        int[] tagIds,
+        LocalDate from,
+        LocalDate to,
+        int page
+    ) {
+        LocalDate now = LocalDate.now();
+        SelectConditionStep<?> conditions = db
+            .select(TRANSACTION.asterisk(), TAG.asterisk(), KEYWORD.asterisk())
+            .from(TRANSACTION)
+            .leftJoin(TAG)
+            .on(TRANSACTION.TAG_ID.eq(TAG.ID))
+            .leftJoin(KEYWORD)
+            .on(TRANSACTION.MATCHING_KEYWORD_ID.eq(KEYWORD.ID))
+            .where(TRANSACTION.USER_ID.eq(userId));
+
+        if (query != null && !query.isBlank()) {
+            if (!query.startsWith("%")) {
+                query = "%" + query;
+            }
+            if (!query.endsWith("%")) {
+                query += "%";
+            }
+
+            conditions = conditions
+                .and(TRANSACTION.ALIAS.likeIgnoreCase(query)
+                    .or(TRANSACTION.NOTE.likeIgnoreCase(query)
+                        .or(TRANSACTION.RECEIVER.likeIgnoreCase(query))));
+        }
+
+        if (tagIds != null && tagIds.length > 0) {
+            Condition tagsCondition = TRANSACTION.TAG_ID.eq(tagIds[0]);
+            for (int i = 1; i < tagIds.length; i++) {
+                tagsCondition = tagsCondition.or(TRANSACTION.TAG_ID.eq(tagIds[i]));
+            }
+            conditions = conditions.and(tagsCondition);
+        }
+
+        if (from != null && from.isBefore(now)) {
+            conditions = conditions.and(TRANSACTION.TRANSACTION_DATE.ge(from));
+        }
+
+        if (to != null && to.isBefore(now)) {
+            conditions = conditions.and(TRANSACTION.TRANSACTION_DATE.le(to));
+        }
+
+        SelectLimitStep<?> limitStep = conditions.orderBy(TRANSACTION.TRANSACTION_DATE.desc());
+        Result<?> result = data.fetchWithLimit(limitStep, page);
+        return parseDeepResultToDto(result);
+    }
+
+    private List<TransactionDto> parseDeepResultToDto(Result<?> result) {
         final List<TransactionDto> dtos = new ArrayList<>();
         for (int i = 0; i < result.size(); i++) {
             int matchingKeywordId = 0;
@@ -219,7 +281,13 @@ public class TransactionProvider {
 
     @LoggedStatement
     public void updateTransaction(TransactionRecord transaction) {
-        transaction.store(TRANSACTION.TAG_ID, TRANSACTION.MATCHING_KEYWORD_ID, TRANSACTION.ALIAS, TRANSACTION.NOTE);
+        if (transaction.getTagId() == 0) {
+            transaction.store(TRANSACTION.ALIAS, TRANSACTION.NOTE);
+        } else if (transaction.getMatchingKeywordId() == 0) {
+            transaction.store(TRANSACTION.TAG_ID, TRANSACTION.ALIAS, TRANSACTION.NOTE);
+        } else {
+            transaction.store(TRANSACTION.TAG_ID, TRANSACTION.MATCHING_KEYWORD_ID, TRANSACTION.ALIAS, TRANSACTION.NOTE);
+        }
     }
 
     protected ImportDbData resultToRecord(Result<?> result, int index) {

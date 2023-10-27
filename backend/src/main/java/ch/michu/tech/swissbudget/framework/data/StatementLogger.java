@@ -38,7 +38,11 @@ public class StatementLogger {
             if (parameterValues[i] instanceof Collection<?> list) {
                 value = "[size:%s]".formatted(list.size());
             } else {
-                value = parameterValues[i].toString();
+                if (parameterValues[i] == null) {
+                    value = "null";
+                } else {
+                    value = parameterValues[i].toString();
+                }
             }
             if (value.length() > 30) {
                 value = value.substring(0, 29) + ".";

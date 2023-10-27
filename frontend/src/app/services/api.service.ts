@@ -98,6 +98,9 @@ export class ApiService {
   }
 
   private handleError<T>(err: HttpErrorResponse, _: Observable<T>, showDialogOnError: boolean): Observable<T> {
+    if (environment.IS_DEV)
+      console.error(err);
+
     if (!this.errorService.handleIfGlobalError(err.error)) {
       if (showDialogOnError) this.errorService.showErrorDialog(err);
       else throw err;
@@ -108,7 +111,7 @@ export class ApiService {
   private parseQueryParams(params: { key: string, value: string }[]): string {
     let url: string = "?";
     for (let i = 0; i < params.length; i++) {
-      if (i > 0 && i < params.length - 1)
+      if (i > 0 && i <= params.length - 1)
         url += "&";
       const current: { key: string, value: string } = params[i];
       url += `${current.key}=${current.value}`;

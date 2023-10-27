@@ -19,35 +19,34 @@ export type LoginState = "in" | "out" | "loading";
 export class AuthService implements OnInit {
   static readonly AUTH_TOKEN = "Auth-Token";
   static readonly MFA_PROCESS_ID = "mfa";
-  static readonly USER_ID = "user";
+  static readonly USER_ID = "id";
 
   private loginSubject: BehaviorSubject<LoginState> = new BehaviorSubject<LoginState>("loading");
   public isLoggedIn$: Observable<LoginState> = this.loginSubject.asObservable();
-  private authToken: string | undefined;
 
   constructor(
       private api: ApiService,
-      private cookie: CookieService,
       private router: Router,
+      private tokenService: TokenService,
   ) {
-    this.authToken = this.cookie.get(AuthService.AUTH_TOKEN);
     this.loadLoginState();
   }
 
   ngOnInit() {
   }
 
-  // FIXME: kicked invalid session -> login -> still unauthorised -> refresh -> OK (login after being logged out due to device change does not work, user needs to reload page)
   login(mail: string, password: string, stay: boolean = true): Observable<string> {
-    this.authToken = undefined;
+    this.tokenService.removeToken();
     return this.api.post<MessageDto | ErrorDto>(endpoint.AUTH, {
       credentials: {
         mail, password
       }, stay
     }).pipe(
         tap(response => {
-          if ((response as MessageDto).message) {
-            this.storeToken(response as MessageDto);
+          const token: string | undefined = (response as MessageDto).message;
+          if (token) {
+            this.tokenService.token = token;
+            this.loginSubject.next("in");
             this.router.navigate([pages.HOME]).then()
           } else {
             const newDeviceError: ErrorDto = response as ErrorDto;
@@ -70,8 +69,7 @@ export class AuthService implements OnInit {
 
   logout() {
     this.loginSubject.next("out");
-    this.authToken = undefined;
-    this.deleteToken();
+    this.tokenService.removeToken();
     location.reload();
   }
 
@@ -80,8 +78,9 @@ export class AuthService implements OnInit {
       processId, userId, code
     }).pipe(
         tap(dto => {
-          this.storeToken(dto);
+          this.tokenService.token = dto.message;
           localStorage.removeItem(AuthService.MFA_PROCESS_ID);
+          this.loginSubject.next("in");
           this.router.navigate([pages.HOME]).then()
         }),
         concatMap(_ => of(true)),
@@ -90,13 +89,11 @@ export class AuthService implements OnInit {
   }
 
   private loadLoginState(): void {
-    if (!this.authToken)
-      this.authToken = this.cookie.get(AuthService.AUTH_TOKEN);
-    if (!!this.authToken) {
+    if (this.tokenService.hasToken()) {
       this.api.getRaw(endpoint.AUTH).subscribe({
         next: _ => this.loginSubject.next("in"),
         error: _ => {
-          this.deleteToken();
+          this.tokenService.removeToken();
           this.loginSubject.next("out");
         }
       });
@@ -104,37 +101,21 @@ export class AuthService implements OnInit {
       this.loginSubject.next("out");
     }
   }
-
-  private storeToken(tokenMessage: MessageDto) {
-    const token = tokenMessage.message;
-    this.authToken = token;
-    let expires = moment(new Date()).add(300, "days");
-    this.cookie.set(AuthService.AUTH_TOKEN, token, expires.toDate(), "/", environment.DOMAIN, true, "Strict");
-    this.loginSubject.next("in");
-  }
-
-  private deleteToken() {
-    this.cookie.delete(AuthService.AUTH_TOKEN, "/", environment.DOMAIN, true, "Strict");
-  }
 }
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthTokenInterceptor implements HttpInterceptor {
-  private authToken: string | undefined;
 
   constructor(
-      private cookie: CookieService,
+      private tokenService: TokenService,
   ) {
   }
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    if (!this.authToken) {
-      this.authToken = this.cookie.get(AuthService.AUTH_TOKEN);
-    }
     const requestWithHeaders = req.clone({
-      setHeaders: {[AuthService.AUTH_TOKEN]: this.authToken},
+      setHeaders: {[AuthService.AUTH_TOKEN]: this.tokenService.token},
     });
     return next.handle(requestWithHeaders);
   }
@@ -155,4 +136,36 @@ export const authenticationGuard: CanActivateFn = (_route: ActivatedRouteSnapsho
         obs.next(router.parseUrl(pages.LOGIN));
     });
   });
+}
+
+@Injectable({
+  providedIn: 'root',
+})
+export class TokenService {
+  constructor(
+      private cookie: CookieService,
+  ) {
+  }
+
+  private _token: string | undefined;
+
+  get token(): string {
+    if (!this._token)
+      this._token = this.cookie.get(AuthService.AUTH_TOKEN);
+    return this._token;
+  }
+
+  set token(token: string) {
+    let expires = moment(new Date()).add(300, "days");
+    this.cookie.set(AuthService.AUTH_TOKEN, token, expires.toDate(), "/", environment.DOMAIN, true, "Strict");
+    this._token = token;
+  }
+
+  hasToken(): boolean {
+    return !!this.token;
+  }
+
+  removeToken() {
+    this.cookie.delete(AuthService.AUTH_TOKEN, "/", environment.DOMAIN, true, "Strict");
+  }
 }
