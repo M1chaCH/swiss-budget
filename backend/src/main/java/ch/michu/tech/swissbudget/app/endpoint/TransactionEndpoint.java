@@ -1,6 +1,6 @@
 package ch.michu.tech.swissbudget.app.endpoint;
 
-import ch.michu.tech.swissbudget.app.dto.TransactionDto;
+import ch.michu.tech.swissbudget.app.dto.transaction.TransactionDto;
 import ch.michu.tech.swissbudget.app.service.TransactionService;
 import ch.michu.tech.swissbudget.framework.LocalDateDeserializer;
 import ch.michu.tech.swissbudget.framework.authentication.Authenticated;

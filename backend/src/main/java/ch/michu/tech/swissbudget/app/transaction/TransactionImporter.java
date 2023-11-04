@@ -145,9 +145,10 @@ public class TransactionImporter {
             throw new UnexpectedServerException("could not instantiate MailContentHandler for " + bank.name(), e);
         } catch (MessagingException e) {
             throw new UnexpectedServerException("could not find or download messages", e);
+        } finally {
+            currentUserIds.remove(dbData.id());
         }
 
-        currentUserIds.remove(dbData.id());
         return transactions;
     }
 

@@ -3,8 +3,8 @@ package ch.michu.tech.swissbudget.app.provider;
 import static ch.michu.tech.swissbudget.generated.jooq.tables.Keyword.KEYWORD;
 import static ch.michu.tech.swissbudget.generated.jooq.tables.Tag.TAG;
 
-import ch.michu.tech.swissbudget.app.dto.KeywordDto;
-import ch.michu.tech.swissbudget.app.dto.TagDto;
+import ch.michu.tech.swissbudget.app.dto.tag.KeywordDto;
+import ch.michu.tech.swissbudget.app.dto.tag.TagDto;
 import ch.michu.tech.swissbudget.framework.data.DataProvider;
 import ch.michu.tech.swissbudget.framework.data.LoggedStatement;
 import ch.michu.tech.swissbudget.generated.jooq.tables.records.KeywordRecord;
@@ -14,6 +14,7 @@ import jakarta.inject.Inject;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.jooq.Condition;
 import org.jooq.DSLContext;
 
 @SuppressWarnings("unused")
@@ -29,6 +30,13 @@ public class TagProvider {
         this.db = data.getContext();
     }
 
+    @LoggedStatement
+    public boolean fetchExistsTag(String userId, int tagId) {
+        Condition userCondition = TAG.USER_ID.eq(userId);
+        Condition tagCondition = TAG.ID.eq(tagId);
+
+        return db.fetchExists(TAG, userCondition, tagCondition);
+    }
 
     /**
      * selects all tags with their records from the DB <br> NOTE: executes a lot of queries, don't use too regularly

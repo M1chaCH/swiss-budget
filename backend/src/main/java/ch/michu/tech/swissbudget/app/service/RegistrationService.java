@@ -84,7 +84,7 @@ public class RegistrationService {
             .newRecord(TransactionMetaData.TRANSACTION_META_DATA);
         metaData.setUserId(user.getId());
         metaData.setBank(bank.getKey());
-        metaData.setTransactionsFolder(dto.getFolderName());
+        metaData.setTransactionsFolder(dto.getFolderName()); // TODO validate if folter exists
         metaData.store();
 
         defaultData.insertDefaultTagsAndKeywords(user.getId());

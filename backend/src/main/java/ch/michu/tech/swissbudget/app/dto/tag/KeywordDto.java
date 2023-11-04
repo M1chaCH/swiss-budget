@@ -1,4 +1,4 @@
-package ch.michu.tech.swissbudget.app.dto;
+package ch.michu.tech.swissbudget.app.dto.tag;
 
 import static ch.michu.tech.swissbudget.generated.jooq.tables.Keyword.KEYWORD;
 

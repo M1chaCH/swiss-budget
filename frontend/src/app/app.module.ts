@@ -33,7 +33,7 @@ import {TransactionComponent} from './components/transactions/transaction/transa
 import {TransactionImporterComponent} from './components/transactions/transaction-importer/transaction-importer.component';
 import {ExpansionPanelComponent} from './components/expansion-panel/expansion-panel.component';
 import {TransactionDetailComponent} from './components/transactions/transaction-detail/transaction-detail.component';
-import {TagIconComponent} from './components/transactions/tag/tag-icon.component';
+import {TagIconComponent} from './components/tags/tag-icon/tag-icon.component';
 import {StyledAmountComponent} from './components/transactions/styled-amount/styled-amount.component';
 import {ExpansionListToggleComponent} from './components/expansion-panel/expansion-panel-toggle/expansion-list-toggle.component';
 import {DisplayErrorDialogComponent} from './components/display-error/display-error-dialog.component';
@@ -48,6 +48,8 @@ import {FieldExtensionContentComponent} from './components/form/field-extensions
 import {DatePickerComponent} from './components/form/date-picker/date-picker.component';
 import {DatePickerFormComponent} from './components/form/date-picker/picker-form/date-picker-form.component';
 import {PageWithHeaderComponent} from './components/page-with-header/page-with-header.component';
+import {AssignTagDialogComponent} from './components/tags/assign-tag-dialog/assign-tag-dialog.component';
+import {TagSelectorComponent} from './components/tags/tag-selector/tag-selector.component';
 
 @NgModule({
   declarations: [
@@ -91,6 +93,8 @@ import {PageWithHeaderComponent} from './components/page-with-header/page-with-h
     DatePickerComponent,
     DatePickerFormComponent,
     PageWithHeaderComponent,
+    AssignTagDialogComponent,
+    TagSelectorComponent,
   ],
   imports: [
     BrowserModule,

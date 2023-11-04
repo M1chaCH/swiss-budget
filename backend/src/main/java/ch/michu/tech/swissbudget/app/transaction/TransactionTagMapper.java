@@ -1,6 +1,7 @@
 package ch.michu.tech.swissbudget.app.transaction;
 
 import ch.michu.tech.swissbudget.app.entity.CompleteTransactionEntity;
+import ch.michu.tech.swissbudget.app.entity.TransactionTagDuplicateEntity;
 import ch.michu.tech.swissbudget.app.provider.TagProvider;
 import ch.michu.tech.swissbudget.app.provider.TransactionProvider;
 import ch.michu.tech.swissbudget.framework.error.exception.ResourceNotFoundException;
@@ -78,16 +79,24 @@ public class TransactionTagMapper {
         for (Entry<TagRecord, List<KeywordRecord>> tagEntry : tags.entrySet()) {
             KeywordRecord keyword = findMatchingKeyword(transaction.getTransaction(), tagEntry.getValue());
             if (keyword != null) {
-                transaction.getTransaction().setTagId(tagEntry.getKey().getId());
-                transaction.setTag(tagEntry.getKey());
-                transaction.getTransaction().setMatchingKeywordId(keyword.getId());
-                transaction.setMatchingKeyword(keyword);
-                found = true;
-                break;
+                if (found) {
+                    transaction.addTagDuplicate(new TransactionTagDuplicateEntity(
+                        transaction.getTransaction(),
+                        tagEntry.getKey(),
+                        keyword
+                    ));
+                } else {
+                    transaction.getTransaction().setTagId(tagEntry.getKey().getId());
+                    transaction.setTag(tagEntry.getKey());
+                    transaction.getTransaction().setMatchingKeywordId(keyword.getId());
+                    transaction.setMatchingKeyword(keyword);
+                    found = true;
+                }
             }
         }
 
         if (!found) {
+            transaction.getTagDuplicates().clear();
             transaction.getTransaction().setTagId(defaultTag.getId());
             transaction.setTag(defaultTag);
         }

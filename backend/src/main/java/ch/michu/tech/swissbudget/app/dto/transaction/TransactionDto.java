@@ -1,7 +1,9 @@
-package ch.michu.tech.swissbudget.app.dto;
+package ch.michu.tech.swissbudget.app.dto.transaction;
 
 import static ch.michu.tech.swissbudget.generated.jooq.tables.Transaction.TRANSACTION;
 
+import ch.michu.tech.swissbudget.app.dto.tag.KeywordDto;
+import ch.michu.tech.swissbudget.app.dto.tag.TagDto;
 import ch.michu.tech.swissbudget.app.entity.CompleteTransactionEntity;
 import ch.michu.tech.swissbudget.framework.LocalDateDeserializer;
 import ch.michu.tech.swissbudget.framework.validation.Nullable;
@@ -11,6 +13,8 @@ import ch.michu.tech.swissbudget.framework.validation.ValidatedDto;
 import ch.michu.tech.swissbudget.generated.jooq.tables.records.TransactionRecord;
 import jakarta.json.bind.annotation.JsonbTypeDeserializer;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -52,6 +56,9 @@ public class TransactionDto {
     @Nullable
     @ValidateLength(max = 250)
     private String note;
+
+    @Nullable
+    private List<TransactionTagDuplicateDto> duplicatedTagMatches = new ArrayList<>();
 
     public TransactionDto(String id, boolean expense, double amount, LocalDate transactionDate, String bankAccount, String receiver) {
         this.id = id;

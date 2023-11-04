@@ -39,7 +39,7 @@ public class DtoValidationInterceptor {
         LOGGER.log(Level.FINE, "validating parameters of {0}->{1}",
             new Object[]{context.getTarget().getClass().getSimpleName(), context.getMethod().getName()});
         for (Object arg : context.getParameters()) {
-            if (arg.getClass().isAnnotationPresent(ValidatedDto.class)) {
+            if (arg != null && arg.getClass().isAnnotationPresent(ValidatedDto.class)) {
                 validateArg(arg);
             }
         }

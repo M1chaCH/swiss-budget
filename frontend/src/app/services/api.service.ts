@@ -14,6 +14,9 @@ export const endpoint = {
   SUPPORTED_BANK: "/register/bank",
   TRANSACTIONS: "/transaction",
   IMPORT_TRANSACTIONS: "/transaction/import",
+  TAG: "/tag",
+  VALIDATE_NO_KEYWORD: "/tag/validate_no_keyword",
+  ASSIGN_TAG: "/tag/assign_tag",
 }
 
 

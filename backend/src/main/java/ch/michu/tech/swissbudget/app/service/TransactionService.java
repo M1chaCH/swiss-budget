@@ -1,6 +1,6 @@
 package ch.michu.tech.swissbudget.app.service;
 
-import ch.michu.tech.swissbudget.app.dto.TransactionDto;
+import ch.michu.tech.swissbudget.app.dto.transaction.TransactionDto;
 import ch.michu.tech.swissbudget.app.provider.TransactionProvider;
 import ch.michu.tech.swissbudget.app.transaction.TransactionImporter;
 import ch.michu.tech.swissbudget.framework.data.RequestSupport;
@@ -27,17 +27,17 @@ public class TransactionService {
     }
 
     public List<TransactionDto> getTransactions(String query, int[] tagIds, LocalDate from, LocalDate to, int page) {
-        return provider.selectTransactionsWithDependenciesWithFilterWithPageAsDto(supportProvider.get().getOrThrowUserId(),
+        return provider.selectTransactionsWithDependenciesWithFilterWithPageAsDto(supportProvider.get().getUserIdOrThrow(),
             query, tagIds, from, to, page);
     }
 
     public List<TransactionDto> importTransactions() {
-        return importer.importTransactions(supportProvider.get().getOrThrowUserId()).stream().map(TransactionDto::new).toList();
+        return importer.importTransactions(supportProvider.get().getUserIdOrThrow()).stream().map(TransactionDto::new).toList();
     }
 
     public void updateTransaction(TransactionDto toUpdate) {
         RequestSupport support = supportProvider.get();
-        TransactionRecord transaction = provider.selectTransaction(support.getOrThrowUserId(), toUpdate.getId())
+        TransactionRecord transaction = provider.selectTransaction(support.getUserIdOrThrow(), toUpdate.getId())
             .orElseThrow(() -> new ResourceNotFoundException("transaction", toUpdate.getId()));
 
         transaction.setTagId(toUpdate.getTagId());

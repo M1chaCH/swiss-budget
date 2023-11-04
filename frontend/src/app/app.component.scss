@@ -63,6 +63,7 @@
         align-items: center;
         justify-content: center;
         height: 100%;
+        width: var(--nav-open-width);
 
         padding: 32px;
         box-sizing: border-box;
@@ -109,7 +110,7 @@
       animation: navOverlayFadeIn 300ms ease-out forwards;
     }
 
-    .page-container {
+    .main-page-container {
       box-sizing: border-box;
 
       margin: auto;
@@ -139,7 +140,7 @@
     z-index: 888;
   }
 
-  .page-container {
+  .main-page-container {
     width: 100% !important;
   }
 }

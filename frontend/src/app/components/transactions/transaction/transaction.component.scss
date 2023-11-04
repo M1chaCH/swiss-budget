@@ -11,6 +11,8 @@
   justify-items: center;
   align-items: center;
 
+  position: relative;
+
   .tag {
     height: 70%;
     display: block;
@@ -21,6 +23,26 @@
     -webkit-line-clamp: 2;
     line-clamp: 2;
     -webkit-box-orient: vertical;
+  }
+
+  #needsAttention {
+    width: 28px;
+    height: 28px;
+
+    position: absolute;
+    top: -10px;
+    left: -10px;
+
+    border-radius: 50%;
+    background-color: var(--michu-tech-warn);
+    color: var(--michu-tech-white);
+
+    --shadow-color: color-mix(in srgb, var(--michu-tech-background) 60%, var(--michu-tech-black));
+    box-shadow: 2px 2px 4px var(--shadow-color);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 }
 

@@ -33,7 +33,7 @@ export class TransactionService {
     })
   }
 
-  async importTransactions(): Promise<void> {
+  async importTransactions(): Promise<void> { // fixme fucks shit up if it is the first import, i think fix is that normal query should complete with empty result
     this.insertTransactions(await firstValueFrom(this.api.get<TransactionDto[]>(endpoint.IMPORT_TRANSACTIONS, [], true)));
   }
 
@@ -54,6 +54,10 @@ export class TransactionService {
         this.insertTransactions(transactions);
       });
     }
+  }
+
+  reloadCurrentFilteredTransitions() {
+    this.reloadFilteredTransactions(this.currentFilter?.query, this.currentFilter?.tags, this.currentFilter?.from, this.currentFilter?.to);
   }
 
   reloadFilteredTransactions(query?: string, tags?: number[], from?: moment.Moment, to?: moment.Moment) {
@@ -101,7 +105,10 @@ export class TransactionService {
     })
   }
 
-  private buildFilterParams(query?: string, tags?: number[], from?: moment.Moment, to?: moment.Moment, page?: number): { key: string, value: string }[] {
+  private buildFilterParams(query?: string, tags?: number[], from?: moment.Moment, to?: moment.Moment, page?: number): {
+    key: string,
+    value: string
+  }[] {
     this.currentMaxLoadedPage = page ?? 1;
     const params: { key: string, value: string }[] = [];
     params.push({key: "page", value: `${this.currentMaxLoadedPage}`});

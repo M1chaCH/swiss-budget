@@ -47,11 +47,10 @@ export class AppComponent implements OnInit {
     this.pageState.subscribe(fullscreen => {
       this.fullscreenPage = fullscreen;
     });
-
-    // this.scrollService.init(this.scrollPageDiv);
   }
 
-  closeMenuIfOverlayMode() {
+  onNavLinkClicked() {
+    this.scrollService.scrollTo(0, false);
     if (window.innerWidth < 1001)
       this.sideMenuOpen = false;
   }

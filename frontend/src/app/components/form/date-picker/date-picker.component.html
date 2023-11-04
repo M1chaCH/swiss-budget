@@ -1,4 +1,5 @@
 <form [id]="formId" [style.height]="height" [style.width]="width" class="date-picker-input">
+    <!--    TODO add 0 before day and month -->
     <input [formControl]="dayControl" max="31" maxlength="2" min="0" placeholder="DD" style="width: 26px;" type="number"/>
     <span>.</span>
     <input [formControl]="monthControl" max="12" maxlength="2" min="0" placeholder="MM" style="width: 26px;" type="number"/>

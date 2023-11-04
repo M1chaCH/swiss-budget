@@ -4,6 +4,8 @@ import ch.michu.tech.swissbudget.generated.jooq.tables.records.KeywordRecord;
 import ch.michu.tech.swissbudget.generated.jooq.tables.records.TagRecord;
 import ch.michu.tech.swissbudget.generated.jooq.tables.records.TransactionMailRecord;
 import ch.michu.tech.swissbudget.generated.jooq.tables.records.TransactionRecord;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,8 +17,13 @@ import lombok.Setter;
 @AllArgsConstructor
 public class CompleteTransactionEntity {
 
+    private final List<TransactionTagDuplicateEntity> tagDuplicates = new ArrayList<>();
     private TransactionMailRecord mail;
     private TransactionRecord transaction;
     private TagRecord tag;
     private KeywordRecord matchingKeyword;
+
+    public void addTagDuplicate(TransactionTagDuplicateEntity other) {
+        this.tagDuplicates.add(other);
+    }
 }

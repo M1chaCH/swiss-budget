@@ -7,4 +7,5 @@ import {Component, Input} from '@angular/core';
 })
 export class DialogContentWrapperComponent {
   @Input() title: string | undefined;
+  @Input() width: string | undefined;
 }

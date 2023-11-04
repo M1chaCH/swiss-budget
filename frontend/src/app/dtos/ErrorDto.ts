@@ -17,5 +17,6 @@ export type ErrorDto = {
       | "UnexpectedDbException"
       | "WebApplicationException"
       | "ProcessingException"
+      | "KeywordAlreadyExistsException"
   args: any,
 }

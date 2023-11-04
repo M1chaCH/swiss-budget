@@ -53,6 +53,8 @@ export class ErrorService {
         return "Please contact the admin. We will happily help you.";
       case "ProcessingException":
         return `Please try again later or contact admin. Reason: ${error.args.cause}: ${error.args.message}`;
+      case "KeywordAlreadyExistsException":
+        return `Keyword '${error.args.keyword}' already exists in tag: '${error.args.tag}'`;
       default:
         return "Failed, please contact admin.";
     }

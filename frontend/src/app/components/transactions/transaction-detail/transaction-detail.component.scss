@@ -18,20 +18,34 @@
   }
 }
 
-.tag-container {
-  height: 60px;
+.tags {
   display: flex;
-  flex-flow: row nowrap;
+  flex-flow: row wrap;
   gap: 20px;
-  justify-content: flex-start;
+  margin-top: 12px;
   align-items: center;
+  justify-content: flex-start;
 
-  app-tag-icon {
-    height: 32px;
+  .tag-container {
+    height: 60px;
+    display: flex;
+    flex-flow: row nowrap;
+    gap: 20px;
+    justify-content: flex-start;
+    align-items: center;
+
+    app-tag-icon {
+      height: 32px;
+    }
+
+    .smaller-text {
+      text-transform: capitalize;
+    }
   }
 
-  .smaller-text {
-    text-transform: capitalize;
+  #conflicts {
+    font-size: 14px;
+    font-weight: 500;
   }
 }
 

@@ -14,6 +14,8 @@ export type TransactionDto = {
   matchingKeyword: KeywordDto,
   alias?: string,
   note?: string,
+
+  duplicatedTagMatches?: TransactionTagDuplicateDto[],
 }
 
 export type TagDto = {
@@ -29,4 +31,10 @@ export type KeywordDto = {
   id: number,
   keyword: string,
   tagId?: number,
+}
+
+export type TransactionTagDuplicateDto = {
+  transactionId: string,
+  tag: TagDto,
+  matchingKeyword: KeywordDto,
 }

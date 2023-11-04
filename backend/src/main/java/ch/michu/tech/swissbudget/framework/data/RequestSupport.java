@@ -55,7 +55,7 @@ public class RequestSupport {
         return Optional.of(sessionToken);
     }
 
-    public String getOrThrowUserId() {
+    public String getUserIdOrThrow() {
         return getSessionToken().orElseThrow(InvalidSessionTokenException::new).getUserId();
     }
 

@@ -1,8 +1,9 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {FormControl} from "@angular/forms";
 import {TransactionService} from "../../../services/transaction.service";
-import {debounceTime, merge, of, skip, switchMap} from "rxjs";
+import {debounceTime, filter, merge, of, switchMap} from "rxjs";
 import * as moment from "moment/moment";
+import {DatePickerComponent} from "../../form/date-picker/date-picker.component";
 
 @Component({
   selector: 'app-transaction-filter',
@@ -11,10 +12,15 @@ import * as moment from "moment/moment";
 })
 export class TransactionFilterComponent implements OnInit {
 
+  @ViewChild("fromDatePicker", {static: true}) fromDatePicker!: DatePickerComponent;
+  @ViewChild("toDatePicker", {static: true}) toDatePicker!: DatePickerComponent;
+
   queryControl: FormControl;
   tagsControl: FormControl;
   fromControl: FormControl<moment.Moment | null>;
   toControl: FormControl<moment.Moment | null>;
+
+  private lastValues: { query: string | null, from: moment.Moment | null, to: moment.Moment | null } | undefined;
 
   constructor(
       private transactionService: TransactionService,
@@ -32,15 +38,53 @@ export class TransactionFilterComponent implements OnInit {
         this.fromControl.valueChanges,
         this.toControl.valueChanges,
     ).pipe(
-        skip(4), // skip the first batch of changes
-        debounceTime(850),
+        debounceTime(500),
+        filter(() => {
+          if (!this.lastValues)
+            this.lastValues = {
+              query: "",
+              from: null,
+              to: null,
+            }
+
+          const query: string | null = this.queryControl.value;
+          const fromMoment = this.fromControl.valid ? this.fromControl.value ?? null : null;
+          const toMoment = this.toControl.valid ? this.toControl.value ?? null : null;
+
+          return query !== this.lastValues.query || fromMoment !== this.lastValues.from || toMoment !== this.lastValues.to;
+        }),
         switchMap(() => {
           const fromMoment = this.fromControl.valid ? this.fromControl.value ?? undefined : undefined;
           const toMoment = this.toControl.valid ? this.toControl.value ?? undefined : undefined;
+          const query = this.queryControl.value;
 
-          this.transactionService.reloadFilteredTransactions(this.queryControl.value, undefined, fromMoment, toMoment);
+          this.transactionService.reloadFilteredTransactions(query, undefined, fromMoment, toMoment);
+          this.lastValues = {
+            query: query,
+            from: fromMoment ?? null,
+            to: toMoment ?? null,
+          }
           return of();
         }),
     ).subscribe();
+  }
+
+  resetFilter() {
+    this.queryControl.setValue("");
+    this.tagsControl.setValue("");
+    this.fromControl.setValue(null);
+    this.toControl.setValue(null);
+    this.fromDatePicker.setValue(null);
+    this.toDatePicker.setValue(null);
+  }
+
+  filterToday() {
+    this.fromDatePicker.setValue(moment());
+    this.toDatePicker.setValue(moment());
+  }
+
+  filterLastWeek() {
+    this.fromDatePicker.setValue(moment().add("-1", "week"));
+    this.toDatePicker.setValue(moment());
   }
 }

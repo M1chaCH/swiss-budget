@@ -3,9 +3,9 @@
         <ng-container pageHeader>
             <app-transaction-filter></app-transaction-filter>
         </ng-container>
-        <p *ngIf="!transactions || transactions.size < 1">No transactions imported yet!</p>
+        <p *ngIf="!transactions || transactions.size < 1">Found no transactions / no transactions imported yet!</p>
 
-        <app-expansion-list-toggle topic="transaction"></app-expansion-list-toggle>
+        <app-expansion-list-toggle *ngIf="transactions && transactions.size > 0" topic="transaction"></app-expansion-list-toggle>
         <div *ngFor="let key of transactions.keys()">
             <h3>{{key}}</h3>
             <div class="transactions">

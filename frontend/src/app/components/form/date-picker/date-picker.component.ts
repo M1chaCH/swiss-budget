@@ -82,10 +82,16 @@ export class DatePickerComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.dayControl.setValue(this.control.value?.date() ?? null);
-    const monthValue = this.control.value?.month() ?? null;
+    if (this.control.value)
+      this.setValue(this.control.value)
+  }
+
+  setValue(v: moment.Moment | null) {
+    this.dayControl.setValue(v?.date() ?? null);
+    const monthValue = v?.month() ?? null;
     this.monthControl.setValue(monthValue === null ? null : monthValue + 1);
-    this.yearControl.setValue(this.control.value?.year() ?? null);
+    this.yearControl.setValue(v?.year() ?? null);
+    this.control.setValue(v);
   }
 
   valueSelected(value: moment.Moment) {

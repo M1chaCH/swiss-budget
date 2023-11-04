@@ -11,6 +11,7 @@ import ch.michu.tech.swissbudget.generated.jooq.tables.Tag;
 import ch.michu.tech.swissbudget.generated.jooq.tables.Transaction;
 import ch.michu.tech.swissbudget.generated.jooq.tables.TransactionMail;
 import ch.michu.tech.swissbudget.generated.jooq.tables.TransactionMetaData;
+import ch.michu.tech.swissbudget.generated.jooq.tables.TransactionTagDuplicate;
 import ch.michu.tech.swissbudget.generated.jooq.tables.VerifiedDevice;
 import java.util.Arrays;
 import java.util.List;
@@ -25,13 +26,11 @@ import org.jooq.impl.SchemaImpl;
 @SuppressWarnings({"all", "unchecked", "rawtypes"})
 public class Public extends SchemaImpl {
 
-    private static final long serialVersionUID = 1L;
-
     /**
      * The reference instance of <code>public</code>
      */
     public static final Public PUBLIC = new Public();
-
+    private static final long serialVersionUID = 1L;
     /**
      * The table <code>public.keyword</code>.
      */
@@ -68,6 +67,11 @@ public class Public extends SchemaImpl {
     public final TransactionMetaData TRANSACTION_META_DATA = TransactionMetaData.TRANSACTION_META_DATA;
 
     /**
+     * The table <code>public.transaction_tag_duplicate</code>.
+     */
+    public final TransactionTagDuplicate TRANSACTION_TAG_DUPLICATE = TransactionTagDuplicate.TRANSACTION_TAG_DUPLICATE;
+
+    /**
      * The table <code>public.verified_device</code>.
      */
     public final VerifiedDevice VERIFIED_DEVICE = VerifiedDevice.VERIFIED_DEVICE;
@@ -95,6 +99,7 @@ public class Public extends SchemaImpl {
             Transaction.TRANSACTION,
             TransactionMail.TRANSACTION_MAIL,
             TransactionMetaData.TRANSACTION_META_DATA,
+            TransactionTagDuplicate.TRANSACTION_TAG_DUPLICATE,
             VerifiedDevice.VERIFIED_DEVICE
         );
     }

@@ -30,13 +30,6 @@ public class MfaCodeRecord extends UpdatableRecordImpl<MfaCodeRecord> implements
     }
 
     /**
-     * Getter for <code>public.mfa_code.id</code>.
-     */
-    public String getId() {
-        return (String) get(0);
-    }
-
-    /**
      * Create a detached, initialised MfaCodeRecord
      */
     public MfaCodeRecord(String id, Integer code, String userId, LocalDateTime expiresAt, Integer tries, String userAgent) {
@@ -51,24 +44,10 @@ public class MfaCodeRecord extends UpdatableRecordImpl<MfaCodeRecord> implements
     }
 
     /**
-     * Getter for <code>public.mfa_code.code</code>.
+     * Getter for <code>public.mfa_code.id</code>.
      */
-    public Integer getCode() {
-        return (Integer) get(1);
-    }
-
-    /**
-     * Setter for <code>public.mfa_code.user_id</code>.
-     */
-    public void setUserId(String value) {
-        set(2, value);
-    }
-
-    /**
-     * Getter for <code>public.mfa_code.user_id</code>.
-     */
-    public String getUserId() {
-        return (String) get(2);
+    public String getId() {
+        return (String) get(0);
     }
 
     /**
@@ -79,10 +58,10 @@ public class MfaCodeRecord extends UpdatableRecordImpl<MfaCodeRecord> implements
     }
 
     /**
-     * Getter for <code>public.mfa_code.expires_at</code>.
+     * Getter for <code>public.mfa_code.code</code>.
      */
-    public LocalDateTime getExpiresAt() {
-        return (LocalDateTime) get(3);
+    public Integer getCode() {
+        return (Integer) get(1);
     }
 
     /**
@@ -93,10 +72,24 @@ public class MfaCodeRecord extends UpdatableRecordImpl<MfaCodeRecord> implements
     }
 
     /**
-     * Getter for <code>public.mfa_code.tries</code>.
+     * Getter for <code>public.mfa_code.user_id</code>.
      */
-    public Integer getTries() {
-        return (Integer) get(4);
+    public String getUserId() {
+        return (String) get(2);
+    }
+
+    /**
+     * Setter for <code>public.mfa_code.user_id</code>.
+     */
+    public void setUserId(String value) {
+        set(2, value);
+    }
+
+    /**
+     * Getter for <code>public.mfa_code.expires_at</code>.
+     */
+    public LocalDateTime getExpiresAt() {
+        return (LocalDateTime) get(3);
     }
 
     /**
@@ -104,6 +97,13 @@ public class MfaCodeRecord extends UpdatableRecordImpl<MfaCodeRecord> implements
      */
     public void setExpiresAt(LocalDateTime value) {
         set(3, value);
+    }
+
+    /**
+     * Getter for <code>public.mfa_code.tries</code>.
+     */
+    public Integer getTries() {
+        return (Integer) get(4);
     }
 
     /**
@@ -117,15 +117,6 @@ public class MfaCodeRecord extends UpdatableRecordImpl<MfaCodeRecord> implements
     // Primary key information
     // -------------------------------------------------------------------------
 
-    @Override
-    public Record1<String> key() {
-        return (Record1) super.key();
-    }
-
-    // -------------------------------------------------------------------------
-    // Record6 type implementation
-    // -------------------------------------------------------------------------
-
     /**
      * Getter for <code>public.mfa_code.user_agent</code>.
      */
@@ -133,11 +124,30 @@ public class MfaCodeRecord extends UpdatableRecordImpl<MfaCodeRecord> implements
         return (String) get(5);
     }
 
+    // -------------------------------------------------------------------------
+    // Record6 type implementation
+    // -------------------------------------------------------------------------
+
     /**
      * Setter for <code>public.mfa_code.user_agent</code>.
      */
     public void setUserAgent(String value) {
         set(5, value);
+    }
+
+    @Override
+    public Record1<String> key() {
+        return (Record1) super.key();
+    }
+
+    @Override
+    public Row6<String, Integer, String, LocalDateTime, Integer, String> fieldsRow() {
+        return (Row6) super.fieldsRow();
+    }
+
+    @Override
+    public Row6<String, Integer, String, LocalDateTime, Integer, String> valuesRow() {
+        return (Row6) super.valuesRow();
     }
 
     @Override
@@ -161,13 +171,13 @@ public class MfaCodeRecord extends UpdatableRecordImpl<MfaCodeRecord> implements
     }
 
     @Override
-    public Row6<String, Integer, String, LocalDateTime, Integer, String> fieldsRow() {
-        return (Row6) super.fieldsRow();
+    public Field<Integer> field5() {
+        return MfaCode.MFA_CODE.TRIES;
     }
 
     @Override
-    public Row6<String, Integer, String, LocalDateTime, Integer, String> valuesRow() {
-        return (Row6) super.valuesRow();
+    public Field<String> field6() {
+        return MfaCode.MFA_CODE.USER_AGENT;
     }
 
     @Override
@@ -191,13 +201,13 @@ public class MfaCodeRecord extends UpdatableRecordImpl<MfaCodeRecord> implements
     }
 
     @Override
-    public Field<Integer> field5() {
-        return MfaCode.MFA_CODE.TRIES;
+    public Integer component5() {
+        return getTries();
     }
 
     @Override
-    public Field<String> field6() {
-        return MfaCode.MFA_CODE.USER_AGENT;
+    public String component6() {
+        return getUserAgent();
     }
 
     @Override
@@ -221,12 +231,12 @@ public class MfaCodeRecord extends UpdatableRecordImpl<MfaCodeRecord> implements
     }
 
     @Override
-    public Integer component5() {
+    public Integer value5() {
         return getTries();
     }
 
     @Override
-    public String component6() {
+    public String value6() {
         return getUserAgent();
     }
 
@@ -260,6 +270,10 @@ public class MfaCodeRecord extends UpdatableRecordImpl<MfaCodeRecord> implements
         return this;
     }
 
+    // -------------------------------------------------------------------------
+    // Constructors
+    // -------------------------------------------------------------------------
+
     @Override
     public MfaCodeRecord value6(String value) {
         setUserAgent(value);
@@ -275,19 +289,5 @@ public class MfaCodeRecord extends UpdatableRecordImpl<MfaCodeRecord> implements
         value5(value5);
         value6(value6);
         return this;
-    }
-
-    // -------------------------------------------------------------------------
-    // Constructors
-    // -------------------------------------------------------------------------
-
-    @Override
-    public Integer value5() {
-        return getTries();
-    }
-
-    @Override
-    public String value6() {
-        return getUserAgent();
     }
 }

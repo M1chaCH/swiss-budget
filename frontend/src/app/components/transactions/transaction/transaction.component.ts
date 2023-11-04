@@ -9,4 +9,7 @@ import {TransactionDto} from "../../../dtos/TransactionDtos";
 export class TransactionComponent {
   @Input() transaction!: TransactionDto;
 
+  get needsAttention() {
+    return (this.transaction.duplicatedTagMatches?.length ?? 0) > 0 || (this.transaction.tag.defaultTag ?? false);
+  }
 }

@@ -1,0 +1,10 @@
+<div *ngIf="allTags$ | async as tags"
+     class="selector-container">
+    <button (click)="selectTag(tags, tag.id)"
+            *ngFor="let tag of tags"
+            [class.selected-tag]="isSelected(tag.id)"
+            class="tag">
+        <app-tag-icon [color]="tag.color" [icon]="tag.icon"></app-tag-icon>
+        <span class="tag-name">{{tag.name}}</span>
+    </button>
+</div>

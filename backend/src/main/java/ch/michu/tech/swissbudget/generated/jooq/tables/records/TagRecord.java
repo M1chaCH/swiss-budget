@@ -28,13 +28,6 @@ public class TagRecord extends UpdatableRecordImpl<TagRecord> implements Record6
     }
 
     /**
-     * Getter for <code>public.tag.id</code>.
-     */
-    public Integer getId() {
-        return (Integer) get(0);
-    }
-
-    /**
      * Create a detached, initialised TagRecord
      */
     public TagRecord(Integer id, String icon, String color, String name, String userId, Boolean defaultTag) {
@@ -49,10 +42,10 @@ public class TagRecord extends UpdatableRecordImpl<TagRecord> implements Record6
     }
 
     /**
-     * Getter for <code>public.tag.icon</code>.
+     * Getter for <code>public.tag.id</code>.
      */
-    public String getIcon() {
-        return (String) get(1);
+    public Integer getId() {
+        return (Integer) get(0);
     }
 
     /**
@@ -63,24 +56,10 @@ public class TagRecord extends UpdatableRecordImpl<TagRecord> implements Record6
     }
 
     /**
-     * Getter for <code>public.tag.color</code>.
+     * Getter for <code>public.tag.icon</code>.
      */
-    public String getColor() {
-        return (String) get(2);
-    }
-
-    /**
-     * Setter for <code>public.tag.name</code>.
-     */
-    public void setName(String value) {
-        set(3, value);
-    }
-
-    /**
-     * Getter for <code>public.tag.name</code>.
-     */
-    public String getName() {
-        return (String) get(3);
+    public String getIcon() {
+        return (String) get(1);
     }
 
     /**
@@ -91,10 +70,10 @@ public class TagRecord extends UpdatableRecordImpl<TagRecord> implements Record6
     }
 
     /**
-     * Getter for <code>public.tag.user_id</code>.
+     * Getter for <code>public.tag.color</code>.
      */
-    public String getUserId() {
-        return (String) get(4);
+    public String getColor() {
+        return (String) get(2);
     }
 
     /**
@@ -102,6 +81,27 @@ public class TagRecord extends UpdatableRecordImpl<TagRecord> implements Record6
      */
     public void setColor(String value) {
         set(2, value);
+    }
+
+    /**
+     * Getter for <code>public.tag.name</code>.
+     */
+    public String getName() {
+        return (String) get(3);
+    }
+
+    /**
+     * Setter for <code>public.tag.name</code>.
+     */
+    public void setName(String value) {
+        set(3, value);
+    }
+
+    /**
+     * Getter for <code>public.tag.user_id</code>.
+     */
+    public String getUserId() {
+        return (String) get(4);
     }
 
     /**
@@ -115,15 +115,6 @@ public class TagRecord extends UpdatableRecordImpl<TagRecord> implements Record6
     // Primary key information
     // -------------------------------------------------------------------------
 
-    @Override
-    public Record1<Integer> key() {
-        return (Record1) super.key();
-    }
-
-    // -------------------------------------------------------------------------
-    // Record6 type implementation
-    // -------------------------------------------------------------------------
-
     /**
      * Getter for <code>public.tag.default_tag</code>.
      */
@@ -131,11 +122,30 @@ public class TagRecord extends UpdatableRecordImpl<TagRecord> implements Record6
         return (Boolean) get(5);
     }
 
+    // -------------------------------------------------------------------------
+    // Record6 type implementation
+    // -------------------------------------------------------------------------
+
     /**
      * Setter for <code>public.tag.default_tag</code>.
      */
     public void setDefaultTag(Boolean value) {
         set(5, value);
+    }
+
+    @Override
+    public Record1<Integer> key() {
+        return (Record1) super.key();
+    }
+
+    @Override
+    public Row6<Integer, String, String, String, String, Boolean> fieldsRow() {
+        return (Row6) super.fieldsRow();
+    }
+
+    @Override
+    public Row6<Integer, String, String, String, String, Boolean> valuesRow() {
+        return (Row6) super.valuesRow();
     }
 
     @Override
@@ -159,13 +169,13 @@ public class TagRecord extends UpdatableRecordImpl<TagRecord> implements Record6
     }
 
     @Override
-    public Row6<Integer, String, String, String, String, Boolean> fieldsRow() {
-        return (Row6) super.fieldsRow();
+    public Field<String> field5() {
+        return Tag.TAG.USER_ID;
     }
 
     @Override
-    public Row6<Integer, String, String, String, String, Boolean> valuesRow() {
-        return (Row6) super.valuesRow();
+    public Field<Boolean> field6() {
+        return Tag.TAG.DEFAULT_TAG;
     }
 
     @Override
@@ -189,13 +199,13 @@ public class TagRecord extends UpdatableRecordImpl<TagRecord> implements Record6
     }
 
     @Override
-    public Field<String> field5() {
-        return Tag.TAG.USER_ID;
+    public String component5() {
+        return getUserId();
     }
 
     @Override
-    public Field<Boolean> field6() {
-        return Tag.TAG.DEFAULT_TAG;
+    public Boolean component6() {
+        return getDefaultTag();
     }
 
     @Override
@@ -219,12 +229,12 @@ public class TagRecord extends UpdatableRecordImpl<TagRecord> implements Record6
     }
 
     @Override
-    public String component5() {
+    public String value5() {
         return getUserId();
     }
 
     @Override
-    public Boolean component6() {
+    public Boolean value6() {
         return getDefaultTag();
     }
 
@@ -258,6 +268,10 @@ public class TagRecord extends UpdatableRecordImpl<TagRecord> implements Record6
         return this;
     }
 
+    // -------------------------------------------------------------------------
+    // Constructors
+    // -------------------------------------------------------------------------
+
     @Override
     public TagRecord value6(Boolean value) {
         setDefaultTag(value);
@@ -273,19 +287,5 @@ public class TagRecord extends UpdatableRecordImpl<TagRecord> implements Record6
         value5(value5);
         value6(value6);
         return this;
-    }
-
-    // -------------------------------------------------------------------------
-    // Constructors
-    // -------------------------------------------------------------------------
-
-    @Override
-    public String value5() {
-        return getUserId();
-    }
-
-    @Override
-    public Boolean value6() {
-        return getDefaultTag();
     }
 }

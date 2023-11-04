@@ -1,29 +1,29 @@
 <div [style.background-image]="backgroundImageUrl"
      appFullscreenPage
      class="page-root">
-  <div class="login-page">
-    <div class="center-card">
-      <div class="welcome">
-        <img alt="michu-tech.com" height="120px" src="/assets/michu-tech-icon.svg"
-             width="120"/>
-        <a href="https://michu-tech.com" id="developedBy" target="_blank">Developed by
-          michu-tech.com</a>
-        <h1 id="welcome"><span>W</span>elcome</h1>
-        <p id="welcomeText"><span>to</span> Swiss Budget! A WebApp that lets you manage your
-          money in a breeze. It features automatic transaction import via E-Mail!</p>
-      </div>
+    <div class="login-page">
+        <div class="center-card">
+            <div class="welcome">
+                <img alt="michu-tech.com" height="120px" src="/assets/michu-tech-icon.svg"
+                     width="120"/>
+                <a href="https://michu-tech.com" id="developedBy" target="_blank">Developed by
+                    michu-tech.com</a>
+                <h1 id="welcome"><span>W</span>elcome</h1>
+                <p id="welcomeText"><span>to</span> Swiss Budget! A WebApp that lets you manage your
+                    money in a breeze. It features automatic transaction import via E-Mail!</p>
+            </div>
 
-      <div class="login-form-container">
-        <div *ngIf="subrouteActive else currentRoute" class="page">
-          <router-outlet></router-outlet>
+            <div class="login-form-container">
+                <div *ngIf="subrouteActive else currentRoute" class="page">
+                    <router-outlet></router-outlet>
+                </div>
+                <ng-template #currentRoute>
+                    <div class="login-form">
+                        <app-login></app-login>
+                    </div>
+                </ng-template>
+            </div>
         </div>
-        <ng-template #currentRoute>
-          <div class="login-form page">
-            <app-login></app-login>
-          </div>
-        </ng-template>
-      </div>
     </div>
-  </div>
 </div>
 

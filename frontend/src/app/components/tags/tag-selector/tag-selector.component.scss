@@ -1,0 +1,40 @@
+.selector-container {
+  display: flex;
+  flex-flow: row wrap;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+
+  .tag {
+    all: unset;
+    cursor: pointer;
+    transition: all 150ms ease-out;
+
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 12px;
+
+    border-radius: 2px;
+    border-width: 2px;
+    border-style: solid;
+    border-color: color-mix(in srgb, var(--michu-tech-primary) 50%, transparent);
+    background-color: transparent;
+
+    app-tag-icon {
+      display: inline-block;
+      width: 28px;
+    }
+  }
+
+  .tag:hover {
+    border-color: color-mix(in srgb, var(--michu-tech-primary) 65%, transparent);
+    background-color: color-mix(in srgb, var(--michu-tech-primary) 65%, transparent);
+  }
+
+  .selected-tag {
+    background-color: var(--michu-tech-primary) !important;
+    border-color: var(--michu-tech-primary) !important;
+  }
+}

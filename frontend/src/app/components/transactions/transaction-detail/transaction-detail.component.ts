@@ -3,6 +3,8 @@ import {TransactionDto} from "../../../dtos/TransactionDtos";
 import {FormControl, Validators} from "@angular/forms";
 import {debounceTime, filter, merge, Observable, switchMap} from "rxjs";
 import {TransactionService} from "../../../services/transaction.service";
+import {DialogService} from "../../dialog/dialog.service";
+import {AssignTagDialogComponent} from "../../tags/assign-tag-dialog/assign-tag-dialog.component";
 
 @Component({
   selector: 'app-transaction-detail',
@@ -17,6 +19,7 @@ export class TransactionDetailComponent implements OnInit {
 
   constructor(
       private transactionService: TransactionService,
+      private dialogService: DialogService,
   ) {
     this.aliasInput = new FormControl("", [Validators.maxLength(50)]);
     this.noteInput = new FormControl("", [Validators.maxLength(250)]);
@@ -34,6 +37,14 @@ export class TransactionDetailComponent implements OnInit {
         filter(() => this.aliasInput.valid && this.noteInput.valid),
         switchMap(() => this.saveTransaction()),
     ).subscribe();
+  }
+
+  assignTag() {
+    this.dialogService.openDialog(AssignTagDialogComponent, this.transaction);
+  }
+
+  resolveDuplicates() {
+
   }
 
   private saveTransaction(): Observable<void> {

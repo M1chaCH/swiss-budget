@@ -11,6 +11,7 @@ import ch.michu.tech.swissbudget.generated.jooq.tables.Tag;
 import ch.michu.tech.swissbudget.generated.jooq.tables.Transaction;
 import ch.michu.tech.swissbudget.generated.jooq.tables.TransactionMail;
 import ch.michu.tech.swissbudget.generated.jooq.tables.TransactionMetaData;
+import ch.michu.tech.swissbudget.generated.jooq.tables.TransactionTagDuplicate;
 import ch.michu.tech.swissbudget.generated.jooq.tables.VerifiedDevice;
 import ch.michu.tech.swissbudget.generated.jooq.tables.records.KeywordRecord;
 import ch.michu.tech.swissbudget.generated.jooq.tables.records.MfaCodeRecord;
@@ -19,6 +20,7 @@ import ch.michu.tech.swissbudget.generated.jooq.tables.records.TagRecord;
 import ch.michu.tech.swissbudget.generated.jooq.tables.records.TransactionMailRecord;
 import ch.michu.tech.swissbudget.generated.jooq.tables.records.TransactionMetaDataRecord;
 import ch.michu.tech.swissbudget.generated.jooq.tables.records.TransactionRecord;
+import ch.michu.tech.swissbudget.generated.jooq.tables.records.TransactionTagDuplicateRecord;
 import ch.michu.tech.swissbudget.generated.jooq.tables.records.VerifiedDeviceRecord;
 import org.jooq.ForeignKey;
 import org.jooq.TableField;
@@ -28,8 +30,7 @@ import org.jooq.impl.Internal;
 
 
 /**
- * A class modelling foreign key relationships and constraints of tables in
- * public.
+ * A class modelling foreign key relationships and constraints of tables in public.
  */
 @SuppressWarnings({"all", "unchecked", "rawtypes"})
 public class Keys {
@@ -57,6 +58,9 @@ public class Keys {
     public static final UniqueKey<TransactionMetaDataRecord> TRANSACTION_META_DATA_PKEY = Internal.createUniqueKey(
         TransactionMetaData.TRANSACTION_META_DATA, DSL.name("transaction_meta_data_pkey"),
         new TableField[]{TransactionMetaData.TRANSACTION_META_DATA.USER_ID}, true);
+    public static final UniqueKey<TransactionTagDuplicateRecord> TRANSACTION_TAG_DUPLICATE_PKEY = Internal.createUniqueKey(
+        TransactionTagDuplicate.TRANSACTION_TAG_DUPLICATE, DSL.name("transaction_tag_duplicate_pkey"),
+        new TableField[]{TransactionTagDuplicate.TRANSACTION_TAG_DUPLICATE.ID}, true);
     public static final UniqueKey<VerifiedDeviceRecord> VERIFIED_DEVICE_PKEY = Internal.createUniqueKey(VerifiedDevice.VERIFIED_DEVICE,
         DSL.name("verified_device_pkey"), new TableField[]{VerifiedDevice.VERIFIED_DEVICE.ID}, true);
 
@@ -96,6 +100,17 @@ public class Keys {
         TransactionMetaData.TRANSACTION_META_DATA, DSL.name("transaction_meta_data_user_id_fkey"),
         new TableField[]{TransactionMetaData.TRANSACTION_META_DATA.USER_ID}, Keys.REGISTERED_USER_PKEY,
         new TableField[]{RegisteredUser.REGISTERED_USER.ID}, true);
+    public static final ForeignKey<TransactionTagDuplicateRecord, KeywordRecord> TRANSACTION_TAG_DUPLICATE__TRANSACTION_TAG_DUPLICATE_MATCHING_KEYWORD_ID_FKEY = Internal.createForeignKey(
+        TransactionTagDuplicate.TRANSACTION_TAG_DUPLICATE, DSL.name("transaction_tag_duplicate_matching_keyword_id_fkey"),
+        new TableField[]{TransactionTagDuplicate.TRANSACTION_TAG_DUPLICATE.MATCHING_KEYWORD_ID}, Keys.KEYWORD_PKEY,
+        new TableField[]{Keyword.KEYWORD.ID}, true);
+    public static final ForeignKey<TransactionTagDuplicateRecord, TagRecord> TRANSACTION_TAG_DUPLICATE__TRANSACTION_TAG_DUPLICATE_TAG_ID_FKEY = Internal.createForeignKey(
+        TransactionTagDuplicate.TRANSACTION_TAG_DUPLICATE, DSL.name("transaction_tag_duplicate_tag_id_fkey"),
+        new TableField[]{TransactionTagDuplicate.TRANSACTION_TAG_DUPLICATE.TAG_ID}, Keys.TAG_PKEY, new TableField[]{Tag.TAG.ID}, true);
+    public static final ForeignKey<TransactionTagDuplicateRecord, TransactionRecord> TRANSACTION_TAG_DUPLICATE__TRANSACTION_TAG_DUPLICATE_TRANSACTION_ID_FKEY = Internal.createForeignKey(
+        TransactionTagDuplicate.TRANSACTION_TAG_DUPLICATE, DSL.name("transaction_tag_duplicate_transaction_id_fkey"),
+        new TableField[]{TransactionTagDuplicate.TRANSACTION_TAG_DUPLICATE.TRANSACTION_ID}, Keys.TRANSACTION_PKEY,
+        new TableField[]{Transaction.TRANSACTION.ID}, true);
     public static final ForeignKey<VerifiedDeviceRecord, RegisteredUserRecord> VERIFIED_DEVICE__VERIFIED_DEVICE_USER_ID_FKEY = Internal.createForeignKey(
         VerifiedDevice.VERIFIED_DEVICE, DSL.name("verified_device_user_id_fkey"), new TableField[]{VerifiedDevice.VERIFIED_DEVICE.USER_ID},
         Keys.REGISTERED_USER_PKEY, new TableField[]{RegisteredUser.REGISTERED_USER.ID}, true);

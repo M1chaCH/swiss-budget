@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS mfa_code
     code       int unique,
     user_id    varchar(250) not null,
     expires_at timestamp    not null,
-    tries int default 0,
+    tries      int default 0,
     user_agent varchar(250) not null,
     FOREIGN KEY (user_id) REFERENCES registered_user (id)
 );
@@ -74,7 +74,7 @@ CREATE TABLE IF NOT EXISTS keyword
 --      in the DB, BUT we need to keep in mind to then also delete the tag foreign key in the transaction
 CREATE TABLE IF NOT EXISTS transaction
 (
-    id      varchar(250) primary key,
+    id                  varchar(250) primary key,
     expense             bool             not null,
     transaction_date    date             not null,
     bankAccount         varchar(250)     not null,
@@ -84,10 +84,23 @@ CREATE TABLE IF NOT EXISTS transaction
     matching_keyword_id int,
     alias               varchar(250),
     note                varchar(250),
-    user_id varchar(250) not null,
+    user_id             varchar(250)     not null,
     FOREIGN KEY (user_id) REFERENCES registered_user (id) ON DELETE CASCADE,
     FOREIGN KEY (tag_id) REFERENCES tag (id) ON DELETE SET NULL,
     FOREIGN KEY (matching_keyword_id) REFERENCES keyword (id) ON DELETE SET NULL
+);
+
+-- there exists the possibility that a transaction matches with multiple tags. in this case save the first tag in the transaction and all
+-- the remaining matches in this table
+CREATE TABLE IF NOT EXISTS transaction_tag_duplicate
+(
+    id                  serial primary key,
+    transaction_id      varchar(250) not null,
+    tag_id              int          not null,
+    matching_keyword_id int          not null,
+    FOREIGN KEY (transaction_id) REFERENCES transaction (id) ON DELETE CASCADE,
+    FOREIGN KEY (tag_id) REFERENCES tag (id) ON DELETE CASCADE,
+    FOREIGN KEY (matching_keyword_id) REFERENCES keyword (id) ON DELETE CASCADE
 );
 
 -- stores the mail transactions in the most raw possible form to not lose any data if we delete the

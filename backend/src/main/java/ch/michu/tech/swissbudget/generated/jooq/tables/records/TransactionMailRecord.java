@@ -30,13 +30,6 @@ public class TransactionMailRecord extends UpdatableRecordImpl<TransactionMailRe
     }
 
     /**
-     * Getter for <code>public.transaction_mail.id</code>.
-     */
-    public String getId() {
-        return (String) get(0);
-    }
-
-    /**
      * Create a detached, initialised TransactionMailRecord
      */
     public TransactionMailRecord(String id, Integer messageNumber, String fromMail, String toMail, LocalDateTime receivedDate,
@@ -56,24 +49,10 @@ public class TransactionMailRecord extends UpdatableRecordImpl<TransactionMailRe
     }
 
     /**
-     * Getter for <code>public.transaction_mail.message_number</code>.
+     * Getter for <code>public.transaction_mail.id</code>.
      */
-    public Integer getMessageNumber() {
-        return (Integer) get(1);
-    }
-
-    /**
-     * Setter for <code>public.transaction_mail.from_mail</code>.
-     */
-    public void setFromMail(String value) {
-        set(2, value);
-    }
-
-    /**
-     * Getter for <code>public.transaction_mail.from_mail</code>.
-     */
-    public String getFromMail() {
-        return (String) get(2);
+    public String getId() {
+        return (String) get(0);
     }
 
     /**
@@ -84,10 +63,10 @@ public class TransactionMailRecord extends UpdatableRecordImpl<TransactionMailRe
     }
 
     /**
-     * Getter for <code>public.transaction_mail.to_mail</code>.
+     * Getter for <code>public.transaction_mail.message_number</code>.
      */
-    public String getToMail() {
-        return (String) get(3);
+    public Integer getMessageNumber() {
+        return (Integer) get(1);
     }
 
     /**
@@ -98,10 +77,24 @@ public class TransactionMailRecord extends UpdatableRecordImpl<TransactionMailRe
     }
 
     /**
-     * Getter for <code>public.transaction_mail.received_date</code>.
+     * Getter for <code>public.transaction_mail.from_mail</code>.
      */
-    public LocalDateTime getReceivedDate() {
-        return (LocalDateTime) get(4);
+    public String getFromMail() {
+        return (String) get(2);
+    }
+
+    /**
+     * Setter for <code>public.transaction_mail.from_mail</code>.
+     */
+    public void setFromMail(String value) {
+        set(2, value);
+    }
+
+    /**
+     * Getter for <code>public.transaction_mail.to_mail</code>.
+     */
+    public String getToMail() {
+        return (String) get(3);
     }
 
     /**
@@ -112,10 +105,10 @@ public class TransactionMailRecord extends UpdatableRecordImpl<TransactionMailRe
     }
 
     /**
-     * Getter for <code>public.transaction_mail.subject</code>.
+     * Getter for <code>public.transaction_mail.received_date</code>.
      */
-    public String getSubject() {
-        return (String) get(5);
+    public LocalDateTime getReceivedDate() {
+        return (LocalDateTime) get(4);
     }
 
     /**
@@ -126,10 +119,10 @@ public class TransactionMailRecord extends UpdatableRecordImpl<TransactionMailRe
     }
 
     /**
-     * Getter for <code>public.transaction_mail.raw_message</code>.
+     * Getter for <code>public.transaction_mail.subject</code>.
      */
-    public String getRawMessage() {
-        return (String) get(6);
+    public String getSubject() {
+        return (String) get(5);
     }
 
     /**
@@ -140,10 +133,10 @@ public class TransactionMailRecord extends UpdatableRecordImpl<TransactionMailRe
     }
 
     /**
-     * Getter for <code>public.transaction_mail.transaction_id</code>.
+     * Getter for <code>public.transaction_mail.raw_message</code>.
      */
-    public String getTransactionId() {
-        return (String) get(7);
+    public String getRawMessage() {
+        return (String) get(6);
     }
 
     /**
@@ -154,10 +147,10 @@ public class TransactionMailRecord extends UpdatableRecordImpl<TransactionMailRe
     }
 
     /**
-     * Getter for <code>public.transaction_mail.user_id</code>.
+     * Getter for <code>public.transaction_mail.transaction_id</code>.
      */
-    public String getUserId() {
-        return (String) get(8);
+    public String getTransactionId() {
+        return (String) get(7);
     }
 
     /**
@@ -168,28 +161,10 @@ public class TransactionMailRecord extends UpdatableRecordImpl<TransactionMailRe
     }
 
     /**
-     * Getter for <code>public.transaction_mail.bank</code>.
+     * Getter for <code>public.transaction_mail.user_id</code>.
      */
-    public String getBank() {
-        return (String) get(9);
-    }
-
-    // -------------------------------------------------------------------------
-    // Primary key information
-    // -------------------------------------------------------------------------
-
-    @Override
-    public Record1<String> key() {
-        return (Record1) super.key();
-    }
-
-    // -------------------------------------------------------------------------
-    // Record10 type implementation
-    // -------------------------------------------------------------------------
-
-    @Override
-    public Row10<String, Integer, String, String, LocalDateTime, String, String, String, String, String> fieldsRow() {
-        return (Row10) super.fieldsRow();
+    public String getUserId() {
+        return (String) get(8);
     }
 
     /**
@@ -199,11 +174,46 @@ public class TransactionMailRecord extends UpdatableRecordImpl<TransactionMailRe
         set(8, value);
     }
 
+    // -------------------------------------------------------------------------
+    // Primary key information
+    // -------------------------------------------------------------------------
+
+    /**
+     * Getter for <code>public.transaction_mail.bank</code>.
+     */
+    public String getBank() {
+        return (String) get(9);
+    }
+
+    // -------------------------------------------------------------------------
+    // Record10 type implementation
+    // -------------------------------------------------------------------------
+
     /**
      * Setter for <code>public.transaction_mail.bank</code>.
      */
     public void setBank(String value) {
         set(9, value);
+    }
+
+    @Override
+    public Record1<String> key() {
+        return (Record1) super.key();
+    }
+
+    @Override
+    public Row10<String, Integer, String, String, LocalDateTime, String, String, String, String, String> fieldsRow() {
+        return (Row10) super.fieldsRow();
+    }
+
+    @Override
+    public Row10<String, Integer, String, String, LocalDateTime, String, String, String, String, String> valuesRow() {
+        return (Row10) super.valuesRow();
+    }
+
+    @Override
+    public Field<String> field1() {
+        return TransactionMail.TRANSACTION_MAIL.ID;
     }
 
     @Override
@@ -222,8 +232,8 @@ public class TransactionMailRecord extends UpdatableRecordImpl<TransactionMailRe
     }
 
     @Override
-    public Row10<String, Integer, String, String, LocalDateTime, String, String, String, String, String> valuesRow() {
-        return (Row10) super.valuesRow();
+    public Field<LocalDateTime> field5() {
+        return TransactionMail.TRANSACTION_MAIL.RECEIVED_DATE;
     }
 
     @Override
@@ -247,13 +257,13 @@ public class TransactionMailRecord extends UpdatableRecordImpl<TransactionMailRe
     }
 
     @Override
-    public Field<String> field1() {
-        return TransactionMail.TRANSACTION_MAIL.ID;
+    public Field<String> field10() {
+        return TransactionMail.TRANSACTION_MAIL.BANK;
     }
 
     @Override
-    public Field<LocalDateTime> field5() {
-        return TransactionMail.TRANSACTION_MAIL.RECEIVED_DATE;
+    public String component1() {
+        return getId();
     }
 
     @Override
@@ -272,8 +282,8 @@ public class TransactionMailRecord extends UpdatableRecordImpl<TransactionMailRe
     }
 
     @Override
-    public Field<String> field10() {
-        return TransactionMail.TRANSACTION_MAIL.BANK;
+    public LocalDateTime component5() {
+        return getReceivedDate();
     }
 
     @Override
@@ -297,13 +307,13 @@ public class TransactionMailRecord extends UpdatableRecordImpl<TransactionMailRe
     }
 
     @Override
-    public String component1() {
-        return getId();
+    public String component10() {
+        return getBank();
     }
 
     @Override
-    public LocalDateTime component5() {
-        return getReceivedDate();
+    public String value1() {
+        return getId();
     }
 
     @Override
@@ -322,8 +332,8 @@ public class TransactionMailRecord extends UpdatableRecordImpl<TransactionMailRe
     }
 
     @Override
-    public String component10() {
-        return getBank();
+    public LocalDateTime value5() {
+        return getReceivedDate();
     }
 
     @Override
@@ -347,13 +357,14 @@ public class TransactionMailRecord extends UpdatableRecordImpl<TransactionMailRe
     }
 
     @Override
-    public String value1() {
-        return getId();
+    public String value10() {
+        return getBank();
     }
 
     @Override
-    public LocalDateTime value5() {
-        return getReceivedDate();
+    public TransactionMailRecord value1(String value) {
+        setId(value);
+        return this;
     }
 
     @Override
@@ -375,8 +386,9 @@ public class TransactionMailRecord extends UpdatableRecordImpl<TransactionMailRe
     }
 
     @Override
-    public String value10() {
-        return getBank();
+    public TransactionMailRecord value5(LocalDateTime value) {
+        setReceivedDate(value);
+        return this;
     }
 
     @Override
@@ -392,8 +404,8 @@ public class TransactionMailRecord extends UpdatableRecordImpl<TransactionMailRe
     }
 
     @Override
-    public TransactionMailRecord value1(String value) {
-        setId(value);
+    public TransactionMailRecord value8(String value) {
+        setTransactionId(value);
         return this;
     }
 
@@ -402,6 +414,10 @@ public class TransactionMailRecord extends UpdatableRecordImpl<TransactionMailRe
         setUserId(value);
         return this;
     }
+
+    // -------------------------------------------------------------------------
+    // Constructors
+    // -------------------------------------------------------------------------
 
     @Override
     public TransactionMailRecord value10(String value) {
@@ -422,22 +438,6 @@ public class TransactionMailRecord extends UpdatableRecordImpl<TransactionMailRe
         value8(value8);
         value9(value9);
         value10(value10);
-        return this;
-    }
-
-    // -------------------------------------------------------------------------
-    // Constructors
-    // -------------------------------------------------------------------------
-
-    @Override
-    public TransactionMailRecord value5(LocalDateTime value) {
-        setReceivedDate(value);
-        return this;
-    }
-
-    @Override
-    public TransactionMailRecord value8(String value) {
-        setTransactionId(value);
         return this;
     }
 }

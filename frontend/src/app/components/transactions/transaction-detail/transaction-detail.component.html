@@ -23,15 +23,34 @@
     </div>
 </div>
 
-<div class="tag-container" style="margin-top: 12px;">
-    <app-tag-icon [color]="transaction.tag.color"
-                  [icon]="transaction.tag.icon">
-    </app-tag-icon>
-    <span>{{transaction.tag.name}}</span>
-    <span *ngIf="transaction.matchingKeyword" class="smaller-text">({{transaction.matchingKeyword.keyword}})</span>
+<div class="tags">
+    <div class="tag-container">
+        <app-tag-icon [color]="transaction.tag.color"
+                      [icon]="transaction.tag.icon">
+        </app-tag-icon>
+        <span>{{transaction.tag.name}}</span>
+        <span *ngIf="transaction.matchingKeyword" class="smaller-text">({{transaction.matchingKeyword.keyword}})</span>
 
-    <app-button *ngIf="transaction.tag.defaultTag"
-                height="36px">
-        Assign tag
-    </app-button>
+        <app-button (onClick)="assignTag()"
+                    *ngIf="transaction.tag.defaultTag"
+                    height="36px">
+            Assign tag
+        </app-button>
+    </div>
+
+    <ng-template [ngIf]="(transaction.duplicatedTagMatches?.length ?? 0) > 0">
+        <span class="smaller-text"
+              id="conflicts">
+            Has conflicts!
+        </span>
+        <span *ngFor="let duplicate of transaction.duplicatedTagMatches"
+              class="smaller-text">
+            {{duplicate.tag.name}} ({{duplicate.matchingKeyword.keyword}})
+        </span>
+        <app-button (onClick)="resolveDuplicates()"
+                    design="primary"
+                    height="36px">
+            Resolve
+        </app-button>
+    </ng-template>
 </div>
