@@ -17,11 +17,11 @@ import lombok.Setter;
 @AllArgsConstructor
 public class CompleteTransactionEntity {
 
-    private final List<TransactionTagDuplicateEntity> tagDuplicates = new ArrayList<>();
     private TransactionMailRecord mail;
     private TransactionRecord transaction;
     private TagRecord tag;
     private KeywordRecord matchingKeyword;
+    private List<TransactionTagDuplicateEntity> tagDuplicates = new ArrayList<>();
 
     public void addTagDuplicate(TransactionTagDuplicateEntity other) {
         this.tagDuplicates.add(other);

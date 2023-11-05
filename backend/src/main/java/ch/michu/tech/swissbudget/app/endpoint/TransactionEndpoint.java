@@ -69,7 +69,7 @@ public class TransactionEndpoint {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response putTransaction(TransactionDto toUpdate) {
-        service.updateTransaction(toUpdate);
+        service.updateTransactionUserInput(toUpdate);
         return Response.status(Status.NO_CONTENT).build();
     }
 }

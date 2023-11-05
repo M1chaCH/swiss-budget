@@ -81,7 +81,7 @@ public class TransactionTagMapper {
             if (keyword != null) {
                 if (found) {
                     transaction.addTagDuplicate(new TransactionTagDuplicateEntity(
-                        transaction.getTransaction(),
+                        transaction.getTransaction().getId(),
                         tagEntry.getKey(),
                         keyword
                     ));

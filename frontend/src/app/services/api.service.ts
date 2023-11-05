@@ -17,6 +17,7 @@ export const endpoint = {
   TAG: "/tag",
   VALIDATE_NO_KEYWORD: "/tag/validate_no_keyword",
   ASSIGN_TAG: "/tag/assign_tag",
+  RESOLVE_TAG_CONFLICT: "/tag/resolve_conflict",
 }
 
 

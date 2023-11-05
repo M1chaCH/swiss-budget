@@ -1,0 +1,30 @@
+.content {
+  display: flex;
+  flex-flow: column;
+  gap: 20px;
+
+  .matches {
+    display: flex;
+    flex-flow: column;
+    gap: 3px;
+
+    p {
+      margin: 0;
+      padding: 0;
+
+      .tag-name {
+        font-size: 14px;
+        font-weight: 500;
+      }
+
+      .matching-keyword {
+        font-size: 14px;
+        font-weight: 300;
+      }
+    }
+
+    p:first-child {
+      margin-bottom: 4px;
+    }
+  }
+}

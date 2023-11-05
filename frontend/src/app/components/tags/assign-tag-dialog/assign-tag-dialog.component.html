@@ -7,13 +7,7 @@
     </p>
     <div class="divider"></div>
     <div class="content">
-        <div class="transaction-preview">
-            <app-styled-amount [amount]="transaction.amount" [expense]="transaction.expense"></app-styled-amount>
-            <span style="margin-left: 10px;">{{transaction.alias}}</span>
-            <pre *ngIf="!transaction.note else receiverAndNote">
-                {{transaction.receiver}}
-            </pre>
-        </div>
+        <app-transaction-preview [transaction]="transaction"></app-transaction-preview>
         <app-tag-selector (selectedTagsChange)="tagSelected($event)" [multiple]="false"></app-tag-selector>
         <app-checkbox [value]="addKeywordControl" label="Add keyword?" style="align-self: flex-start;"></app-checkbox>
         <div *ngIf="!!addKeywordControl.value">
@@ -67,15 +61,3 @@
         </app-button>
     </ng-container>
 </app-dialog-content-wrapper>
-
-<ng-template #receiverAndNote>
-    <div class="receiver-and-note-container">
-        <div class="receiver-and-note">
-            <pre>{{transaction.receiver}}</pre>
-            <p>
-                {{transaction.note}}
-                <span class="label">Note</span>
-            </p>
-        </div>
-    </div>
-</ng-template>

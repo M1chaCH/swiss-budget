@@ -16,6 +16,7 @@ import ch.michu.tech.swissbudget.app.dto.transaction.TransactionTagDuplicateDto;
 import ch.michu.tech.swissbudget.app.entity.CompleteTransactionEntity;
 import ch.michu.tech.swissbudget.app.entity.TransactionTagDuplicateEntity;
 import ch.michu.tech.swissbudget.app.transaction.TransactionImporter;
+import ch.michu.tech.swissbudget.framework.data.BaseRecordProvider;
 import ch.michu.tech.swissbudget.framework.data.DataProvider;
 import ch.michu.tech.swissbudget.framework.data.LoggedStatement;
 import ch.michu.tech.swissbudget.framework.error.exception.ResourceNotFoundException;
@@ -23,7 +24,6 @@ import ch.michu.tech.swissbudget.generated.jooq.tables.records.KeywordRecord;
 import ch.michu.tech.swissbudget.generated.jooq.tables.records.TagRecord;
 import ch.michu.tech.swissbudget.generated.jooq.tables.records.TransactionMailRecord;
 import ch.michu.tech.swissbudget.generated.jooq.tables.records.TransactionRecord;
-import ch.michu.tech.swissbudget.generated.jooq.tables.records.TransactionTagDuplicateRecord;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import java.time.LocalDate;
@@ -34,96 +34,145 @@ import java.util.Optional;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Query;
+import org.jooq.Record;
 import org.jooq.Result;
 import org.jooq.SelectConditionStep;
 import org.jooq.SelectLimitStep;
 import org.jooq.impl.UpdatableRecordImpl;
 
 // TODO cache for improved read times
-@SuppressWarnings("unused")
+// TODO write tests with demo data
 @ApplicationScoped
-public class TransactionProvider {
+public class TransactionProvider implements BaseRecordProvider<TransactionRecord, String> {
 
     protected static final String DUPLICATES_COUNT_COLUMN = "duplicates";
 
+    protected final TransactionMailProvider transactionMailProvider;
+    protected final TagProvider tagProvider;
+    protected final KeywordProvider keywordProvider;
+    protected final TransactionTagDuplicateProvider transactionTagDuplicateProvider;
     protected final DataProvider data;
     protected final DSLContext db;
 
     @Inject
-    public TransactionProvider(DataProvider data) {
+    public TransactionProvider(TransactionMailProvider transactionMailProvider, TagProvider tagProvider, KeywordProvider keywordProvider,
+        TransactionTagDuplicateProvider transactionTagDuplicateProvider, DataProvider data) {
+        this.transactionMailProvider = transactionMailProvider;
+        this.tagProvider = tagProvider;
+        this.keywordProvider = keywordProvider;
+        this.transactionTagDuplicateProvider = transactionTagDuplicateProvider;
         this.data = data;
         this.db = data.getContext();
     }
 
-    public TransactionRecord newTransaction() {
+    @Override
+    public TransactionRecord newRecord() {
         return db.newRecord(TRANSACTION);
     }
 
-    public TransactionMailRecord newTransactionMail() {
-        return db.newRecord(TRANSACTION_MAIL);
+    @Override
+    public TransactionRecord fromRecord(Record result) {
+        TransactionRecord transaction = newRecord();
+
+        transaction.setId(result.getValue(TRANSACTION.ID));
+        transaction.setExpense(result.getValue(TRANSACTION.EXPENSE));
+        transaction.setTransactionDate(result.getValue(TRANSACTION.TRANSACTION_DATE));
+        transaction.setBankaccount(result.getValue(TRANSACTION.BANKACCOUNT));
+        transaction.setAmount(result.getValue(TRANSACTION.AMOUNT));
+        transaction.setReceiver(result.getValue(TRANSACTION.RECEIVER));
+        transaction.setTagId(result.getValue(TRANSACTION.TAG_ID));
+        transaction.setMatchingKeywordId(result.getValue(TRANSACTION.MATCHING_KEYWORD_ID));
+        transaction.setNeedUserAttention(result.getValue(TRANSACTION.NEED_USER_ATTENTION));
+        transaction.setAlias(result.getValue(TRANSACTION.ALIAS));
+        transaction.setNote(result.getValue(TRANSACTION.NOTE));
+        transaction.setUserId(result.getValue(TRANSACTION.USER_ID));
+
+        return transaction;
     }
 
-    public TransactionTagDuplicateRecord newTagDuplicate() {
-        return db.newRecord(TRANSACTION_TAG_DUPLICATE);
-    }
-
+    @Override
     @LoggedStatement
-    public Optional<TransactionRecord> selectTransaction(String userId, String transactionId) {
-        return db.fetch(TRANSACTION,
-                TRANSACTION.USER_ID.eq(userId)
-                    .and(TRANSACTION.ID.eq(transactionId)))
-            .stream().findAny();
-    }
-
-    @LoggedStatement
-    public boolean fetchExistsTransaction(String userId, String transactionId) {
+    public boolean fetchExists(String userId, String transactionId) {
         Condition userCondition = TRANSACTION.USER_ID.eq(userId);
         Condition transactionCondition = TRANSACTION.ID.eq(transactionId);
 
         return db.fetchExists(TRANSACTION, userCondition, transactionCondition);
     }
 
-    @LoggedStatement
-    public void insertCompleteTransactions(List<CompleteTransactionEntity> transactions) {
-        List<Query> queries = new ArrayList<>();
+    public TransactionDto asDto(Record result, TagDto tag, KeywordDto matchingKeyword, List<TransactionTagDuplicateDto> duplicatedTags) {
+        int tagId = tag == null ? 0 : tag.getId();
+        int matchingKeywordId = matchingKeyword == null ? 0 : matchingKeyword.getId();
 
-        for (CompleteTransactionEntity entity : transactions) {
-            queries.add(db.insertInto(TRANSACTION, TRANSACTION.fields()).values(entity.getTransaction()));
-            queries.add(db.insertInto(TRANSACTION_MAIL, TRANSACTION_MAIL.fields()).values(entity.getMail()));
-
-            for (TransactionTagDuplicateEntity otherMatch : entity.getTagDuplicates()) {
-                queries.add(
-                    db.insertInto(TRANSACTION_TAG_DUPLICATE,
-                            TRANSACTION_TAG_DUPLICATE.TRANSACTION_ID, TRANSACTION_TAG_DUPLICATE.TAG_ID,
-                            TRANSACTION_TAG_DUPLICATE.MATCHING_KEYWORD_ID)
-                        .values(otherMatch.getTransaction().getId(), otherMatch.getTag().getId(), otherMatch.getMatchingKeyword().getId())
-                );
-            }
-        }
-
-        db.batch(queries).execute();
+        return new TransactionDto(
+            result.getValue(TRANSACTION.ID),
+            result.getValue(TRANSACTION.EXPENSE),
+            result.getValue(TRANSACTION.AMOUNT),
+            result.getValue(TRANSACTION.TRANSACTION_DATE),
+            result.getValue(TRANSACTION.BANKACCOUNT),
+            result.getValue(TRANSACTION.RECEIVER),
+            tagId,
+            tag,
+            matchingKeywordId,
+            matchingKeyword,
+            result.getValue(TRANSACTION.ALIAS),
+            result.getValue(TRANSACTION.NOTE),
+            result.getValue(TRANSACTION.NEED_USER_ATTENTION),
+            duplicatedTags
+        );
     }
 
     @LoggedStatement
-    public List<CompleteTransactionEntity> selectCompleteTransactionByFilter(String userId, String keyword) {
-        Condition keywordCondition = keyword != null && !keyword.isBlank() ? KEYWORD.KEYWORD_.like("%" + keyword + "%") : null;
+    public Optional<TransactionRecord> selectTransaction(String userId, String transactionId) {
+        TransactionRecord transaction = db.fetchOne(TRANSACTION, TRANSACTION.USER_ID.eq(userId).and(TRANSACTION.ID.eq(transactionId)));
 
-        Result<?> result = db.select(TRANSACTION_MAIL.asterisk(),
+        if (transaction == null) {
+            return Optional.empty();
+        }
+        return Optional.of(transaction);
+    }
+
+    @LoggedStatement
+    public CompleteTransactionEntity selectCompleteTransaction(String userId, String transactionId) {
+        Record result = db
+            .select(TRANSACTION_MAIL.asterisk(),
                 TRANSACTION.asterisk(),
                 TAG.asterisk(),
                 KEYWORD.asterisk(),
                 count(TRANSACTION_TAG_DUPLICATE.ID).as(DUPLICATES_COUNT_COLUMN))
             .from(TRANSACTION)
+            .leftJoin(TRANSACTION_MAIL).on(TRANSACTION_MAIL.TRANSACTION_ID.eq(TRANSACTION.ID))
             .leftJoin(TAG).on(TRANSACTION.TAG_ID.eq(TAG.ID))
             .leftJoin(KEYWORD).on(TRANSACTION.MATCHING_KEYWORD_ID.eq(KEYWORD.ID))
-            .leftJoin(TRANSACTION_TAG_DUPLICATE)
-            .on(TRANSACTION.ID.eq(TRANSACTION_TAG_DUPLICATE.TRANSACTION_ID))
-            .where(TRANSACTION.USER_ID.eq(userId)).and(keywordCondition)
-            .groupBy(TRANSACTION.ID, TAG.ID, KEYWORD.ID)
-            .orderBy(TRANSACTION.TRANSACTION_DATE.desc())
-            .fetch();
+            .leftJoin(TRANSACTION_TAG_DUPLICATE).on(TRANSACTION.ID.eq(TRANSACTION_TAG_DUPLICATE.TRANSACTION_ID))
+            .where(TRANSACTION.USER_ID.eq(userId)).and(TRANSACTION.ID.eq(transactionId))
+            .groupBy(TRANSACTION.ID, TAG.ID, KEYWORD.ID, TRANSACTION_MAIL.ID)
+            .fetchOne();
 
-        return parseDeepResultToCompleteEntities(result);
+        if (result == null) {
+            throw new ResourceNotFoundException("transaction", transactionId);
+        }
+
+        TransactionMailRecord transactionMail = transactionMailProvider.fromRecord(result);
+        TransactionRecord transaction = fromRecord(result);
+
+        TagRecord tag = null;
+        if (result.get(TRANSACTION.TAG_ID) != null) {
+            tag = tagProvider.fromRecord(result);
+        }
+
+        KeywordRecord matchingKeyword = null;
+        if (result.get(TRANSACTION.MATCHING_KEYWORD_ID) != null) {
+            matchingKeyword = keywordProvider.fromRecord(result);
+        }
+
+        int duplicatedCount = result.get(DUPLICATES_COUNT_COLUMN, Integer.class);
+        List<TransactionTagDuplicateEntity> duplicates = new ArrayList<>(duplicatedCount);
+        if (duplicatedCount > 0) {
+            duplicates.addAll(transactionTagDuplicateProvider.selectTagDuplicatesForTransaction(transactionId,
+                transactionTagDuplicateProvider.getRecordToEntityMapper()));
+        }
+
+        return new CompleteTransactionEntity(transactionMail, transaction, tag, matchingKeyword, duplicates);
     }
 
     @LoggedStatement
@@ -149,96 +198,6 @@ public class TransactionProvider {
                     alreadyHasTagMapped
                 );
             });
-    }
-
-    @LoggedStatement
-    public int insertDuplicatedTag(String transactionId, int tagId, int matchingKeywordId) {
-        return db
-            .insertInto(TRANSACTION_TAG_DUPLICATE, TRANSACTION_TAG_DUPLICATE.TRANSACTION_ID, TRANSACTION_TAG_DUPLICATE.TAG_ID,
-                TRANSACTION_TAG_DUPLICATE.MATCHING_KEYWORD_ID)
-            .values(transactionId, tagId, matchingKeywordId)
-            .returningResult(TRANSACTION_TAG_DUPLICATE.ID)
-            .fetchOne(TRANSACTION_TAG_DUPLICATE.ID);
-    }
-
-    @LoggedStatement
-    public int updateTransactionNeedsUserAttention(String transactionId, boolean needAttention) {
-        return db
-            .update(TRANSACTION)
-            .set(TRANSACTION.NEED_USER_ATTENTION, needAttention)
-            .where(TRANSACTION.ID.eq(transactionId))
-            .execute();
-    }
-
-    /**
-     * don't send default tag id, this will break with the needUserAttention field. needUserAttention field is set to false here
-     */
-    @LoggedStatement
-    public int updateTransactionWithTagAndRemoveNeedAttention(String transactionId, int tagId) {
-        return db
-            .update(TRANSACTION)
-            .set(TRANSACTION.TAG_ID, tagId)
-            .set(TRANSACTION.NEED_USER_ATTENTION, false)
-            .where(TRANSACTION.ID.eq(transactionId))
-            .execute();
-    }
-
-    /**
-     * don't send default tag id, this will break with the needUserAttention field. needUserAttention field is set to false here
-     */
-    @LoggedStatement
-    public int updateTransactionWithTagAndRemoveNeedAttention(String transactionId, int tagId, int matchingKeywordId) {
-        return db
-            .update(TRANSACTION)
-            .set(TRANSACTION.TAG_ID, tagId)
-            .set(TRANSACTION.MATCHING_KEYWORD_ID, matchingKeywordId)
-            .set(TRANSACTION.NEED_USER_ATTENTION, false)
-            .where(TRANSACTION.ID.eq(transactionId))
-            .execute();
-    }
-
-    @LoggedStatement
-    public void insertTransactions(List<TransactionRecord> transactions) {
-        db.transaction(c -> transactions.forEach(UpdatableRecordImpl::store));
-    }
-
-    @LoggedStatement
-    public void updateLastImport(String id, LocalDateTime lastImportedTransaction) {
-        db
-            .update(TRANSACTION_META_DATA)
-            .set(TRANSACTION_META_DATA.LAST_IMPORTED_TRANSACTION, lastImportedTransaction)
-            .set(TRANSACTION_META_DATA.LAST_IMPORT_CHECK, LocalDateTime.now())
-            .where(TRANSACTION_META_DATA.USER_ID.eq(id))
-            .execute();
-    }
-
-    @LoggedStatement
-    public List<TransactionDto> selectTransactionsByUserIdAsDto(String userId) {
-        return db
-            .selectFrom(TRANSACTION)
-            .where(TRANSACTION.USER_ID.eq(userId))
-            .orderBy(TRANSACTION.TRANSACTION_DATE.desc())
-            .fetch().map(TransactionDto::new);
-    }
-
-    @LoggedStatement
-    public List<TransactionDto> selectTransactionsWithDependenciesByUserIdAsDto(String userId) {
-        Result<?> result = db
-            .select(TRANSACTION.asterisk(), TAG.asterisk(), KEYWORD.asterisk(),
-                count(TRANSACTION_TAG_DUPLICATE.ID).as(DUPLICATES_COUNT_COLUMN))
-            .from(TRANSACTION)
-            .leftJoin(TAG)
-            .on(TRANSACTION.TAG_ID.eq(TAG.ID))
-            .leftJoin(KEYWORD)
-            .on(TRANSACTION.MATCHING_KEYWORD_ID.eq(KEYWORD.ID))
-            .leftJoin(TRANSACTION_TAG_DUPLICATE)
-            .on(TRANSACTION.ID.eq(TRANSACTION_TAG_DUPLICATE.TRANSACTION_ID))
-            .where(TRANSACTION.USER_ID.eq(userId))
-            .groupBy(TRANSACTION.ID, TAG.ID, KEYWORD.ID)
-            .orderBy(TRANSACTION.TRANSACTION_DATE.desc())
-            .fetch();
-
-        return parseDeepResultToDtos(result);
     }
 
     @LoggedStatement // TODO verify in detail if this condition building doesn't destroy the userId check
@@ -306,158 +265,6 @@ public class TransactionProvider {
         return parseDeepResultToDtos(result);
     }
 
-    protected List<TransactionDto> parseDeepResultToDtos(Result<?> result) {
-        final List<TransactionDto> dtos = new ArrayList<>();
-        for (int i = 0; i < result.size(); i++) {
-            int matchingKeywordId = 0;
-            KeywordDto matchingKeyword = null;
-            if (result.get(i).get(TRANSACTION.MATCHING_KEYWORD_ID) != null) {
-                matchingKeywordId = result.getValue(i, TRANSACTION.MATCHING_KEYWORD_ID);
-                matchingKeyword = new KeywordDto(
-                    result.getValue(i, KEYWORD.ID),
-                    result.getValue(i, KEYWORD.KEYWORD_),
-                    result.getValue(i, KEYWORD.TAG_ID)
-                );
-            }
-
-            int tagId = 0;
-            TagDto tag = null;
-            if (result.get(i).get(TRANSACTION.TAG_ID) != null) {
-                tagId = result.getValue(i, TRANSACTION.TAG_ID);
-                tag = new TagDto(
-                    result.getValue(i, TAG.ID),
-                    result.getValue(i, TAG.ICON),
-                    result.getValue(i, TAG.COLOR),
-                    result.getValue(i, TAG.NAME),
-                    result.getValue(i, TAG.DEFAULT_TAG),
-                    List.of()
-                );
-            }
-
-            final String transactionId = result.getValue(i, TRANSACTION.ID);
-            int duplicatesCount = result.get(i).get(DUPLICATES_COUNT_COLUMN, int.class);
-            final List<TransactionTagDuplicateDto> duplicatedTags = new ArrayList<>(duplicatesCount);
-            if (duplicatesCount > 0) {
-                duplicatedTags.addAll(resolveDuplicatedTagDtos(transactionId));
-            }
-
-            dtos.add(new TransactionDto(
-                transactionId,
-                result.getValue(i, TRANSACTION.EXPENSE),
-                result.getValue(i, TRANSACTION.AMOUNT),
-                result.getValue(i, TRANSACTION.TRANSACTION_DATE),
-                result.getValue(i, TRANSACTION.BANKACCOUNT),
-                result.getValue(i, TRANSACTION.RECEIVER),
-                tagId,
-                tag,
-                matchingKeywordId,
-                matchingKeyword,
-                result.getValue(i, TRANSACTION.ALIAS),
-                result.getValue(i, TRANSACTION.NOTE),
-                result.getValue(i, TRANSACTION.NEED_USER_ATTENTION),
-                duplicatedTags
-            ));
-        }
-
-        return dtos;
-    }
-
-    protected List<CompleteTransactionEntity> parseDeepResultToCompleteEntities(Result<?> result) {
-        final List<CompleteTransactionEntity> entities = new ArrayList<>();
-        for (int i = 0; i < result.size(); i++) {
-            final String transactionId = result.getValue(i, TRANSACTION.ID);
-            TransactionRecord transaction = new TransactionRecord(
-                transactionId,
-                result.getValue(i, TRANSACTION.EXPENSE),
-                result.getValue(i, TRANSACTION.TRANSACTION_DATE),
-                result.getValue(i, TRANSACTION.BANKACCOUNT),
-                result.getValue(i, TRANSACTION.AMOUNT),
-                result.getValue(i, TRANSACTION.RECEIVER),
-                result.getValue(i, TRANSACTION.TAG_ID),
-                result.getValue(i, TRANSACTION.MATCHING_KEYWORD_ID),
-                result.getValue(i, TRANSACTION.NEED_USER_ATTENTION),
-                result.getValue(i, TRANSACTION.ALIAS),
-                result.getValue(i, TRANSACTION.NOTE),
-                result.getValue(i, TRANSACTION.USER_ID)
-            );
-
-            TransactionMailRecord transactionMail = new TransactionMailRecord(
-                result.getValue(i, TRANSACTION_MAIL.ID),
-                result.getValue(i, TRANSACTION_MAIL.MESSAGE_NUMBER),
-                result.getValue(i, TRANSACTION_MAIL.FROM_MAIL),
-                result.getValue(i, TRANSACTION_MAIL.TO_MAIL),
-                result.getValue(i, TRANSACTION_MAIL.RECEIVED_DATE),
-                result.getValue(i, TRANSACTION_MAIL.SUBJECT),
-                result.getValue(i, TRANSACTION_MAIL.RAW_MESSAGE),
-                result.getValue(i, TRANSACTION_MAIL.TRANSACTION_ID),
-                result.getValue(i, TRANSACTION_MAIL.USER_ID),
-                result.getValue(i, TRANSACTION_MAIL.BANK)
-            );
-
-            TagRecord tag = null;
-            if (result.get(i).get(TRANSACTION.TAG_ID) != null) {
-                tag = new TagRecord(
-                    result.getValue(i, TAG.ID),
-                    result.getValue(i, TAG.ICON),
-                    result.getValue(i, TAG.COLOR),
-                    result.getValue(i, TAG.NAME),
-                    result.getValue(i, TAG.USER_ID),
-                    result.getValue(i, TAG.DEFAULT_TAG)
-                );
-            }
-
-            KeywordRecord matchingKeyword = null;
-            if (result.get(i).get(TRANSACTION.MATCHING_KEYWORD_ID) != null) {
-                matchingKeyword = new KeywordRecord(
-                    result.getValue(i, KEYWORD.ID),
-                    result.getValue(i, KEYWORD.KEYWORD_),
-                    result.getValue(i, KEYWORD.TAG_ID),
-                    result.getValue(i, KEYWORD.USER_ID)
-                );
-            }
-
-            entities.add(new CompleteTransactionEntity(
-                transactionMail,
-                transaction,
-                tag,
-                matchingKeyword
-            ));
-        }
-
-        return entities;
-    }
-
-    protected List<TransactionTagDuplicateDto> resolveDuplicatedTagDtos(String transactionId) {
-        return db
-            .select(TAG.asterisk(), KEYWORD.asterisk())
-            .from(TAG)
-            .leftJoin(TRANSACTION_TAG_DUPLICATE)
-            .on(TRANSACTION_TAG_DUPLICATE.TAG_ID.eq(TAG.ID))
-            .leftJoin(KEYWORD)
-            .on(TRANSACTION_TAG_DUPLICATE.MATCHING_KEYWORD_ID.eq(KEYWORD.ID))
-            .where(TRANSACTION_TAG_DUPLICATE.TRANSACTION_ID.eq(transactionId))
-            .fetch()
-            .map(result -> {
-                TransactionTagDuplicateDto dto = new TransactionTagDuplicateDto();
-                dto.setTransactionId(transactionId);
-                dto.setTag(new TagDto(
-                    result.getValue(TAG.ID),
-                    result.getValue(TAG.ICON),
-                    result.getValue(TAG.COLOR),
-                    result.getValue(TAG.NAME),
-                    result.getValue(TAG.DEFAULT_TAG),
-                    List.of()
-                ));
-                dto.setMatchingKeyword(new KeywordDto(
-                    result.getValue(KEYWORD.ID),
-                    result.getValue(KEYWORD.KEYWORD_),
-                    result.getValue(KEYWORD.TAG_ID)
-                ));
-
-                return dto;
-            });
-    }
-
     @LoggedStatement
     public ImportDbData selectImportDataByUserId(String userId) {
         Result<?> result = db
@@ -474,7 +281,7 @@ public class TransactionProvider {
             throw new ResourceNotFoundException("user", userId);
         }
 
-        return resultToRecord(result, 0);
+        return parseResultToImportData(result, 0);
     }
 
     @LoggedStatement
@@ -490,24 +297,40 @@ public class TransactionProvider {
 
         List<ImportDbData> importedDbData = new ArrayList<>();
         for (int i = 0; i < result.size(); i++) {
-            importedDbData.add(resultToRecord(result, i));
+            importedDbData.add(parseResultToImportData(result, i));
         }
 
         return importedDbData;
     }
 
     @LoggedStatement
-    public void updateTransaction(String transactionId, int tagId, String alias, String note) {
-        db.update(TRANSACTION)
-            .set(TRANSACTION.TAG_ID, tagId)
-            .set(TRANSACTION.ALIAS, alias)
-            .set(TRANSACTION.NOTE, note)
-            .where(TRANSACTION.ID.eq(transactionId))
-            .execute();
+    public void insertCompleteTransactions(List<CompleteTransactionEntity> transactions) {
+        List<Query> queries = new ArrayList<>();
+
+        for (CompleteTransactionEntity entity : transactions) {
+            queries.add(db.insertInto(TRANSACTION, TRANSACTION.fields()).values(entity.getTransaction()));
+            queries.add(db.insertInto(TRANSACTION_MAIL, TRANSACTION_MAIL.fields()).values(entity.getMail()));
+
+            for (TransactionTagDuplicateEntity otherMatch : entity.getTagDuplicates()) {
+                queries.add(
+                    db.insertInto(TRANSACTION_TAG_DUPLICATE,
+                            TRANSACTION_TAG_DUPLICATE.TRANSACTION_ID, TRANSACTION_TAG_DUPLICATE.TAG_ID,
+                            TRANSACTION_TAG_DUPLICATE.MATCHING_KEYWORD_ID)
+                        .values(otherMatch.getTransactionId(), otherMatch.getTag().getId(), otherMatch.getMatchingKeyword().getId())
+                );
+            }
+        }
+
+        db.batch(queries).execute();
     }
 
     @LoggedStatement
-    public void updateTransaction(TransactionRecord transaction) {
+    public void insertTransactions(List<TransactionRecord> transactions) {
+        db.transaction(c -> transactions.forEach(UpdatableRecordImpl::store));
+    }
+
+    @LoggedStatement
+    public void updateTransactionUserInput(TransactionRecord transaction) {
         if (transaction.getTagId() == 0) {
             transaction.store(TRANSACTION.ALIAS, TRANSACTION.NOTE);
         } else if (transaction.getMatchingKeywordId() == 0) {
@@ -517,7 +340,61 @@ public class TransactionProvider {
         }
     }
 
-    protected ImportDbData resultToRecord(Result<?> result, int index) {
+    @LoggedStatement
+    public void updateTransactionNeedsUserAttention(String transactionId, boolean needAttention) {
+        db
+            .update(TRANSACTION)
+            .set(TRANSACTION.NEED_USER_ATTENTION, needAttention)
+            .where(TRANSACTION.ID.eq(transactionId))
+            .execute();
+    }
+
+    /**
+     * don't send default tag id, this will break with the needUserAttention field. needUserAttention field is set to false here
+     */
+    @LoggedStatement
+    public void updateTransactionWithTagAndRemoveNeedAttention(String transactionId, int tagId) {
+        db
+            .update(TRANSACTION)
+            .set(TRANSACTION.TAG_ID, tagId)
+            .set(TRANSACTION.NEED_USER_ATTENTION, false)
+            .where(TRANSACTION.ID.eq(transactionId))
+            .execute();
+    }
+
+    /**
+     * don't send default tag id, this will break with the needUserAttention field. needUserAttention field is set to false here
+     */
+    @LoggedStatement
+    public void updateTransactionWithTagAndRemoveNeedAttention(String transactionId, int tagId, int matchingKeywordId) {
+        db
+            .update(TRANSACTION)
+            .set(TRANSACTION.TAG_ID, tagId)
+            .set(TRANSACTION.MATCHING_KEYWORD_ID, matchingKeywordId)
+            .set(TRANSACTION.NEED_USER_ATTENTION, false)
+            .where(TRANSACTION.ID.eq(transactionId))
+            .execute();
+    }
+
+    @LoggedStatement
+    public void updateLastImport(String id, LocalDateTime lastImportedTransaction) {
+        db
+            .update(TRANSACTION_META_DATA)
+            .set(TRANSACTION_META_DATA.LAST_IMPORTED_TRANSACTION, lastImportedTransaction)
+            .set(TRANSACTION_META_DATA.LAST_IMPORT_CHECK, LocalDateTime.now())
+            .where(TRANSACTION_META_DATA.USER_ID.eq(id))
+            .execute();
+    }
+
+    @LoggedStatement
+    public void deleteAllTagDuplicates(String transactionId) {
+        db
+            .delete(TRANSACTION_TAG_DUPLICATE)
+            .where(TRANSACTION_TAG_DUPLICATE.TRANSACTION_ID.eq(transactionId))
+            .execute();
+    }
+
+    protected ImportDbData parseResultToImportData(Result<?> result, int index) {
         LocalDateTime lastImportedTransaction = result.getValue(index, TRANSACTION_META_DATA.LAST_IMPORTED_TRANSACTION);
         lastImportedTransaction = lastImportedTransaction == null ?
             LocalDateTime.now().minusYears(TransactionImporter.MAX_IMPORT_SINCE_YEARS) :
@@ -537,6 +414,33 @@ public class TransactionProvider {
             result.getValue(index, TRANSACTION_META_DATA.TRANSACTIONS_FOLDER),
             result.getValue(index, TRANSACTION_META_DATA.BANK)
         );
+    }
+
+    protected List<TransactionDto> parseDeepResultToDtos(Result<?> result) {
+        final List<TransactionDto> dtos = new ArrayList<>();
+        for (Record currentResult : result) {
+            KeywordDto matchingKeyword = null;
+            if (currentResult.get(TRANSACTION.MATCHING_KEYWORD_ID) != null) {
+                matchingKeyword = keywordProvider.asDto(currentResult);
+            }
+
+            TagDto tag = null;
+            if (currentResult.get(TRANSACTION.TAG_ID) != null) {
+                tag = tagProvider.asDto(currentResult, List.of());
+            }
+
+            int duplicatesCount = currentResult.get(DUPLICATES_COUNT_COLUMN, int.class);
+            final List<TransactionTagDuplicateDto> duplicatedTags = new ArrayList<>(duplicatesCount);
+            if (duplicatesCount > 0) {
+                duplicatedTags.addAll(
+                    transactionTagDuplicateProvider.selectTagDuplicatesForTransaction(currentResult.getValue(TRANSACTION.ID),
+                        transactionTagDuplicateProvider.getRecordToDtoMapper()));
+            }
+
+            dtos.add(asDto(currentResult, tag, matchingKeyword, duplicatedTags));
+        }
+
+        return dtos;
     }
 
     /**

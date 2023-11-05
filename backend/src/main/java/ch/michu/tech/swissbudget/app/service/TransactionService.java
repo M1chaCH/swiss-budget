@@ -35,7 +35,7 @@ public class TransactionService {
         return importer.importTransactions(supportProvider.get().getUserIdOrThrow()).stream().map(TransactionDto::new).toList();
     }
 
-    public void updateTransaction(TransactionDto toUpdate) {
+    public void updateTransactionUserInput(TransactionDto toUpdate) {
         RequestSupport support = supportProvider.get();
         TransactionRecord transaction = provider.selectTransaction(support.getUserIdOrThrow(), toUpdate.getId())
             .orElseThrow(() -> new ResourceNotFoundException("transaction", toUpdate.getId()));
@@ -44,6 +44,6 @@ public class TransactionService {
         transaction.setMatchingKeywordId(toUpdate.getMatchingKeywordId());
         transaction.setAlias(toUpdate.getAlias());
         transaction.setNote(toUpdate.getNote());
-        provider.updateTransaction(transaction);
+        provider.updateTransactionUserInput(transaction);
     }
 }

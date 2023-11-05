@@ -2,11 +2,13 @@ package ch.michu.tech.swissbudget.app.service;
 
 
 import ch.michu.tech.swissbudget.app.dto.tag.TagDto;
+import ch.michu.tech.swissbudget.app.entity.CompleteTransactionEntity;
 import ch.michu.tech.swissbudget.app.exception.KeywordAlreadyExistsException;
 import ch.michu.tech.swissbudget.app.provider.KeywordProvider;
 import ch.michu.tech.swissbudget.app.provider.TagProvider;
 import ch.michu.tech.swissbudget.app.provider.TransactionProvider;
 import ch.michu.tech.swissbudget.app.provider.TransactionProvider.TransactionIdWithTagDuplicateCount;
+import ch.michu.tech.swissbudget.app.provider.TransactionTagDuplicateProvider;
 import ch.michu.tech.swissbudget.framework.data.RequestSupport;
 import ch.michu.tech.swissbudget.framework.error.exception.ResourceNotFoundException;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -20,14 +22,17 @@ public class TagService {
 
     private final Provider<RequestSupport> supportProvider;
     private final TransactionProvider transactionProvider;
+    private final TransactionTagDuplicateProvider transactionTagDuplicateProvider;
     private final TagProvider tagProvider;
     private final KeywordProvider keywordProvider;
 
     @Inject
-    public TagService(Provider<RequestSupport> supportProvider, TransactionProvider transactionProvider, TagProvider tagProvider,
+    public TagService(Provider<RequestSupport> supportProvider, TransactionProvider transactionProvider,
+        TransactionTagDuplicateProvider transactionTagDuplicateProvider, TagProvider tagProvider,
         KeywordProvider keywordProvider) {
         this.supportProvider = supportProvider;
         this.transactionProvider = transactionProvider;
+        this.transactionTagDuplicateProvider = transactionTagDuplicateProvider;
         this.tagProvider = tagProvider;
         this.keywordProvider = keywordProvider;
     }
@@ -48,14 +53,48 @@ public class TagService {
         }
     }
 
+    public void resolveConflict(String transactionId, int selectedTagId, int matchingKeywordId, boolean removeOthers) {
+        RequestSupport support = supportProvider.get();
+        String userId = support.getUserIdOrThrow();
+
+        if (!transactionProvider.fetchExists(userId, transactionId)) {
+            throw new ResourceNotFoundException("transaction", transactionId);
+        }
+        if (!tagProvider.fetchExists(userId, selectedTagId)) {
+            throw new ResourceNotFoundException("tag", "" + selectedTagId);
+        }
+        if (!keywordProvider.fetchExists(userId, matchingKeywordId)) {
+            throw new ResourceNotFoundException("keyword", "" + matchingKeywordId);
+        }
+
+        CompleteTransactionEntity transaction = transactionProvider.selectCompleteTransaction(userId, transactionId);
+
+        if (removeOthers) {
+            // delete keywords from duplicates that are not the newly selected
+            transaction.getTagDuplicates().forEach(duplicate -> {
+                if (duplicate.getMatchingKeyword().getId() != matchingKeywordId) {
+                    duplicate.getMatchingKeyword().delete();
+                }
+            });
+
+            // if old matching keyword is not in selected tag -> delete this keyword
+            if (transaction.getTransaction().getMatchingKeywordId() != matchingKeywordId) {
+                transaction.getMatchingKeyword().delete();
+            }
+        }
+
+        transactionProvider.updateTransactionWithTagAndRemoveNeedAttention(transactionId, selectedTagId, matchingKeywordId);
+        transactionProvider.deleteAllTagDuplicates(transactionId);
+    }
+
     public void assignTag(String transactionId, int tagId, String keyword) {
         RequestSupport support = supportProvider.get();
         String userId = support.getUserIdOrThrow();
 
-        if (!transactionProvider.fetchExistsTransaction(userId, transactionId)) {
+        if (!transactionProvider.fetchExists(userId, transactionId)) {
             throw new ResourceNotFoundException("transaction", transactionId);
         }
-        if (!tagProvider.fetchExistsTag(userId, tagId)) {
+        if (!tagProvider.fetchExists(userId, tagId)) {
             throw new ResourceNotFoundException("tag", "" + tagId);
         }
 
@@ -75,7 +114,7 @@ public class TagService {
         support.logInfo(this, "updating %s transactions with new keyword", transactions.size());
         for (TransactionIdWithTagDuplicateCount transaction : transactions) {
             if (transaction.alreadyMappedToTag()) { // TODO maybe faster if wrapped in transaction
-                transactionProvider.insertDuplicatedTag(transaction.transactionId(), tagId, newKeywordId);
+                transactionTagDuplicateProvider.insertDuplicatedTag(transaction.transactionId(), tagId, newKeywordId);
                 // transaction now has duplicates -> needs user attention
                 transactionProvider.updateTransactionNeedsUserAttention(transaction.transactionId(), true);
             } else {

@@ -1,6 +1,5 @@
 package ch.michu.tech.swissbudget.app.dto.tag;
 
-import ch.michu.tech.swissbudget.framework.validation.Nullable;
 import ch.michu.tech.swissbudget.framework.validation.ValidateAmount;
 import ch.michu.tech.swissbudget.framework.validation.ValidateLength;
 import ch.michu.tech.swissbudget.framework.validation.ValidatedDto;
@@ -18,13 +17,13 @@ import lombok.ToString;
 @ToString
 @EqualsAndHashCode
 @ValidatedDto
-public class AssignTagDto {
+public class ResolveConflictDto {
 
     @ValidateLength(min = 1)
     private String transactionId;
     @ValidateAmount(min = 1)
-    private int tagId;
-    @Nullable
-    @ValidateLength(min = 1)
-    private String keyword;
+    private int selectedTagId;
+    @ValidateAmount(min = 1)
+    private int matchingKeywordId;
+    private boolean removeUnselectedKeywords;
 }

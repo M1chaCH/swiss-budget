@@ -5,6 +5,7 @@ import {debounceTime, filter, merge, Observable, switchMap} from "rxjs";
 import {TransactionService} from "../../../services/transaction.service";
 import {DialogService} from "../../dialog/dialog.service";
 import {AssignTagDialogComponent} from "../../tags/assign-tag-dialog/assign-tag-dialog.component";
+import {ResolveTagConflictDialogComponent} from "../../tags/resolve-tag-conflict-dialog/resolve-tag-conflict-dialog.component";
 
 @Component({
   selector: 'app-transaction-detail',
@@ -44,7 +45,7 @@ export class TransactionDetailComponent implements OnInit {
   }
 
   resolveDuplicates() {
-
+    this.dialogService.openDialog(ResolveTagConflictDialogComponent, this.transaction);
   }
 
   private saveTransaction(): Observable<void> {

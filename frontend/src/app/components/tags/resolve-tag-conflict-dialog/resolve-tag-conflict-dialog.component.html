@@ -1,0 +1,45 @@
+<app-dialog-content-wrapper title="Resolve conflict" width="750px">
+    <p class="smaller-text">This transaction matches keywords from multiple tags. Now you need to decide on one tag.</p>
+    <div class="divider"></div>
+    <div class="content">
+        <app-transaction-preview [transaction]="transaction"></app-transaction-preview>
+        <app-tag-selector (selectedTagsChange)="tagSelected($event)" [allTags$]="possibleTags" [multiple]="false"></app-tag-selector>
+
+        <div class="matches">
+            <p>Matches:</p>
+            <p>
+                <span class="tag-name">{{transaction.tag.name}}: </span>
+                <span class="matching-keyword">{{transaction.matchingKeyword.keyword}}</span>
+            </p>
+            <p *ngFor="let match of transaction.duplicatedTagMatches">
+                <span class="tag-name">{{match.tag.name}}: </span>
+                <span class="matching-keyword">{{match.matchingKeyword.keyword}}</span>
+            </p>
+        </div>
+
+        <div>
+            <app-checkbox [value]="removeKeywordsControl" label="Remove keywords?"></app-checkbox>
+            <p class="smaller-text">If enabled: Remove the keywords from the tags that you did not choose. This will solve this issue in the
+                future.</p>
+        </div>
+    </div>
+
+    <ng-container dialogFooter>
+        <app-button (onClick)="cancel()"
+                    design="secondary"
+                    height="60px"
+                    rightIcon="close"
+                    width="150px">
+            Cancel
+        </app-button>
+        <app-button (click)="save()"
+                    [disabled]="!selectedTag"
+                    [loading]="saving"
+                    design="primary"
+                    height="60px"
+                    rightIcon="check"
+                    width="150px">
+            Save
+        </app-button>
+    </ng-container>
+</app-dialog-content-wrapper>

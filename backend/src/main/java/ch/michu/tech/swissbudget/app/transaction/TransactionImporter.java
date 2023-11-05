@@ -5,6 +5,7 @@ import ch.michu.tech.swissbudget.app.exception.BankNotSupportedException;
 import ch.michu.tech.swissbudget.app.exception.ProcessAlreadyStartedException;
 import ch.michu.tech.swissbudget.app.exception.UnexpectedDbException;
 import ch.michu.tech.swissbudget.app.provider.TagProvider;
+import ch.michu.tech.swissbudget.app.provider.TransactionMailProvider;
 import ch.michu.tech.swissbudget.app.provider.TransactionProvider;
 import ch.michu.tech.swissbudget.app.provider.TransactionProvider.ImportDbData;
 import ch.michu.tech.swissbudget.app.transaction.mail.MailContentHandler;
@@ -44,6 +45,7 @@ public class TransactionImporter {
     private static final Logger LOGGER = Logger.getLogger(TransactionImporter.class.getSimpleName());
 
     private final TransactionProvider transactionProvider;
+    private final TransactionMailProvider transactionMailProvider;
     private final TagProvider tagProvider;
     private final MailReader mailReader;
     private final ErrorReporter errorReporter;
@@ -53,11 +55,13 @@ public class TransactionImporter {
     private final List<String> currentUserIds = new ArrayList<>();
 
     @Inject
-    public TransactionImporter(TransactionProvider transactionProvider, TagProvider tagProvider, MailReader mailReader,
+    public TransactionImporter(TransactionProvider transactionProvider, TransactionMailProvider transactionMailProvider,
+        TagProvider tagProvider, MailReader mailReader,
         ErrorReporter errorReporter,
         TransactionTagMapper tagMapper,
         @ConfigProperty(name = "ch.michu.tech.threads.user-amount-breakpoint", defaultValue = "8") int userAmountMultithreadingBreakpoint) {
         this.transactionProvider = transactionProvider;
+        this.transactionMailProvider = transactionMailProvider;
         this.tagProvider = tagProvider;
         this.mailReader = mailReader;
         this.errorReporter = errorReporter;
@@ -114,7 +118,7 @@ public class TransactionImporter {
             int skippedCount = 0;
             for (Message message : messages) {
                 CompleteTransactionEntity entity = new CompleteTransactionEntity();
-                TransactionMailRecord mail = transactionProvider.newTransactionMail();
+                TransactionMailRecord mail = transactionMailProvider.newRecord();
                 mail.setUserId(dbData.id());
                 contentHandler.parseMail(mail, message);
                 entity.setMail(mail);
@@ -124,7 +128,7 @@ public class TransactionImporter {
                     continue;
                 }
 
-                TransactionRecord transaction = transactionProvider.newTransaction();
+                TransactionRecord transaction = transactionProvider.newRecord();
                 transaction.setUserId(dbData.id());
                 contentHandler.parseTransaction(transaction, mail);
 

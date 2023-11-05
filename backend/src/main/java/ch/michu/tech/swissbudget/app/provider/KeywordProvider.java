@@ -4,17 +4,21 @@ package ch.michu.tech.swissbudget.app.provider;
 import static ch.michu.tech.swissbudget.generated.jooq.tables.Keyword.KEYWORD;
 import static ch.michu.tech.swissbudget.generated.jooq.tables.Tag.TAG;
 
+import ch.michu.tech.swissbudget.app.dto.tag.KeywordDto;
+import ch.michu.tech.swissbudget.framework.data.BaseRecordProvider;
 import ch.michu.tech.swissbudget.framework.data.DataProvider;
 import ch.michu.tech.swissbudget.framework.data.LoggedStatement;
+import ch.michu.tech.swissbudget.generated.jooq.tables.records.KeywordRecord;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
+import org.jooq.Record;
 import org.jooq.Record4;
 import org.jooq.exception.TooManyRowsException;
 
 @ApplicationScoped
-public class KeywordProvider {
+public class KeywordProvider implements BaseRecordProvider<KeywordRecord, Integer> {
 
     protected final DataProvider data;
     protected final DSLContext db;
@@ -23,6 +27,40 @@ public class KeywordProvider {
     public KeywordProvider(DataProvider data) {
         this.data = data;
         this.db = data.getContext();
+    }
+
+    @Override
+    public KeywordRecord newRecord() {
+        return db.newRecord(KEYWORD);
+    }
+
+    @Override
+    public KeywordRecord fromRecord(Record result) {
+        KeywordRecord keyword = newRecord();
+
+        keyword.setId(result.getValue(KEYWORD.ID));
+        keyword.setKeyword(result.getValue(KEYWORD.KEYWORD_));
+        keyword.setTagId(result.getValue(KEYWORD.TAG_ID));
+        keyword.setUserId(result.getValue(KEYWORD.USER_ID));
+
+        return keyword;
+    }
+
+    @Override
+    @LoggedStatement
+    public boolean fetchExists(String userId, Integer recordId) {
+        Condition userCondition = KEYWORD.USER_ID.eq(userId);
+        Condition keywordCondition = KEYWORD.ID.eq(recordId);
+
+        return db.fetchExists(KEYWORD, userCondition, keywordCondition);
+    }
+
+    public KeywordDto asDto(Record result) {
+        return new KeywordDto(
+            result.getValue(KEYWORD.ID),
+            result.getValue(KEYWORD.KEYWORD_),
+            result.getValue(KEYWORD.TAG_ID)
+        );
     }
 
     @LoggedStatement

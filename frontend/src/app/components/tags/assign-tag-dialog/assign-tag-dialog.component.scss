@@ -8,37 +8,6 @@
   flex-flow: column;
   gap: 20px;
 
-  .receiver-and-note-container {
-    container: receiverAndNote / inline-size;
-    width: 100%;
-
-    .receiver-and-note {
-      display: grid;
-      gap: 10px;
-      grid-template-columns: repeat(2, calc(50% - 5px));
-      grid-template-rows: auto;
-
-      pre {
-        white-space: pre-wrap;
-        word-wrap: break-word;
-      }
-
-      p {
-        position: relative;
-        padding-top: 10px;
-
-        .label {
-          position: absolute;
-          top: -3px;
-          left: 0;
-
-          font-size: 12px;
-          font-weight: 300;
-        }
-      }
-    }
-  }
-
   .checked-keyword {
     display: grid;
     grid-template-rows: 60px;
@@ -53,15 +22,6 @@
     .material-symbols-rounded {
       font-size: 32px !important;
       animation: flyIn ease-out 250ms forwards;
-    }
-  }
-}
-
-@container receiverAndNote (max-width: 500px) {
-  .receiver-and-note-container {
-    .receiver-and-note {
-      display: flex !important;
-      flex-flow: column;
     }
   }
 }

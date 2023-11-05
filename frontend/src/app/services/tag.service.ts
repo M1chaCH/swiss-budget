@@ -23,6 +23,17 @@ export class TagService {
     );
   }
 
+  resolveConflict(transactionId: string, selectedTagId: number, matchingKeywordId: number, removeUnselectedKeywords: boolean): Observable<any> {
+    return this.api.put(endpoint.RESOLVE_TAG_CONFLICT, {
+      transactionId,
+      selectedTagId,
+      matchingKeywordId,
+      removeUnselectedKeywords
+    }, undefined, true).pipe(
+        tap(() => this.transactionService.reloadCurrentFilteredTransitions()),
+    );
+  }
+
   isKeywordInTag(keyword: string): Observable<any> {
     return this.api.post(endpoint.VALIDATE_NO_KEYWORD, null, [{key: "keyword", value: keyword}]);
   }

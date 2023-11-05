@@ -1,6 +1,7 @@
 package ch.michu.tech.swissbudget.app.endpoint;
 
 import ch.michu.tech.swissbudget.app.dto.tag.AssignTagDto;
+import ch.michu.tech.swissbudget.app.dto.tag.ResolveConflictDto;
 import ch.michu.tech.swissbudget.app.service.TagService;
 import ch.michu.tech.swissbudget.framework.authentication.Authenticated;
 import ch.michu.tech.swissbudget.framework.logging.LoggedRequest;
@@ -53,8 +54,18 @@ public class TagEndpoint {
     @Path("/assign_tag")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response postAssignTag(AssignTagDto dto) {
+    public Response putAssignTag(AssignTagDto dto) {
         service.assignTag(dto.getTransactionId(), dto.getTagId(), dto.getKeyword());
+        return Response.status(Status.NO_CONTENT).build();
+    }
+
+    @PUT
+    @Path("/resolve_conflict")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response putResolveConflicts(ResolveConflictDto dto) {
+        service.resolveConflict(dto.getTransactionId(), dto.getSelectedTagId(), dto.getMatchingKeywordId(),
+            dto.isRemoveUnselectedKeywords());
         return Response.status(Status.NO_CONTENT).build();
     }
 }

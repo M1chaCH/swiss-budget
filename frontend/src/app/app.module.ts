@@ -50,6 +50,8 @@ import {DatePickerFormComponent} from './components/form/date-picker/picker-form
 import {PageWithHeaderComponent} from './components/page-with-header/page-with-header.component';
 import {AssignTagDialogComponent} from './components/tags/assign-tag-dialog/assign-tag-dialog.component';
 import {TagSelectorComponent} from './components/tags/tag-selector/tag-selector.component';
+import {ResolveTagConflictDialogComponent} from './components/tags/resolve-tag-conflict-dialog/resolve-tag-conflict-dialog.component';
+import {TransactionPreviewComponent} from './components/transactions/transaction-preview/transaction-preview.component';
 
 @NgModule({
   declarations: [
@@ -95,6 +97,8 @@ import {TagSelectorComponent} from './components/tags/tag-selector/tag-selector.
     PageWithHeaderComponent,
     AssignTagDialogComponent,
     TagSelectorComponent,
+    ResolveTagConflictDialogComponent,
+    TransactionPreviewComponent,
   ],
   imports: [
     BrowserModule,
