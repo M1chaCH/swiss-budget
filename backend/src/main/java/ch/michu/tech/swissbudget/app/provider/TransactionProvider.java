@@ -162,20 +162,37 @@ public class TransactionProvider {
     }
 
     @LoggedStatement
-    public int updateTransactionWithTag(String transactionId, int tagId) {
+    public int updateTransactionNeedsUserAttention(String transactionId, boolean needAttention) {
         return db
             .update(TRANSACTION)
-            .set(TRANSACTION.TAG_ID, tagId)
+            .set(TRANSACTION.NEED_USER_ATTENTION, needAttention)
             .where(TRANSACTION.ID.eq(transactionId))
             .execute();
     }
 
+    /**
+     * don't send default tag id, this will break with the needUserAttention field. needUserAttention field is set to false here
+     */
     @LoggedStatement
-    public int updateTransactionWithTag(String transactionId, int tagId, int matchingKeywordId) {
+    public int updateTransactionWithTagAndRemoveNeedAttention(String transactionId, int tagId) {
+        return db
+            .update(TRANSACTION)
+            .set(TRANSACTION.TAG_ID, tagId)
+            .set(TRANSACTION.NEED_USER_ATTENTION, false)
+            .where(TRANSACTION.ID.eq(transactionId))
+            .execute();
+    }
+
+    /**
+     * don't send default tag id, this will break with the needUserAttention field. needUserAttention field is set to false here
+     */
+    @LoggedStatement
+    public int updateTransactionWithTagAndRemoveNeedAttention(String transactionId, int tagId, int matchingKeywordId) {
         return db
             .update(TRANSACTION)
             .set(TRANSACTION.TAG_ID, tagId)
             .set(TRANSACTION.MATCHING_KEYWORD_ID, matchingKeywordId)
+            .set(TRANSACTION.NEED_USER_ATTENTION, false)
             .where(TRANSACTION.ID.eq(transactionId))
             .execute();
     }
@@ -224,13 +241,14 @@ public class TransactionProvider {
         return parseDeepResultToDtos(result);
     }
 
-    @LoggedStatement
+    @LoggedStatement // TODO verify in detail if this condition building doesn't destroy the userId check
     public List<TransactionDto> selectTransactionsWithDependenciesWithFilterWithPageAsDto(
         String userId,
         String query,
         int[] tagIds,
         LocalDate from,
         LocalDate to,
+        boolean needAttention,
         int page
     ) {
         LocalDate tomorrow = LocalDate.now().plusDays(1);
@@ -258,6 +276,10 @@ public class TransactionProvider {
                 .and(TRANSACTION.ALIAS.likeIgnoreCase(query)
                     .or(TRANSACTION.NOTE.likeIgnoreCase(query)
                         .or(TRANSACTION.RECEIVER.likeIgnoreCase(query))));
+        }
+
+        if (needAttention) {
+            conditions = conditions.and(TRANSACTION.NEED_USER_ATTENTION.eq(true));
         }
 
         if (tagIds != null && tagIds.length > 0) {
@@ -332,6 +354,7 @@ public class TransactionProvider {
                 matchingKeyword,
                 result.getValue(i, TRANSACTION.ALIAS),
                 result.getValue(i, TRANSACTION.NOTE),
+                result.getValue(i, TRANSACTION.NEED_USER_ATTENTION),
                 duplicatedTags
             ));
         }
@@ -352,6 +375,7 @@ public class TransactionProvider {
                 result.getValue(i, TRANSACTION.RECEIVER),
                 result.getValue(i, TRANSACTION.TAG_ID),
                 result.getValue(i, TRANSACTION.MATCHING_KEYWORD_ID),
+                result.getValue(i, TRANSACTION.NEED_USER_ATTENTION),
                 result.getValue(i, TRANSACTION.ALIAS),
                 result.getValue(i, TRANSACTION.NOTE),
                 result.getValue(i, TRANSACTION.USER_ID)

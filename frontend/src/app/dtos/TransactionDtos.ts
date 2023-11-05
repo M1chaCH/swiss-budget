@@ -14,6 +14,7 @@ export type TransactionDto = {
   matchingKeyword: KeywordDto,
   alias?: string,
   note?: string,
+  needsAttention?: boolean,
 
   duplicatedTagMatches?: TransactionTagDuplicateDto[],
 }

@@ -62,7 +62,7 @@ public class TagService {
         if (keyword != null) {
             this.addKeyword(support, tagId, keyword);
         } else {
-            transactionProvider.updateTransactionWithTag(transactionId, tagId);
+            transactionProvider.updateTransactionWithTagAndRemoveNeedAttention(transactionId, tagId);
         }
     }
 
@@ -76,8 +76,10 @@ public class TagService {
         for (TransactionIdWithTagDuplicateCount transaction : transactions) {
             if (transaction.alreadyMappedToTag()) { // TODO maybe faster if wrapped in transaction
                 transactionProvider.insertDuplicatedTag(transaction.transactionId(), tagId, newKeywordId);
+                // transaction now has duplicates -> needs user attention
+                transactionProvider.updateTransactionNeedsUserAttention(transaction.transactionId(), true);
             } else {
-                transactionProvider.updateTransactionWithTag(transaction.transactionId(), tagId, newKeywordId);
+                transactionProvider.updateTransactionWithTagAndRemoveNeedAttention(transaction.transactionId(), tagId, newKeywordId);
             }
         }
     }

@@ -30,6 +30,13 @@ public class MfaCodeRecord extends UpdatableRecordImpl<MfaCodeRecord> implements
     }
 
     /**
+     * Getter for <code>public.mfa_code.id</code>.
+     */
+    public String getId() {
+        return (String) get(0);
+    }
+
+    /**
      * Create a detached, initialised MfaCodeRecord
      */
     public MfaCodeRecord(String id, Integer code, String userId, LocalDateTime expiresAt, Integer tries, String userAgent) {
@@ -44,38 +51,10 @@ public class MfaCodeRecord extends UpdatableRecordImpl<MfaCodeRecord> implements
     }
 
     /**
-     * Getter for <code>public.mfa_code.id</code>.
-     */
-    public String getId() {
-        return (String) get(0);
-    }
-
-    /**
-     * Setter for <code>public.mfa_code.id</code>.
-     */
-    public void setId(String value) {
-        set(0, value);
-    }
-
-    /**
      * Getter for <code>public.mfa_code.code</code>.
      */
     public Integer getCode() {
         return (Integer) get(1);
-    }
-
-    /**
-     * Setter for <code>public.mfa_code.code</code>.
-     */
-    public void setCode(Integer value) {
-        set(1, value);
-    }
-
-    /**
-     * Getter for <code>public.mfa_code.user_id</code>.
-     */
-    public String getUserId() {
-        return (String) get(2);
     }
 
     /**
@@ -86,10 +65,10 @@ public class MfaCodeRecord extends UpdatableRecordImpl<MfaCodeRecord> implements
     }
 
     /**
-     * Getter for <code>public.mfa_code.expires_at</code>.
+     * Setter for <code>public.mfa_code.id</code>.
      */
-    public LocalDateTime getExpiresAt() {
-        return (LocalDateTime) get(3);
+    public void setId(String value) {
+        set(0, value);
     }
 
     /**
@@ -100,10 +79,10 @@ public class MfaCodeRecord extends UpdatableRecordImpl<MfaCodeRecord> implements
     }
 
     /**
-     * Getter for <code>public.mfa_code.tries</code>.
+     * Setter for <code>public.mfa_code.code</code>.
      */
-    public Integer getTries() {
-        return (Integer) get(4);
+    public void setCode(Integer value) {
+        set(1, value);
     }
 
     /**
@@ -113,9 +92,19 @@ public class MfaCodeRecord extends UpdatableRecordImpl<MfaCodeRecord> implements
         set(4, value);
     }
 
-    // -------------------------------------------------------------------------
-    // Primary key information
-    // -------------------------------------------------------------------------
+    /**
+     * Getter for <code>public.mfa_code.user_id</code>.
+     */
+    public String getUserId() {
+        return (String) get(2);
+    }
+
+    /**
+     * Getter for <code>public.mfa_code.expires_at</code>.
+     */
+    public LocalDateTime getExpiresAt() {
+        return (LocalDateTime) get(3);
+    }
 
     /**
      * Getter for <code>public.mfa_code.user_agent</code>.
@@ -125,20 +114,17 @@ public class MfaCodeRecord extends UpdatableRecordImpl<MfaCodeRecord> implements
     }
 
     // -------------------------------------------------------------------------
-    // Record6 type implementation
+    // Primary key information
     // -------------------------------------------------------------------------
-
-    /**
-     * Setter for <code>public.mfa_code.user_agent</code>.
-     */
-    public void setUserAgent(String value) {
-        set(5, value);
-    }
 
     @Override
     public Record1<String> key() {
         return (Record1) super.key();
     }
+
+    // -------------------------------------------------------------------------
+    // Record6 type implementation
+    // -------------------------------------------------------------------------
 
     @Override
     public Row6<String, Integer, String, LocalDateTime, Integer, String> fieldsRow() {
@@ -270,10 +256,6 @@ public class MfaCodeRecord extends UpdatableRecordImpl<MfaCodeRecord> implements
         return this;
     }
 
-    // -------------------------------------------------------------------------
-    // Constructors
-    // -------------------------------------------------------------------------
-
     @Override
     public MfaCodeRecord value6(String value) {
         setUserAgent(value);
@@ -289,5 +271,23 @@ public class MfaCodeRecord extends UpdatableRecordImpl<MfaCodeRecord> implements
         value5(value5);
         value6(value6);
         return this;
+    }
+
+    // -------------------------------------------------------------------------
+    // Constructors
+    // -------------------------------------------------------------------------
+
+    /**
+     * Getter for <code>public.mfa_code.tries</code>.
+     */
+    public Integer getTries() {
+        return (Integer) get(4);
+    }
+
+    /**
+     * Setter for <code>public.mfa_code.user_agent</code>.
+     */
+    public void setUserAgent(String value) {
+        set(5, value);
     }
 }

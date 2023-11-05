@@ -30,6 +30,13 @@ public class TransactionMetaDataRecord extends UpdatableRecordImpl<TransactionMe
     }
 
     /**
+     * Getter for <code>public.transaction_meta_data.user_id</code>.
+     */
+    public String getUserId() {
+        return (String) get(0);
+    }
+
+    /**
      * Create a detached, initialised TransactionMetaDataRecord
      */
     public TransactionMetaDataRecord(String userId, String bank, LocalDateTime lastImportCheck, LocalDateTime lastImportedTransaction,
@@ -44,10 +51,10 @@ public class TransactionMetaDataRecord extends UpdatableRecordImpl<TransactionMe
     }
 
     /**
-     * Getter for <code>public.transaction_meta_data.user_id</code>.
+     * Getter for <code>public.transaction_meta_data.bank</code>.
      */
-    public String getUserId() {
-        return (String) get(0);
+    public String getBank() {
+        return (String) get(1);
     }
 
     /**
@@ -58,39 +65,10 @@ public class TransactionMetaDataRecord extends UpdatableRecordImpl<TransactionMe
     }
 
     /**
-     * Getter for <code>public.transaction_meta_data.bank</code>.
-     */
-    public String getBank() {
-        return (String) get(1);
-    }
-
-    /**
-     * Setter for <code>public.transaction_meta_data.bank</code>.
-     */
-    public void setBank(String value) {
-        set(1, value);
-    }
-
-    /**
      * Getter for <code>public.transaction_meta_data.last_import_check</code>.
      */
     public LocalDateTime getLastImportCheck() {
         return (LocalDateTime) get(2);
-    }
-
-    /**
-     * Setter for <code>public.transaction_meta_data.last_import_check</code>.
-     */
-    public void setLastImportCheck(LocalDateTime value) {
-        set(2, value);
-    }
-
-    /**
-     * Getter for
-     * <code>public.transaction_meta_data.last_imported_transaction</code>.
-     */
-    public LocalDateTime getLastImportedTransaction() {
-        return (LocalDateTime) get(3);
     }
 
     /**
@@ -101,9 +79,19 @@ public class TransactionMetaDataRecord extends UpdatableRecordImpl<TransactionMe
         set(3, value);
     }
 
-    // -------------------------------------------------------------------------
-    // Primary key information
-    // -------------------------------------------------------------------------
+    /**
+     * Setter for <code>public.transaction_meta_data.bank</code>.
+     */
+    public void setBank(String value) {
+        set(1, value);
+    }
+
+    /**
+     * Setter for <code>public.transaction_meta_data.last_import_check</code>.
+     */
+    public void setLastImportCheck(LocalDateTime value) {
+        set(2, value);
+    }
 
     /**
      * Getter for <code>public.transaction_meta_data.transactions_folder</code>.
@@ -113,20 +101,17 @@ public class TransactionMetaDataRecord extends UpdatableRecordImpl<TransactionMe
     }
 
     // -------------------------------------------------------------------------
-    // Record5 type implementation
+    // Primary key information
     // -------------------------------------------------------------------------
-
-    /**
-     * Setter for <code>public.transaction_meta_data.transactions_folder</code>.
-     */
-    public void setTransactionsFolder(String value) {
-        set(4, value);
-    }
 
     @Override
     public Record1<String> key() {
         return (Record1) super.key();
     }
+
+    // -------------------------------------------------------------------------
+    // Record5 type implementation
+    // -------------------------------------------------------------------------
 
     @Override
     public Row5<String, String, LocalDateTime, LocalDateTime, String> fieldsRow() {
@@ -237,10 +222,6 @@ public class TransactionMetaDataRecord extends UpdatableRecordImpl<TransactionMe
         return this;
     }
 
-    // -------------------------------------------------------------------------
-    // Constructors
-    // -------------------------------------------------------------------------
-
     @Override
     public TransactionMetaDataRecord value5(String value) {
         setTransactionsFolder(value);
@@ -255,5 +236,24 @@ public class TransactionMetaDataRecord extends UpdatableRecordImpl<TransactionMe
         value4(value4);
         value5(value5);
         return this;
+    }
+
+    // -------------------------------------------------------------------------
+    // Constructors
+    // -------------------------------------------------------------------------
+
+    /**
+     * Getter for
+     * <code>public.transaction_meta_data.last_imported_transaction</code>.
+     */
+    public LocalDateTime getLastImportedTransaction() {
+        return (LocalDateTime) get(3);
+    }
+
+    /**
+     * Setter for <code>public.transaction_meta_data.transactions_folder</code>.
+     */
+    public void setTransactionsFolder(String value) {
+        set(4, value);
     }
 }

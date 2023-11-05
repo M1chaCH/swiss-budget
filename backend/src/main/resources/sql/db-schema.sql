@@ -82,6 +82,7 @@ CREATE TABLE IF NOT EXISTS transaction
     receiver            varchar(250)     not null,
     tag_id              int,
     matching_keyword_id int,
+    need_user_attention bool not null default true,
     alias               varchar(250),
     note                varchar(250),
     user_id             varchar(250)     not null,

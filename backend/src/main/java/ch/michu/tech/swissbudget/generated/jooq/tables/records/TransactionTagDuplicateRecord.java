@@ -22,10 +22,24 @@ public class TransactionTagDuplicateRecord extends UpdatableRecordImpl<Transacti
     private static final long serialVersionUID = 1L;
 
     /**
+     * Setter for <code>public.transaction_tag_duplicate.id</code>.
+     */
+    public void setId(Integer value) {
+        set(0, value);
+    }
+
+    /**
      * Create a detached TransactionTagDuplicateRecord
      */
     public TransactionTagDuplicateRecord() {
         super(TransactionTagDuplicate.TRANSACTION_TAG_DUPLICATE);
+    }
+
+    /**
+     * Setter for <code>public.transaction_tag_duplicate.transaction_id</code>.
+     */
+    public void setTransactionId(String value) {
+        set(1, value);
     }
 
     /**
@@ -41,17 +55,17 @@ public class TransactionTagDuplicateRecord extends UpdatableRecordImpl<Transacti
     }
 
     /**
+     * Setter for <code>public.transaction_tag_duplicate.tag_id</code>.
+     */
+    public void setTagId(Integer value) {
+        set(2, value);
+    }
+
+    /**
      * Getter for <code>public.transaction_tag_duplicate.id</code>.
      */
     public Integer getId() {
         return (Integer) get(0);
-    }
-
-    /**
-     * Setter for <code>public.transaction_tag_duplicate.id</code>.
-     */
-    public void setId(Integer value) {
-        set(0, value);
     }
 
     /**
@@ -62,31 +76,6 @@ public class TransactionTagDuplicateRecord extends UpdatableRecordImpl<Transacti
     }
 
     /**
-     * Setter for <code>public.transaction_tag_duplicate.transaction_id</code>.
-     */
-    public void setTransactionId(String value) {
-        set(1, value);
-    }
-
-    /**
-     * Getter for <code>public.transaction_tag_duplicate.tag_id</code>.
-     */
-    public Integer getTagId() {
-        return (Integer) get(2);
-    }
-
-    /**
-     * Setter for <code>public.transaction_tag_duplicate.tag_id</code>.
-     */
-    public void setTagId(Integer value) {
-        set(2, value);
-    }
-
-    // -------------------------------------------------------------------------
-    // Primary key information
-    // -------------------------------------------------------------------------
-
-    /**
      * Getter for
      * <code>public.transaction_tag_duplicate.matching_keyword_id</code>.
      */
@@ -95,21 +84,17 @@ public class TransactionTagDuplicateRecord extends UpdatableRecordImpl<Transacti
     }
 
     // -------------------------------------------------------------------------
-    // Record4 type implementation
+    // Primary key information
     // -------------------------------------------------------------------------
-
-    /**
-     * Setter for
-     * <code>public.transaction_tag_duplicate.matching_keyword_id</code>.
-     */
-    public void setMatchingKeywordId(Integer value) {
-        set(3, value);
-    }
 
     @Override
     public Record1<Integer> key() {
         return (Record1) super.key();
     }
+
+    // -------------------------------------------------------------------------
+    // Record4 type implementation
+    // -------------------------------------------------------------------------
 
     @Override
     public Row4<Integer, String, Integer, Integer> fieldsRow() {
@@ -199,10 +184,6 @@ public class TransactionTagDuplicateRecord extends UpdatableRecordImpl<Transacti
         return this;
     }
 
-    // -------------------------------------------------------------------------
-    // Constructors
-    // -------------------------------------------------------------------------
-
     @Override
     public TransactionTagDuplicateRecord value4(Integer value) {
         setMatchingKeywordId(value);
@@ -216,5 +197,24 @@ public class TransactionTagDuplicateRecord extends UpdatableRecordImpl<Transacti
         value3(value3);
         value4(value4);
         return this;
+    }
+
+    // -------------------------------------------------------------------------
+    // Constructors
+    // -------------------------------------------------------------------------
+
+    /**
+     * Getter for <code>public.transaction_tag_duplicate.tag_id</code>.
+     */
+    public Integer getTagId() {
+        return (Integer) get(2);
+    }
+
+    /**
+     * Setter for
+     * <code>public.transaction_tag_duplicate.matching_keyword_id</code>.
+     */
+    public void setMatchingKeywordId(Integer value) {
+        set(3, value);
     }
 }

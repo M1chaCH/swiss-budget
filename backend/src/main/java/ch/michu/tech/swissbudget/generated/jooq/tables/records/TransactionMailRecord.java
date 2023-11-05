@@ -30,6 +30,20 @@ public class TransactionMailRecord extends UpdatableRecordImpl<TransactionMailRe
     }
 
     /**
+     * Getter for <code>public.transaction_mail.id</code>.
+     */
+    public String getId() {
+        return (String) get(0);
+    }
+
+    /**
+     * Setter for <code>public.transaction_mail.message_number</code>.
+     */
+    public void setMessageNumber(Integer value) {
+        set(1, value);
+    }
+
+    /**
      * Create a detached, initialised TransactionMailRecord
      */
     public TransactionMailRecord(String id, Integer messageNumber, String fromMail, String toMail, LocalDateTime receivedDate,
@@ -49,10 +63,10 @@ public class TransactionMailRecord extends UpdatableRecordImpl<TransactionMailRe
     }
 
     /**
-     * Getter for <code>public.transaction_mail.id</code>.
+     * Setter for <code>public.transaction_mail.from_mail</code>.
      */
-    public String getId() {
-        return (String) get(0);
+    public void setFromMail(String value) {
+        set(2, value);
     }
 
     /**
@@ -70,10 +84,10 @@ public class TransactionMailRecord extends UpdatableRecordImpl<TransactionMailRe
     }
 
     /**
-     * Setter for <code>public.transaction_mail.message_number</code>.
+     * Getter for <code>public.transaction_mail.to_mail</code>.
      */
-    public void setMessageNumber(Integer value) {
-        set(1, value);
+    public String getToMail() {
+        return (String) get(3);
     }
 
     /**
@@ -84,45 +98,10 @@ public class TransactionMailRecord extends UpdatableRecordImpl<TransactionMailRe
     }
 
     /**
-     * Setter for <code>public.transaction_mail.from_mail</code>.
-     */
-    public void setFromMail(String value) {
-        set(2, value);
-    }
-
-    /**
-     * Getter for <code>public.transaction_mail.to_mail</code>.
-     */
-    public String getToMail() {
-        return (String) get(3);
-    }
-
-    /**
-     * Setter for <code>public.transaction_mail.to_mail</code>.
-     */
-    public void setToMail(String value) {
-        set(3, value);
-    }
-
-    /**
      * Getter for <code>public.transaction_mail.received_date</code>.
      */
     public LocalDateTime getReceivedDate() {
         return (LocalDateTime) get(4);
-    }
-
-    /**
-     * Setter for <code>public.transaction_mail.received_date</code>.
-     */
-    public void setReceivedDate(LocalDateTime value) {
-        set(4, value);
-    }
-
-    /**
-     * Getter for <code>public.transaction_mail.subject</code>.
-     */
-    public String getSubject() {
-        return (String) get(5);
     }
 
     /**
@@ -133,10 +112,10 @@ public class TransactionMailRecord extends UpdatableRecordImpl<TransactionMailRe
     }
 
     /**
-     * Getter for <code>public.transaction_mail.raw_message</code>.
+     * Setter for <code>public.transaction_mail.to_mail</code>.
      */
-    public String getRawMessage() {
-        return (String) get(6);
+    public void setToMail(String value) {
+        set(3, value);
     }
 
     /**
@@ -147,10 +126,10 @@ public class TransactionMailRecord extends UpdatableRecordImpl<TransactionMailRe
     }
 
     /**
-     * Getter for <code>public.transaction_mail.transaction_id</code>.
+     * Setter for <code>public.transaction_mail.received_date</code>.
      */
-    public String getTransactionId() {
-        return (String) get(7);
+    public void setReceivedDate(LocalDateTime value) {
+        set(4, value);
     }
 
     /**
@@ -161,6 +140,20 @@ public class TransactionMailRecord extends UpdatableRecordImpl<TransactionMailRe
     }
 
     /**
+     * Getter for <code>public.transaction_mail.subject</code>.
+     */
+    public String getSubject() {
+        return (String) get(5);
+    }
+
+    /**
+     * Getter for <code>public.transaction_mail.raw_message</code>.
+     */
+    public String getRawMessage() {
+        return (String) get(6);
+    }
+
+    /**
      * Getter for <code>public.transaction_mail.user_id</code>.
      */
     public String getUserId() {
@@ -168,15 +161,11 @@ public class TransactionMailRecord extends UpdatableRecordImpl<TransactionMailRe
     }
 
     /**
-     * Setter for <code>public.transaction_mail.user_id</code>.
+     * Getter for <code>public.transaction_mail.transaction_id</code>.
      */
-    public void setUserId(String value) {
-        set(8, value);
+    public String getTransactionId() {
+        return (String) get(7);
     }
-
-    // -------------------------------------------------------------------------
-    // Primary key information
-    // -------------------------------------------------------------------------
 
     /**
      * Getter for <code>public.transaction_mail.bank</code>.
@@ -186,20 +175,17 @@ public class TransactionMailRecord extends UpdatableRecordImpl<TransactionMailRe
     }
 
     // -------------------------------------------------------------------------
-    // Record10 type implementation
+    // Primary key information
     // -------------------------------------------------------------------------
-
-    /**
-     * Setter for <code>public.transaction_mail.bank</code>.
-     */
-    public void setBank(String value) {
-        set(9, value);
-    }
 
     @Override
     public Record1<String> key() {
         return (Record1) super.key();
     }
+
+    // -------------------------------------------------------------------------
+    // Record10 type implementation
+    // -------------------------------------------------------------------------
 
     @Override
     public Row10<String, Integer, String, String, LocalDateTime, String, String, String, String, String> fieldsRow() {
@@ -415,10 +401,6 @@ public class TransactionMailRecord extends UpdatableRecordImpl<TransactionMailRe
         return this;
     }
 
-    // -------------------------------------------------------------------------
-    // Constructors
-    // -------------------------------------------------------------------------
-
     @Override
     public TransactionMailRecord value10(String value) {
         setBank(value);
@@ -439,5 +421,23 @@ public class TransactionMailRecord extends UpdatableRecordImpl<TransactionMailRe
         value9(value9);
         value10(value10);
         return this;
+    }
+
+    // -------------------------------------------------------------------------
+    // Constructors
+    // -------------------------------------------------------------------------
+
+    /**
+     * Setter for <code>public.transaction_mail.user_id</code>.
+     */
+    public void setUserId(String value) {
+        set(8, value);
+    }
+
+    /**
+     * Setter for <code>public.transaction_mail.bank</code>.
+     */
+    public void setBank(String value) {
+        set(9, value);
     }
 }

@@ -35,35 +35,38 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({"all", "unchecked", "rawtypes"})
 public class TransactionTagDuplicate extends TableImpl<TransactionTagDuplicateRecord> {
 
+    private static final long serialVersionUID = 1L;
+
     /**
      * The reference instance of <code>public.transaction_tag_duplicate</code>
      */
     public static final TransactionTagDuplicate TRANSACTION_TAG_DUPLICATE = new TransactionTagDuplicate();
-    private static final long serialVersionUID = 1L;
+    private transient Transaction _transaction;
+
     /**
      * The column <code>public.transaction_tag_duplicate.id</code>.
      */
     public final TableField<TransactionTagDuplicateRecord, Integer> ID = createField(DSL.name("id"),
         SQLDataType.INTEGER.nullable(false).identity(true), this, "");
+
     /**
      * The column <code>public.transaction_tag_duplicate.transaction_id</code>.
      */
     public final TableField<TransactionTagDuplicateRecord, String> TRANSACTION_ID = createField(DSL.name("transaction_id"),
         SQLDataType.VARCHAR(250).nullable(false), this, "");
+
     /**
      * The column <code>public.transaction_tag_duplicate.tag_id</code>.
      */
     public final TableField<TransactionTagDuplicateRecord, Integer> TAG_ID = createField(DSL.name("tag_id"),
         SQLDataType.INTEGER.nullable(false), this, "");
+
     /**
      * The column
      * <code>public.transaction_tag_duplicate.matching_keyword_id</code>.
      */
     public final TableField<TransactionTagDuplicateRecord, Integer> MATCHING_KEYWORD_ID = createField(DSL.name("matching_keyword_id"),
         SQLDataType.INTEGER.nullable(false), this, "");
-    private transient Transaction _transaction;
-    private transient Tag _tag;
-    private transient Keyword _keyword;
 
     private TransactionTagDuplicate(Name alias, Table<TransactionTagDuplicateRecord> aliased) {
         this(alias, aliased, null);
@@ -72,20 +75,8 @@ public class TransactionTagDuplicate extends TableImpl<TransactionTagDuplicateRe
     private TransactionTagDuplicate(Name alias, Table<TransactionTagDuplicateRecord> aliased, Field<?>[] parameters) {
         super(alias, null, aliased, parameters, DSL.comment(""), TableOptions.table());
     }
-
-    /**
-     * Create an aliased <code>public.transaction_tag_duplicate</code> table reference
-     */
-    public TransactionTagDuplicate(String alias) {
-        this(DSL.name(alias), TRANSACTION_TAG_DUPLICATE);
-    }
-
-    /**
-     * Create an aliased <code>public.transaction_tag_duplicate</code> table reference
-     */
-    public TransactionTagDuplicate(Name alias) {
-        this(alias, TRANSACTION_TAG_DUPLICATE);
-    }
+    private transient Tag _tag;
+    private transient Keyword _keyword;
 
     /**
      * Create a <code>public.transaction_tag_duplicate</code> table reference
@@ -96,14 +87,6 @@ public class TransactionTagDuplicate extends TableImpl<TransactionTagDuplicateRe
 
     public <O extends Record> TransactionTagDuplicate(Table<O> child, ForeignKey<O, TransactionTagDuplicateRecord> key) {
         super(child, key, TRANSACTION_TAG_DUPLICATE);
-    }
-
-    /**
-     * The class holding records for this type
-     */
-    @Override
-    public Class<TransactionTagDuplicateRecord> getRecordType() {
-        return TransactionTagDuplicateRecord.class;
     }
 
     @Override
@@ -129,12 +112,34 @@ public class TransactionTagDuplicate extends TableImpl<TransactionTagDuplicateRe
     }
 
     /**
+     * Create an aliased <code>public.transaction_tag_duplicate</code> table
+     * reference
+     */
+    public TransactionTagDuplicate(String alias) {
+        this(DSL.name(alias), TRANSACTION_TAG_DUPLICATE);
+    }
+    /**
+     * Create an aliased <code>public.transaction_tag_duplicate</code> table
+     * reference
+     */
+    public TransactionTagDuplicate(Name alias) {
+        this(alias, TRANSACTION_TAG_DUPLICATE);
+    }
+
+    /**
+     * The class holding records for this type
+     */
+    @Override
+    public Class<TransactionTagDuplicateRecord> getRecordType() {
+        return TransactionTagDuplicateRecord.class;
+    }
+
+    /**
      * Get the implicit join path to the <code>public.transaction</code> table.
      */
     public Transaction transaction() {
-        if (_transaction == null) {
+        if (_transaction == null)
             _transaction = new Transaction(this, Keys.TRANSACTION_TAG_DUPLICATE__TRANSACTION_TAG_DUPLICATE_TRANSACTION_ID_FKEY);
-        }
 
         return _transaction;
     }
@@ -143,9 +148,8 @@ public class TransactionTagDuplicate extends TableImpl<TransactionTagDuplicateRe
      * Get the implicit join path to the <code>public.tag</code> table.
      */
     public Tag tag() {
-        if (_tag == null) {
+        if (_tag == null)
             _tag = new Tag(this, Keys.TRANSACTION_TAG_DUPLICATE__TRANSACTION_TAG_DUPLICATE_TAG_ID_FKEY);
-        }
 
         return _tag;
     }
@@ -154,9 +158,8 @@ public class TransactionTagDuplicate extends TableImpl<TransactionTagDuplicateRe
      * Get the implicit join path to the <code>public.keyword</code> table.
      */
     public Keyword keyword() {
-        if (_keyword == null) {
+        if (_keyword == null)
             _keyword = new Keyword(this, Keys.TRANSACTION_TAG_DUPLICATE__TRANSACTION_TAG_DUPLICATE_MATCHING_KEYWORD_ID_FKEY);
-        }
 
         return _keyword;
     }
@@ -217,7 +220,8 @@ public class TransactionTagDuplicate extends TableImpl<TransactionTagDuplicateRe
     }
 
     /**
-     * Convenience mapping calling {@link SelectField#convertFrom(Class, Function)}.
+     * Convenience mapping calling {@link SelectField#convertFrom(Class,
+     * Function)}.
      */
     public <U> SelectField<U> mapping(Class<U> toType,
         Function4<? super Integer, ? super String, ? super Integer, ? super Integer, ? extends U> from) {

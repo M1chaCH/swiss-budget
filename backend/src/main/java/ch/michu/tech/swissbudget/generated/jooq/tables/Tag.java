@@ -35,39 +35,46 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({"all", "unchecked", "rawtypes"})
 public class Tag extends TableImpl<TagRecord> {
 
+    private static final long serialVersionUID = 1L;
+
     /**
      * The reference instance of <code>public.tag</code>
      */
     public static final Tag TAG = new Tag();
-    private static final long serialVersionUID = 1L;
+    private transient RegisteredUser _registeredUser;
+
     /**
      * The column <code>public.tag.id</code>.
      */
     public final TableField<TagRecord, Integer> ID = createField(DSL.name("id"), SQLDataType.INTEGER.nullable(false).identity(true), this,
         "");
+
     /**
      * The column <code>public.tag.icon</code>.
      */
     public final TableField<TagRecord, String> ICON = createField(DSL.name("icon"), SQLDataType.VARCHAR(50).nullable(false), this, "");
+
     /**
      * The column <code>public.tag.color</code>.
      */
     public final TableField<TagRecord, String> COLOR = createField(DSL.name("color"), SQLDataType.VARCHAR(10).nullable(false), this, "");
+
     /**
      * The column <code>public.tag.name</code>.
      */
     public final TableField<TagRecord, String> NAME = createField(DSL.name("name"), SQLDataType.VARCHAR(250).nullable(false), this, "");
+
     /**
      * The column <code>public.tag.user_id</code>.
      */
     public final TableField<TagRecord, String> USER_ID = createField(DSL.name("user_id"), SQLDataType.VARCHAR(250).nullable(false), this,
         "");
+
     /**
      * The column <code>public.tag.default_tag</code>.
      */
     public final TableField<TagRecord, Boolean> DEFAULT_TAG = createField(DSL.name("default_tag"),
         SQLDataType.BOOLEAN.nullable(false).defaultValue(DSL.field("false", SQLDataType.BOOLEAN)), this, "");
-    private transient RegisteredUser _registeredUser;
 
     private Tag(Name alias, Table<TagRecord> aliased) {
         this(alias, aliased, null);
@@ -102,14 +109,6 @@ public class Tag extends TableImpl<TagRecord> {
         super(child, key, TAG);
     }
 
-    /**
-     * The class holding records for this type
-     */
-    @Override
-    public Class<TagRecord> getRecordType() {
-        return TagRecord.class;
-    }
-
     @Override
     public Schema getSchema() {
         return aliased() ? null : Public.PUBLIC;
@@ -131,12 +130,20 @@ public class Tag extends TableImpl<TagRecord> {
     }
 
     /**
-     * Get the implicit join path to the <code>public.registered_user</code> table.
+     * The class holding records for this type
+     */
+    @Override
+    public Class<TagRecord> getRecordType() {
+        return TagRecord.class;
+    }
+
+    /**
+     * Get the implicit join path to the <code>public.registered_user</code>
+     * table.
      */
     public RegisteredUser registeredUser() {
-        if (_registeredUser == null) {
+        if (_registeredUser == null)
             _registeredUser = new RegisteredUser(this, Keys.TAG__TAG_USER_ID_FKEY);
-        }
 
         return _registeredUser;
     }
@@ -198,7 +205,8 @@ public class Tag extends TableImpl<TagRecord> {
     }
 
     /**
-     * Convenience mapping calling {@link SelectField#convertFrom(Class, Function)}.
+     * Convenience mapping calling {@link SelectField#convertFrom(Class,
+     * Function)}.
      */
     public <U> SelectField<U> mapping(Class<U> toType,
         Function6<? super Integer, ? super String, ? super String, ? super String, ? super String, ? super Boolean, ? extends U> from) {

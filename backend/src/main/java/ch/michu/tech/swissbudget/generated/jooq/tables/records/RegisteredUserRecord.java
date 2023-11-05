@@ -30,6 +30,20 @@ public class RegisteredUserRecord extends UpdatableRecordImpl<RegisteredUserReco
     }
 
     /**
+     * Getter for <code>public.registered_user.id</code>.
+     */
+    public String getId() {
+        return (String) get(0);
+    }
+
+    /**
+     * Setter for <code>public.registered_user.mail</code>.
+     */
+    public void setMail(String value) {
+        set(1, value);
+    }
+
+    /**
      * Create a detached, initialised RegisteredUserRecord
      */
     public RegisteredUserRecord(String id, String mail, String password, String salt, String mailPassword, String username,
@@ -49,10 +63,10 @@ public class RegisteredUserRecord extends UpdatableRecordImpl<RegisteredUserReco
     }
 
     /**
-     * Getter for <code>public.registered_user.id</code>.
+     * Setter for <code>public.registered_user.password</code>.
      */
-    public String getId() {
-        return (String) get(0);
+    public void setPassword(String value) {
+        set(2, value);
     }
 
     /**
@@ -70,10 +84,10 @@ public class RegisteredUserRecord extends UpdatableRecordImpl<RegisteredUserReco
     }
 
     /**
-     * Setter for <code>public.registered_user.mail</code>.
+     * Getter for <code>public.registered_user.salt</code>.
      */
-    public void setMail(String value) {
-        set(1, value);
+    public String getSalt() {
+        return (String) get(3);
     }
 
     /**
@@ -84,45 +98,10 @@ public class RegisteredUserRecord extends UpdatableRecordImpl<RegisteredUserReco
     }
 
     /**
-     * Setter for <code>public.registered_user.password</code>.
-     */
-    public void setPassword(String value) {
-        set(2, value);
-    }
-
-    /**
-     * Getter for <code>public.registered_user.salt</code>.
-     */
-    public String getSalt() {
-        return (String) get(3);
-    }
-
-    /**
-     * Setter for <code>public.registered_user.salt</code>.
-     */
-    public void setSalt(String value) {
-        set(3, value);
-    }
-
-    /**
      * Getter for <code>public.registered_user.mail_password</code>.
      */
     public String getMailPassword() {
         return (String) get(4);
-    }
-
-    /**
-     * Setter for <code>public.registered_user.mail_password</code>.
-     */
-    public void setMailPassword(String value) {
-        set(4, value);
-    }
-
-    /**
-     * Getter for <code>public.registered_user.username</code>.
-     */
-    public String getUsername() {
-        return (String) get(5);
     }
 
     /**
@@ -133,10 +112,10 @@ public class RegisteredUserRecord extends UpdatableRecordImpl<RegisteredUserReco
     }
 
     /**
-     * Getter for <code>public.registered_user.disabled</code>.
+     * Setter for <code>public.registered_user.salt</code>.
      */
-    public Boolean getDisabled() {
-        return (Boolean) get(6);
+    public void setSalt(String value) {
+        set(3, value);
     }
 
     /**
@@ -147,10 +126,10 @@ public class RegisteredUserRecord extends UpdatableRecordImpl<RegisteredUserReco
     }
 
     /**
-     * Getter for <code>public.registered_user.created_at</code>.
+     * Setter for <code>public.registered_user.mail_password</code>.
      */
-    public LocalDateTime getCreatedAt() {
-        return (LocalDateTime) get(7);
+    public void setMailPassword(String value) {
+        set(4, value);
     }
 
     /**
@@ -161,6 +140,20 @@ public class RegisteredUserRecord extends UpdatableRecordImpl<RegisteredUserReco
     }
 
     /**
+     * Getter for <code>public.registered_user.username</code>.
+     */
+    public String getUsername() {
+        return (String) get(5);
+    }
+
+    /**
+     * Getter for <code>public.registered_user.disabled</code>.
+     */
+    public Boolean getDisabled() {
+        return (Boolean) get(6);
+    }
+
+    /**
      * Getter for <code>public.registered_user.last_login</code>.
      */
     public LocalDateTime getLastLogin() {
@@ -168,15 +161,11 @@ public class RegisteredUserRecord extends UpdatableRecordImpl<RegisteredUserReco
     }
 
     /**
-     * Setter for <code>public.registered_user.last_login</code>.
+     * Getter for <code>public.registered_user.created_at</code>.
      */
-    public void setLastLogin(LocalDateTime value) {
-        set(8, value);
+    public LocalDateTime getCreatedAt() {
+        return (LocalDateTime) get(7);
     }
-
-    // -------------------------------------------------------------------------
-    // Primary key information
-    // -------------------------------------------------------------------------
 
     /**
      * Getter for <code>public.registered_user.current_session</code>.
@@ -186,20 +175,17 @@ public class RegisteredUserRecord extends UpdatableRecordImpl<RegisteredUserReco
     }
 
     // -------------------------------------------------------------------------
-    // Record10 type implementation
+    // Primary key information
     // -------------------------------------------------------------------------
-
-    /**
-     * Setter for <code>public.registered_user.current_session</code>.
-     */
-    public void setCurrentSession(String value) {
-        set(9, value);
-    }
 
     @Override
     public Record1<String> key() {
         return (Record1) super.key();
     }
+
+    // -------------------------------------------------------------------------
+    // Record10 type implementation
+    // -------------------------------------------------------------------------
 
     @Override
     public Row10<String, String, String, String, String, String, Boolean, LocalDateTime, LocalDateTime, String> fieldsRow() {
@@ -415,10 +401,6 @@ public class RegisteredUserRecord extends UpdatableRecordImpl<RegisteredUserReco
         return this;
     }
 
-    // -------------------------------------------------------------------------
-    // Constructors
-    // -------------------------------------------------------------------------
-
     @Override
     public RegisteredUserRecord value10(String value) {
         setCurrentSession(value);
@@ -439,5 +421,23 @@ public class RegisteredUserRecord extends UpdatableRecordImpl<RegisteredUserReco
         value9(value9);
         value10(value10);
         return this;
+    }
+
+    // -------------------------------------------------------------------------
+    // Constructors
+    // -------------------------------------------------------------------------
+
+    /**
+     * Setter for <code>public.registered_user.last_login</code>.
+     */
+    public void setLastLogin(LocalDateTime value) {
+        set(8, value);
+    }
+
+    /**
+     * Setter for <code>public.registered_user.current_session</code>.
+     */
+    public void setCurrentSession(String value) {
+        set(9, value);
     }
 }

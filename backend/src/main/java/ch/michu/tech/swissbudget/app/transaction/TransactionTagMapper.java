@@ -87,8 +87,9 @@ public class TransactionTagMapper {
                     ));
                 } else {
                     transaction.getTransaction().setTagId(tagEntry.getKey().getId());
-                    transaction.setTag(tagEntry.getKey());
                     transaction.getTransaction().setMatchingKeywordId(keyword.getId());
+                    transaction.getTransaction().setNeedUserAttention(false);
+                    transaction.setTag(tagEntry.getKey());
                     transaction.setMatchingKeyword(keyword);
                     found = true;
                 }
@@ -98,6 +99,7 @@ public class TransactionTagMapper {
         if (!found) {
             transaction.getTagDuplicates().clear();
             transaction.getTransaction().setTagId(defaultTag.getId());
+            transaction.getTransaction().setNeedUserAttention(true);
             transaction.setTag(defaultTag);
         }
     }

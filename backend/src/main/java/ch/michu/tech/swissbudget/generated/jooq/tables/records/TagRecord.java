@@ -28,6 +28,13 @@ public class TagRecord extends UpdatableRecordImpl<TagRecord> implements Record6
     }
 
     /**
+     * Getter for <code>public.tag.id</code>.
+     */
+    public Integer getId() {
+        return (Integer) get(0);
+    }
+
+    /**
      * Create a detached, initialised TagRecord
      */
     public TagRecord(Integer id, String icon, String color, String name, String userId, Boolean defaultTag) {
@@ -42,38 +49,10 @@ public class TagRecord extends UpdatableRecordImpl<TagRecord> implements Record6
     }
 
     /**
-     * Getter for <code>public.tag.id</code>.
-     */
-    public Integer getId() {
-        return (Integer) get(0);
-    }
-
-    /**
-     * Setter for <code>public.tag.id</code>.
-     */
-    public void setId(Integer value) {
-        set(0, value);
-    }
-
-    /**
      * Getter for <code>public.tag.icon</code>.
      */
     public String getIcon() {
         return (String) get(1);
-    }
-
-    /**
-     * Setter for <code>public.tag.icon</code>.
-     */
-    public void setIcon(String value) {
-        set(1, value);
-    }
-
-    /**
-     * Getter for <code>public.tag.color</code>.
-     */
-    public String getColor() {
-        return (String) get(2);
     }
 
     /**
@@ -84,10 +63,10 @@ public class TagRecord extends UpdatableRecordImpl<TagRecord> implements Record6
     }
 
     /**
-     * Getter for <code>public.tag.name</code>.
+     * Setter for <code>public.tag.id</code>.
      */
-    public String getName() {
-        return (String) get(3);
+    public void setId(Integer value) {
+        set(0, value);
     }
 
     /**
@@ -98,10 +77,10 @@ public class TagRecord extends UpdatableRecordImpl<TagRecord> implements Record6
     }
 
     /**
-     * Getter for <code>public.tag.user_id</code>.
+     * Setter for <code>public.tag.icon</code>.
      */
-    public String getUserId() {
-        return (String) get(4);
+    public void setIcon(String value) {
+        set(1, value);
     }
 
     /**
@@ -111,9 +90,19 @@ public class TagRecord extends UpdatableRecordImpl<TagRecord> implements Record6
         set(4, value);
     }
 
-    // -------------------------------------------------------------------------
-    // Primary key information
-    // -------------------------------------------------------------------------
+    /**
+     * Getter for <code>public.tag.color</code>.
+     */
+    public String getColor() {
+        return (String) get(2);
+    }
+
+    /**
+     * Getter for <code>public.tag.name</code>.
+     */
+    public String getName() {
+        return (String) get(3);
+    }
 
     /**
      * Getter for <code>public.tag.default_tag</code>.
@@ -123,20 +112,17 @@ public class TagRecord extends UpdatableRecordImpl<TagRecord> implements Record6
     }
 
     // -------------------------------------------------------------------------
-    // Record6 type implementation
+    // Primary key information
     // -------------------------------------------------------------------------
-
-    /**
-     * Setter for <code>public.tag.default_tag</code>.
-     */
-    public void setDefaultTag(Boolean value) {
-        set(5, value);
-    }
 
     @Override
     public Record1<Integer> key() {
         return (Record1) super.key();
     }
+
+    // -------------------------------------------------------------------------
+    // Record6 type implementation
+    // -------------------------------------------------------------------------
 
     @Override
     public Row6<Integer, String, String, String, String, Boolean> fieldsRow() {
@@ -268,10 +254,6 @@ public class TagRecord extends UpdatableRecordImpl<TagRecord> implements Record6
         return this;
     }
 
-    // -------------------------------------------------------------------------
-    // Constructors
-    // -------------------------------------------------------------------------
-
     @Override
     public TagRecord value6(Boolean value) {
         setDefaultTag(value);
@@ -287,5 +269,23 @@ public class TagRecord extends UpdatableRecordImpl<TagRecord> implements Record6
         value5(value5);
         value6(value6);
         return this;
+    }
+
+    // -------------------------------------------------------------------------
+    // Constructors
+    // -------------------------------------------------------------------------
+
+    /**
+     * Getter for <code>public.tag.user_id</code>.
+     */
+    public String getUserId() {
+        return (String) get(4);
+    }
+
+    /**
+     * Setter for <code>public.tag.default_tag</code>.
+     */
+    public void setDefaultTag(Boolean value) {
+        set(5, value);
     }
 }

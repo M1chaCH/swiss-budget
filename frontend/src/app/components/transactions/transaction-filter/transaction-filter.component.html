@@ -19,6 +19,9 @@
                 Week
             </app-button>
         </div>
+        <div id="needAttention">
+            <app-checkbox [value]="needAttentionControl" label="Need attention"></app-checkbox>
+        </div>
         <div id="resetButton">
             <app-button (onClick)="resetFilter()" design="primary" height="60px" rightIcon="restart_alt" width="180px">
                 Reset

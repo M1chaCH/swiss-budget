@@ -14,7 +14,6 @@ export class TransactionService {
   private currentMaxLoadedPage: number = 1;
   private pageSize: number = -1;
   private latestLoadedSize: number = -1;
-  private currentFilter: { query?: string, tags?: number[], from?: moment.Moment, to?: moment.Moment } | undefined;
 
   constructor(
       private api: ApiService,
@@ -33,6 +32,16 @@ export class TransactionService {
     })
   }
 
+  private _currentFilter: TransactionFilter;
+
+  public get currentFilter() {
+    return this._currentFilter;
+  }
+
+  private set currentFilter(filter: TransactionFilter) {
+    this._currentFilter = filter;
+  }
+
   async importTransactions(): Promise<void> { // fixme fucks shit up if it is the first import, i think fix is that normal query should complete with empty result
     this.insertTransactions(await firstValueFrom(this.api.get<TransactionDto[]>(endpoint.IMPORT_TRANSACTIONS, [], true)));
   }
@@ -45,6 +54,7 @@ export class TransactionService {
           this.currentFilter?.tags,
           this.currentFilter?.from,
           this.currentFilter?.to,
+          this.currentFilter?.needAttention,
           this.currentMaxLoadedPage
       );
 
@@ -57,15 +67,15 @@ export class TransactionService {
   }
 
   reloadCurrentFilteredTransitions() {
-    this.reloadFilteredTransactions(this.currentFilter?.query, this.currentFilter?.tags, this.currentFilter?.from, this.currentFilter?.to);
+    this.reloadFilteredTransactions(this.currentFilter?.query, this.currentFilter?.tags, this.currentFilter?.from, this.currentFilter?.to, this.currentFilter?.needAttention);
   }
 
-  reloadFilteredTransactions(query?: string, tags?: number[], from?: moment.Moment, to?: moment.Moment) {
-    const params = this.buildFilterParams(query, tags, from, to, 1);
+  reloadFilteredTransactions(query?: string, tags?: number[], from?: moment.Moment, to?: moment.Moment, needAttention?: boolean) {
+    const params = this.buildFilterParams(query, tags, from, to, needAttention, 1);
 
     this.api.get<TransactionDto[]>(endpoint.TRANSACTIONS, params, true)
     .subscribe(transactions => {
-      this.currentFilter = {query, tags, from, to};
+      this.currentFilter = {query, tags, from, to, needAttention};
       this.latestLoadedSize = transactions.length;
       this.transactionUpdater.next(transactions);
     });
@@ -105,7 +115,7 @@ export class TransactionService {
     })
   }
 
-  private buildFilterParams(query?: string, tags?: number[], from?: moment.Moment, to?: moment.Moment, page?: number): {
+  private buildFilterParams(query?: string, tags?: number[], from?: moment.Moment, to?: moment.Moment, needAttention?: boolean, page?: number): {
     key: string,
     value: string
   }[] {
@@ -114,6 +124,7 @@ export class TransactionService {
     params.push({key: "page", value: `${this.currentMaxLoadedPage}`});
     params.push({key: "query", value: query ?? ""});
     params.push({key: "tagIds", value: tags?.join(";") ?? ""});
+    params.push({key: "needAttention", value: `${needAttention ?? false}`});
     if (from)
       params.push({key: "from", value: from.format(ApiService.API_DATE_FORMAT)});
     if (to)
@@ -122,3 +133,11 @@ export class TransactionService {
     return params;
   }
 }
+
+export type TransactionFilter = {
+  query?: string,
+  tags?: number[],
+  from?: moment.Moment,
+  to?: moment.Moment,
+  needAttention?: boolean
+} | undefined;

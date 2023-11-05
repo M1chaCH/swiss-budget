@@ -28,6 +28,13 @@ public class KeywordRecord extends UpdatableRecordImpl<KeywordRecord> implements
     }
 
     /**
+     * Getter for <code>public.keyword.id</code>.
+     */
+    public Integer getId() {
+        return (Integer) get(0);
+    }
+
+    /**
      * Create a detached, initialised KeywordRecord
      */
     public KeywordRecord(Integer id, String keyword, Integer tagId, String userId) {
@@ -40,10 +47,17 @@ public class KeywordRecord extends UpdatableRecordImpl<KeywordRecord> implements
     }
 
     /**
-     * Getter for <code>public.keyword.id</code>.
+     * Getter for <code>public.keyword.keyword</code>.
      */
-    public Integer getId() {
-        return (Integer) get(0);
+    public String getKeyword() {
+        return (String) get(1);
+    }
+
+    /**
+     * Setter for <code>public.keyword.tag_id</code>.
+     */
+    public void setTagId(Integer value) {
+        set(2, value);
     }
 
     /**
@@ -54,36 +68,11 @@ public class KeywordRecord extends UpdatableRecordImpl<KeywordRecord> implements
     }
 
     /**
-     * Getter for <code>public.keyword.keyword</code>.
-     */
-    public String getKeyword() {
-        return (String) get(1);
-    }
-
-    /**
      * Setter for <code>public.keyword.keyword</code>.
      */
     public void setKeyword(String value) {
         set(1, value);
     }
-
-    /**
-     * Getter for <code>public.keyword.tag_id</code>.
-     */
-    public Integer getTagId() {
-        return (Integer) get(2);
-    }
-
-    /**
-     * Setter for <code>public.keyword.tag_id</code>.
-     */
-    public void setTagId(Integer value) {
-        set(2, value);
-    }
-
-    // -------------------------------------------------------------------------
-    // Primary key information
-    // -------------------------------------------------------------------------
 
     /**
      * Getter for <code>public.keyword.user_id</code>.
@@ -93,20 +82,17 @@ public class KeywordRecord extends UpdatableRecordImpl<KeywordRecord> implements
     }
 
     // -------------------------------------------------------------------------
-    // Record4 type implementation
+    // Primary key information
     // -------------------------------------------------------------------------
-
-    /**
-     * Setter for <code>public.keyword.user_id</code>.
-     */
-    public void setUserId(String value) {
-        set(3, value);
-    }
 
     @Override
     public Record1<Integer> key() {
         return (Record1) super.key();
     }
+
+    // -------------------------------------------------------------------------
+    // Record4 type implementation
+    // -------------------------------------------------------------------------
 
     @Override
     public Row4<Integer, String, Integer, String> fieldsRow() {
@@ -196,10 +182,6 @@ public class KeywordRecord extends UpdatableRecordImpl<KeywordRecord> implements
         return this;
     }
 
-    // -------------------------------------------------------------------------
-    // Constructors
-    // -------------------------------------------------------------------------
-
     @Override
     public KeywordRecord value4(String value) {
         setUserId(value);
@@ -213,5 +195,23 @@ public class KeywordRecord extends UpdatableRecordImpl<KeywordRecord> implements
         value3(value3);
         value4(value4);
         return this;
+    }
+
+    // -------------------------------------------------------------------------
+    // Constructors
+    // -------------------------------------------------------------------------
+
+    /**
+     * Getter for <code>public.keyword.tag_id</code>.
+     */
+    public Integer getTagId() {
+        return (Integer) get(2);
+    }
+
+    /**
+     * Setter for <code>public.keyword.user_id</code>.
+     */
+    public void setUserId(String value) {
+        set(3, value);
     }
 }

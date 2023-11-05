@@ -42,6 +42,7 @@ public class TransactionEndpoint {
         @QueryParam("tagIds") @DefaultValue("") String tagIds,
         @QueryParam("from") @DefaultValue("") String fromDate,
         @QueryParam("to") @DefaultValue("") String toDate,
+        @QueryParam("needAttention") @DefaultValue("false") boolean needAttention,
         @QueryParam("page") @DefaultValue("1") int page
     ) {
         LocalDate from = null;
@@ -54,7 +55,7 @@ public class TransactionEndpoint {
         }
         int[] tags = Arrays.stream(tagIds.split(";")).filter(s -> !s.isBlank()).mapToInt(Integer::parseInt).toArray();
 
-        return Response.status(Status.OK).entity(service.getTransactions(query, tags, from, to, page)).build();
+        return Response.status(Status.OK).entity(service.getTransactions(query, tags, from, to, needAttention, page)).build();
     }
 
     @GET

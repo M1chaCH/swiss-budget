@@ -35,40 +35,47 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({"all", "unchecked", "rawtypes"})
 public class MfaCode extends TableImpl<MfaCodeRecord> {
 
+    private static final long serialVersionUID = 1L;
+
     /**
      * The reference instance of <code>public.mfa_code</code>
      */
     public static final MfaCode MFA_CODE = new MfaCode();
-    private static final long serialVersionUID = 1L;
+    private transient RegisteredUser _registeredUser;
+
     /**
      * The column <code>public.mfa_code.id</code>.
      */
     public final TableField<MfaCodeRecord, String> ID = createField(DSL.name("id"), SQLDataType.VARCHAR(250).nullable(false), this, "");
+
     /**
      * The column <code>public.mfa_code.code</code>.
      */
     public final TableField<MfaCodeRecord, Integer> CODE = createField(DSL.name("code"), SQLDataType.INTEGER, this, "");
+
     /**
      * The column <code>public.mfa_code.user_id</code>.
      */
     public final TableField<MfaCodeRecord, String> USER_ID = createField(DSL.name("user_id"), SQLDataType.VARCHAR(250).nullable(false),
         this, "");
+
     /**
      * The column <code>public.mfa_code.expires_at</code>.
      */
     public final TableField<MfaCodeRecord, LocalDateTime> EXPIRES_AT = createField(DSL.name("expires_at"),
         SQLDataType.LOCALDATETIME(6).nullable(false), this, "");
+
     /**
      * The column <code>public.mfa_code.tries</code>.
      */
     public final TableField<MfaCodeRecord, Integer> TRIES = createField(DSL.name("tries"),
         SQLDataType.INTEGER.defaultValue(DSL.field("0", SQLDataType.INTEGER)), this, "");
+
     /**
      * The column <code>public.mfa_code.user_agent</code>.
      */
     public final TableField<MfaCodeRecord, String> USER_AGENT = createField(DSL.name("user_agent"),
         SQLDataType.VARCHAR(250).nullable(false), this, "");
-    private transient RegisteredUser _registeredUser;
 
     private MfaCode(Name alias, Table<MfaCodeRecord> aliased) {
         this(alias, aliased, null);
@@ -103,14 +110,6 @@ public class MfaCode extends TableImpl<MfaCodeRecord> {
         super(child, key, MFA_CODE);
     }
 
-    /**
-     * The class holding records for this type
-     */
-    @Override
-    public Class<MfaCodeRecord> getRecordType() {
-        return MfaCodeRecord.class;
-    }
-
     @Override
     public Schema getSchema() {
         return aliased() ? null : Public.PUBLIC;
@@ -132,12 +131,20 @@ public class MfaCode extends TableImpl<MfaCodeRecord> {
     }
 
     /**
-     * Get the implicit join path to the <code>public.registered_user</code> table.
+     * The class holding records for this type
+     */
+    @Override
+    public Class<MfaCodeRecord> getRecordType() {
+        return MfaCodeRecord.class;
+    }
+
+    /**
+     * Get the implicit join path to the <code>public.registered_user</code>
+     * table.
      */
     public RegisteredUser registeredUser() {
-        if (_registeredUser == null) {
+        if (_registeredUser == null)
             _registeredUser = new RegisteredUser(this, Keys.MFA_CODE__MFA_CODE_USER_ID_FKEY);
-        }
 
         return _registeredUser;
     }
@@ -199,7 +206,8 @@ public class MfaCode extends TableImpl<MfaCodeRecord> {
     }
 
     /**
-     * Convenience mapping calling {@link SelectField#convertFrom(Class, Function)}.
+     * Convenience mapping calling {@link SelectField#convertFrom(Class,
+     * Function)}.
      */
     public <U> SelectField<U> mapping(Class<U> toType,
         Function6<? super String, ? super Integer, ? super String, ? super LocalDateTime, ? super Integer, ? super String, ? extends U> from) {

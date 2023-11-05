@@ -14,7 +14,7 @@
             </div>
 
             <div class="login-form-container">
-                <div *ngIf="subrouteActive else currentRoute" class="page">
+                <div *ngIf="subrouteActive else currentRoute" class="page-container" style="height: 100%;">
                     <router-outlet></router-outlet>
                 </div>
                 <ng-template #currentRoute>

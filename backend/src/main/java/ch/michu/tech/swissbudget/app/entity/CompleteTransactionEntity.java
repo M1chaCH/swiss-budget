@@ -25,5 +25,6 @@ public class CompleteTransactionEntity {
 
     public void addTagDuplicate(TransactionTagDuplicateEntity other) {
         this.tagDuplicates.add(other);
+        this.transaction.setNeedUserAttention(true);
     }
 }

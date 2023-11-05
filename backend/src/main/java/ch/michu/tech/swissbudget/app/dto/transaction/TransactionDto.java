@@ -56,6 +56,8 @@ public class TransactionDto {
     @Nullable
     @ValidateLength(max = 250)
     private String note;
+    @Nullable
+    private boolean needsAttention;
 
     @Nullable
     private List<TransactionTagDuplicateDto> duplicatedTagMatches = new ArrayList<>();
@@ -76,6 +78,7 @@ public class TransactionDto {
         transactionDate = entity.getTransactionDate();
         bankAccount = entity.getBankaccount();
         receiver = entity.getReceiver();
+        needsAttention = entity.getNeedUserAttention();
 
         if (entity.get(TRANSACTION.TAG_ID) != null) {
             tagId = entity.getTagId();
@@ -99,6 +102,7 @@ public class TransactionDto {
         transactionDate = transaction.getTransactionDate();
         bankAccount = transaction.getBankaccount();
         receiver = transaction.getReceiver();
+        needsAttention = transaction.getNeedUserAttention();
 
         if (transaction.get(TRANSACTION.TAG_ID) != null) {
             tagId = transaction.getTagId();
