@@ -1,9 +1,10 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {FormControl} from "@angular/forms";
 import {TransactionService} from "../../../services/transaction.service";
-import {debounceTime, filter, merge, of, switchMap} from "rxjs";
+import {BehaviorSubject, debounceTime, filter, merge, of, skip, switchMap} from "rxjs";
 import * as moment from "moment/moment";
 import {DatePickerComponent} from "../../form/date-picker/date-picker.component";
+import {ApiService} from "../../../services/api.service";
 
 @Component({
   selector: 'app-transaction-filter',
@@ -14,9 +15,7 @@ export class TransactionFilterComponent implements OnInit {
 
   @ViewChild("fromDatePicker", {static: true}) fromDatePicker!: DatePickerComponent;
   @ViewChild("toDatePicker", {static: true}) toDatePicker!: DatePickerComponent;
-
   queryControl: FormControl;
-  tagsControl: FormControl;
   fromControl: FormControl<moment.Moment | null>;
   toControl: FormControl<moment.Moment | null>;
   needAttentionControl: FormControl;
@@ -25,10 +24,20 @@ export class TransactionFilterComponent implements OnInit {
       private transactionService: TransactionService,
   ) {
     this.queryControl = new FormControl("");
-    this.tagsControl = new FormControl("");
+    this._selectedTags = new BehaviorSubject<number[]>([]);
     this.fromControl = new FormControl(null);
     this.toControl = new FormControl(null);
     this.needAttentionControl = new FormControl(false);
+  }
+
+  _selectedTags: BehaviorSubject<number[]>;
+
+  get selectedTags() {
+    return this._selectedTags.getValue();
+  }
+
+  set selectedTags(value: number[]) {
+    this._selectedTags.next(value);
   }
 
   ngOnInit() {
@@ -40,15 +49,17 @@ export class TransactionFilterComponent implements OnInit {
       this.toControl.setValue(currentFilter.to ?? null);
       this.toDatePicker.setValue(currentFilter.to ?? null);
       this.needAttentionControl.setValue(currentFilter.needAttention);
+      this.selectedTags = currentFilter.tags ?? [];
     }
 
     merge(
         this.queryControl.valueChanges,
-        this.tagsControl.valueChanges,
+        this._selectedTags.asObservable(),
         this.fromControl.valueChanges,
         this.toControl.valueChanges,
         this.needAttentionControl.valueChanges,
     ).pipe(
+        skip(1),
         debounceTime(500),
         filter(() => {
           const lastValues = this.transactionService.currentFilter;
@@ -59,17 +70,21 @@ export class TransactionFilterComponent implements OnInit {
           const fromMoment = this.fromControl.valid ? this.fromControl.value ?? null : null;
           const toMoment = this.toControl.valid ? this.toControl.value ?? null : null;
           const needAttention: boolean = this.needAttentionControl.value ?? false;
+          const tagIds = this.selectedTags;
 
-          // false true true false FIXME find why dates are always different
-          console.log(query !== lastValues.query, fromMoment !== lastValues.from, toMoment !== lastValues.to, needAttention !== lastValues.needAttention)
-          return query !== lastValues.query || fromMoment !== lastValues.from || toMoment !== lastValues.to || needAttention !== lastValues.needAttention;
+          return query !== lastValues.query
+              || fromMoment?.format(ApiService.API_DATE_FORMAT) !== lastValues.from?.format(ApiService.API_DATE_FORMAT)
+              || toMoment?.format(ApiService.API_DATE_FORMAT) !== lastValues.to?.format(ApiService.API_DATE_FORMAT)
+              || needAttention !== lastValues.needAttention
+              || JSON.stringify(tagIds) !== JSON.stringify(lastValues.tags);
         }),
         switchMap(() => {
           const fromMoment = this.fromControl.valid ? this.fromControl.value ?? undefined : undefined;
           const toMoment = this.toControl.valid ? this.toControl.value ?? undefined : undefined;
           const query = this.queryControl.value;
+          const tagIds = [...this.selectedTags];
 
-          this.transactionService.reloadFilteredTransactions(query, undefined, fromMoment, toMoment, this.needAttentionControl.value);
+          this.transactionService.reloadFilteredTransactions(query, tagIds, fromMoment, toMoment, this.needAttentionControl.value);
           return of();
         }),
     ).subscribe();
@@ -77,7 +92,7 @@ export class TransactionFilterComponent implements OnInit {
 
   resetFilter() {
     this.queryControl.setValue("");
-    this.tagsControl.setValue("");
+    this.selectedTags = [];
     this.fromControl.setValue(null);
     this.toControl.setValue(null);
     this.fromDatePicker.setValue(null);

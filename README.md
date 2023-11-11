@@ -13,15 +13,14 @@ _should be ready for personal use: 28.04.2024_
 _should be publicly available at: 01.08.2024_
 
 ### Transaction Page
-- [ ] filter
-  - [ ] filter by tags
-  - [ ] improve filter UI design
+- [x] filter
+  - [x] filter by tags
+  - [x] improve filter UI design
 - [ ] transaction list
   - [ ] change tag for transaction
     - change only for this transaction and automatically remove matching keyword. bulk changes can be made in configuration page.
   - [ ] implement transaction splitting
     - you can split a transaction into multiple tags, this way, f.e. cash retrieval can be split into the actual tags. 
-- [ ] 
 
 ### Configuration Page
 - [ ] CRUD for tags, including bulk changes into the past
