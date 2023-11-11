@@ -105,6 +105,19 @@ public class TagService {
         }
     }
 
+    public void changeTag(String transactionId, int tagId) {
+        String userId = supportProvider.get().getUserIdOrThrow();
+
+        if (!transactionProvider.fetchExists(userId, transactionId)) {
+            throw new ResourceNotFoundException("transaction", transactionId);
+        }
+        if (!tagProvider.fetchExists(userId, tagId)) {
+            throw new ResourceNotFoundException("tag", "" + tagId);
+        }
+
+        transactionProvider.updateTransactionWithTagAndRemoveNeedAttention(transactionId, tagId);
+    }
+
     private void addKeyword(RequestSupport support, int tagId, String keyword) {
         support.logInfo(this, "adding keyword to tag: %s->%s", tagId, keyword);
         String userId = support.getUserIdOrThrow();

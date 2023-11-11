@@ -17,8 +17,23 @@ export class TagService {
     this.tags$ = api.get<TagDto[]>(endpoint.TAG, undefined, true).pipe(shareReplay(1));
   }
 
+  /**
+   * assign a tag to a transaction that has no tag yet and optionally add a keyword to match with other transactions
+   * @param transactionId the transaction to update
+   * @param tagId the tag to assign
+   * @param keyword the keyword to add to the tag and check for matches.
+   */
   assignTag(transactionId: string, tagId: number, keyword?: string) {
     return this.api.put(endpoint.ASSIGN_TAG, {transactionId, tagId, keyword}, undefined, true).pipe(
+        tap(() => this.transactionService.reloadCurrentFilteredTransitions()),
+    );
+  }
+
+  /**
+   *
+   */
+  changeTag(transactionId: string, tagId: number) {
+    return this.api.put(endpoint.CHANGE_TAG, {transactionId, tagId}, undefined, true).pipe(
         tap(() => this.transactionService.reloadCurrentFilteredTransitions()),
     );
   }

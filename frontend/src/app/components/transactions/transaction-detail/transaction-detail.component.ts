@@ -6,6 +6,7 @@ import {TransactionService} from "../../../services/transaction.service";
 import {DialogService} from "../../dialog/dialog.service";
 import {AssignTagDialogComponent} from "../../tags/assign-tag-dialog/assign-tag-dialog.component";
 import {ResolveTagConflictDialogComponent} from "../../tags/resolve-tag-conflict-dialog/resolve-tag-conflict-dialog.component";
+import {ChangeTagDialogComponent} from "../../tags/change-tag-dialog/change-tag-dialog.component";
 
 @Component({
   selector: 'app-transaction-detail',
@@ -38,6 +39,10 @@ export class TransactionDetailComponent implements OnInit {
         filter(() => this.aliasInput.valid && this.noteInput.valid),
         switchMap(() => this.saveTransaction()),
     ).subscribe();
+  }
+
+  changeTag() {
+    this.dialogService.openDialog(ChangeTagDialogComponent, this.transaction);
   }
 
   assignTag() {

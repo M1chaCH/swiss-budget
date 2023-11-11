@@ -26,21 +26,12 @@
   align-items: center;
   justify-content: flex-start;
 
-  .tag-container {
-    height: 60px;
-    display: flex;
-    flex-flow: row nowrap;
-    gap: 20px;
-    justify-content: flex-start;
-    align-items: center;
+  app-tag-icon {
+    height: 32px;
+  }
 
-    app-tag-icon {
-      height: 32px;
-    }
-
-    .smaller-text {
-      text-transform: capitalize;
-    }
+  .smaller-text {
+    text-transform: capitalize;
   }
 
   #conflicts {

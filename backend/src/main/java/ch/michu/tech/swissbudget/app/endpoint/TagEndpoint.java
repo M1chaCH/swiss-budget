@@ -1,6 +1,7 @@
 package ch.michu.tech.swissbudget.app.endpoint;
 
 import ch.michu.tech.swissbudget.app.dto.tag.AssignTagDto;
+import ch.michu.tech.swissbudget.app.dto.tag.ChangeTagDto;
 import ch.michu.tech.swissbudget.app.dto.tag.ResolveConflictDto;
 import ch.michu.tech.swissbudget.app.service.TagService;
 import ch.michu.tech.swissbudget.framework.authentication.Authenticated;
@@ -56,6 +57,15 @@ public class TagEndpoint {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response putAssignTag(AssignTagDto dto) {
         service.assignTag(dto.getTransactionId(), dto.getTagId(), dto.getKeyword());
+        return Response.status(Status.NO_CONTENT).build();
+    }
+
+    @PUT
+    @Path("/change_tag")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response putChangeTag(ChangeTagDto dto) {
+        service.changeTag(dto.getTransactionId(), dto.getTagId());
         return Response.status(Status.NO_CONTENT).build();
     }
 

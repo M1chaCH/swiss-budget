@@ -24,19 +24,23 @@
 </div>
 
 <div class="tags">
-    <div class="tag-container">
-        <app-tag-icon [color]="transaction.tag.color"
-                      [icon]="transaction.tag.icon">
-        </app-tag-icon>
-        <span>{{transaction.tag.name}}</span>
-        <span *ngIf="transaction.matchingKeyword" class="smaller-text">({{transaction.matchingKeyword.keyword}})</span>
+    <app-tag-icon [color]="transaction.tag.color"
+                  [icon]="transaction.tag.icon">
+    </app-tag-icon>
+    <span>{{transaction.tag.name}}</span>
+    <span *ngIf="transaction.matchingKeyword" class="smaller-text">({{transaction.matchingKeyword.keyword}})</span>
 
-        <app-button (onClick)="assignTag()"
-                    *ngIf="transaction.tag.defaultTag"
+    <app-button (onClick)="assignTag()"
+                *ngIf="transaction.tag.defaultTag else changeTagTemplate"
+                height="36px">
+        Assign tag
+    </app-button>
+    <ng-template #changeTagTemplate>
+        <app-button (onClick)="changeTag()"
                     height="36px">
-            Assign tag
+            Change Tag
         </app-button>
-    </div>
+    </ng-template>
 
     <ng-template [ngIf]="(transaction.duplicatedTagMatches?.length ?? 0) > 0">
         <span class="smaller-text"

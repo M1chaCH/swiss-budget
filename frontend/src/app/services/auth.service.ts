@@ -1,4 +1,4 @@
-import {inject, Injectable, OnInit} from '@angular/core';
+import {inject, Injectable} from '@angular/core';
 import {ActivatedRouteSnapshot, CanActivateFn, Router, RouterStateSnapshot, UrlTree} from "@angular/router";
 import {BehaviorSubject, catchError, concatMap, Observable, of, tap} from "rxjs";
 import {pages} from "../app-routing.module";
@@ -16,7 +16,7 @@ export type LoginState = "in" | "out" | "loading";
 @Injectable({
   providedIn: 'root',
 })
-export class AuthService implements OnInit {
+export class AuthService {
   static readonly AUTH_TOKEN = "Auth-Token";
   static readonly MFA_PROCESS_ID = "mfa";
   static readonly USER_ID = "id";
@@ -30,9 +30,6 @@ export class AuthService implements OnInit {
       private tokenService: TokenService,
   ) {
     this.loadLoginState();
-  }
-
-  ngOnInit() {
   }
 
   login(mail: string, password: string, stay: boolean = true): Observable<string> {

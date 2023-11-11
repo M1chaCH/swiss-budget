@@ -3,6 +3,7 @@ import {ErrorDto} from "../dtos/ErrorDto";
 import {HttpErrorResponse} from "@angular/common/http";
 import {DisplayErrorDialogComponent} from "../components/display-error/display-error-dialog.component";
 import {DialogService} from "../components/dialog/dialog.service";
+import {TokenService} from "./auth.service";
 
 @Injectable({
   providedIn: 'root'
@@ -11,6 +12,7 @@ export class ErrorService {
 
   constructor(
       private dialogService: DialogService,
+      private tokenService: TokenService,
   ) {
   }
 
@@ -60,13 +62,14 @@ export class ErrorService {
     }
   }
 
-  public handleIfGlobalError(e: ErrorDto): boolean { // TODO implement
+  public handleIfGlobalError(e: ErrorDto): boolean {
     switch (e?.errorKey) {
-      case "AgentNotRegisteredException":
+      case "AgentNotRegisteredException": // TODO implement
         console.warn("should handle agent not registered, but not implemented")
         return true;
       case "InvalidSessionTokenException":
-        console.warn("should handle invalid token, but not implemented")
+        this.tokenService.removeToken();
+        location.reload();
         return true;
       default:
         return false;

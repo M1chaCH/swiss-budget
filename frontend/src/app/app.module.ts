@@ -52,6 +52,7 @@ import {AssignTagDialogComponent} from './components/tags/assign-tag-dialog/assi
 import {TagSelectorComponent} from './components/tags/tag-selector/tag-selector.component';
 import {ResolveTagConflictDialogComponent} from './components/tags/resolve-tag-conflict-dialog/resolve-tag-conflict-dialog.component';
 import {TransactionPreviewComponent} from './components/transactions/transaction-preview/transaction-preview.component';
+import {ChangeTagDialogComponent} from './components/tags/change-tag-dialog/change-tag-dialog.component';
 
 @NgModule({
   declarations: [
@@ -99,6 +100,7 @@ import {TransactionPreviewComponent} from './components/transactions/transaction
     TagSelectorComponent,
     ResolveTagConflictDialogComponent,
     TransactionPreviewComponent,
+    ChangeTagDialogComponent,
   ],
   imports: [
     BrowserModule,

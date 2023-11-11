@@ -1,3 +1,8 @@
+pre {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
 .receiver-and-note-container {
   container: receiverAndNote / inline-size;
   width: 100%;
@@ -7,11 +12,6 @@
     gap: 10px;
     grid-template-columns: repeat(2, calc(50% - 5px));
     grid-template-rows: auto;
-
-    pre {
-      white-space: pre-wrap;
-      word-wrap: break-word;
-    }
 
     p {
       position: relative;
