@@ -70,10 +70,31 @@ public class RegisteredUserRecord extends UpdatableRecordImpl<RegisteredUserReco
     }
 
     /**
+     * Getter for <code>public.registered_user.password</code>.
+     */
+    public String getPassword() {
+        return (String) get(2);
+    }
+
+    /**
+     * Setter for <code>public.registered_user.salt</code>.
+     */
+    public void setSalt(String value) {
+        set(3, value);
+    }
+
+    /**
      * Setter for <code>public.registered_user.id</code>.
      */
     public void setId(String value) {
         set(0, value);
+    }
+
+    /**
+     * Setter for <code>public.registered_user.mail_password</code>.
+     */
+    public void setMailPassword(String value) {
+        set(4, value);
     }
 
     /**
@@ -91,10 +112,10 @@ public class RegisteredUserRecord extends UpdatableRecordImpl<RegisteredUserReco
     }
 
     /**
-     * Getter for <code>public.registered_user.password</code>.
+     * Getter for <code>public.registered_user.username</code>.
      */
-    public String getPassword() {
-        return (String) get(2);
+    public String getUsername() {
+        return (String) get(5);
     }
 
     /**
@@ -105,6 +126,13 @@ public class RegisteredUserRecord extends UpdatableRecordImpl<RegisteredUserReco
     }
 
     /**
+     * Getter for <code>public.registered_user.disabled</code>.
+     */
+    public Boolean getDisabled() {
+        return (Boolean) get(6);
+    }
+
+    /**
      * Setter for <code>public.registered_user.username</code>.
      */
     public void setUsername(String value) {
@@ -112,10 +140,10 @@ public class RegisteredUserRecord extends UpdatableRecordImpl<RegisteredUserReco
     }
 
     /**
-     * Setter for <code>public.registered_user.salt</code>.
+     * Getter for <code>public.registered_user.created_at</code>.
      */
-    public void setSalt(String value) {
-        set(3, value);
+    public LocalDateTime getCreatedAt() {
+        return (LocalDateTime) get(7);
     }
 
     /**
@@ -126,13 +154,6 @@ public class RegisteredUserRecord extends UpdatableRecordImpl<RegisteredUserReco
     }
 
     /**
-     * Setter for <code>public.registered_user.mail_password</code>.
-     */
-    public void setMailPassword(String value) {
-        set(4, value);
-    }
-
-    /**
      * Setter for <code>public.registered_user.created_at</code>.
      */
     public void setCreatedAt(LocalDateTime value) {
@@ -140,31 +161,10 @@ public class RegisteredUserRecord extends UpdatableRecordImpl<RegisteredUserReco
     }
 
     /**
-     * Getter for <code>public.registered_user.username</code>.
-     */
-    public String getUsername() {
-        return (String) get(5);
-    }
-
-    /**
-     * Getter for <code>public.registered_user.disabled</code>.
-     */
-    public Boolean getDisabled() {
-        return (Boolean) get(6);
-    }
-
-    /**
      * Getter for <code>public.registered_user.last_login</code>.
      */
     public LocalDateTime getLastLogin() {
         return (LocalDateTime) get(8);
-    }
-
-    /**
-     * Getter for <code>public.registered_user.created_at</code>.
-     */
-    public LocalDateTime getCreatedAt() {
-        return (LocalDateTime) get(7);
     }
 
     /**

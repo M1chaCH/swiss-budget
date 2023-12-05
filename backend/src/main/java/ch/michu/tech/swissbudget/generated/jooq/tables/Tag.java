@@ -41,6 +41,7 @@ public class Tag extends TableImpl<TagRecord> {
      * The reference instance of <code>public.tag</code>
      */
     public static final Tag TAG = new Tag();
+
     private transient RegisteredUser _registeredUser;
 
     /**

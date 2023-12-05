@@ -1,0 +1,21 @@
+<app-dialog-content-wrapper [title]="data.title ?? 'Please confirm'"
+                            width="400px">
+    <p>{{data.decision}}</p>
+    <ng-container dialogFooter>
+        <app-button (onClick)="close(false)"
+                    design="secondary"
+                    height="60px"
+                    rightIcon="close"
+                    width="150px">
+            {{data.declineLabel ?? 'No'}}
+        </app-button>
+        <app-button (onClick)="close(true)"
+                    [disabled]="acceptDisabled"
+                    design="primary"
+                    height="60px"
+                    rightIcon="check"
+                    width="150px">
+            {{data.acceptLabel ?? 'Yes'}}
+        </app-button>
+    </ng-container>
+</app-dialog-content-wrapper>

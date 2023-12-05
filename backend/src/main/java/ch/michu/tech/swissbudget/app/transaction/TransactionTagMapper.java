@@ -4,6 +4,8 @@ import ch.michu.tech.swissbudget.app.entity.CompleteTransactionEntity;
 import ch.michu.tech.swissbudget.app.entity.TransactionTagDuplicateEntity;
 import ch.michu.tech.swissbudget.app.provider.TagProvider;
 import ch.michu.tech.swissbudget.app.provider.TransactionProvider;
+import ch.michu.tech.swissbudget.app.provider.TransactionProvider.TransactionIdWithTagDuplicateCount;
+import ch.michu.tech.swissbudget.app.provider.TransactionTagDuplicateProvider;
 import ch.michu.tech.swissbudget.framework.error.exception.ResourceNotFoundException;
 import ch.michu.tech.swissbudget.generated.jooq.tables.records.KeywordRecord;
 import ch.michu.tech.swissbudget.generated.jooq.tables.records.TagRecord;
@@ -25,11 +27,14 @@ public class TransactionTagMapper {
 
     private final TagProvider tagProvider;
     private final TransactionProvider transactionProvider;
+    private final TransactionTagDuplicateProvider transactionTagDuplicateProvider;
 
     @Inject
-    public TransactionTagMapper(TagProvider tagProvider, TransactionProvider transactionProvider) {
+    public TransactionTagMapper(TagProvider tagProvider, TransactionProvider transactionProvider,
+        TransactionTagDuplicateProvider transactionTagDuplicateProvider) {
         this.tagProvider = tagProvider;
         this.transactionProvider = transactionProvider;
+        this.transactionTagDuplicateProvider = transactionTagDuplicateProvider;
     }
 
     /**
@@ -101,6 +106,27 @@ public class TransactionTagMapper {
             transaction.getTransaction().setTagId(defaultTag.getId());
             transaction.getTransaction().setNeedUserAttention(true);
             transaction.setTag(defaultTag);
+        }
+    }
+
+    public void handleKeywordsAdded(String userId, int tagId, List<KeywordRecord> keywords) {
+        LOGGER.log(Level.INFO, "handling {0} added keywords for user {1}", new Object[]{keywords.size(), userId});
+
+        for (KeywordRecord addedKeyword : keywords) {
+            List<TransactionIdWithTagDuplicateCount> transactions = transactionProvider.selectTransactionIdsByMatchingKeyword(userId,
+                addedKeyword.getKeyword());
+
+            LOGGER.log(Level.INFO, "updating {0} transaction with new keyword", new Object[]{transactions.size()});
+            for (TransactionIdWithTagDuplicateCount transaction : transactions) {
+                if (transaction.alreadyMappedToAnyTag()) {
+                    transactionTagDuplicateProvider.insertDuplicatedTag(transaction.transactionId(), tagId, addedKeyword.getId());
+                    // transaction now has duplicates -> needs user attention
+                    transactionProvider.updateTransactionNeedsUserAttention(transaction.transactionId(), true);
+                } else {
+                    transactionProvider.updateTransactionWithTagAndRemoveNeedAttention(transaction.transactionId(), tagId,
+                        addedKeyword.getId());
+                }
+            }
         }
     }
 

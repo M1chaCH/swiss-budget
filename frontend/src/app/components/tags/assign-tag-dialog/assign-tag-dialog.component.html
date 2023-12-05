@@ -12,7 +12,7 @@
         <app-checkbox [value]="addKeywordControl" label="Add keyword?" style="align-self: flex-start;"></app-checkbox>
         <div *ngIf="!!addKeywordControl.value">
             <div class="checked-keyword">
-                <app-text-input [value]="keywordControl"
+                <app-text-input [formControl]="keywordControl"
                                 height="60px"
                                 hint="Keyword"
                                 placeholder="Keyword"

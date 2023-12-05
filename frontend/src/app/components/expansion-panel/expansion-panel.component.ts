@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from "@angular/core";
 import {openCloseAnimation} from "../../animations";
 import {Expandable, ExpansionService} from "./expansion.service";
 
@@ -10,6 +10,7 @@ import {Expandable, ExpansionService} from "./expansion.service";
 })
 export class ExpansionPanelComponent implements Expandable, OnInit, OnDestroy {
   @Input() topic?: string;
+  @Input() openIcon: string = "expand_more";
   @Output() openChange: EventEmitter<boolean> = new EventEmitter<boolean>();
 
   constructor(

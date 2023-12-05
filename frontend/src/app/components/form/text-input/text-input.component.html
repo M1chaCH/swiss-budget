@@ -1,4 +1,4 @@
-<div [class.disabled]="value.disabled"
+<div [class.disabled]="control.disabled"
      [class.secondary]="design === 'secondary'"
      [style.height]="height"
      [style.width]="width"
@@ -8,10 +8,12 @@
         (keydown.enter)="submit.emit()"
         (keydown.escape)="cancel.emit()"
         [autocomplete]="password ? 'current-password' : ''"
-        [formControl]="value"
-        [placeholder]="value.hasValidator(Validators.required) ? placeholder + '*' : placeholder"
+        [formControl]="control"
+        [placeholder]="isRequired() ? placeholder + '*' : placeholder"
         [type]="password ? 'password' : 'text'"
         class="textarea"/>
-    <span *ngIf="hint && !value.invalid" class="hint">{{hint}}</span>
-    <span *ngIf="value.invalid && edited" class="hint error">{{errorText}}</span>
+    <span *ngIf="hint && !control.invalid"
+          class="hint">{{hint}}</span>
+    <span *ngIf="control.invalid && edited"
+          class="hint error">{{errorText}}</span>
 </div>

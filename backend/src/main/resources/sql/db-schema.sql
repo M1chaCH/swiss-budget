@@ -56,17 +56,15 @@ CREATE TABLE IF NOT EXISTS tag
 );
 
 -- keywords are used to map transactions to tags
--- if a tag of a keyword is deleted, we don't care, because we want to have a list of keywords,
--- also the ones that are not in a tag currently (can be a reminder for the user to create a
--- new tag with this dangling keyword)
+-- if a tag of a keyword is deleted, we also delete its keywords. no dangling keywords, keywords are always part of tag.
 CREATE TABLE IF NOT EXISTS keyword
 (
     id      serial primary key,
     keyword varchar(250) not null,
-    tag_id  int,
+    tag_id int not null,
     user_id varchar(250) not null,
     FOREIGN KEY (user_id) REFERENCES registered_user (id) ON DELETE CASCADE,
-    FOREIGN KEY (tag_id) REFERENCES tag (id) ON DELETE SET NULL
+    FOREIGN KEY (tag_id) REFERENCES tag (id) ON DELETE CASCADE
 );
 
 -- transactions are the equivalent of a bank transaction

@@ -41,6 +41,7 @@ public class TransactionMetaData extends TableImpl<TransactionMetaDataRecord> {
      * The reference instance of <code>public.transaction_meta_data</code>
      */
     public static final TransactionMetaData TRANSACTION_META_DATA = new TransactionMetaData();
+
     private transient RegisteredUser _registeredUser;
 
     /**

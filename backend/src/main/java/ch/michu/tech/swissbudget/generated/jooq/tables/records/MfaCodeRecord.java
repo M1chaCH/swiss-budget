@@ -65,6 +65,13 @@ public class MfaCodeRecord extends UpdatableRecordImpl<MfaCodeRecord> implements
     }
 
     /**
+     * Getter for <code>public.mfa_code.user_id</code>.
+     */
+    public String getUserId() {
+        return (String) get(2);
+    }
+
+    /**
      * Setter for <code>public.mfa_code.id</code>.
      */
     public void setId(String value) {
@@ -72,10 +79,10 @@ public class MfaCodeRecord extends UpdatableRecordImpl<MfaCodeRecord> implements
     }
 
     /**
-     * Setter for <code>public.mfa_code.expires_at</code>.
+     * Getter for <code>public.mfa_code.expires_at</code>.
      */
-    public void setExpiresAt(LocalDateTime value) {
-        set(3, value);
+    public LocalDateTime getExpiresAt() {
+        return (LocalDateTime) get(3);
     }
 
     /**
@@ -86,24 +93,17 @@ public class MfaCodeRecord extends UpdatableRecordImpl<MfaCodeRecord> implements
     }
 
     /**
-     * Setter for <code>public.mfa_code.tries</code>.
+     * Setter for <code>public.mfa_code.expires_at</code>.
      */
-    public void setTries(Integer value) {
-        set(4, value);
+    public void setExpiresAt(LocalDateTime value) {
+        set(3, value);
     }
 
     /**
-     * Getter for <code>public.mfa_code.user_id</code>.
+     * Getter for <code>public.mfa_code.tries</code>.
      */
-    public String getUserId() {
-        return (String) get(2);
-    }
-
-    /**
-     * Getter for <code>public.mfa_code.expires_at</code>.
-     */
-    public LocalDateTime getExpiresAt() {
-        return (LocalDateTime) get(3);
+    public Integer getTries() {
+        return (Integer) get(4);
     }
 
     /**
@@ -278,10 +278,10 @@ public class MfaCodeRecord extends UpdatableRecordImpl<MfaCodeRecord> implements
     // -------------------------------------------------------------------------
 
     /**
-     * Getter for <code>public.mfa_code.tries</code>.
+     * Setter for <code>public.mfa_code.tries</code>.
      */
-    public Integer getTries() {
-        return (Integer) get(4);
+    public void setTries(Integer value) {
+        set(4, value);
     }
 
     /**

@@ -41,6 +41,7 @@ public class TransactionMail extends TableImpl<TransactionMailRecord> {
      * The reference instance of <code>public.transaction_mail</code>
      */
     public static final TransactionMail TRANSACTION_MAIL = new TransactionMail();
+
     private transient Transaction _transaction;
 
     /**
@@ -151,7 +152,6 @@ public class TransactionMail extends TableImpl<TransactionMailRecord> {
         return Arrays.asList(Keys.TRANSACTION_MAIL__TRANSACTION_MAIL_TRANSACTION_ID_FKEY,
             Keys.TRANSACTION_MAIL__TRANSACTION_MAIL_USER_ID_FKEY);
     }
-    private transient RegisteredUser _registeredUser;
 
     /**
      * The class holding records for this type
@@ -160,6 +160,7 @@ public class TransactionMail extends TableImpl<TransactionMailRecord> {
     public Class<TransactionMailRecord> getRecordType() {
         return TransactionMailRecord.class;
     }
+    private transient RegisteredUser _registeredUser;
 
     /**
      * Get the implicit join path to the <code>public.transaction</code> table.

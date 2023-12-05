@@ -43,6 +43,7 @@ public class Transaction extends TableImpl<TransactionRecord> {
      * The reference instance of <code>public.transaction</code>
      */
     public static final Transaction TRANSACTION = new Transaction();
+
     /**
      * The column <code>public.transaction.need_user_attention</code>.
      */
@@ -160,8 +161,6 @@ public class Transaction extends TableImpl<TransactionRecord> {
         return Arrays.asList(Keys.TRANSACTION__TRANSACTION_TAG_ID_FKEY, Keys.TRANSACTION__TRANSACTION_MATCHING_KEYWORD_ID_FKEY,
             Keys.TRANSACTION__TRANSACTION_USER_ID_FKEY);
     }
-    private transient Keyword _keyword;
-    private transient RegisteredUser _registeredUser;
 
     /**
      * The class holding records for this type
@@ -170,6 +169,8 @@ public class Transaction extends TableImpl<TransactionRecord> {
     public Class<TransactionRecord> getRecordType() {
         return TransactionRecord.class;
     }
+    private transient Keyword _keyword;
+    private transient RegisteredUser _registeredUser;
 
     /**
      * Get the implicit join path to the <code>public.tag</code> table.

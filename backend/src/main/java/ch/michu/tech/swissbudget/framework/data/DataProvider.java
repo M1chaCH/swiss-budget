@@ -20,6 +20,9 @@ import org.jooq.SQLDialect;
 import org.jooq.SelectLimitStep;
 import org.jooq.impl.DSL;
 
+// TODO upgrade to connection pool (keep same connection per request) (either use plain hickari connection pool lib or use helidon integration)
+// TODO use transaction per request (rollback if any error)
+
 /**
  * simple provider for a global db connections via jOOQ.
  */
@@ -64,7 +67,6 @@ public class DataProvider implements OnAppStartupListener {
         }
     }
 
-    // TODO upgrade to connection pool (keep same connection per request) (either use plain hickari connection pool lib or use helidon integration)
     public DSLContext getContext() {
         return dbContext;
     }

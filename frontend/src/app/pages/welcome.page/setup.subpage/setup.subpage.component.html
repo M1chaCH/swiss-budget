@@ -39,12 +39,14 @@
                 <p>Enter your mail address and password. We need these credentials to import your
                     transaction notifications.</p>
                 <form [formGroup]="form.group" class="controls">
-                    <app-text-input (submit)="checkMailCredentials()" [value]="form.mail"
+                    <app-text-input (submit)="checkMailCredentials()"
+                                    [formControl]="form.mail"
                                     errorText="not valid mail address"
                                     height="60px"
                                     placeholder="E-Mail"></app-text-input>
-                    <app-text-input (submit)="checkMailCredentials()" [password]="true"
-                                    [value]="form.mailPassword"
+                    <app-text-input (submit)="checkMailCredentials()"
+                                    [formControl]="form.mailPassword"
+                                    [password]="true"
                                     errorText="password required"
                                     height="60px"
                                     placeholder="Password to mail"></app-text-input>
@@ -121,7 +123,7 @@
                 <p>I recommend you to create a folder in you mail account for all transaction
                     notifications. This will help to keep your inbox clean. Also you should create a
                     rule that moves all transaction notifications to this folder. </p>
-                <app-text-input [value]="form.folderName"
+                <app-text-input [formControl]="form.folderName"
                                 errorText="Has to be between 3 and 32 characters"
                                 height="60px"
                                 placeholder="Folder">
@@ -156,14 +158,14 @@
             <form *appPanelStep class="steps-panel-step">
                 <h3>Define password</h3>
                 <p>Your last step is to define a password for the application.</p>
-                <app-text-input [password]="true"
-                                [value]="form.password"
+                <app-text-input [formControl]="form.password"
+                                [password]="true"
                                 errorText="password required"
                                 height="60px"
                                 placeholder="Password">
                 </app-text-input>
-                <app-text-input [password]="true"
-                                [value]="secondPasswordControl"
+                <app-text-input [formControl]="secondPasswordControl"
+                                [password]="true"
                                 errorText="password required & must match"
                                 height="60px"
                                 placeholder="Repeat password">

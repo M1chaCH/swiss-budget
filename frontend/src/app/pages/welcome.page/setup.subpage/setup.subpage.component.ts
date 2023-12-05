@@ -1,13 +1,12 @@
-import {Component} from '@angular/core';
+import {Component} from "@angular/core";
 import {FormControl, FormGroup, Validators} from "@angular/forms";
-import {ApiService, endpoint} from "../../../services/api.service";
-import {ErrorDto} from "../../../dtos/ErrorDto";
-import {AuthService} from "../../../services/auth.service";
 import {Router} from "@angular/router";
-import {pages} from "../../../app-routing.module";
 import {Observable, of, shareReplay, switchMap} from "rxjs";
+import {pages} from "../../../app-routing.module";
+import {ErrorDto} from "../../../dtos/ErrorDto";
 import {SupportedBankDto} from "../../../dtos/SupportedBankDto";
-import {DialogService} from "../../../components/dialog/dialog.service";
+import {ApiService, endpoint} from "../../../services/api.service";
+import {AuthService} from "../../../services/auth.service";
 
 @Component({
   selector: 'app-setup-subpage',
@@ -30,7 +29,6 @@ export class SetupSubpageComponent {
   constructor(
       private api: ApiService,
       private router: Router,
-      private dialogService: DialogService,
   ) {
     this.form.mail.valueChanges.subscribe(v => this.showGoogleMessage = v.includes("gmail"));
     this.supportedBanks$ = this.api.get<SupportedBankDto[]>(endpoint.SUPPORTED_BANK).pipe(

@@ -63,6 +63,13 @@ public class TagRecord extends UpdatableRecordImpl<TagRecord> implements Record6
     }
 
     /**
+     * Getter for <code>public.tag.color</code>.
+     */
+    public String getColor() {
+        return (String) get(2);
+    }
+
+    /**
      * Setter for <code>public.tag.id</code>.
      */
     public void setId(Integer value) {
@@ -70,10 +77,10 @@ public class TagRecord extends UpdatableRecordImpl<TagRecord> implements Record6
     }
 
     /**
-     * Setter for <code>public.tag.name</code>.
+     * Getter for <code>public.tag.name</code>.
      */
-    public void setName(String value) {
-        set(3, value);
+    public String getName() {
+        return (String) get(3);
     }
 
     /**
@@ -84,24 +91,17 @@ public class TagRecord extends UpdatableRecordImpl<TagRecord> implements Record6
     }
 
     /**
-     * Setter for <code>public.tag.user_id</code>.
+     * Setter for <code>public.tag.name</code>.
      */
-    public void setUserId(String value) {
-        set(4, value);
+    public void setName(String value) {
+        set(3, value);
     }
 
     /**
-     * Getter for <code>public.tag.color</code>.
+     * Getter for <code>public.tag.user_id</code>.
      */
-    public String getColor() {
-        return (String) get(2);
-    }
-
-    /**
-     * Getter for <code>public.tag.name</code>.
-     */
-    public String getName() {
-        return (String) get(3);
+    public String getUserId() {
+        return (String) get(4);
     }
 
     /**
@@ -276,10 +276,10 @@ public class TagRecord extends UpdatableRecordImpl<TagRecord> implements Record6
     // -------------------------------------------------------------------------
 
     /**
-     * Getter for <code>public.tag.user_id</code>.
+     * Setter for <code>public.tag.user_id</code>.
      */
-    public String getUserId() {
-        return (String) get(4);
+    public void setUserId(String value) {
+        set(4, value);
     }
 
     /**

@@ -2,6 +2,7 @@ package ch.michu.tech.swissbudget.app.dto.tag;
 
 import static ch.michu.tech.swissbudget.generated.jooq.tables.Tag.TAG;
 
+import ch.michu.tech.swissbudget.app.dto.keyword.KeywordDto;
 import ch.michu.tech.swissbudget.app.service.DefaultDataService;
 import ch.michu.tech.swissbudget.framework.validation.Nullable;
 import ch.michu.tech.swissbudget.framework.validation.ValidateAmount;

@@ -41,6 +41,7 @@ public class VerifiedDevice extends TableImpl<VerifiedDeviceRecord> {
      * The reference instance of <code>public.verified_device</code>
      */
     public static final VerifiedDevice VERIFIED_DEVICE = new VerifiedDevice();
+
     private transient RegisteredUser _registeredUser;
 
     /**

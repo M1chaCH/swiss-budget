@@ -1,7 +1,10 @@
 <div class="filter-container">
     <div class="filter">
         <div id="query">
-            <app-text-input [value]="queryControl" height="60px" hint="Search receiver, alias & note" placeholder="Search">
+            <app-text-input [formControl]="queryControl"
+                            height="60px"
+                            hint="Search receiver, alias & note"
+                            placeholder="Search">
             </app-text-input>
         </div>
         <div id="tags">

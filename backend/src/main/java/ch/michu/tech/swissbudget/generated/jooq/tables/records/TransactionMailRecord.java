@@ -70,10 +70,31 @@ public class TransactionMailRecord extends UpdatableRecordImpl<TransactionMailRe
     }
 
     /**
+     * Getter for <code>public.transaction_mail.from_mail</code>.
+     */
+    public String getFromMail() {
+        return (String) get(2);
+    }
+
+    /**
+     * Setter for <code>public.transaction_mail.to_mail</code>.
+     */
+    public void setToMail(String value) {
+        set(3, value);
+    }
+
+    /**
      * Setter for <code>public.transaction_mail.id</code>.
      */
     public void setId(String value) {
         set(0, value);
+    }
+
+    /**
+     * Setter for <code>public.transaction_mail.received_date</code>.
+     */
+    public void setReceivedDate(LocalDateTime value) {
+        set(4, value);
     }
 
     /**
@@ -91,10 +112,10 @@ public class TransactionMailRecord extends UpdatableRecordImpl<TransactionMailRe
     }
 
     /**
-     * Getter for <code>public.transaction_mail.from_mail</code>.
+     * Getter for <code>public.transaction_mail.subject</code>.
      */
-    public String getFromMail() {
-        return (String) get(2);
+    public String getSubject() {
+        return (String) get(5);
     }
 
     /**
@@ -105,6 +126,13 @@ public class TransactionMailRecord extends UpdatableRecordImpl<TransactionMailRe
     }
 
     /**
+     * Getter for <code>public.transaction_mail.raw_message</code>.
+     */
+    public String getRawMessage() {
+        return (String) get(6);
+    }
+
+    /**
      * Setter for <code>public.transaction_mail.subject</code>.
      */
     public void setSubject(String value) {
@@ -112,10 +140,10 @@ public class TransactionMailRecord extends UpdatableRecordImpl<TransactionMailRe
     }
 
     /**
-     * Setter for <code>public.transaction_mail.to_mail</code>.
+     * Getter for <code>public.transaction_mail.transaction_id</code>.
      */
-    public void setToMail(String value) {
-        set(3, value);
+    public String getTransactionId() {
+        return (String) get(7);
     }
 
     /**
@@ -126,13 +154,6 @@ public class TransactionMailRecord extends UpdatableRecordImpl<TransactionMailRe
     }
 
     /**
-     * Setter for <code>public.transaction_mail.received_date</code>.
-     */
-    public void setReceivedDate(LocalDateTime value) {
-        set(4, value);
-    }
-
-    /**
      * Setter for <code>public.transaction_mail.transaction_id</code>.
      */
     public void setTransactionId(String value) {
@@ -140,31 +161,10 @@ public class TransactionMailRecord extends UpdatableRecordImpl<TransactionMailRe
     }
 
     /**
-     * Getter for <code>public.transaction_mail.subject</code>.
-     */
-    public String getSubject() {
-        return (String) get(5);
-    }
-
-    /**
-     * Getter for <code>public.transaction_mail.raw_message</code>.
-     */
-    public String getRawMessage() {
-        return (String) get(6);
-    }
-
-    /**
      * Getter for <code>public.transaction_mail.user_id</code>.
      */
     public String getUserId() {
         return (String) get(8);
-    }
-
-    /**
-     * Getter for <code>public.transaction_mail.transaction_id</code>.
-     */
-    public String getTransactionId() {
-        return (String) get(7);
     }
 
     /**

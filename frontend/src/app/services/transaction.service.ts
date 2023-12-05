@@ -1,16 +1,15 @@
-import {Injectable} from '@angular/core';
-import * as moment from 'moment';
-import {BehaviorSubject, firstValueFrom, map, Observable, tap} from "rxjs";
+import {Injectable} from "@angular/core";
+import * as moment from "moment";
+import {firstValueFrom, map, Observable, tap} from "rxjs";
 import {TransactionDto} from "../dtos/TransactionDtos";
 import {ApiService, endpoint} from "./api.service";
+import {EntityCacheService} from "./EntityCacheService";
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root"
 })
-export class TransactionService {
-  transactions$: Observable<TransactionDto[] | undefined>;
-  private readonly transactionUpdater: BehaviorSubject<TransactionDto[] | undefined>;
-
+export class TransactionService extends EntityCacheService<TransactionDto[]> {
+  // latest load was entire page -> next page will contain values.
   private currentMaxLoadedPage: number = 1;
   private pageSize: number = -1;
   private latestLoadedSize: number = -1;
@@ -18,18 +17,8 @@ export class TransactionService {
   constructor(
       private api: ApiService,
   ) {
-    this.transactionUpdater = new BehaviorSubject<TransactionDto[] | undefined>(undefined)
-    this.transactions$ = this.transactionUpdater.asObservable().pipe(
-        tap(result => result?.map(t => t.transactionDate = moment(t.transactionDate))),
-        map(result => this.sortTransactions(result ?? [])),
-    );
-
-    this.api.get<TransactionDto[]>(endpoint.TRANSACTIONS, [], true)
-    .subscribe(transactions => {
-      this.pageSize = transactions.length;
-      this.latestLoadedSize = transactions.length;
-      this.transactionUpdater.next(transactions);
-    })
+    super();
+    super.init();
   }
 
   private _currentFilter: TransactionFilter;
@@ -77,13 +66,12 @@ export class TransactionService {
     .subscribe(transactions => {
       this.currentFilter = {query, tags, from, to, needAttention};
       this.latestLoadedSize = transactions.length;
-      this.transactionUpdater.next(transactions);
+      super.updateData(transactions);
     });
   }
 
   // latest load was entire page -> next page will contain values.
   // if the latest load was smaller than the page size, then this had to be the last page.
-  // if the latest load was larger, then something is wrong in the backend.
   hasNextPage() {
     return this.latestLoadedSize >= this.pageSize;
   }
@@ -93,14 +81,28 @@ export class TransactionService {
     const payload = {
       ...transaction,
       transactionDate: transactionDateString,
-    }
+    };
     return this.api.put(endpoint.TRANSACTIONS, payload, [], true);
   }
 
+  protected override async loadData() {
+    const transactions = await firstValueFrom(this.api.get<TransactionDto[]>(endpoint.TRANSACTIONS, [], true));
+    this.pageSize = transactions.length;
+    this.latestLoadedSize = transactions.length;
+    return transactions;
+  }
+
+  protected override pipeResult(data: Observable<TransactionDto[] | undefined>): Observable<TransactionDto[] | undefined> {
+    return data.pipe(
+        tap(result => result?.map(t => t.transactionDate = moment(t.transactionDate))),
+        map(result => this.sortTransactions(result ?? [])),
+    );
+  }
+
   private insertTransactions(toInsert: TransactionDto[]) {
-    let currentTransactions = this.transactionUpdater.getValue() ?? [];
+    let currentTransactions = super.getCurrent() ?? [];
     currentTransactions = [...currentTransactions, ...toInsert];
-    this.transactionUpdater.next(currentTransactions);
+    super.updateData(currentTransactions);
   }
 
   private sortTransactions(transactions: TransactionDto[]) {
@@ -112,7 +114,7 @@ export class TransactionService {
       if (momentA.isBefore(momentB))
         return 1;
       return -1;
-    })
+    });
   }
 
   private buildFilterParams(query?: string, tags?: number[], from?: moment.Moment, to?: moment.Moment, needAttention?: boolean, page?: number): {

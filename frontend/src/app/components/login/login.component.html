@@ -1,12 +1,12 @@
 <form [formGroup]="form.group">
     <app-text-input (submit)="login()"
-                    [value]="form.mail"
+                    [formControl]="form.mail"
                     errorText="not valid mail address"
                     placeholder="Mail">
     </app-text-input>
     <app-text-input (submit)="login()"
+                    [formControl]="form.password"
                     [password]="true"
-                    [value]="form.password"
                     errorText="password required"
                     placeholder="Password">
     </app-text-input>

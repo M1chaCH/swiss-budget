@@ -16,15 +16,15 @@ _should be publicly available at: 01.08.2024_
 - [x] filter
   - [x] filter by tags
   - [x] improve filter UI design
-- [ ] transaction list
-  - [ ] change tag for transaction
+- [x] transaction list
+  - [x] change tag for transaction
     - change only for this transaction and automatically remove matching keyword. bulk changes can be made in configuration page.
   - [ ] implement transaction splitting
     - you can split a transaction into multiple tags, this way, f.e. cash retrieval can be split into the actual tags. 
 
 ### Configuration Page
 - [ ] CRUD for tags, including bulk changes into the past
-  - [ ] color & icon picker
+  - [x] color & icon picker
   - [ ] add keyword to tag & apply into past
 - [ ] CURD for keywords, including bulk changes into the past
   - [ ] move keyword & its transactions to different tag
@@ -78,4 +78,11 @@ _should be publicly available at: 01.08.2024_
 - [ ] detailed tests that user can't access data he's not allowed to
 - [ ] add support for more banks
   - post, migros. NAB, UBS, ZKB, CS
-- [ ] fronted: handle unauthorized response (send to login) 
+- [ ] fronted: handle unauthorized response (send to login)
+
+(GPT finance adviser)
+- create a custom GPT that knows how SwissBudget works and knows how the datastructures is built
+- let the user ask the custom GPT questions about their money
+  - These are my finances, how would you start investing money and how much would you invest
+  - I live in switzerland. currently still in the same house as my parents, how much money do I have to save to be able to move out.
+  - Do you have any tips on how I can spend less money per year?

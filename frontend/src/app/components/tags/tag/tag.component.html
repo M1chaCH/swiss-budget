@@ -1,0 +1,18 @@
+<app-expansion-panel topic="tag">
+    <div class="tag"
+         expansion-panel-header>
+        <app-tag-icon [color]="tag.color"
+                      [icon]="tag.icon"
+                      class="tag-prop-square">
+        </app-tag-icon>
+
+        <p class="tag-prop">{{ tag.name }}</p>
+        <p class="smaller-text tag-prop"
+           id="keywords">
+            {{ keywordNames }}
+        </p>
+    </div>
+
+    <app-tag-detail [tag]="tag">
+    </app-tag-detail>
+</app-expansion-panel>

@@ -18,7 +18,7 @@ import org.jooq.Query;
 @ApplicationScoped
 public class DefaultDataService {
 
-    public static final String DEFAULT_TAG_COLOR = "#3C3E3C";
+    public static final String DEFAULT_TAG_COLOR = "#3c3e3c";
     public static final String DEFAULT_TAG_ICON = "question_mark";
 
     private final Provider<RequestSupport> supportProvider;

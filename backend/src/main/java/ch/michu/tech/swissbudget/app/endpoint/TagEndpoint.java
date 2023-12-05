@@ -1,8 +1,9 @@
 package ch.michu.tech.swissbudget.app.endpoint;
 
 import ch.michu.tech.swissbudget.app.dto.tag.AssignTagDto;
-import ch.michu.tech.swissbudget.app.dto.tag.ChangeTagDto;
+import ch.michu.tech.swissbudget.app.dto.tag.ChangeTagOfTransactionDto;
 import ch.michu.tech.swissbudget.app.dto.tag.ResolveConflictDto;
+import ch.michu.tech.swissbudget.app.dto.tag.UpdateTagDto;
 import ch.michu.tech.swissbudget.app.service.TagService;
 import ch.michu.tech.swissbudget.framework.authentication.Authenticated;
 import ch.michu.tech.swissbudget.framework.logging.LoggedRequest;
@@ -10,10 +11,12 @@ import ch.michu.tech.swissbudget.framework.validation.ValidateDtos;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
@@ -41,6 +44,30 @@ public class TagEndpoint {
     }
 
     @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response postTag(UpdateTagDto dto) {
+        service.createTag(dto);
+        return Response.status(Status.CREATED).build();
+    }
+
+    @PUT
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response putTag(UpdateTagDto dto) {
+        service.updateTag(dto);
+        return Response.status(Status.NO_CONTENT).build();
+    }
+
+    @DELETE
+    @Path("/{tagId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response deleteTag(@PathParam("tagId") int tagId) {
+        service.deleteTag(tagId);
+        return Response.status(Status.NO_CONTENT).build();
+    }
+
+    @POST
     @Path("/validate_no_keyword")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
@@ -64,7 +91,7 @@ public class TagEndpoint {
     @Path("/change_tag")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response putChangeTag(ChangeTagDto dto) {
+    public Response putChangeTag(ChangeTagOfTransactionDto dto) {
         service.changeTag(dto.getTransactionId(), dto.getTagId());
         return Response.status(Status.NO_CONTENT).build();
     }

@@ -1,20 +1,49 @@
-import {Injectable} from '@angular/core';
-import {Observable, shareReplay, tap} from "rxjs";
+import {Injectable} from "@angular/core";
+import {firstValueFrom, Observable, take, tap} from "rxjs";
 import {TagDto} from "../dtos/TransactionDtos";
 import {ApiService, endpoint} from "./api.service";
+import {EntityCacheService} from "./EntityCacheService";
 import {TransactionService} from "./transaction.service";
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root"
 })
-export class TagService {
-  tags$: Observable<TagDto[] | undefined>;
+export class TagService extends EntityCacheService<TagDto[]> {
 
   constructor(
       private api: ApiService,
       private transactionService: TransactionService,
   ) {
-    this.tags$ = api.get<TagDto[]>(endpoint.TAG, undefined, true).pipe(shareReplay(1));
+    super();
+    super.init();
+  }
+
+  createTag(tagId: number, icon: string, color: string, name: string, keywords: string[]) {
+    this.api.post(endpoint.TAG, {
+      tagId: tagId,
+      icon: icon,
+      color: color,
+      name: name,
+      keywordsToAdd: keywords
+    }, undefined, true)
+    .subscribe(() => this.transactionService.invalidateCache());
+  }
+
+  updateTag(tagId: number, icon: string, color: string, name: string, keywordsToAdd: string[], keywordIdsToDelete: number[]) {
+    this.api.put(endpoint.TAG, {tagId, icon, color, name, keywordsToAdd, keywordIdsToDelete}, undefined, true)
+    .subscribe(() => this.transactionService.invalidateCache());
+  }
+
+  deleteTag(tagId: number) {
+    this.api.delete(`${endpoint.TAG}/${tagId}`, true)
+    .subscribe(() => {
+      const tags = super.getCurrent();
+      if (tags) {
+        tags.splice(tags.findIndex(t => t.id === tagId), 1);
+        super.updateData(tags);
+      }
+      this.transactionService.invalidateCache();
+    });
   }
 
   /**
@@ -25,12 +54,15 @@ export class TagService {
    */
   assignTag(transactionId: string, tagId: number, keyword?: string) {
     return this.api.put(endpoint.ASSIGN_TAG, {transactionId, tagId, keyword}, undefined, true).pipe(
-        tap(() => this.transactionService.reloadCurrentFilteredTransitions()),
+        take(1),
+        tap(() => this.transactionService.reloadFilteredTransactions()),
     );
   }
 
   /**
-   *
+   * change the tag of a transaction
+   * @param transactionId the transaction to change
+   * @param tagId the new tag id
    */
   changeTag(transactionId: string, tagId: number) {
     return this.api.put(endpoint.CHANGE_TAG, {transactionId, tagId}, undefined, true).pipe(
@@ -51,5 +83,9 @@ export class TagService {
 
   isKeywordInTag(keyword: string): Observable<any> {
     return this.api.post(endpoint.VALIDATE_NO_KEYWORD, null, [{key: "keyword", value: keyword}]);
+  }
+
+  protected override async loadData() {
+    return firstValueFrom(this.api.get<TagDto[]>(endpoint.TAG, undefined, true));
   }
 }

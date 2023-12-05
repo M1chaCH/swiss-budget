@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from "@angular/core";
 import {firstValueFrom, map, Observable} from "rxjs";
 import {TagDto} from "../../../dtos/TransactionDtos";
 import {TagService} from "../../../services/tag.service";
@@ -24,7 +24,7 @@ export class TagSelectorComponent implements OnInit {
 
   async ngOnInit() {
     if (!this.allTags$)
-      this.allTags$ = this.tagService.tags$.pipe(
+      this.allTags$ = this.tagService.get$().pipe(
           map(tags => tags?.filter(t => !t.defaultTag)),
       );
 

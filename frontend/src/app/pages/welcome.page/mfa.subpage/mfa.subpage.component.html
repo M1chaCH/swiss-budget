@@ -5,7 +5,9 @@
         <br>
         (You might have to check your spam folder)
     </p>
-    <app-text-input [value]="codeControl" errorText="code not valid" height="60px"
+    <app-text-input [formControl]="codeControl"
+                    errorText="code not valid"
+                    height="60px"
                     placeholder="Code">
     </app-text-input>
     <p *ngIf="errorMessage" class="form-error-message">{{errorMessage}}</p>

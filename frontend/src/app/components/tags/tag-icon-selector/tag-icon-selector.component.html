@@ -1,0 +1,11 @@
+<div class="selector-container">
+    <p class="smaller-text">Icon</p>
+    <div class="icons-container">
+        <button (click)="select(icon)"
+                *ngFor="let icon of icons"
+                [class.selected]="isSelected(icon)"
+                class="icon">
+            <span class="material-symbols-rounded">{{icon}}</span>
+        </button>
+    </div>
+</div>

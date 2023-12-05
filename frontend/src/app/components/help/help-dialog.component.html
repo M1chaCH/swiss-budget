@@ -5,12 +5,16 @@
     </p>
     <form [formGroup]="form.group">
         <div class="message-header">
-            <app-text-input [value]="form.mail" errorText="No valid mail address" height="60px"
+            <app-text-input [formControl]="form.mail"
+                            errorText="No valid mail address"
+                            height="60px"
                             placeholder="Mail"
                             width="220px">
             </app-text-input>
 
-            <app-text-input [value]="form.subject" errorText="Subject required" height="60px"
+            <app-text-input [formControl]="form.subject"
+                            errorText="Subject required"
+                            height="60px"
                             placeholder="Subject"
                             width="220px">
             </app-text-input>

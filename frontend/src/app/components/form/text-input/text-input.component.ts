@@ -1,18 +1,16 @@
-import {Component, EventEmitter, Input, Output} from '@angular/core';
-import {FormControl, Validators} from "@angular/forms";
+import {Component, EventEmitter, Input, Output, Self} from "@angular/core";
+import {ControlValueAccessor, FormControl, NgControl, Validators} from "@angular/forms";
 
 @Component({
   selector: 'app-text-input',
   templateUrl: './text-input.component.html',
   styleUrls: ['./text-input.component.scss']
 })
-// TODO transform to action angular form control
-export class TextInputComponent {
+export class TextInputComponent implements ControlValueAccessor {
   @Input() width: string = "100%"
   @Input() height: string = "100%";
   @Input() design: "primary" | "secondary" = "primary";
 
-  @Input() value!: FormControl;
   @Input() placeholder: string | undefined = "Input";
   @Input() hint: string | undefined;
   @Input() errorText: string = "Field is invalid";
@@ -23,5 +21,35 @@ export class TextInputComponent {
   @Output() cancel: EventEmitter<void> = new EventEmitter<void>();
 
   edited: boolean = false;
-  protected readonly Validators = Validators;
+
+  constructor(
+      @Self() private ngControl: NgControl,
+  ) {
+    ngControl.valueAccessor = this;
+  }
+
+  get control(): FormControl {
+    return this.ngControl.control as FormControl;
+  }
+
+  isRequired() {
+    return this.control.hasValidator(Validators.required);
+  }
+
+  onChange = (_: any) => {
+  };
+
+  onTouched = () => {
+  };
+
+  registerOnChange(fn: any): void {
+    this.onChange = fn;
+  }
+
+  registerOnTouched(fn: any): void {
+    this.onTouched = fn;
+  }
+
+  writeValue(_: any): void {
+  }
 }

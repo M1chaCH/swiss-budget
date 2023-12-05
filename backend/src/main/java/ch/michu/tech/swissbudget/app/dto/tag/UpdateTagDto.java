@@ -1,8 +1,10 @@
 package ch.michu.tech.swissbudget.app.dto.tag;
 
+import ch.michu.tech.swissbudget.framework.validation.Nullable;
 import ch.michu.tech.swissbudget.framework.validation.ValidateAmount;
 import ch.michu.tech.swissbudget.framework.validation.ValidateLength;
 import ch.michu.tech.swissbudget.framework.validation.ValidatedDto;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -17,10 +19,16 @@ import lombok.ToString;
 @ToString
 @EqualsAndHashCode
 @ValidatedDto
-public class ChangeTagDto {
+public class UpdateTagDto {
 
-    @ValidateLength(min = 1)
-    private String transactionId;
     @ValidateAmount(min = 1)
+    @Nullable
     private int tagId;
+    private String icon;
+    private String color;
+    @ValidateLength(min = 3, max = 50)
+    private String name;
+    private List<String> keywordsToAdd;
+    @Nullable
+    private int[] keywordIdsToDelete;
 }

@@ -2,7 +2,7 @@ package ch.michu.tech.swissbudget.app.dto.transaction;
 
 import static ch.michu.tech.swissbudget.generated.jooq.tables.Transaction.TRANSACTION;
 
-import ch.michu.tech.swissbudget.app.dto.tag.KeywordDto;
+import ch.michu.tech.swissbudget.app.dto.keyword.KeywordDto;
 import ch.michu.tech.swissbudget.app.dto.tag.TagDto;
 import ch.michu.tech.swissbudget.app.entity.CompleteTransactionEntity;
 import ch.michu.tech.swissbudget.framework.LocalDateDeserializer;

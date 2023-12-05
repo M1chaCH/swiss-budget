@@ -1,0 +1,18 @@
+<div appPage
+     class="page-container"
+     pageRoute="config"
+     pageTitle="Configure">
+    <h3>Tags / Keywords</h3>
+    <p class="smaller-text">
+        Here you can customize the tags and keywords. <br>
+        <strong>Here you can destroy things</strong>, so think about what you are doing.
+        Head to the <a [routerLink]="helpPage">Help</a> page for more information.
+    </p>
+
+    <div *ngIf="tags$ | async as tags"
+         class="tags-container">
+        <app-tag *ngFor="let tag of tags"
+                 [tag]="tag">
+        </app-tag>
+    </div>
+</div>

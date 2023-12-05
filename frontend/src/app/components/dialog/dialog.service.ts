@@ -1,4 +1,4 @@
-import {Injectable, TemplateRef, Type} from '@angular/core';
+import {Injectable, TemplateRef, Type} from "@angular/core";
 import {DialogComponent} from "./dialog.component";
 
 @Injectable({
@@ -15,10 +15,11 @@ export class DialogService {
     this._dialogHostComponent = component;
   }
 
-  public openDialog(dialog: Type<any> | TemplateRef<any>, data?: any) {
+  public openDialog<I, O>(dialog: Type<any> | TemplateRef<any>, data?: I, onClose?: (output: O | undefined) => void) {
     const dialogOpenItem: AppDialogOpenItem = {
       componentOrTemplate: dialog,
       data: data,
+      onClose: onClose
     };
     this.dialogQueue.push(dialogOpenItem);
     this.openNextDialogIfClosed();
@@ -29,8 +30,9 @@ export class DialogService {
     this.closeCurrentDialog();
   }
 
-  public closeCurrentDialog() {
+  public closeCurrentDialog(output?: any) {
     this._dialogHostComponent.open = false;
+    this.currentDialog?.onClose?.call(this, output);
     setTimeout(() => {
       this.openNextDialogIfClosed();
     }, 300); // to let close animation go by, otherwise user won't notice that there is a SECONDS dialog
@@ -57,4 +59,5 @@ export interface AppDialogComponent<T> {
 export type AppDialogOpenItem = {
   componentOrTemplate: Type<any> | TemplateRef<any>,
   data: any,
+  onClose?: (event: any) => void,
 };

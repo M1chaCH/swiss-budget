@@ -3,7 +3,7 @@ package ch.michu.tech.swissbudget.app.provider;
 import static ch.michu.tech.swissbudget.generated.jooq.tables.Keyword.KEYWORD;
 import static ch.michu.tech.swissbudget.generated.jooq.tables.Tag.TAG;
 
-import ch.michu.tech.swissbudget.app.dto.tag.KeywordDto;
+import ch.michu.tech.swissbudget.app.dto.keyword.KeywordDto;
 import ch.michu.tech.swissbudget.app.dto.tag.TagDto;
 import ch.michu.tech.swissbudget.framework.data.BaseRecordProvider;
 import ch.michu.tech.swissbudget.framework.data.DataProvider;
@@ -105,12 +105,46 @@ public class TagProvider implements BaseRecordProvider<TagRecord, Integer> {
             .where(TAG.USER_ID.eq(userId))
             .fetch(TagDto::new);
 
-        tags.forEach(tag -> db
+        tags.forEach(tag -> tag.setKeywords(db
             .selectFrom(KEYWORD)
             .where(KEYWORD.TAG_ID
                 .eq(tag.getId())
                 .and(KEYWORD.USER_ID.eq(userId)))
-            .fetch(KeywordDto::new));
+            .fetch(KeywordDto::new)));
         return tags;
+    }
+
+    @LoggedStatement
+    public void insertCompleteTag(String userId, String name, String color, String icon, List<String> keywords) {
+        db.transaction(ctx -> {
+            DSLContext dsl = ctx.dsl();
+
+            int tagId = dsl.insertInto(TAG, TAG.NAME, TAG.COLOR, TAG.ICON, TAG.USER_ID)
+                .values(name, color, icon, userId)
+                .returning(TAG.ID)
+                .fetchOne(TAG.ID);
+
+            for (String keyword : keywords) {
+                dsl.insertInto(KEYWORD, KEYWORD.KEYWORD_, KEYWORD.USER_ID, KEYWORD.TAG_ID)
+                    .values(keyword, userId, tagId)
+                    .execute();
+            }
+        });
+    }
+
+    @LoggedStatement
+    public void updateTag(String userId, int tagId, String name, String color, String icon) {
+        db.update(TAG)
+            .set(TAG.ICON, icon)
+            .set(TAG.COLOR, color)
+            .set(TAG.NAME, name)
+            .where(TAG.ID.eq(tagId))
+            .and(TAG.USER_ID.eq(userId))
+            .execute();
+    }
+
+    @LoggedStatement
+    public void deleteById(String userId, int tagId) {
+        db.deleteFrom(TAG).where(TAG.USER_ID.eq(userId)).and(TAG.ID.eq(tagId)).execute();
     }
 }

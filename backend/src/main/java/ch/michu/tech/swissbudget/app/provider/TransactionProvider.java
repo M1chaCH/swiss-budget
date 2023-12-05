@@ -9,7 +9,7 @@ import static ch.michu.tech.swissbudget.generated.jooq.tables.TransactionMetaDat
 import static ch.michu.tech.swissbudget.generated.jooq.tables.TransactionTagDuplicate.TRANSACTION_TAG_DUPLICATE;
 import static org.jooq.impl.DSL.count;
 
-import ch.michu.tech.swissbudget.app.dto.tag.KeywordDto;
+import ch.michu.tech.swissbudget.app.dto.keyword.KeywordDto;
 import ch.michu.tech.swissbudget.app.dto.tag.TagDto;
 import ch.michu.tech.swissbudget.app.dto.transaction.TransactionDto;
 import ch.michu.tech.swissbudget.app.dto.transaction.TransactionTagDuplicateDto;
@@ -468,7 +468,7 @@ public class TransactionProvider implements BaseRecordProvider<TransactionRecord
     public record TransactionIdWithTagDuplicateCount(
         String transactionId,
         int tagDuplicateCount,
-        boolean alreadyMappedToTag
+        boolean alreadyMappedToAnyTag
     ) {
 
     }

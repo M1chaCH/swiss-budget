@@ -1,28 +1,29 @@
-import {ChangeDetectionStrategy, Component, ElementRef, ViewChild} from '@angular/core';
+import {ChangeDetectionStrategy, Component, ElementRef, ViewChild} from "@angular/core";
+import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
+import * as moment from "moment";
 import {map, Observable, tap} from "rxjs";
 import {TransactionDto} from "../../dtos/TransactionDtos";
-import {TransactionService} from "../../services/transaction.service";
-import * as moment from "moment";
 import {ScrollService} from "../../services/scroll.service";
-import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
+import {TransactionService} from "../../services/transaction.service";
 
 @Component({
-  selector: 'app-transaction.page',
-  templateUrl: './transaction.page.component.html',
-  styleUrls: ['./transaction.page.component.scss'],
+  selector: "app-transaction.page",
+  templateUrl: "./transaction.page.component.html",
+  styleUrls: ["./transaction.page.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TransactionPageComponent {
-  @ViewChild('loadMore', {static: false}) loadMoreDiv: ElementRef<HTMLDivElement> | undefined;
-  transactions$: Observable<Map<string, TransactionDto[]>>; // TODO implement lazy loading
+  @ViewChild("loadMore", {static: false}) loadMoreDiv: ElementRef<HTMLDivElement> | undefined;
+  transactions$: Observable<Map<string, TransactionDto[]>>;
   moreTransactionsAvailable: boolean = true;
 
+  // FIXME 1. filter (so that 0 results) 2. leave page 3. invalidate data 4. return page 5. never stops loading
   constructor(
       private service: TransactionService,
       scrollService: ScrollService,
   ) {
     // expects sorted results from backend
-    this.transactions$ = service.transactions$.pipe(
+    this.transactions$ = service.get$().pipe(
         map(t => this.mapTransactionsToDates(t)),
         tap(() => this.moreTransactionsAvailable = service.hasNextPage()),
     );

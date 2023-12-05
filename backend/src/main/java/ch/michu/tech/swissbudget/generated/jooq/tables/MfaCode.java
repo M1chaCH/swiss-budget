@@ -41,6 +41,7 @@ public class MfaCode extends TableImpl<MfaCodeRecord> {
      * The reference instance of <code>public.mfa_code</code>
      */
     public static final MfaCode MFA_CODE = new MfaCode();
+
     private transient RegisteredUser _registeredUser;
 
     /**

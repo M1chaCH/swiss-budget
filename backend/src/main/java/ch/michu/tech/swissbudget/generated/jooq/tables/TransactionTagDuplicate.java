@@ -41,6 +41,7 @@ public class TransactionTagDuplicate extends TableImpl<TransactionTagDuplicateRe
      * The reference instance of <code>public.transaction_tag_duplicate</code>
      */
     public static final TransactionTagDuplicate TRANSACTION_TAG_DUPLICATE = new TransactionTagDuplicate();
+
     private transient Transaction _transaction;
 
     /**
@@ -112,15 +113,13 @@ public class TransactionTagDuplicate extends TableImpl<TransactionTagDuplicateRe
     }
 
     /**
-     * Create an aliased <code>public.transaction_tag_duplicate</code> table
-     * reference
+     * Create an aliased <code>public.transaction_tag_duplicate</code> table reference
      */
     public TransactionTagDuplicate(String alias) {
         this(DSL.name(alias), TRANSACTION_TAG_DUPLICATE);
     }
     /**
-     * Create an aliased <code>public.transaction_tag_duplicate</code> table
-     * reference
+     * Create an aliased <code>public.transaction_tag_duplicate</code> table reference
      */
     public TransactionTagDuplicate(Name alias) {
         this(alias, TRANSACTION_TAG_DUPLICATE);

@@ -93,6 +93,12 @@ a:visited {
   opacity: 0.6;
 }
 
+.icon-button:disabled {
+  pointer-events: none;
+  opacity: 0.6;
+  cursor: default;
+}
+
 .divider {
   height: 1px;
   width: 100%;
@@ -106,7 +112,7 @@ a:visited {
   opacity: 80%;
   overflow: hidden;
   text-overflow: ellipsis;
-  text-align: center;
+  text-align: start;
 }
 
 .loading-icon {
