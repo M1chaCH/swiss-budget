@@ -86,3 +86,5 @@ yarn-error.log
 /bazel-out
 /frontend/node_modules/
 *.iml
+
+microprofile-config.properties
