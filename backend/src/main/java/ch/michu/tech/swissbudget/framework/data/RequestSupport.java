@@ -2,7 +2,7 @@ package ch.michu.tech.swissbudget.framework.data;
 
 import ch.michu.tech.swissbudget.framework.authentication.SessionToken;
 import ch.michu.tech.swissbudget.framework.error.exception.InvalidSessionTokenException;
-import io.helidon.webserver.ServerRequest;
+import io.helidon.webserver.http.ServerRequest;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.core.Context;
@@ -86,7 +86,7 @@ public class RequestSupport {
             instance = this;
         }
 
-        return String.format("r%s@%s: %s", request.requestId(),
+        return String.format("r%s@%s: %s", request.id(),
             instance.getClass().getSimpleName(), formattedMessage.formatted(args));
     }
 }

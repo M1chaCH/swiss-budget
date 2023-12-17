@@ -2,7 +2,7 @@ package ch.michu.tech.swissbudget.framework.authentication;
 
 import ch.michu.tech.swissbudget.framework.data.RequestSupport;
 import ch.michu.tech.swissbudget.framework.error.exception.InvalidSessionTokenException;
-import io.helidon.webserver.ServerRequest;
+import io.helidon.webserver.http.ServerRequest;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;

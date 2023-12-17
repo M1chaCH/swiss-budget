@@ -1,20 +1,20 @@
-import {inject, Injectable} from '@angular/core';
-import {ActivatedRouteSnapshot, CanActivateFn, Router, RouterStateSnapshot, UrlTree} from "@angular/router";
-import {BehaviorSubject, catchError, concatMap, Observable, of, tap} from "rxjs";
-import {pages} from "../app-routing.module";
-import {ApiService, endpoint} from "./api.service";
-import {CookieService} from "ngx-cookie-service";
 import {HttpEvent, HttpHandler, HttpInterceptor, HttpRequest} from "@angular/common/http";
-import {ErrorService} from "./error.service";
-import {MessageDto} from "../dtos/MessageDto";
-import {ErrorDto} from "../dtos/ErrorDto";
+import {inject, Injectable} from "@angular/core";
+import {ActivatedRouteSnapshot, CanActivateFn, Router, RouterStateSnapshot, UrlTree} from "@angular/router";
+import * as moment from "moment";
+import {CookieService} from "ngx-cookie-service";
+import {BehaviorSubject, catchError, concatMap, Observable, of, tap} from "rxjs";
 import {environment} from "../../environments/environment";
-import * as moment from 'moment';
+import {pages} from "../app-routing.module";
+import {ErrorDto} from "../dtos/ErrorDto";
+import {MessageDto} from "../dtos/MessageDto";
+import {ApiService, endpoint} from "./api.service";
+import {ErrorService} from "./error.service";
 
 export type LoginState = "in" | "out" | "loading";
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: "root",
 })
 export class AuthService {
   static readonly AUTH_TOKEN = "Auth-Token";
@@ -44,15 +44,15 @@ export class AuthService {
           if (token) {
             this.tokenService.token = token;
             this.loginSubject.next("in");
-            this.router.navigate([pages.HOME]).then()
+            this.router.navigate([pages.HOME]).then();
           } else {
             const newDeviceError: ErrorDto = response as ErrorDto;
             if (newDeviceError.errorKey === "AgentNotRegisteredException") {
               const processId = newDeviceError.args.processId;
               const userId = newDeviceError.args.userId;
               localStorage.setItem(AuthService.MFA_PROCESS_ID, processId);
-              localStorage.setItem(AuthService.USER_ID, userId)
-              this.router.navigate([pages.LOGIN, pages.login.MFA]).then()
+              localStorage.setItem(AuthService.USER_ID, userId);
+              this.router.navigate([pages.LOGIN, pages.login.MFA]).then();
             }
           }
         }),
@@ -78,7 +78,7 @@ export class AuthService {
           this.tokenService.token = dto.message;
           localStorage.removeItem(AuthService.MFA_PROCESS_ID);
           this.loginSubject.next("in");
-          this.router.navigate([pages.HOME]).then()
+          this.router.navigate([pages.HOME]).then();
         }),
         concatMap(_ => of(true)),
         catchError(_ => of(false))
@@ -101,7 +101,7 @@ export class AuthService {
 }
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: "root",
 })
 export class AuthTokenInterceptor implements HttpInterceptor {
 
@@ -133,10 +133,10 @@ export const authenticationGuard: CanActivateFn = (_route: ActivatedRouteSnapsho
         obs.next(router.parseUrl(pages.LOGIN));
     });
   });
-}
+};
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: "root",
 })
 export class TokenService {
   constructor(

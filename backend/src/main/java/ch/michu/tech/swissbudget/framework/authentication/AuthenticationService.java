@@ -12,8 +12,10 @@ import ch.michu.tech.swissbudget.generated.jooq.tables.RegisteredUser;
 import ch.michu.tech.swissbudget.generated.jooq.tables.VerifiedDevice;
 import ch.michu.tech.swissbudget.generated.jooq.tables.records.RegisteredUserRecord;
 import ch.michu.tech.swissbudget.generated.jooq.tables.records.VerifiedDeviceRecord;
-import io.helidon.webserver.RequestHeaders;
-import io.helidon.webserver.ServerRequest;
+import io.helidon.http.HeaderName;
+import io.helidon.http.HeaderNames;
+import io.helidon.http.ServerRequestHeaders;
+import io.helidon.webserver.http.ServerRequest;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Provider;
@@ -27,9 +29,7 @@ import org.apache.commons.validator.routines.InetAddressValidator;
 public class AuthenticationService {
 
     public static final String HEADER_AUTH_TOKEN = "Auth-Token";
-    public static final String HEADER_X_REAL_IP = "X-Real-IP";
-    public static final String HEADER_X_FORWARDED_FOR = "X-Forwarded-For";
-    public static final String HEADER_USER_AGENT = "User-Agent";
+    public static final HeaderName HEADER_X_REAL_IP = HeaderNames.create("X-Real-IP");
     public static final String INVALID_USER_AGENT = "invalid-user-agent";
 
     private final DataProvider data;
@@ -53,7 +53,7 @@ public class AuthenticationService {
     }
 
     public static String extractRemoteAddress(ServerRequest request) {
-        RequestHeaders headers = request.headers();
+        ServerRequestHeaders headers = request.headers();
 
         Optional<String> xRealIp = headers.first(HEADER_X_REAL_IP);
 
@@ -61,13 +61,13 @@ public class AuthenticationService {
             return xRealIp.get();
         }
 
-        Optional<String> xForwardedFor = headers.first(HEADER_X_FORWARDED_FOR);
+        Optional<String> xForwardedFor = headers.first(HeaderNames.X_FORWARDED_FOR);
         if (xForwardedFor.isPresent() && InetAddressValidator.getInstance()
             .isValid(xForwardedFor.get())) {
             return xForwardedFor.get();
         }
 
-        String remoteAddress = request.remoteAddress();
+        String remoteAddress = request.remotePeer().host();
         if (InetAddressValidator.getInstance().isValid(remoteAddress)) {
             return remoteAddress;
         }
@@ -76,7 +76,7 @@ public class AuthenticationService {
     }
 
     public static String extractUserAgent(ServerRequest request) {
-        return request.headers().first(HEADER_USER_AGENT).orElse(INVALID_USER_AGENT);
+        return request.headers().first(HeaderNames.USER_AGENT).orElse(INVALID_USER_AGENT);
     }
 
     public String login(String mail, String password, boolean stay) {

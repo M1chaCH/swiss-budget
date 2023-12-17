@@ -71,10 +71,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "swissbudget:build:production"
+              "buildTarget": "swissbudget:build:production"
             },
             "development": {
-              "browserTarget": "swissbudget:build:development"
+              "buildTarget": "swissbudget:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -82,7 +82,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "swissbudget:build"
+            "buildTarget": "swissbudget:build"
           }
         },
         "test": {
