@@ -69,7 +69,7 @@ public class RegistrationService {
         String hashedPassword = EncodingUtil.hashString(dto.getPassword(), passwordSalt);
 
         RegisteredUserRecord user = data.getContext().newRecord(RegisteredUser.REGISTERED_USER);
-        user.setId(UUID.randomUUID().toString());
+        user.setId(UUID.randomUUID());
         user.setMail(dto.getMail());
         user.setSalt(passwordSalt);
         user.setPassword(hashedPassword);
@@ -78,11 +78,9 @@ public class RegistrationService {
         user.store();
 
         SupportedBank bank = SupportedBank.fromKey(dto.getBank())
-            .orElseThrow(() -> new BankNotSupportedException(
-                dto.getMail(), dto.getBank()));
+            .orElseThrow(() -> new BankNotSupportedException(dto.getMail(), dto.getBank()));
 
-        TransactionMetaDataRecord metaData = data.getContext()
-            .newRecord(TransactionMetaData.TRANSACTION_META_DATA);
+        TransactionMetaDataRecord metaData = data.getContext().newRecord(TransactionMetaData.TRANSACTION_META_DATA);
         metaData.setUserId(user.getId());
         metaData.setBank(bank.getKey());
         metaData.setTransactionsFolder(dto.getFolderName()); // TODO validate if folter exists
@@ -110,7 +108,7 @@ public class RegistrationService {
         }
 
         RegisteredUserRecord user = data.getContext().newRecord(RegisteredUser.REGISTERED_USER);
-        user.setId(UUID.randomUUID().toString());
+        user.setId(UUID.randomUUID());
         user.setDemoUser(true);
         user.setUsername(dto.getUsername());
 

@@ -34,7 +34,7 @@ export class TagService extends EntityCacheService<TagDto[]> {
     .subscribe(() => this.transactionService.invalidateCache());
   }
 
-  deleteTag(tagId: number) {
+  deleteTag(tagId: string) {
     this.api.delete(`${endpoint.TAG}/${tagId}`, true)
     .subscribe(() => {
       const tags = super.getCurrent();
@@ -52,7 +52,7 @@ export class TagService extends EntityCacheService<TagDto[]> {
    * @param tagId the tag to assign
    * @param keyword the keyword to add to the tag and check for matches.
    */
-  assignTag(transactionId: string, tagId: number, keyword?: string) {
+  assignTag(transactionId: string, tagId: string, keyword?: string) {
     return this.api.put(endpoint.ASSIGN_TAG, {transactionId, tagId, keyword}, undefined, true).pipe(
         take(1),
         tap(() => this.transactionService.reloadFilteredTransactions()),
@@ -64,13 +64,13 @@ export class TagService extends EntityCacheService<TagDto[]> {
    * @param transactionId the transaction to change
    * @param tagId the new tag id
    */
-  changeTag(transactionId: string, tagId: number) {
+  changeTag(transactionId: string, tagId: string) {
     return this.api.put(endpoint.CHANGE_TAG, {transactionId, tagId}, undefined, true).pipe(
         tap(() => this.transactionService.reloadCurrentFilteredTransitions()),
     );
   }
 
-  resolveConflict(transactionId: string, selectedTagId: number, matchingKeywordId: number, removeUnselectedKeywords: boolean): Observable<any> {
+  resolveConflict(transactionId: string, selectedTagId: string, matchingKeywordId: string, removeUnselectedKeywords: boolean): Observable<any> {
     return this.api.put(endpoint.RESOLVE_TAG_CONFLICT, {
       transactionId,
       selectedTagId,

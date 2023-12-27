@@ -22,6 +22,7 @@ import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.Status;
+import java.util.UUID;
 
 @Path("/tag")
 @RequestScoped
@@ -62,7 +63,7 @@ public class TagEndpoint {
     @DELETE
     @Path("/{tagId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteTag(@PathParam("tagId") String tagId) {
+    public Response deleteTag(@PathParam("tagId") UUID tagId) {
         service.deleteTag(tagId);
         return Response.status(Status.NO_CONTENT).build();
     }

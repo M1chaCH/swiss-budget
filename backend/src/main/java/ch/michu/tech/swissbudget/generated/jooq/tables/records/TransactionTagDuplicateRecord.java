@@ -5,6 +5,7 @@ package ch.michu.tech.swissbudget.generated.jooq.tables.records;
 
 
 import ch.michu.tech.swissbudget.generated.jooq.tables.TransactionTagDuplicate;
+import java.util.UUID;
 import org.jooq.Field;
 import org.jooq.Record1;
 import org.jooq.Record4;
@@ -17,7 +18,7 @@ import org.jooq.impl.UpdatableRecordImpl;
  */
 @SuppressWarnings({"all", "unchecked", "rawtypes", "this-escape"})
 public class TransactionTagDuplicateRecord extends UpdatableRecordImpl<TransactionTagDuplicateRecord> implements
-    Record4<String, String, String, String> {
+    Record4<UUID, UUID, UUID, UUID> {
 
     private static final long serialVersionUID = 1L;
 
@@ -31,7 +32,7 @@ public class TransactionTagDuplicateRecord extends UpdatableRecordImpl<Transacti
     /**
      * Create a detached, initialised TransactionTagDuplicateRecord
      */
-    public TransactionTagDuplicateRecord(String id, String transactionId, String tagId, String matchingKeywordId) {
+    public TransactionTagDuplicateRecord(UUID id, UUID transactionId, UUID tagId, UUID matchingKeywordId) {
         super(TransactionTagDuplicate.TRANSACTION_TAG_DUPLICATE);
 
         setId(id);
@@ -44,42 +45,42 @@ public class TransactionTagDuplicateRecord extends UpdatableRecordImpl<Transacti
     /**
      * Getter for <code>public.transaction_tag_duplicate.id</code>.
      */
-    public String getId() {
-        return (String) get(0);
+    public UUID getId() {
+        return (UUID) get(0);
     }
 
     /**
      * Setter for <code>public.transaction_tag_duplicate.id</code>.
      */
-    public void setId(String value) {
+    public void setId(UUID value) {
         set(0, value);
     }
 
     /**
      * Getter for <code>public.transaction_tag_duplicate.transaction_id</code>.
      */
-    public String getTransactionId() {
-        return (String) get(1);
+    public UUID getTransactionId() {
+        return (UUID) get(1);
     }
 
     /**
      * Setter for <code>public.transaction_tag_duplicate.transaction_id</code>.
      */
-    public void setTransactionId(String value) {
+    public void setTransactionId(UUID value) {
         set(1, value);
     }
 
     /**
      * Getter for <code>public.transaction_tag_duplicate.tag_id</code>.
      */
-    public String getTagId() {
-        return (String) get(2);
+    public UUID getTagId() {
+        return (UUID) get(2);
     }
 
     /**
      * Setter for <code>public.transaction_tag_duplicate.tag_id</code>.
      */
-    public void setTagId(String value) {
+    public void setTagId(UUID value) {
         set(2, value);
     }
 
@@ -91,8 +92,8 @@ public class TransactionTagDuplicateRecord extends UpdatableRecordImpl<Transacti
      * Getter for
      * <code>public.transaction_tag_duplicate.matching_keyword_id</code>.
      */
-    public String getMatchingKeywordId() {
-        return (String) get(3);
+    public UUID getMatchingKeywordId() {
+        return (UUID) get(3);
     }
 
     // -------------------------------------------------------------------------
@@ -103,99 +104,99 @@ public class TransactionTagDuplicateRecord extends UpdatableRecordImpl<Transacti
      * Setter for
      * <code>public.transaction_tag_duplicate.matching_keyword_id</code>.
      */
-    public void setMatchingKeywordId(String value) {
+    public void setMatchingKeywordId(UUID value) {
         set(3, value);
     }
 
     @Override
-    public Record1<String> key() {
+    public Record1<UUID> key() {
         return (Record1) super.key();
     }
 
     @Override
-    public Row4<String, String, String, String> fieldsRow() {
+    public Row4<UUID, UUID, UUID, UUID> fieldsRow() {
         return (Row4) super.fieldsRow();
     }
 
     @Override
-    public Row4<String, String, String, String> valuesRow() {
+    public Row4<UUID, UUID, UUID, UUID> valuesRow() {
         return (Row4) super.valuesRow();
     }
 
     @Override
-    public Field<String> field1() {
+    public Field<UUID> field1() {
         return TransactionTagDuplicate.TRANSACTION_TAG_DUPLICATE.ID;
     }
 
     @Override
-    public Field<String> field2() {
+    public Field<UUID> field2() {
         return TransactionTagDuplicate.TRANSACTION_TAG_DUPLICATE.TRANSACTION_ID;
     }
 
     @Override
-    public Field<String> field3() {
+    public Field<UUID> field3() {
         return TransactionTagDuplicate.TRANSACTION_TAG_DUPLICATE.TAG_ID;
     }
 
     @Override
-    public Field<String> field4() {
+    public Field<UUID> field4() {
         return TransactionTagDuplicate.TRANSACTION_TAG_DUPLICATE.MATCHING_KEYWORD_ID;
     }
 
     @Override
-    public String component1() {
+    public UUID component1() {
         return getId();
     }
 
     @Override
-    public String component2() {
+    public UUID component2() {
         return getTransactionId();
     }
 
     @Override
-    public String component3() {
+    public UUID component3() {
         return getTagId();
     }
 
     @Override
-    public String component4() {
+    public UUID component4() {
         return getMatchingKeywordId();
     }
 
     @Override
-    public String value1() {
+    public UUID value1() {
         return getId();
     }
 
     @Override
-    public String value2() {
+    public UUID value2() {
         return getTransactionId();
     }
 
     @Override
-    public String value3() {
+    public UUID value3() {
         return getTagId();
     }
 
     @Override
-    public String value4() {
+    public UUID value4() {
         return getMatchingKeywordId();
     }
 
     @Override
-    public TransactionTagDuplicateRecord value1(String value) {
+    public TransactionTagDuplicateRecord value1(UUID value) {
         setId(value);
         return this;
     }
 
     @Override
-    public TransactionTagDuplicateRecord value2(String value) {
+    public TransactionTagDuplicateRecord value2(UUID value) {
         setTransactionId(value);
         return this;
     }
 
     @Override
-    public TransactionTagDuplicateRecord value3(String value) {
+    public TransactionTagDuplicateRecord value3(UUID value) {
         setTagId(value);
         return this;
     }
@@ -205,13 +206,13 @@ public class TransactionTagDuplicateRecord extends UpdatableRecordImpl<Transacti
     // -------------------------------------------------------------------------
 
     @Override
-    public TransactionTagDuplicateRecord value4(String value) {
+    public TransactionTagDuplicateRecord value4(UUID value) {
         setMatchingKeywordId(value);
         return this;
     }
 
     @Override
-    public TransactionTagDuplicateRecord values(String value1, String value2, String value3, String value4) {
+    public TransactionTagDuplicateRecord values(UUID value1, UUID value2, UUID value3, UUID value4) {
         value1(value1);
         value2(value2);
         value3(value3);

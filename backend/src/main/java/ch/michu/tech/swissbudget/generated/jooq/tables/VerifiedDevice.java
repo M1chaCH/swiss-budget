@@ -9,6 +9,7 @@ import ch.michu.tech.swissbudget.generated.jooq.Public;
 import ch.michu.tech.swissbudget.generated.jooq.tables.records.VerifiedDeviceRecord;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 import java.util.function.Function;
 import org.jooq.Field;
 import org.jooq.ForeignKey;
@@ -42,13 +43,12 @@ public class VerifiedDevice extends TableImpl<VerifiedDeviceRecord> {
     /**
      * The column <code>public.verified_device.id</code>.
      */
-    public final TableField<VerifiedDeviceRecord, String> ID = createField(DSL.name("id"), SQLDataType.VARCHAR(42).nullable(false), this,
-        "");
+    public final TableField<VerifiedDeviceRecord, UUID> ID = createField(DSL.name("id"), SQLDataType.UUID.nullable(false), this, "");
     /**
      * The column <code>public.verified_device.user_id</code>.
      */
-    public final TableField<VerifiedDeviceRecord, String> USER_ID = createField(DSL.name("user_id"),
-        SQLDataType.VARCHAR(42).nullable(false), this, "");
+    public final TableField<VerifiedDeviceRecord, UUID> USER_ID = createField(DSL.name("user_id"), SQLDataType.UUID.nullable(false), this,
+        "");
     /**
      * The column <code>public.verified_device.user_agent</code>.
      */
@@ -167,21 +167,21 @@ public class VerifiedDevice extends TableImpl<VerifiedDeviceRecord> {
     // -------------------------------------------------------------------------
 
     @Override
-    public Row3<String, String, String> fieldsRow() {
+    public Row3<UUID, UUID, String> fieldsRow() {
         return (Row3) super.fieldsRow();
     }
 
     /**
      * Convenience mapping calling {@link SelectField#convertFrom(Function)}.
      */
-    public <U> SelectField<U> mapping(Function3<? super String, ? super String, ? super String, ? extends U> from) {
+    public <U> SelectField<U> mapping(Function3<? super UUID, ? super UUID, ? super String, ? extends U> from) {
         return convertFrom(Records.mapping(from));
     }
 
     /**
      * Convenience mapping calling {@link SelectField#convertFrom(Class, Function)}.
      */
-    public <U> SelectField<U> mapping(Class<U> toType, Function3<? super String, ? super String, ? super String, ? extends U> from) {
+    public <U> SelectField<U> mapping(Class<U> toType, Function3<? super UUID, ? super UUID, ? super String, ? extends U> from) {
         return convertFrom(toType, Records.mapping(from));
     }
 }

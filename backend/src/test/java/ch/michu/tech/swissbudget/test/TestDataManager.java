@@ -14,6 +14,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Map;
 import java.util.Queue;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import lombok.Getter;
@@ -35,7 +36,7 @@ public class TestDataManager {
     private final String setupScriptPath;
 
     private final Queue<String> dataStatements;
-    private final Map<String, String> idAliasWithUUID;
+    private final Map<String, UUID> idAliasWithUUID;
 
     private boolean initialized = false;
 
@@ -89,8 +90,8 @@ public class TestDataManager {
         initialized = true;
     }
 
-    public String getGeneratedId(String alias) {
-        return idAliasWithUUID.getOrDefault(alias, "");
+    public UUID getGeneratedId(String alias) {
+        return idAliasWithUUID.get(alias);
     }
 
     public void applyTestData() throws SQLException {

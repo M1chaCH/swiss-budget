@@ -1,18 +1,18 @@
-import {Component, OnInit} from '@angular/core';
-import {AppDialogComponent, DialogService} from "../../dialog/dialog.service";
-import {TagDto, TransactionDto} from "../../../dtos/TransactionDtos";
-import {catchError, Observable, of} from "rxjs";
+import {Component, OnInit} from "@angular/core";
 import {FormControl} from "@angular/forms";
+import {catchError, Observable, of} from "rxjs";
+import {TagDto, TransactionDto} from "../../../dtos/TransactionDtos";
 import {TagService} from "../../../services/tag.service";
+import {AppDialogComponent, DialogService} from "../../dialog/dialog.service";
 
 @Component({
-  selector: 'app-resolve-tag-conflict-dialog',
-  templateUrl: './resolve-tag-conflict-dialog.component.html',
-  styleUrls: ['./resolve-tag-conflict-dialog.component.scss']
+  selector: "app-resolve-tag-conflict-dialog",
+  templateUrl: "./resolve-tag-conflict-dialog.component.html",
+  styleUrls: ["./resolve-tag-conflict-dialog.component.scss"]
 })
 export class ResolveTagConflictDialogComponent implements AppDialogComponent<TransactionDto>, OnInit {
   data!: TransactionDto;
-  possibleTags?: Observable<TagDto[]>
+  possibleTags?: Observable<TagDto[]>;
   saving: boolean = false;
 
   removeKeywordsControl: FormControl = new FormControl(true);
@@ -45,17 +45,17 @@ export class ResolveTagConflictDialogComponent implements AppDialogComponent<Tra
     this.dialogService.closeCurrentDialog();
   }
 
-  save() {
+  save() { // TODO remove logs
     if (this.selectedTag) {
       let matchingKeywordId;
       if (this.selectedTag.id === this.transaction.tagId) {
-        matchingKeywordId = this.transaction.matchingKeywordId ?? -1;
-        console.log("already matched", matchingKeywordId)
+        matchingKeywordId = this.transaction.matchingKeywordId ?? "";
+        console.log("already matched", matchingKeywordId);
       } else {
         matchingKeywordId = this.transaction.duplicatedTagMatches!
         .filter(duplicate => duplicate.tag.id === this.selectedTag!.id)
         .map(duplicate => duplicate.matchingKeyword.id)[0];
-        console.log("from dups", matchingKeywordId)
+        console.log("from dups", matchingKeywordId);
       }
 
       this.tagService.resolveConflict(

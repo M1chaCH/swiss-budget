@@ -10,6 +10,7 @@ import ch.michu.tech.swissbudget.generated.jooq.tables.records.TransactionRecord
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 import java.util.function.Function;
 import org.jooq.Check;
 import org.jooq.Field;
@@ -45,7 +46,7 @@ public class Transaction extends TableImpl<TransactionRecord> {
     /**
      * The column <code>public.transaction.id</code>.
      */
-    public final TableField<TransactionRecord, String> ID = createField(DSL.name("id"), SQLDataType.VARCHAR(42).nullable(false), this, "");
+    public final TableField<TransactionRecord, UUID> ID = createField(DSL.name("id"), SQLDataType.UUID.nullable(false), this, "");
     /**
      * The column <code>public.transaction.expense</code>.
      */
@@ -74,12 +75,12 @@ public class Transaction extends TableImpl<TransactionRecord> {
     /**
      * The column <code>public.transaction.tag_id</code>.
      */
-    public final TableField<TransactionRecord, String> TAG_ID = createField(DSL.name("tag_id"), SQLDataType.VARCHAR(42), this, "");
+    public final TableField<TransactionRecord, UUID> TAG_ID = createField(DSL.name("tag_id"), SQLDataType.UUID, this, "");
     /**
      * The column <code>public.transaction.matching_keyword_id</code>.
      */
-    public final TableField<TransactionRecord, String> MATCHING_KEYWORD_ID = createField(DSL.name("matching_keyword_id"),
-        SQLDataType.VARCHAR(42), this, "");
+    public final TableField<TransactionRecord, UUID> MATCHING_KEYWORD_ID = createField(DSL.name("matching_keyword_id"), SQLDataType.UUID,
+        this, "");
     /**
      * The column <code>public.transaction.need_user_attention</code>.
      */
@@ -96,8 +97,7 @@ public class Transaction extends TableImpl<TransactionRecord> {
     /**
      * The column <code>public.transaction.user_id</code>.
      */
-    public final TableField<TransactionRecord, String> USER_ID = createField(DSL.name("user_id"), SQLDataType.VARCHAR(42).nullable(false),
-        this, "");
+    public final TableField<TransactionRecord, UUID> USER_ID = createField(DSL.name("user_id"), SQLDataType.UUID.nullable(false), this, "");
     private transient Tag _tag;
     private transient Keyword _keyword;
     private transient RegisteredUser _registeredUser;
@@ -243,7 +243,7 @@ public class Transaction extends TableImpl<TransactionRecord> {
     // -------------------------------------------------------------------------
 
     @Override
-    public Row12<String, Boolean, LocalDate, String, Double, String, String, String, Boolean, String, String, String> fieldsRow() {
+    public Row12<UUID, Boolean, LocalDate, String, Double, String, UUID, UUID, Boolean, String, String, UUID> fieldsRow() {
         return (Row12) super.fieldsRow();
     }
 
@@ -251,7 +251,7 @@ public class Transaction extends TableImpl<TransactionRecord> {
      * Convenience mapping calling {@link SelectField#convertFrom(Function)}.
      */
     public <U> SelectField<U> mapping(
-        Function12<? super String, ? super Boolean, ? super LocalDate, ? super String, ? super Double, ? super String, ? super String, ? super String, ? super Boolean, ? super String, ? super String, ? super String, ? extends U> from) {
+        Function12<? super UUID, ? super Boolean, ? super LocalDate, ? super String, ? super Double, ? super String, ? super UUID, ? super UUID, ? super Boolean, ? super String, ? super String, ? super UUID, ? extends U> from) {
         return convertFrom(Records.mapping(from));
     }
 
@@ -259,7 +259,7 @@ public class Transaction extends TableImpl<TransactionRecord> {
      * Convenience mapping calling {@link SelectField#convertFrom(Class, Function)}.
      */
     public <U> SelectField<U> mapping(Class<U> toType,
-        Function12<? super String, ? super Boolean, ? super LocalDate, ? super String, ? super Double, ? super String, ? super String, ? super String, ? super Boolean, ? super String, ? super String, ? super String, ? extends U> from) {
+        Function12<? super UUID, ? super Boolean, ? super LocalDate, ? super String, ? super Double, ? super String, ? super UUID, ? super UUID, ? super Boolean, ? super String, ? super String, ? super UUID, ? extends U> from) {
         return convertFrom(toType, Records.mapping(from));
     }
 }

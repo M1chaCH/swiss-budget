@@ -11,6 +11,7 @@ import jakarta.inject.Inject;
 import jakarta.inject.Provider;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 @ApplicationScoped
 public class TransactionService {
@@ -26,7 +27,7 @@ public class TransactionService {
         this.provider = provider;
     }
 
-    public List<TransactionDto> getTransactions(String query, String[] tagIds, LocalDate from, LocalDate to, boolean needAttention,
+    public List<TransactionDto> getTransactions(String query, UUID[] tagIds, LocalDate from, LocalDate to, boolean needAttention,
         int page) {
         return provider.selectTransactionsWithDependenciesWithFilterWithPageAsDto(supportProvider.get().getUserIdOrThrow(),
             query, tagIds, from, to, needAttention, page);

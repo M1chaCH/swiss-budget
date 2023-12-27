@@ -26,6 +26,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -52,7 +53,7 @@ public class TransactionImporter {
     private final TransactionTagMapper tagMapper;
     private final int userAmountMultithreadingBreakpoint;
 
-    private final List<String> currentUserIds = new ArrayList<>();
+    private final List<UUID> currentUserIds = new ArrayList<>();
 
     @Inject
     public TransactionImporter(TransactionProvider transactionProvider, TransactionMailProvider transactionMailProvider,
@@ -77,7 +78,7 @@ public class TransactionImporter {
      * @param userId the user to import the transactions for
      * @return the imported transactions
      */
-    public List<CompleteTransactionEntity> importTransactions(String userId) {
+    public List<CompleteTransactionEntity> importTransactions(UUID userId) {
         return importTransactions(transactionProvider.selectImportDataByUserId(userId));
     }
 
@@ -213,7 +214,7 @@ public class TransactionImporter {
         return Math.min(Math.max(1, userCount / 4), 12);
     }
 
-    private synchronized void handleAlreadyStarted(String userId) {
+    private synchronized void handleAlreadyStarted(UUID userId) {
         if (currentUserIds.contains(userId)) {
             throw new ProcessAlreadyStartedException("transaction import");
         }

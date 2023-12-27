@@ -1,15 +1,15 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, OnInit, ViewChild} from "@angular/core";
 import {FormControl} from "@angular/forms";
-import {TransactionService} from "../../../services/transaction.service";
-import {BehaviorSubject, debounceTime, filter, merge, of, skip, switchMap} from "rxjs";
 import * as moment from "moment/moment";
-import {DatePickerComponent} from "../../form/date-picker/date-picker.component";
+import {BehaviorSubject, debounceTime, filter, merge, of, skip, switchMap} from "rxjs";
 import {ApiService} from "../../../services/api.service";
+import {TransactionService} from "../../../services/transaction.service";
+import {DatePickerComponent} from "../../form/date-picker/date-picker.component";
 
 @Component({
-  selector: 'app-transaction-filter',
-  templateUrl: './transaction-filter.component.html',
-  styleUrls: ['./transaction-filter.component.scss']
+  selector: "app-transaction-filter",
+  templateUrl: "./transaction-filter.component.html",
+  styleUrls: ["./transaction-filter.component.scss"]
 })
 export class TransactionFilterComponent implements OnInit {
 
@@ -24,19 +24,19 @@ export class TransactionFilterComponent implements OnInit {
       private transactionService: TransactionService,
   ) {
     this.queryControl = new FormControl("");
-    this._selectedTags = new BehaviorSubject<number[]>([]);
+    this._selectedTags = new BehaviorSubject<string[]>([]);
     this.fromControl = new FormControl(null);
     this.toControl = new FormControl(null);
     this.needAttentionControl = new FormControl(false);
   }
 
-  _selectedTags: BehaviorSubject<number[]>;
+  _selectedTags: BehaviorSubject<string[]>;
 
   get selectedTags() {
     return this._selectedTags.getValue();
   }
 
-  set selectedTags(value: number[]) {
+  set selectedTags(value: string[]) {
     this._selectedTags.next(value);
   }
 

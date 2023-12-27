@@ -59,7 +59,7 @@ export class TransactionService extends EntityCacheService<TransactionDto[]> {
     this.reloadFilteredTransactions(this.currentFilter?.query, this.currentFilter?.tags, this.currentFilter?.from, this.currentFilter?.to, this.currentFilter?.needAttention);
   }
 
-  reloadFilteredTransactions(query?: string, tags?: number[], from?: moment.Moment, to?: moment.Moment, needAttention?: boolean) {
+  reloadFilteredTransactions(query?: string, tags?: string[], from?: moment.Moment, to?: moment.Moment, needAttention?: boolean) {
     const params = this.buildFilterParams(query, tags, from, to, needAttention, 1);
 
     this.api.get<TransactionDto[]>(endpoint.TRANSACTIONS, params, true)
@@ -117,7 +117,7 @@ export class TransactionService extends EntityCacheService<TransactionDto[]> {
     });
   }
 
-  private buildFilterParams(query?: string, tags?: number[], from?: moment.Moment, to?: moment.Moment, needAttention?: boolean, page?: number): {
+  private buildFilterParams(query?: string, tags?: string[], from?: moment.Moment, to?: moment.Moment, needAttention?: boolean, page?: number): {
     key: string,
     value: string
   }[] {
@@ -138,7 +138,7 @@ export class TransactionService extends EntityCacheService<TransactionDto[]> {
 
 export type TransactionFilter = {
   query?: string,
-  tags?: number[],
+  tags?: string[],
   from?: moment.Moment,
   to?: moment.Moment,
   needAttention?: boolean

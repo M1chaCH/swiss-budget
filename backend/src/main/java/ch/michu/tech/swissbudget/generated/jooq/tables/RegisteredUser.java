@@ -10,6 +10,7 @@ import ch.michu.tech.swissbudget.generated.jooq.tables.records.RegisteredUserRec
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 import java.util.function.Function;
 import org.jooq.Field;
 import org.jooq.ForeignKey;
@@ -43,8 +44,7 @@ public class RegisteredUser extends TableImpl<RegisteredUserRecord> {
     /**
      * The column <code>public.registered_user.id</code>.
      */
-    public final TableField<RegisteredUserRecord, String> ID = createField(DSL.name("id"), SQLDataType.VARCHAR(42).nullable(false), this,
-        "");
+    public final TableField<RegisteredUserRecord, UUID> ID = createField(DSL.name("id"), SQLDataType.UUID.nullable(false), this, "");
     /**
      * The column <code>public.registered_user.mail</code>.
      */
@@ -89,8 +89,8 @@ public class RegisteredUser extends TableImpl<RegisteredUserRecord> {
     /**
      * The column <code>public.registered_user.current_session</code>.
      */
-    public final TableField<RegisteredUserRecord, String> CURRENT_SESSION = createField(DSL.name("current_session"),
-        SQLDataType.VARCHAR(250), this, "");
+    public final TableField<RegisteredUserRecord, UUID> CURRENT_SESSION = createField(DSL.name("current_session"), SQLDataType.UUID, this,
+        "");
     /**
      * The column <code>public.registered_user.demo_user</code>.
      */
@@ -197,7 +197,7 @@ public class RegisteredUser extends TableImpl<RegisteredUserRecord> {
     // -------------------------------------------------------------------------
 
     @Override
-    public Row11<String, String, String, String, String, String, Boolean, LocalDateTime, LocalDateTime, String, Boolean> fieldsRow() {
+    public Row11<UUID, String, String, String, String, String, Boolean, LocalDateTime, LocalDateTime, UUID, Boolean> fieldsRow() {
         return (Row11) super.fieldsRow();
     }
 
@@ -205,7 +205,7 @@ public class RegisteredUser extends TableImpl<RegisteredUserRecord> {
      * Convenience mapping calling {@link SelectField#convertFrom(Function)}.
      */
     public <U> SelectField<U> mapping(
-        Function11<? super String, ? super String, ? super String, ? super String, ? super String, ? super String, ? super Boolean, ? super LocalDateTime, ? super LocalDateTime, ? super String, ? super Boolean, ? extends U> from) {
+        Function11<? super UUID, ? super String, ? super String, ? super String, ? super String, ? super String, ? super Boolean, ? super LocalDateTime, ? super LocalDateTime, ? super UUID, ? super Boolean, ? extends U> from) {
         return convertFrom(Records.mapping(from));
     }
 
@@ -213,7 +213,7 @@ public class RegisteredUser extends TableImpl<RegisteredUserRecord> {
      * Convenience mapping calling {@link SelectField#convertFrom(Class, Function)}.
      */
     public <U> SelectField<U> mapping(Class<U> toType,
-        Function11<? super String, ? super String, ? super String, ? super String, ? super String, ? super String, ? super Boolean, ? super LocalDateTime, ? super LocalDateTime, ? super String, ? super Boolean, ? extends U> from) {
+        Function11<? super UUID, ? super String, ? super String, ? super String, ? super String, ? super String, ? super Boolean, ? super LocalDateTime, ? super LocalDateTime, ? super UUID, ? super Boolean, ? extends U> from) {
         return convertFrom(toType, Records.mapping(from));
     }
 }

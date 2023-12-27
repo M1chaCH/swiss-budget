@@ -6,6 +6,7 @@ package ch.michu.tech.swissbudget.generated.jooq.tables.records;
 
 import ch.michu.tech.swissbudget.generated.jooq.tables.TransactionMetaData;
 import java.time.LocalDateTime;
+import java.util.UUID;
 import org.jooq.Field;
 import org.jooq.Record1;
 import org.jooq.Record5;
@@ -18,7 +19,7 @@ import org.jooq.impl.UpdatableRecordImpl;
  */
 @SuppressWarnings({"all", "unchecked", "rawtypes", "this-escape"})
 public class TransactionMetaDataRecord extends UpdatableRecordImpl<TransactionMetaDataRecord> implements
-    Record5<String, String, LocalDateTime, LocalDateTime, String> {
+    Record5<UUID, String, LocalDateTime, LocalDateTime, String> {
 
     private static final long serialVersionUID = 1L;
 
@@ -32,7 +33,7 @@ public class TransactionMetaDataRecord extends UpdatableRecordImpl<TransactionMe
     /**
      * Create a detached, initialised TransactionMetaDataRecord
      */
-    public TransactionMetaDataRecord(String userId, String bank, LocalDateTime lastImportCheck, LocalDateTime lastImportedTransaction,
+    public TransactionMetaDataRecord(UUID userId, String bank, LocalDateTime lastImportCheck, LocalDateTime lastImportedTransaction,
         String transactionsFolder) {
         super(TransactionMetaData.TRANSACTION_META_DATA);
 
@@ -47,14 +48,14 @@ public class TransactionMetaDataRecord extends UpdatableRecordImpl<TransactionMe
     /**
      * Getter for <code>public.transaction_meta_data.user_id</code>.
      */
-    public String getUserId() {
-        return (String) get(0);
+    public UUID getUserId() {
+        return (UUID) get(0);
     }
 
     /**
      * Setter for <code>public.transaction_meta_data.user_id</code>.
      */
-    public void setUserId(String value) {
+    public void setUserId(UUID value) {
         set(0, value);
     }
 
@@ -125,22 +126,22 @@ public class TransactionMetaDataRecord extends UpdatableRecordImpl<TransactionMe
     }
 
     @Override
-    public Record1<String> key() {
+    public Record1<UUID> key() {
         return (Record1) super.key();
     }
 
     @Override
-    public Row5<String, String, LocalDateTime, LocalDateTime, String> fieldsRow() {
+    public Row5<UUID, String, LocalDateTime, LocalDateTime, String> fieldsRow() {
         return (Row5) super.fieldsRow();
     }
 
     @Override
-    public Row5<String, String, LocalDateTime, LocalDateTime, String> valuesRow() {
+    public Row5<UUID, String, LocalDateTime, LocalDateTime, String> valuesRow() {
         return (Row5) super.valuesRow();
     }
 
     @Override
-    public Field<String> field1() {
+    public Field<UUID> field1() {
         return TransactionMetaData.TRANSACTION_META_DATA.USER_ID;
     }
 
@@ -165,7 +166,7 @@ public class TransactionMetaDataRecord extends UpdatableRecordImpl<TransactionMe
     }
 
     @Override
-    public String component1() {
+    public UUID component1() {
         return getUserId();
     }
 
@@ -190,7 +191,7 @@ public class TransactionMetaDataRecord extends UpdatableRecordImpl<TransactionMe
     }
 
     @Override
-    public String value1() {
+    public UUID value1() {
         return getUserId();
     }
 
@@ -215,7 +216,7 @@ public class TransactionMetaDataRecord extends UpdatableRecordImpl<TransactionMe
     }
 
     @Override
-    public TransactionMetaDataRecord value1(String value) {
+    public TransactionMetaDataRecord value1(UUID value) {
         setUserId(value);
         return this;
     }
@@ -249,7 +250,7 @@ public class TransactionMetaDataRecord extends UpdatableRecordImpl<TransactionMe
     }
 
     @Override
-    public TransactionMetaDataRecord values(String value1, String value2, LocalDateTime value3, LocalDateTime value4, String value5) {
+    public TransactionMetaDataRecord values(UUID value1, String value2, LocalDateTime value3, LocalDateTime value4, String value5) {
         value1(value1);
         value2(value2);
         value3(value3);

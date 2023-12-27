@@ -1,8 +1,15 @@
 package ch.michu.tech.swissbudget.app.endpoint;
 
+import static ch.michu.tech.swissbudget.generated.jooq.tables.RegisteredUser.REGISTERED_USER;
+import static ch.michu.tech.swissbudget.generated.jooq.tables.TransactionMetaData.TRANSACTION_META_DATA;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import ch.michu.tech.swissbudget.app.dto.RegisterDto;
+import ch.michu.tech.swissbudget.app.exception.UserAlreadyExistsException;
+import ch.michu.tech.swissbudget.generated.jooq.tables.records.RegisteredUserRecord;
+import ch.michu.tech.swissbudget.generated.jooq.tables.records.TransactionMetaDataRecord;
 import ch.michu.tech.swissbudget.test.AppIntegrationTest;
 import ch.michu.tech.swissbudget.test.TestDataManager;
 import ch.michu.tech.swissbudget.test.TestHttpClient;
@@ -11,8 +18,10 @@ import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.Status;
 import org.junit.jupiter.api.Test;
 
-@SuppressWarnings("resource") // will be closed by TestHttpClient
+@SuppressWarnings("resource") // all responses will be closed by TestHttpClient
 class RegisterEndpointTest extends AppIntegrationTest {
+
+    private boolean changesData = false;
 
     @Inject
     public RegisterEndpointTest(TestDataManager data, TestHttpClient client) {
@@ -21,9 +30,35 @@ class RegisterEndpointTest extends AppIntegrationTest {
 
     @Test
     void register_happy() {
-        RegisterDto registerDto = new RegisterDto("test-folder", "raiffeisen", "test@mail.com", "test", "mailPass");
+        changesData = true;
+        final String expectedMail = "test@mail.com";
+        RegisterDto registerDto = new RegisterDto("test-folder", "raiffeisen", expectedMail, "test", "mailPass");
 
         Response r = client.create().unauthorized().post(registerDto);
         assertEquals(Status.OK.getStatusCode(), r.getStatus());
+
+        RegisteredUserRecord user = data.getDsl().fetchOne(REGISTERED_USER, REGISTERED_USER.MAIL.eq(expectedMail));
+        assertNotNull(user);
+
+        TransactionMetaDataRecord metaData = data.getDsl().fetchOne(TRANSACTION_META_DATA, TRANSACTION_META_DATA.USER_ID.eq(user.getId()));
+        assertNotNull(metaData);
+        assertEquals("raiffeisen", metaData.getBank());
+        assertEquals("test-folder", metaData.getTransactionsFolder());
+    }
+
+    @Test
+    void register_alreadyExists() {
+        changesData = false;
+        RegisterDto registerDto = new RegisterDto("test-folder", "raiffeisen", TestHttpClient.ROOT_MAIL, "test", "mailPass");
+
+        Response r = client.create().unauthorized().post(registerDto);
+        assertEquals(Status.BAD_REQUEST.getStatusCode(), r.getStatus());
+        String body = r.readEntity(String.class);
+        assertTrue(body.contains(UserAlreadyExistsException.class.getSimpleName()));
+    }
+
+    @Override
+    protected boolean wasDataModified() {
+        return changesData;
     }
 }

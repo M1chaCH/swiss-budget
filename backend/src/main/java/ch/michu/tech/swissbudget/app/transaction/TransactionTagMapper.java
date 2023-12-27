@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -44,7 +45,7 @@ public class TransactionTagMapper {
      * @param transactions the transactions to modify
      * @param store        whether the changes should be stored in the DB or not (would store using a transaction)
      */
-    public void mapAll(String userId, List<CompleteTransactionEntity> transactions, boolean store) {
+    public void mapAll(UUID userId, List<CompleteTransactionEntity> transactions, boolean store) {
         LOGGER.log(Level.INFO, "mapping {0} transactions for user {1}", new Object[]{transactions.size(), userId});
         Map<TagRecord, List<KeywordRecord>> tags = tagProvider.selectTagsWithKeywordsByUserId(userId);
 
@@ -64,7 +65,7 @@ public class TransactionTagMapper {
      * @param userId      the user to select the tags from
      * @param transaction the transaction to modify
      */
-    public void map(String userId, CompleteTransactionEntity transaction) {
+    public void map(UUID userId, CompleteTransactionEntity transaction) {
         LOGGER.log(Level.INFO, "mapping tags to transaction for {0}", new Object[]{userId});
         Map<TagRecord, List<KeywordRecord>> tags = tagProvider.selectTagsWithKeywordsByUserId(userId);
         map(transaction, tags, getDefaultTag(tags.keySet()));
@@ -109,7 +110,7 @@ public class TransactionTagMapper {
         }
     }
 
-    public void handleKeywordsAdded(String userId, String tagId, List<KeywordRecord> keywords) {
+    public void handleKeywordsAdded(UUID userId, UUID tagId, List<KeywordRecord> keywords) {
         LOGGER.log(Level.INFO, "handling {0} added keywords for user {1}", new Object[]{keywords.size(), userId});
 
         for (KeywordRecord addedKeyword : keywords) {

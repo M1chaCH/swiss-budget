@@ -15,13 +15,14 @@ import jakarta.inject.Inject;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Record;
 
 @SuppressWarnings("unused")
 @ApplicationScoped
-public class TagProvider implements BaseRecordProvider<TagRecord, String> {
+public class TagProvider implements BaseRecordProvider<TagRecord, UUID> {
 
     public static final String DEFAULT_TAG_COLOR = "#3c3e3c";
     public static final String DEFAULT_TAG_ICON = "question_mark";
@@ -56,7 +57,7 @@ public class TagProvider implements BaseRecordProvider<TagRecord, String> {
 
     @Override
     @LoggedStatement
-    public boolean fetchExists(String userId, String recordId) {
+    public boolean fetchExists(UUID userId, UUID recordId) {
         Condition userCondition = TAG.USER_ID.eq(userId);
         Condition tagCondition = TAG.ID.eq(recordId);
 
@@ -81,7 +82,7 @@ public class TagProvider implements BaseRecordProvider<TagRecord, String> {
      * @return a map of Tags with their Keywords
      */
     @LoggedStatement
-    public Map<TagRecord, List<KeywordRecord>> selectTagsWithKeywordsByUserId(String userId) {
+    public Map<TagRecord, List<KeywordRecord>> selectTagsWithKeywordsByUserId(UUID userId) {
         Map<TagRecord, List<KeywordRecord>> entities = new HashMap<>();
 
         List<TagRecord> tags = db.selectFrom(TAG)
@@ -102,7 +103,7 @@ public class TagProvider implements BaseRecordProvider<TagRecord, String> {
     }
 
     @LoggedStatement
-    public List<TagDto> selectTagsWithKeywordsByUserIdAsDto(String userId) {
+    public List<TagDto> selectTagsWithKeywordsByUserIdAsDto(UUID userId) {
         List<TagDto> tags = db
             .selectFrom(TAG)
             .where(TAG.USER_ID.eq(userId))
@@ -118,11 +119,11 @@ public class TagProvider implements BaseRecordProvider<TagRecord, String> {
     }
 
     @LoggedStatement
-    public void insertCompleteTag(String userId, String name, String color, String icon, List<String> keywords) {
+    public void insertCompleteTag(UUID userId, String name, String color, String icon, List<String> keywords) {
         db.transaction(ctx -> {
             DSLContext dsl = ctx.dsl();
 
-            String tagId = dsl.insertInto(TAG, TAG.NAME, TAG.COLOR, TAG.ICON, TAG.USER_ID)
+            UUID tagId = dsl.insertInto(TAG, TAG.NAME, TAG.COLOR, TAG.ICON, TAG.USER_ID)
                 .values(name, color, icon, userId)
                 .returning(TAG.ID)
                 .fetchOne(TAG.ID);
@@ -136,7 +137,7 @@ public class TagProvider implements BaseRecordProvider<TagRecord, String> {
     }
 
     @LoggedStatement
-    public void updateTag(String userId, String tagId, String name, String color, String icon) {
+    public void updateTag(UUID userId, UUID tagId, String name, String color, String icon) {
         db.update(TAG)
             .set(TAG.ICON, icon)
             .set(TAG.COLOR, color)
@@ -147,7 +148,7 @@ public class TagProvider implements BaseRecordProvider<TagRecord, String> {
     }
 
     @LoggedStatement
-    public void deleteById(String userId, String tagId) {
+    public void deleteById(UUID userId, UUID tagId) {
         db.deleteFrom(TAG).where(TAG.USER_ID.eq(userId)).and(TAG.ID.eq(tagId)).execute();
     }
 }

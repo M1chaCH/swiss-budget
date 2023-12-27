@@ -45,10 +45,10 @@ public class MfaService {
         this.mfaCodeTryLimit = mfaCodeTryLimit;
     }
 
-    public String startMfaProcess(RegisteredUserRecord user) {
+    public UUID startMfaProcess(RegisteredUserRecord user) {
         String currentUserAgent = AuthenticationService.extractUserAgent(
             supportProvider.get().getRequest());
-        String mfaProcessId = UUID.randomUUID().toString();
+        UUID mfaProcessId = UUID.randomUUID();
         MfaCodeRecord mfaCodeRecord = data.getContext().newRecord(MfaCode.MFA_CODE);
         mfaCodeRecord.setCode(random.nextInt(100000, 999999));
         mfaCodeRecord.setExpiresAt(LocalDateTime.now().plusHours(mfaCodeLifetime));
@@ -70,7 +70,7 @@ public class MfaService {
         return mfaProcessId;
     }
 
-    public void verifyMfaCode(String userId, String mfaProcessId, int providedCode) {
+    public void verifyMfaCode(UUID userId, UUID mfaProcessId, int providedCode) {
         RequestSupport support = supportProvider.get();
         String currentUserAgent = AuthenticationService.extractUserAgent(support.getRequest());
         DSLContext dataContext = data.getContext();
@@ -95,7 +95,7 @@ public class MfaService {
         }
 
         VerifiedDeviceRecord verifiedDeviceRecord = dataContext.newRecord(VerifiedDevice.VERIFIED_DEVICE);
-        verifiedDeviceRecord.setId(UUID.randomUUID().toString());
+        verifiedDeviceRecord.setId(UUID.randomUUID());
         verifiedDeviceRecord.setUserAgent(currentUserAgent);
         verifiedDeviceRecord.setUserId(userId);
         verifiedDeviceRecord.store();

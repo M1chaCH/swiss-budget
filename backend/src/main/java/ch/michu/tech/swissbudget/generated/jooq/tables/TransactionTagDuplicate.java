@@ -9,6 +9,7 @@ import ch.michu.tech.swissbudget.generated.jooq.Public;
 import ch.michu.tech.swissbudget.generated.jooq.tables.records.TransactionTagDuplicateRecord;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 import java.util.function.Function;
 import org.jooq.Field;
 import org.jooq.ForeignKey;
@@ -42,24 +43,24 @@ public class TransactionTagDuplicate extends TableImpl<TransactionTagDuplicateRe
     /**
      * The column <code>public.transaction_tag_duplicate.id</code>.
      */
-    public final TableField<TransactionTagDuplicateRecord, String> ID = createField(DSL.name("id"), SQLDataType.VARCHAR(42).nullable(false),
-        this, "");
+    public final TableField<TransactionTagDuplicateRecord, UUID> ID = createField(DSL.name("id"), SQLDataType.UUID.nullable(false), this,
+        "");
     /**
      * The column <code>public.transaction_tag_duplicate.transaction_id</code>.
      */
-    public final TableField<TransactionTagDuplicateRecord, String> TRANSACTION_ID = createField(DSL.name("transaction_id"),
-        SQLDataType.VARCHAR(42).nullable(false), this, "");
+    public final TableField<TransactionTagDuplicateRecord, UUID> TRANSACTION_ID = createField(DSL.name("transaction_id"),
+        SQLDataType.UUID.nullable(false), this, "");
     /**
      * The column <code>public.transaction_tag_duplicate.tag_id</code>.
      */
-    public final TableField<TransactionTagDuplicateRecord, String> TAG_ID = createField(DSL.name("tag_id"),
-        SQLDataType.VARCHAR(42).nullable(false), this, "");
+    public final TableField<TransactionTagDuplicateRecord, UUID> TAG_ID = createField(DSL.name("tag_id"), SQLDataType.UUID.nullable(false),
+        this, "");
     /**
      * The column
      * <code>public.transaction_tag_duplicate.matching_keyword_id</code>.
      */
-    public final TableField<TransactionTagDuplicateRecord, String> MATCHING_KEYWORD_ID = createField(DSL.name("matching_keyword_id"),
-        SQLDataType.VARCHAR(42).nullable(false), this, "");
+    public final TableField<TransactionTagDuplicateRecord, UUID> MATCHING_KEYWORD_ID = createField(DSL.name("matching_keyword_id"),
+        SQLDataType.UUID.nullable(false), this, "");
     private transient Transaction _transaction;
     private transient Tag _tag;
     private transient Keyword _keyword;
@@ -199,14 +200,14 @@ public class TransactionTagDuplicate extends TableImpl<TransactionTagDuplicateRe
     // -------------------------------------------------------------------------
 
     @Override
-    public Row4<String, String, String, String> fieldsRow() {
+    public Row4<UUID, UUID, UUID, UUID> fieldsRow() {
         return (Row4) super.fieldsRow();
     }
 
     /**
      * Convenience mapping calling {@link SelectField#convertFrom(Function)}.
      */
-    public <U> SelectField<U> mapping(Function4<? super String, ? super String, ? super String, ? super String, ? extends U> from) {
+    public <U> SelectField<U> mapping(Function4<? super UUID, ? super UUID, ? super UUID, ? super UUID, ? extends U> from) {
         return convertFrom(Records.mapping(from));
     }
 
@@ -214,7 +215,7 @@ public class TransactionTagDuplicate extends TableImpl<TransactionTagDuplicateRe
      * Convenience mapping calling {@link SelectField#convertFrom(Class, Function)}.
      */
     public <U> SelectField<U> mapping(Class<U> toType,
-        Function4<? super String, ? super String, ? super String, ? super String, ? extends U> from) {
+        Function4<? super UUID, ? super UUID, ? super UUID, ? super UUID, ? extends U> from) {
         return convertFrom(toType, Records.mapping(from));
     }
 }

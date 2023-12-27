@@ -27,6 +27,7 @@ import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.Status;
 import java.time.Instant;
 import java.time.ZoneId;
+import java.util.UUID;
 import org.json.JSONObject;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.Order;
@@ -53,8 +54,9 @@ class AuthenticationEndpointTest extends AppIntegrationTest {
     @Test
     @Order(0)
     void login_happy() {
+        wroteData = false;
         LoginDto dto = new LoginDto(new CredentialDto("user@test.ch", "test"), true);
-        String userId = data.getGeneratedId("usr_tst");
+        UUID userId = data.getGeneratedId("usr_tst");
 
         long executedAtSeconds = Instant.now().atZone(ZoneId.of("CET")).toEpochSecond();
         Response response = client.getTarget()
@@ -80,11 +82,11 @@ class AuthenticationEndpointTest extends AppIntegrationTest {
 
         response.close();
         validationResponse.close();
-        wroteData = false;
     }
 
     @Test
     void login_disabledUser() {
+        wroteData = false;
         LoginDto dto = new LoginDto(new CredentialDto("locked@test.ch", "test"), true);
 
         Response response = client.getTarget()
@@ -97,6 +99,7 @@ class AuthenticationEndpointTest extends AppIntegrationTest {
 
     @Test
     void login_newAgent() {
+        wroteData = true;
         mailSender.clearSentMails();
         LoginDto dto = new LoginDto(new CredentialDto("user@test.ch", "test"), true);
 
@@ -112,11 +115,11 @@ class AuthenticationEndpointTest extends AppIntegrationTest {
         assertEquals(1, mailSender.getMessages().size());
 
         response.close();
-        wroteData = true;
     }
 
     @Test
     void login_invalidCredentials() {
+        wroteData = false;
         LoginDto userWrongDto = new LoginDto(new CredentialDto("not-a-user", "test"), true);
         LoginDto passwordWrongDto = new LoginDto(new CredentialDto("user@test.ch", "blah"), true);
 
@@ -136,14 +139,14 @@ class AuthenticationEndpointTest extends AppIntegrationTest {
 
         urResponse.close();
         pwResponse.close();
-        wroteData = false;
     }
 
     @Test
     @Order(1)
     void mfa_happy() {
+        wroteData = true;
         mailSender.clearSentMails();
-        String expectedUserId = data.getGeneratedId("usr_tst");
+        UUID expectedUserId = data.getGeneratedId("usr_tst");
         LoginDto loginDto = new LoginDto(new CredentialDto("user@test.ch", "test"), false);
         Response loginResponse = client.getTarget()
             .path("/auth")
@@ -183,11 +186,11 @@ class AuthenticationEndpointTest extends AppIntegrationTest {
         mfaResponse.close();
         validationResponse.close();
         secondMfaResponse.close();
-        wroteData = true;
     }
 
     @Test
     void mfa_maxTries() {
+        wroteData = true;
         LoginDto loginDto = new LoginDto(new CredentialDto("user@test.ch", "test"), false);
         Response loginResponse = client.getTarget()
             .path("/auth")
@@ -235,12 +238,12 @@ class AuthenticationEndpointTest extends AppIntegrationTest {
         secondMfaResponse.close();
         thridMfaResponse.close();
         fourthMfaResponse.close();
-        wroteData = true;
     }
 
     @Test
     void mfa_deviceChanged() {
-        String expectedUserId = data.getGeneratedId("usr_tst");
+        wroteData = false;
+        UUID expectedUserId = data.getGeneratedId("usr_tst");
         LoginDto loginDto = new LoginDto(new CredentialDto("user@test.ch", "test"), false);
         Response loginResponse = client.getTarget()
             .path("/auth")
@@ -270,11 +273,11 @@ class AuthenticationEndpointTest extends AppIntegrationTest {
         loginResponse.close();
         mfaResponse.close();
         secondMfaResponse.close();
-        wroteData = false;
     }
 
     @Test
     void validation_agentChange() {
+        wroteData = false;
         LoginDto dto = new LoginDto(new CredentialDto("user@test.ch", "test"), false);
 
         Response response = client.getTarget()
@@ -295,11 +298,11 @@ class AuthenticationEndpointTest extends AppIntegrationTest {
 
         response.close();
         validationResponse.close();
-        wroteData = false;
     }
 
     @Test
     void validation_ipCheck() {
+        wroteData = false;
         LoginDto dto = new LoginDto(new CredentialDto("user@test.ch", "test"), false);
 
         Response response = client.getTarget()
@@ -361,15 +364,15 @@ class AuthenticationEndpointTest extends AppIntegrationTest {
         validationForwardedForInvalid.close();
         validationForwardedForValid.close();
         validationDefaultInvalid.close();
-        wroteData = false;
     }
 
     protected MfaCodeDto loadMfaCode(String responseJSON) {
         JSONObject args = new JSONObject(responseJSON).optJSONObject("args");
         assertNotNull(args);
-        String processId = args.optString("processId");
-        assertNotNull(processId);
-        String userId = args.optString("userId");
+        String processIdString = args.optString("processId");
+        assertNotNull(processIdString);
+        UUID processId = UUID.fromString(processIdString);
+        UUID userId = UUID.fromString(args.optString("userId"));
 
         MfaCodeRecord mfaCode = data.getDsl().fetch(MFA_CODE, MFA_CODE.USER_ID.eq(userId)).getFirst();
         assertEquals(processId, mfaCode.getId());

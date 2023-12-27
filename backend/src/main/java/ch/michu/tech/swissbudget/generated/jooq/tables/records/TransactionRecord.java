@@ -6,6 +6,7 @@ package ch.michu.tech.swissbudget.generated.jooq.tables.records;
 
 import ch.michu.tech.swissbudget.generated.jooq.tables.Transaction;
 import java.time.LocalDate;
+import java.util.UUID;
 import org.jooq.Field;
 import org.jooq.Record1;
 import org.jooq.Record12;
@@ -18,7 +19,7 @@ import org.jooq.impl.UpdatableRecordImpl;
  */
 @SuppressWarnings({"all", "unchecked", "rawtypes", "this-escape"})
 public class TransactionRecord extends UpdatableRecordImpl<TransactionRecord> implements
-    Record12<String, Boolean, LocalDate, String, Double, String, String, String, Boolean, String, String, String> {
+    Record12<UUID, Boolean, LocalDate, String, Double, String, UUID, UUID, Boolean, String, String, UUID> {
 
     private static final long serialVersionUID = 1L;
 
@@ -32,8 +33,8 @@ public class TransactionRecord extends UpdatableRecordImpl<TransactionRecord> im
     /**
      * Create a detached, initialised TransactionRecord
      */
-    public TransactionRecord(String id, Boolean expense, LocalDate transactionDate, String bankaccount, Double amount, String receiver,
-        String tagId, String matchingKeywordId, Boolean needUserAttention, String alias, String note, String userId) {
+    public TransactionRecord(UUID id, Boolean expense, LocalDate transactionDate, String bankaccount, Double amount, String receiver,
+        UUID tagId, UUID matchingKeywordId, Boolean needUserAttention, String alias, String note, UUID userId) {
         super(Transaction.TRANSACTION);
 
         setId(id);
@@ -54,14 +55,14 @@ public class TransactionRecord extends UpdatableRecordImpl<TransactionRecord> im
     /**
      * Getter for <code>public.transaction.id</code>.
      */
-    public String getId() {
-        return (String) get(0);
+    public UUID getId() {
+        return (UUID) get(0);
     }
 
     /**
      * Setter for <code>public.transaction.id</code>.
      */
-    public void setId(String value) {
+    public void setId(UUID value) {
         set(0, value);
     }
 
@@ -138,28 +139,28 @@ public class TransactionRecord extends UpdatableRecordImpl<TransactionRecord> im
     /**
      * Getter for <code>public.transaction.tag_id</code>.
      */
-    public String getTagId() {
-        return (String) get(6);
+    public UUID getTagId() {
+        return (UUID) get(6);
     }
 
     /**
      * Setter for <code>public.transaction.tag_id</code>.
      */
-    public void setTagId(String value) {
+    public void setTagId(UUID value) {
         set(6, value);
     }
 
     /**
      * Getter for <code>public.transaction.matching_keyword_id</code>.
      */
-    public String getMatchingKeywordId() {
-        return (String) get(7);
+    public UUID getMatchingKeywordId() {
+        return (UUID) get(7);
     }
 
     /**
      * Setter for <code>public.transaction.matching_keyword_id</code>.
      */
-    public void setMatchingKeywordId(String value) {
+    public void setMatchingKeywordId(UUID value) {
         set(7, value);
     }
 
@@ -212,8 +213,8 @@ public class TransactionRecord extends UpdatableRecordImpl<TransactionRecord> im
     /**
      * Getter for <code>public.transaction.user_id</code>.
      */
-    public String getUserId() {
-        return (String) get(11);
+    public UUID getUserId() {
+        return (UUID) get(11);
     }
 
     // -------------------------------------------------------------------------
@@ -223,27 +224,27 @@ public class TransactionRecord extends UpdatableRecordImpl<TransactionRecord> im
     /**
      * Setter for <code>public.transaction.user_id</code>.
      */
-    public void setUserId(String value) {
+    public void setUserId(UUID value) {
         set(11, value);
     }
 
     @Override
-    public Record1<String> key() {
+    public Record1<UUID> key() {
         return (Record1) super.key();
     }
 
     @Override
-    public Row12<String, Boolean, LocalDate, String, Double, String, String, String, Boolean, String, String, String> fieldsRow() {
+    public Row12<UUID, Boolean, LocalDate, String, Double, String, UUID, UUID, Boolean, String, String, UUID> fieldsRow() {
         return (Row12) super.fieldsRow();
     }
 
     @Override
-    public Row12<String, Boolean, LocalDate, String, Double, String, String, String, Boolean, String, String, String> valuesRow() {
+    public Row12<UUID, Boolean, LocalDate, String, Double, String, UUID, UUID, Boolean, String, String, UUID> valuesRow() {
         return (Row12) super.valuesRow();
     }
 
     @Override
-    public Field<String> field1() {
+    public Field<UUID> field1() {
         return Transaction.TRANSACTION.ID;
     }
 
@@ -273,12 +274,12 @@ public class TransactionRecord extends UpdatableRecordImpl<TransactionRecord> im
     }
 
     @Override
-    public Field<String> field7() {
+    public Field<UUID> field7() {
         return Transaction.TRANSACTION.TAG_ID;
     }
 
     @Override
-    public Field<String> field8() {
+    public Field<UUID> field8() {
         return Transaction.TRANSACTION.MATCHING_KEYWORD_ID;
     }
 
@@ -298,12 +299,12 @@ public class TransactionRecord extends UpdatableRecordImpl<TransactionRecord> im
     }
 
     @Override
-    public Field<String> field12() {
+    public Field<UUID> field12() {
         return Transaction.TRANSACTION.USER_ID;
     }
 
     @Override
-    public String component1() {
+    public UUID component1() {
         return getId();
     }
 
@@ -333,12 +334,12 @@ public class TransactionRecord extends UpdatableRecordImpl<TransactionRecord> im
     }
 
     @Override
-    public String component7() {
+    public UUID component7() {
         return getTagId();
     }
 
     @Override
-    public String component8() {
+    public UUID component8() {
         return getMatchingKeywordId();
     }
 
@@ -358,12 +359,12 @@ public class TransactionRecord extends UpdatableRecordImpl<TransactionRecord> im
     }
 
     @Override
-    public String component12() {
+    public UUID component12() {
         return getUserId();
     }
 
     @Override
-    public String value1() {
+    public UUID value1() {
         return getId();
     }
 
@@ -393,12 +394,12 @@ public class TransactionRecord extends UpdatableRecordImpl<TransactionRecord> im
     }
 
     @Override
-    public String value7() {
+    public UUID value7() {
         return getTagId();
     }
 
     @Override
-    public String value8() {
+    public UUID value8() {
         return getMatchingKeywordId();
     }
 
@@ -418,12 +419,12 @@ public class TransactionRecord extends UpdatableRecordImpl<TransactionRecord> im
     }
 
     @Override
-    public String value12() {
+    public UUID value12() {
         return getUserId();
     }
 
     @Override
-    public TransactionRecord value1(String value) {
+    public TransactionRecord value1(UUID value) {
         setId(value);
         return this;
     }
@@ -459,13 +460,13 @@ public class TransactionRecord extends UpdatableRecordImpl<TransactionRecord> im
     }
 
     @Override
-    public TransactionRecord value7(String value) {
+    public TransactionRecord value7(UUID value) {
         setTagId(value);
         return this;
     }
 
     @Override
-    public TransactionRecord value8(String value) {
+    public TransactionRecord value8(UUID value) {
         setMatchingKeywordId(value);
         return this;
     }
@@ -493,14 +494,14 @@ public class TransactionRecord extends UpdatableRecordImpl<TransactionRecord> im
     // -------------------------------------------------------------------------
 
     @Override
-    public TransactionRecord value12(String value) {
+    public TransactionRecord value12(UUID value) {
         setUserId(value);
         return this;
     }
 
     @Override
-    public TransactionRecord values(String value1, Boolean value2, LocalDate value3, String value4, Double value5, String value6,
-        String value7, String value8, Boolean value9, String value10, String value11, String value12) {
+    public TransactionRecord values(UUID value1, Boolean value2, LocalDate value3, String value4, Double value5, String value6, UUID value7,
+        UUID value8, Boolean value9, String value10, String value11, UUID value12) {
         value1(value1);
         value2(value2);
         value3(value3);

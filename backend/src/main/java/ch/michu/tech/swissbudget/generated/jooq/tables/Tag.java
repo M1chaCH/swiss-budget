@@ -9,6 +9,7 @@ import ch.michu.tech.swissbudget.generated.jooq.Public;
 import ch.michu.tech.swissbudget.generated.jooq.tables.records.TagRecord;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 import java.util.function.Function;
 import org.jooq.Field;
 import org.jooq.ForeignKey;
@@ -42,7 +43,7 @@ public class Tag extends TableImpl<TagRecord> {
     /**
      * The column <code>public.tag.id</code>.
      */
-    public final TableField<TagRecord, String> ID = createField(DSL.name("id"), SQLDataType.VARCHAR(42).nullable(false), this, "");
+    public final TableField<TagRecord, UUID> ID = createField(DSL.name("id"), SQLDataType.UUID.nullable(false), this, "");
     /**
      * The column <code>public.tag.icon</code>.
      */
@@ -58,8 +59,7 @@ public class Tag extends TableImpl<TagRecord> {
     /**
      * The column <code>public.tag.user_id</code>.
      */
-    public final TableField<TagRecord, String> USER_ID = createField(DSL.name("user_id"), SQLDataType.VARCHAR(42).nullable(false), this,
-        "");
+    public final TableField<TagRecord, UUID> USER_ID = createField(DSL.name("user_id"), SQLDataType.UUID.nullable(false), this, "");
     /**
      * The column <code>public.tag.default_tag</code>.
      */
@@ -178,7 +178,7 @@ public class Tag extends TableImpl<TagRecord> {
     // -------------------------------------------------------------------------
 
     @Override
-    public Row6<String, String, String, String, String, Boolean> fieldsRow() {
+    public Row6<UUID, String, String, String, UUID, Boolean> fieldsRow() {
         return (Row6) super.fieldsRow();
     }
 
@@ -186,7 +186,7 @@ public class Tag extends TableImpl<TagRecord> {
      * Convenience mapping calling {@link SelectField#convertFrom(Function)}.
      */
     public <U> SelectField<U> mapping(
-        Function6<? super String, ? super String, ? super String, ? super String, ? super String, ? super Boolean, ? extends U> from) {
+        Function6<? super UUID, ? super String, ? super String, ? super String, ? super UUID, ? super Boolean, ? extends U> from) {
         return convertFrom(Records.mapping(from));
     }
 
@@ -194,7 +194,7 @@ public class Tag extends TableImpl<TagRecord> {
      * Convenience mapping calling {@link SelectField#convertFrom(Class, Function)}.
      */
     public <U> SelectField<U> mapping(Class<U> toType,
-        Function6<? super String, ? super String, ? super String, ? super String, ? super String, ? super Boolean, ? extends U> from) {
+        Function6<? super UUID, ? super String, ? super String, ? super String, ? super UUID, ? super Boolean, ? extends U> from) {
         return convertFrom(toType, Records.mapping(from));
     }
 }

@@ -10,6 +10,7 @@ import ch.michu.tech.swissbudget.generated.jooq.tables.records.TransactionMailRe
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 import java.util.function.Function;
 import org.jooq.Field;
 import org.jooq.ForeignKey;
@@ -43,8 +44,7 @@ public class TransactionMail extends TableImpl<TransactionMailRecord> {
     /**
      * The column <code>public.transaction_mail.id</code>.
      */
-    public final TableField<TransactionMailRecord, String> ID = createField(DSL.name("id"), SQLDataType.VARCHAR(42).nullable(false), this,
-        "");
+    public final TableField<TransactionMailRecord, UUID> ID = createField(DSL.name("id"), SQLDataType.UUID.nullable(false), this, "");
     /**
      * The column <code>public.transaction_mail.message_number</code>.
      */
@@ -78,13 +78,13 @@ public class TransactionMail extends TableImpl<TransactionMailRecord> {
     /**
      * The column <code>public.transaction_mail.transaction_id</code>.
      */
-    public final TableField<TransactionMailRecord, String> TRANSACTION_ID = createField(DSL.name("transaction_id"),
-        SQLDataType.VARCHAR(42).nullable(false), this, "");
+    public final TableField<TransactionMailRecord, UUID> TRANSACTION_ID = createField(DSL.name("transaction_id"),
+        SQLDataType.UUID.nullable(false), this, "");
     /**
      * The column <code>public.transaction_mail.user_id</code>.
      */
-    public final TableField<TransactionMailRecord, String> USER_ID = createField(DSL.name("user_id"),
-        SQLDataType.VARCHAR(42).nullable(false), this, "");
+    public final TableField<TransactionMailRecord, UUID> USER_ID = createField(DSL.name("user_id"), SQLDataType.UUID.nullable(false), this,
+        "");
     /**
      * The column <code>public.transaction_mail.bank</code>.
      */
@@ -216,7 +216,7 @@ public class TransactionMail extends TableImpl<TransactionMailRecord> {
     // -------------------------------------------------------------------------
 
     @Override
-    public Row10<String, Integer, String, String, LocalDateTime, String, String, String, String, String> fieldsRow() {
+    public Row10<UUID, Integer, String, String, LocalDateTime, String, String, UUID, UUID, String> fieldsRow() {
         return (Row10) super.fieldsRow();
     }
 
@@ -224,7 +224,7 @@ public class TransactionMail extends TableImpl<TransactionMailRecord> {
      * Convenience mapping calling {@link SelectField#convertFrom(Function)}.
      */
     public <U> SelectField<U> mapping(
-        Function10<? super String, ? super Integer, ? super String, ? super String, ? super LocalDateTime, ? super String, ? super String, ? super String, ? super String, ? super String, ? extends U> from) {
+        Function10<? super UUID, ? super Integer, ? super String, ? super String, ? super LocalDateTime, ? super String, ? super String, ? super UUID, ? super UUID, ? super String, ? extends U> from) {
         return convertFrom(Records.mapping(from));
     }
 
@@ -232,7 +232,7 @@ public class TransactionMail extends TableImpl<TransactionMailRecord> {
      * Convenience mapping calling {@link SelectField#convertFrom(Class, Function)}.
      */
     public <U> SelectField<U> mapping(Class<U> toType,
-        Function10<? super String, ? super Integer, ? super String, ? super String, ? super LocalDateTime, ? super String, ? super String, ? super String, ? super String, ? super String, ? extends U> from) {
+        Function10<? super UUID, ? super Integer, ? super String, ? super String, ? super LocalDateTime, ? super String, ? super String, ? super UUID, ? super UUID, ? super String, ? extends U> from) {
         return convertFrom(toType, Records.mapping(from));
     }
 }

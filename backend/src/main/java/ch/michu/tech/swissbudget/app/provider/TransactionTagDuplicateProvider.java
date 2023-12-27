@@ -15,13 +15,14 @@ import ch.michu.tech.swissbudget.generated.jooq.tables.records.TransactionTagDup
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import java.util.List;
+import java.util.UUID;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.RecordMapper;
 
 @ApplicationScoped
-public class TransactionTagDuplicateProvider implements BaseRecordProvider<TransactionTagDuplicateRecord, String> {
+public class TransactionTagDuplicateProvider implements BaseRecordProvider<TransactionTagDuplicateRecord, UUID> {
 
     protected final DataProvider data;
     protected final DSLContext db;
@@ -55,14 +56,14 @@ public class TransactionTagDuplicateProvider implements BaseRecordProvider<Trans
 
     @Override
     @LoggedStatement
-    public boolean fetchExists(String userId, String recordId) {
+    public boolean fetchExists(UUID userId, UUID recordId) {
         Condition transactionMailCondition = TRANSACTION_TAG_DUPLICATE.ID.eq(recordId);
 
         return db.fetchExists(TRANSACTION_TAG_DUPLICATE, transactionMailCondition);
     }
 
     @LoggedStatement
-    public <T> List<T> selectTagDuplicatesForTransaction(String transactionId, RecordMapper<Record, T> mapper) {
+    public <T> List<T> selectTagDuplicatesForTransaction(UUID transactionId, RecordMapper<Record, T> mapper) {
         return db
             .select(TRANSACTION_TAG_DUPLICATE.TRANSACTION_ID, TAG.asterisk(), KEYWORD.asterisk())
             .from(TAG)
@@ -76,7 +77,7 @@ public class TransactionTagDuplicateProvider implements BaseRecordProvider<Trans
     }
 
     @LoggedStatement
-    public String insertDuplicatedTag(String transactionId, String tagId, String matchingKeywordId) {
+    public UUID insertDuplicatedTag(UUID transactionId, UUID tagId, UUID matchingKeywordId) {
         return db
             .insertInto(TRANSACTION_TAG_DUPLICATE, TRANSACTION_TAG_DUPLICATE.TRANSACTION_ID, TRANSACTION_TAG_DUPLICATE.TAG_ID,
                 TRANSACTION_TAG_DUPLICATE.MATCHING_KEYWORD_ID)

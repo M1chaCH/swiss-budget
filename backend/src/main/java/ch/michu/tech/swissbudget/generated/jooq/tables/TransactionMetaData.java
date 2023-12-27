@@ -10,6 +10,7 @@ import ch.michu.tech.swissbudget.generated.jooq.tables.records.TransactionMetaDa
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 import java.util.function.Function;
 import org.jooq.Field;
 import org.jooq.ForeignKey;
@@ -43,8 +44,8 @@ public class TransactionMetaData extends TableImpl<TransactionMetaDataRecord> {
     /**
      * The column <code>public.transaction_meta_data.user_id</code>.
      */
-    public final TableField<TransactionMetaDataRecord, String> USER_ID = createField(DSL.name("user_id"),
-        SQLDataType.VARCHAR(42).nullable(false), this, "");
+    public final TableField<TransactionMetaDataRecord, UUID> USER_ID = createField(DSL.name("user_id"), SQLDataType.UUID.nullable(false),
+        this, "");
     /**
      * The column <code>public.transaction_meta_data.bank</code>.
      */
@@ -180,7 +181,7 @@ public class TransactionMetaData extends TableImpl<TransactionMetaDataRecord> {
     // -------------------------------------------------------------------------
 
     @Override
-    public Row5<String, String, LocalDateTime, LocalDateTime, String> fieldsRow() {
+    public Row5<UUID, String, LocalDateTime, LocalDateTime, String> fieldsRow() {
         return (Row5) super.fieldsRow();
     }
 
@@ -188,7 +189,7 @@ public class TransactionMetaData extends TableImpl<TransactionMetaDataRecord> {
      * Convenience mapping calling {@link SelectField#convertFrom(Function)}.
      */
     public <U> SelectField<U> mapping(
-        Function5<? super String, ? super String, ? super LocalDateTime, ? super LocalDateTime, ? super String, ? extends U> from) {
+        Function5<? super UUID, ? super String, ? super LocalDateTime, ? super LocalDateTime, ? super String, ? extends U> from) {
         return convertFrom(Records.mapping(from));
     }
 
@@ -196,7 +197,7 @@ public class TransactionMetaData extends TableImpl<TransactionMetaDataRecord> {
      * Convenience mapping calling {@link SelectField#convertFrom(Class, Function)}.
      */
     public <U> SelectField<U> mapping(Class<U> toType,
-        Function5<? super String, ? super String, ? super LocalDateTime, ? super LocalDateTime, ? super String, ? extends U> from) {
+        Function5<? super UUID, ? super String, ? super LocalDateTime, ? super LocalDateTime, ? super String, ? extends U> from) {
         return convertFrom(toType, Records.mapping(from));
     }
 }

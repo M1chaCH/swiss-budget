@@ -16,6 +16,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Provider;
 import java.util.List;
+import java.util.UUID;
 import org.jooq.exception.TooManyRowsException;
 
 @ApplicationScoped
@@ -42,7 +43,7 @@ public class TagService {
     }
 
     public void createTag(UpdateTagDto toCreate) {
-        String userId = supportProvider.get().getUserIdOrThrow();
+        UUID userId = supportProvider.get().getUserIdOrThrow();
         tagProvider.insertCompleteTag(userId, toCreate.getName(), toCreate.getColor(), toCreate.getIcon(), toCreate.getKeywordsToAdd());
 
         List<KeywordRecord> addedKeywords = keywordProvider.selectKeywordsByTagId(userId, toCreate.getTagId());
@@ -51,7 +52,7 @@ public class TagService {
 
     // not allowed to update keywords, would be waaaay too much pain to make sure all transactions are correct -> user has to delete and add again
     public void updateTag(UpdateTagDto toUpdate) {
-        String userId = supportProvider.get().getUserIdOrThrow();
+        UUID userId = supportProvider.get().getUserIdOrThrow();
 
         if (!tagProvider.fetchExists(userId, toUpdate.getTagId())) {
             throw new ResourceNotFoundException("tag", toUpdate.getTagId());
@@ -65,7 +66,7 @@ public class TagService {
         mapper.handleKeywordsAdded(userId, toUpdate.getTagId(), addedKeywords);
     }
 
-    public void deleteTag(String tagId) { // FIXME can't just delete tag, need to also insert default tag into transactions with no tags
+    public void deleteTag(UUID tagId) { // FIXME can't just delete tag, need to also insert default tag into transactions with no tags
         tagProvider.deleteById(supportProvider.get().getUserIdOrThrow(), tagId);
     }
 
@@ -81,9 +82,9 @@ public class TagService {
         }
     }
 
-    public void resolveConflict(String transactionId, String selectedTagId, String matchingKeywordId, boolean removeOthers) {
+    public void resolveConflict(UUID transactionId, UUID selectedTagId, UUID matchingKeywordId, boolean removeOthers) {
         RequestSupport support = supportProvider.get();
-        String userId = support.getUserIdOrThrow();
+        UUID userId = support.getUserIdOrThrow();
 
         if (!transactionProvider.fetchExists(userId, transactionId)) {
             throw new ResourceNotFoundException("transaction", transactionId);
@@ -115,9 +116,9 @@ public class TagService {
         transactionProvider.deleteAllTagDuplicates(transactionId);
     }
 
-    public void assignTag(String transactionId, String tagId, String keyword) {
+    public void assignTag(UUID transactionId, UUID tagId, String keyword) {
         RequestSupport support = supportProvider.get();
-        String userId = support.getUserIdOrThrow();
+        UUID userId = support.getUserIdOrThrow();
 
         if (!transactionProvider.fetchExists(userId, transactionId)) {
             throw new ResourceNotFoundException("transaction", transactionId);
@@ -133,8 +134,8 @@ public class TagService {
         }
     }
 
-    public void changeTag(String transactionId, String tagId) {
-        String userId = supportProvider.get().getUserIdOrThrow();
+    public void changeTag(UUID transactionId, UUID tagId) {
+        UUID userId = supportProvider.get().getUserIdOrThrow();
 
         if (!transactionProvider.fetchExists(userId, transactionId)) {
             throw new ResourceNotFoundException("transaction", transactionId);
@@ -146,10 +147,10 @@ public class TagService {
         transactionProvider.updateTransactionWithTagAndRemoveNeedAttention(transactionId, tagId);
     }
 
-    private void addKeyword(RequestSupport support, String tagId, String keyword) {
+    private void addKeyword(RequestSupport support, UUID tagId, String keyword) {
         support.logInfo(this, "adding keyword to tag: %s->%s", tagId, keyword);
-        String userId = support.getUserIdOrThrow();
-        String newKeywordId = keywordProvider.insertKeywordToTag(userId, tagId, keyword);
+        UUID userId = support.getUserIdOrThrow();
+        UUID newKeywordId = keywordProvider.insertKeywordToTag(userId, tagId, keyword);
         KeywordRecord newKeyword = keywordProvider.newRecord();
         newKeyword.setId(newKeywordId);
         newKeyword.setUserId(userId);

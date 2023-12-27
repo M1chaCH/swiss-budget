@@ -51,7 +51,8 @@ public class ErrorReporter {
                 LOGGER.log(Level.SEVERE, "failed to report error to admin", exception);
             }
         } else {
-            LOGGER.log(Level.WARNING, "WOULD REPORT ERROR (in production)", e);
+            LOGGER.log(Level.WARNING, "WOULD REPORT ERROR (in production): {0} - {1}",
+                new Object[]{e.getClass().getSimpleName(), e.getMessage()});
         }
     }
 

@@ -9,6 +9,7 @@ import ch.michu.tech.swissbudget.generated.jooq.Public;
 import ch.michu.tech.swissbudget.generated.jooq.tables.records.KeywordRecord;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 import java.util.function.Function;
 import org.jooq.Field;
 import org.jooq.ForeignKey;
@@ -42,7 +43,7 @@ public class Keyword extends TableImpl<KeywordRecord> {
     /**
      * The column <code>public.keyword.id</code>.
      */
-    public final TableField<KeywordRecord, String> ID = createField(DSL.name("id"), SQLDataType.VARCHAR(42).nullable(false), this, "");
+    public final TableField<KeywordRecord, UUID> ID = createField(DSL.name("id"), SQLDataType.UUID.nullable(false), this, "");
     /**
      * The column <code>public.keyword.keyword</code>.
      */
@@ -51,13 +52,11 @@ public class Keyword extends TableImpl<KeywordRecord> {
     /**
      * The column <code>public.keyword.tag_id</code>.
      */
-    public final TableField<KeywordRecord, String> TAG_ID = createField(DSL.name("tag_id"), SQLDataType.VARCHAR(42).nullable(false), this,
-        "");
+    public final TableField<KeywordRecord, UUID> TAG_ID = createField(DSL.name("tag_id"), SQLDataType.UUID.nullable(false), this, "");
     /**
      * The column <code>public.keyword.user_id</code>.
      */
-    public final TableField<KeywordRecord, String> USER_ID = createField(DSL.name("user_id"), SQLDataType.VARCHAR(42).nullable(false), this,
-        "");
+    public final TableField<KeywordRecord, UUID> USER_ID = createField(DSL.name("user_id"), SQLDataType.UUID.nullable(false), this, "");
     private transient Tag _tag;
     private transient RegisteredUser _registeredUser;
 
@@ -183,14 +182,14 @@ public class Keyword extends TableImpl<KeywordRecord> {
     // -------------------------------------------------------------------------
 
     @Override
-    public Row4<String, String, String, String> fieldsRow() {
+    public Row4<UUID, String, UUID, UUID> fieldsRow() {
         return (Row4) super.fieldsRow();
     }
 
     /**
      * Convenience mapping calling {@link SelectField#convertFrom(Function)}.
      */
-    public <U> SelectField<U> mapping(Function4<? super String, ? super String, ? super String, ? super String, ? extends U> from) {
+    public <U> SelectField<U> mapping(Function4<? super UUID, ? super String, ? super UUID, ? super UUID, ? extends U> from) {
         return convertFrom(Records.mapping(from));
     }
 
@@ -198,7 +197,7 @@ public class Keyword extends TableImpl<KeywordRecord> {
      * Convenience mapping calling {@link SelectField#convertFrom(Class, Function)}.
      */
     public <U> SelectField<U> mapping(Class<U> toType,
-        Function4<? super String, ? super String, ? super String, ? super String, ? extends U> from) {
+        Function4<? super UUID, ? super String, ? super UUID, ? super UUID, ? extends U> from) {
         return convertFrom(toType, Records.mapping(from));
     }
 }

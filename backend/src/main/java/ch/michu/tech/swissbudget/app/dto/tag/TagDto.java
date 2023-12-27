@@ -10,6 +10,7 @@ import ch.michu.tech.swissbudget.framework.validation.ValidateLength;
 import ch.michu.tech.swissbudget.framework.validation.ValidatedDto;
 import ch.michu.tech.swissbudget.generated.jooq.tables.records.TagRecord;
 import java.util.List;
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -27,7 +28,7 @@ import lombok.ToString;
 public class TagDto {
 
     @ValidateAmount(min = 0)
-    private String id;
+    private UUID id;
     private String icon;
     private String color;
     @ValidateLength(min = 3, max = 50)

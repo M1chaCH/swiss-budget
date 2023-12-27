@@ -6,6 +6,7 @@ package ch.michu.tech.swissbudget.generated.jooq.tables.records;
 
 import ch.michu.tech.swissbudget.generated.jooq.tables.RegisteredUser;
 import java.time.LocalDateTime;
+import java.util.UUID;
 import org.jooq.Field;
 import org.jooq.Record1;
 import org.jooq.Record11;
@@ -18,7 +19,7 @@ import org.jooq.impl.UpdatableRecordImpl;
  */
 @SuppressWarnings({"all", "unchecked", "rawtypes", "this-escape"})
 public class RegisteredUserRecord extends UpdatableRecordImpl<RegisteredUserRecord> implements
-    Record11<String, String, String, String, String, String, Boolean, LocalDateTime, LocalDateTime, String, Boolean> {
+    Record11<UUID, String, String, String, String, String, Boolean, LocalDateTime, LocalDateTime, UUID, Boolean> {
 
     private static final long serialVersionUID = 1L;
 
@@ -32,8 +33,8 @@ public class RegisteredUserRecord extends UpdatableRecordImpl<RegisteredUserReco
     /**
      * Create a detached, initialised RegisteredUserRecord
      */
-    public RegisteredUserRecord(String id, String mail, String password, String salt, String mailPassword, String username,
-        Boolean disabled, LocalDateTime createdAt, LocalDateTime lastLogin, String currentSession, Boolean demoUser) {
+    public RegisteredUserRecord(UUID id, String mail, String password, String salt, String mailPassword, String username, Boolean disabled,
+        LocalDateTime createdAt, LocalDateTime lastLogin, UUID currentSession, Boolean demoUser) {
         super(RegisteredUser.REGISTERED_USER);
 
         setId(id);
@@ -53,14 +54,14 @@ public class RegisteredUserRecord extends UpdatableRecordImpl<RegisteredUserReco
     /**
      * Getter for <code>public.registered_user.id</code>.
      */
-    public String getId() {
-        return (String) get(0);
+    public UUID getId() {
+        return (UUID) get(0);
     }
 
     /**
      * Setter for <code>public.registered_user.id</code>.
      */
-    public void setId(String value) {
+    public void setId(UUID value) {
         set(0, value);
     }
 
@@ -179,14 +180,14 @@ public class RegisteredUserRecord extends UpdatableRecordImpl<RegisteredUserReco
     /**
      * Getter for <code>public.registered_user.current_session</code>.
      */
-    public String getCurrentSession() {
-        return (String) get(9);
+    public UUID getCurrentSession() {
+        return (UUID) get(9);
     }
 
     /**
      * Setter for <code>public.registered_user.current_session</code>.
      */
-    public void setCurrentSession(String value) {
+    public void setCurrentSession(UUID value) {
         set(9, value);
     }
 
@@ -213,22 +214,22 @@ public class RegisteredUserRecord extends UpdatableRecordImpl<RegisteredUserReco
     }
 
     @Override
-    public Record1<String> key() {
+    public Record1<UUID> key() {
         return (Record1) super.key();
     }
 
     @Override
-    public Row11<String, String, String, String, String, String, Boolean, LocalDateTime, LocalDateTime, String, Boolean> fieldsRow() {
+    public Row11<UUID, String, String, String, String, String, Boolean, LocalDateTime, LocalDateTime, UUID, Boolean> fieldsRow() {
         return (Row11) super.fieldsRow();
     }
 
     @Override
-    public Row11<String, String, String, String, String, String, Boolean, LocalDateTime, LocalDateTime, String, Boolean> valuesRow() {
+    public Row11<UUID, String, String, String, String, String, Boolean, LocalDateTime, LocalDateTime, UUID, Boolean> valuesRow() {
         return (Row11) super.valuesRow();
     }
 
     @Override
-    public Field<String> field1() {
+    public Field<UUID> field1() {
         return RegisteredUser.REGISTERED_USER.ID;
     }
 
@@ -273,7 +274,7 @@ public class RegisteredUserRecord extends UpdatableRecordImpl<RegisteredUserReco
     }
 
     @Override
-    public Field<String> field10() {
+    public Field<UUID> field10() {
         return RegisteredUser.REGISTERED_USER.CURRENT_SESSION;
     }
 
@@ -283,7 +284,7 @@ public class RegisteredUserRecord extends UpdatableRecordImpl<RegisteredUserReco
     }
 
     @Override
-    public String component1() {
+    public UUID component1() {
         return getId();
     }
 
@@ -328,7 +329,7 @@ public class RegisteredUserRecord extends UpdatableRecordImpl<RegisteredUserReco
     }
 
     @Override
-    public String component10() {
+    public UUID component10() {
         return getCurrentSession();
     }
 
@@ -338,7 +339,7 @@ public class RegisteredUserRecord extends UpdatableRecordImpl<RegisteredUserReco
     }
 
     @Override
-    public String value1() {
+    public UUID value1() {
         return getId();
     }
 
@@ -383,7 +384,7 @@ public class RegisteredUserRecord extends UpdatableRecordImpl<RegisteredUserReco
     }
 
     @Override
-    public String value10() {
+    public UUID value10() {
         return getCurrentSession();
     }
 
@@ -393,7 +394,7 @@ public class RegisteredUserRecord extends UpdatableRecordImpl<RegisteredUserReco
     }
 
     @Override
-    public RegisteredUserRecord value1(String value) {
+    public RegisteredUserRecord value1(UUID value) {
         setId(value);
         return this;
     }
@@ -447,7 +448,7 @@ public class RegisteredUserRecord extends UpdatableRecordImpl<RegisteredUserReco
     }
 
     @Override
-    public RegisteredUserRecord value10(String value) {
+    public RegisteredUserRecord value10(UUID value) {
         setCurrentSession(value);
         return this;
     }
@@ -463,8 +464,8 @@ public class RegisteredUserRecord extends UpdatableRecordImpl<RegisteredUserReco
     }
 
     @Override
-    public RegisteredUserRecord values(String value1, String value2, String value3, String value4, String value5, String value6,
-        Boolean value7, LocalDateTime value8, LocalDateTime value9, String value10, Boolean value11) {
+    public RegisteredUserRecord values(UUID value1, String value2, String value3, String value4, String value5, String value6,
+        Boolean value7, LocalDateTime value8, LocalDateTime value9, UUID value10, Boolean value11) {
         value1(value1);
         value2(value2);
         value3(value3);

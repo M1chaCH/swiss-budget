@@ -30,7 +30,7 @@ public class RaiffeisenMessageHandler extends MailContentHandler {
     public void parseTransaction(TransactionRecord transaction, TransactionMailRecord mail) {
         String content = mail.getRawMessage();
 
-        transaction.setId(UUID.randomUUID().toString());
+        transaction.setId(UUID.randomUUID());
         transaction.setExpense(mail.getSubject().equals(EXPENSE_SUBJECT));
 
         int transactionDateIndex = content.indexOf(TRANSACTION_DATE_ID) + TRANSACTION_DATE_ID.length();

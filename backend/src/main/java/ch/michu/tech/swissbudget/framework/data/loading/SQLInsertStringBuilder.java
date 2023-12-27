@@ -74,7 +74,7 @@ public class SQLInsertStringBuilder {
             startedValues = true;
         }
         builder.append(OPEN_BRACKET);
-        builder.append(getValueString(values.get(0)));
+        builder.append(getValueString(values.getFirst()));
 
         for (int i = 1; i < values.size(); i++) {
             builder.append(COMMA).append(getValueString(values.get(i)));
@@ -89,7 +89,8 @@ public class SQLInsertStringBuilder {
             return "null";
         }
 
-        return CHICKEN_FOOT + value.trim() + CHICKEN_FOOT;
+        // replace: need to escape the CHICKEN_FOOT (:
+        return CHICKEN_FOOT + value.replace(CHICKEN_FOOT, CHICKEN_FOOT + CHICKEN_FOOT).trim() + CHICKEN_FOOT;
     }
 
     public String complete() {

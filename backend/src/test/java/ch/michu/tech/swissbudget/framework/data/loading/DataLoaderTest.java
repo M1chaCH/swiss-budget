@@ -3,6 +3,7 @@ package ch.michu.tech.swissbudget.framework.data.loading;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.isNotNull;
 import static org.mockito.ArgumentMatchers.isNull;
@@ -226,5 +227,22 @@ class DataLoaderTest {
         if (!stmt.contains(expected)) {
             fail("date chain did not work: e: " + expected + " statement: " + stmt);
         }
+    }
+
+    @Test
+    void dataLoader_TestVariables() {
+        List<String> lines = List.of(
+            "::var",
+            "column1",
+            "{{useVar(test)}}"
+        );
+        Queue<String> statements = new DataLoader(null).buildStatements(lines, Map.of("test", "cooler string"));
+
+        String stmt = statements.poll();
+        assertNotNull(stmt);
+        assertTrue(stmt.contains("cooler string"));
+        assertFalse(stmt.contains("{"));
+        assertFalse(stmt.contains("}"));
+        assertFalse(stmt.contains("test"));
     }
 }

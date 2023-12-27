@@ -15,6 +15,7 @@ import jakarta.json.bind.annotation.JsonbTypeDeserializer;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -31,7 +32,7 @@ import lombok.ToString;
 @ValidatedDto
 public class TransactionDto {
 
-    private String id;
+    private UUID id;
     private boolean expense;
     @ValidateAmount(min = 0)
     private double amount;
@@ -42,12 +43,12 @@ public class TransactionDto {
 
     @Nullable
     @ValidateAmount(min = 0)
-    private String tagId;
+    private UUID tagId;
     @Nullable
     private TagDto tag;
     @Nullable
     @ValidateAmount(min = 0)
-    private String matchingKeywordId;
+    private UUID matchingKeywordId;
     @Nullable
     private KeywordDto matchingKeyword;
     @Nullable
@@ -62,7 +63,7 @@ public class TransactionDto {
     @Nullable
     private List<TransactionTagDuplicateDto> duplicatedTagMatches = new ArrayList<>();
 
-    public TransactionDto(String id, boolean expense, double amount, LocalDate transactionDate, String bankAccount, String receiver) {
+    public TransactionDto(UUID id, boolean expense, double amount, LocalDate transactionDate, String bankAccount, String receiver) {
         this.id = id;
         this.expense = expense;
         this.amount = amount;

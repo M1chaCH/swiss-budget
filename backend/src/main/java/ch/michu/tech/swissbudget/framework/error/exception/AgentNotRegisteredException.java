@@ -8,6 +8,6 @@ public class AgentNotRegisteredException extends AppException {
 
     public AgentNotRegisteredException(String username, String agent, MfaCodeDto dto) {
         super(String.format("user %s tries login on new agent %s", username, agent),
-            Status.OK, Map.of("processId", dto.getProcessId(), "userId", dto.getUserId()));
+            Status.OK, Map.of("processId", dto.getProcessId().toString(), "userId", dto.getUserId().toString()));
     }
 }

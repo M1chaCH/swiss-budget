@@ -6,6 +6,7 @@ package ch.michu.tech.swissbudget.generated.jooq.tables.records;
 
 import ch.michu.tech.swissbudget.generated.jooq.tables.MfaCode;
 import java.time.LocalDateTime;
+import java.util.UUID;
 import org.jooq.Field;
 import org.jooq.Record1;
 import org.jooq.Record6;
@@ -18,7 +19,7 @@ import org.jooq.impl.UpdatableRecordImpl;
  */
 @SuppressWarnings({"all", "unchecked", "rawtypes", "this-escape"})
 public class MfaCodeRecord extends UpdatableRecordImpl<MfaCodeRecord> implements
-    Record6<String, Integer, String, LocalDateTime, Integer, String> {
+    Record6<UUID, Integer, UUID, LocalDateTime, Integer, String> {
 
     private static final long serialVersionUID = 1L;
 
@@ -32,7 +33,7 @@ public class MfaCodeRecord extends UpdatableRecordImpl<MfaCodeRecord> implements
     /**
      * Create a detached, initialised MfaCodeRecord
      */
-    public MfaCodeRecord(String id, Integer code, String userId, LocalDateTime expiresAt, Integer tries, String userAgent) {
+    public MfaCodeRecord(UUID id, Integer code, UUID userId, LocalDateTime expiresAt, Integer tries, String userAgent) {
         super(MfaCode.MFA_CODE);
 
         setId(id);
@@ -47,14 +48,14 @@ public class MfaCodeRecord extends UpdatableRecordImpl<MfaCodeRecord> implements
     /**
      * Getter for <code>public.mfa_code.id</code>.
      */
-    public String getId() {
-        return (String) get(0);
+    public UUID getId() {
+        return (UUID) get(0);
     }
 
     /**
      * Setter for <code>public.mfa_code.id</code>.
      */
-    public void setId(String value) {
+    public void setId(UUID value) {
         set(0, value);
     }
 
@@ -75,14 +76,14 @@ public class MfaCodeRecord extends UpdatableRecordImpl<MfaCodeRecord> implements
     /**
      * Getter for <code>public.mfa_code.user_id</code>.
      */
-    public String getUserId() {
-        return (String) get(2);
+    public UUID getUserId() {
+        return (UUID) get(2);
     }
 
     /**
      * Setter for <code>public.mfa_code.user_id</code>.
      */
-    public void setUserId(String value) {
+    public void setUserId(UUID value) {
         set(2, value);
     }
 
@@ -137,22 +138,22 @@ public class MfaCodeRecord extends UpdatableRecordImpl<MfaCodeRecord> implements
     }
 
     @Override
-    public Record1<String> key() {
+    public Record1<UUID> key() {
         return (Record1) super.key();
     }
 
     @Override
-    public Row6<String, Integer, String, LocalDateTime, Integer, String> fieldsRow() {
+    public Row6<UUID, Integer, UUID, LocalDateTime, Integer, String> fieldsRow() {
         return (Row6) super.fieldsRow();
     }
 
     @Override
-    public Row6<String, Integer, String, LocalDateTime, Integer, String> valuesRow() {
+    public Row6<UUID, Integer, UUID, LocalDateTime, Integer, String> valuesRow() {
         return (Row6) super.valuesRow();
     }
 
     @Override
-    public Field<String> field1() {
+    public Field<UUID> field1() {
         return MfaCode.MFA_CODE.ID;
     }
 
@@ -162,7 +163,7 @@ public class MfaCodeRecord extends UpdatableRecordImpl<MfaCodeRecord> implements
     }
 
     @Override
-    public Field<String> field3() {
+    public Field<UUID> field3() {
         return MfaCode.MFA_CODE.USER_ID;
     }
 
@@ -182,7 +183,7 @@ public class MfaCodeRecord extends UpdatableRecordImpl<MfaCodeRecord> implements
     }
 
     @Override
-    public String component1() {
+    public UUID component1() {
         return getId();
     }
 
@@ -192,7 +193,7 @@ public class MfaCodeRecord extends UpdatableRecordImpl<MfaCodeRecord> implements
     }
 
     @Override
-    public String component3() {
+    public UUID component3() {
         return getUserId();
     }
 
@@ -212,7 +213,7 @@ public class MfaCodeRecord extends UpdatableRecordImpl<MfaCodeRecord> implements
     }
 
     @Override
-    public String value1() {
+    public UUID value1() {
         return getId();
     }
 
@@ -222,7 +223,7 @@ public class MfaCodeRecord extends UpdatableRecordImpl<MfaCodeRecord> implements
     }
 
     @Override
-    public String value3() {
+    public UUID value3() {
         return getUserId();
     }
 
@@ -242,7 +243,7 @@ public class MfaCodeRecord extends UpdatableRecordImpl<MfaCodeRecord> implements
     }
 
     @Override
-    public MfaCodeRecord value1(String value) {
+    public MfaCodeRecord value1(UUID value) {
         setId(value);
         return this;
     }
@@ -254,7 +255,7 @@ public class MfaCodeRecord extends UpdatableRecordImpl<MfaCodeRecord> implements
     }
 
     @Override
-    public MfaCodeRecord value3(String value) {
+    public MfaCodeRecord value3(UUID value) {
         setUserId(value);
         return this;
     }
@@ -282,7 +283,7 @@ public class MfaCodeRecord extends UpdatableRecordImpl<MfaCodeRecord> implements
     }
 
     @Override
-    public MfaCodeRecord values(String value1, Integer value2, String value3, LocalDateTime value4, Integer value5, String value6) {
+    public MfaCodeRecord values(UUID value1, Integer value2, UUID value3, LocalDateTime value4, Integer value5, String value6) {
         value1(value1);
         value2(value2);
         value3(value3);

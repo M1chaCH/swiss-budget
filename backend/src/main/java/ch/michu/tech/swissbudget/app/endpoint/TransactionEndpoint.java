@@ -20,6 +20,7 @@ import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.Status;
 import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.UUID;
 
 @Path("/transaction")
 @RequestScoped
@@ -53,7 +54,7 @@ public class TransactionEndpoint {
         if (!toDate.isBlank()) {
             to = LocalDateDeserializer.parseLocalDate(toDate);
         }
-        String[] tags = (String[]) Arrays.stream(tagIds.split(";")).filter(s -> !s.isBlank()).toArray();
+        UUID[] tags = (UUID[]) Arrays.stream(tagIds.split(";")).filter(s -> !s.isBlank()).map(UUID::fromString).toArray();
 
         return Response.status(Status.OK).entity(service.getTransactions(query, tags, from, to, needAttention, page)).build();
     }

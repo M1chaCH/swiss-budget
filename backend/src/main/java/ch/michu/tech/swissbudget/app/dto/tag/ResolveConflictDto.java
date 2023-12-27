@@ -3,6 +3,7 @@ package ch.michu.tech.swissbudget.app.dto.tag;
 import ch.michu.tech.swissbudget.framework.validation.ValidateAmount;
 import ch.michu.tech.swissbudget.framework.validation.ValidateLength;
 import ch.michu.tech.swissbudget.framework.validation.ValidatedDto;
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -20,10 +21,10 @@ import lombok.ToString;
 public class ResolveConflictDto {
 
     @ValidateLength(min = 1)
-    private String transactionId;
+    private UUID transactionId;
     @ValidateAmount(min = 1)
-    private String selectedTagId;
+    private UUID selectedTagId;
     @ValidateAmount(min = 1)
-    private String matchingKeywordId;
+    private UUID matchingKeywordId;
     private boolean removeUnselectedKeywords;
 }

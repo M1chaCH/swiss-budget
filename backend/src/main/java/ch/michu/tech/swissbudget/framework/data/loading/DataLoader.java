@@ -86,7 +86,7 @@ public class DataLoader {
      * ID alias with value cache, but remember this class is not application scoped
      */
     @Getter
-    private final Map<String, String> uuidCache = new HashMap<>();
+    private final Map<String, UUID> uuidCache = new HashMap<>();
     private SQLInsertStringBuilder builder;
 
     @Inject
@@ -99,7 +99,7 @@ public class DataLoader {
      * @param path CSV file to read
      * @return a queue with the statements
      */
-    public Queue<String> load(Path path, Map<String, String> variables) {
+    public Queue<String> load(Path path, Map<String, Object> variables) {
         long startTime = Instant.now().toEpochMilli();
         if (variables == null) {
             variables = Map.of();
@@ -113,16 +113,17 @@ public class DataLoader {
         }
 
         try {
-            Queue<String> statements = buildStatements(Files.readAllLines(path, StandardCharsets.UTF_8), variables);
+            Queue<String> statements = buildStatements(Files.readAllLines(path, StandardCharsets.ISO_8859_1), variables);
             long duration = Instant.now().toEpochMilli() - startTime;
             LOGGER.log(Level.INFO, "loaded data into SQL. took:{0}ms", new Object[]{duration});
             return statements;
         } catch (IOException e) {
-            throw new DataLoaderException("could not read data loader file: " + e.getMessage());
+            throw new DataLoaderException(
+                "could not read data loader file: (%s) %s".formatted(e.getClass().getSimpleName(), e.getMessage()));
         }
     }
 
-    protected Queue<String> buildStatements(List<String> lines, Map<String, String> variables) {
+    protected Queue<String> buildStatements(List<String> lines, Map<String, Object> variables) {
         Queue<String> statements = new LinkedBlockingQueue<>();
 
         boolean previousWasTableName = false;
@@ -186,7 +187,7 @@ public class DataLoader {
     }
 
     @SuppressWarnings("java:S3776") // sorry for the complexity, but this needs to be mapped somewhere
-    protected void handleValuesLine(String line, Map<String, String> variables) {
+    protected void handleValuesLine(String line, Map<String, Object> variables) {
         LOGGER.log(Level.FINE, "handling values line: {0}", new Object[]{line});
         int columnCount = builder.getColumnsCount();
         String[] values = line.split(COMMA);
@@ -229,7 +230,7 @@ public class DataLoader {
                     if (!variables.containsKey(params[0])) {
                         throw new DataLoaderException("variable %s not provided".formatted(params[0]));
                     }
-                    value = variables.get(params[0]);
+                    value = variables.get(params[0]).toString();
                 }
             }
 
@@ -241,15 +242,15 @@ public class DataLoader {
     }
 
     protected String useGuid(String alias) {
-        uuidCache.putIfAbsent(alias, UUID.randomUUID().toString());
-        return uuidCache.get(alias);
+        uuidCache.putIfAbsent(alias, UUID.randomUUID());
+        return uuidCache.get(alias).toString();
     }
 
     protected String genGuid(String[] params) {
         if (params.length > 0 && !params[0].isBlank()) {
-            String value = uuidCache.getOrDefault(params[0], UUID.randomUUID().toString());
+            UUID value = uuidCache.getOrDefault(params[0], UUID.randomUUID());
             uuidCache.put(params[0], value);
-            return value;
+            return value.toString();
         }
 
         return UUID.randomUUID().toString();

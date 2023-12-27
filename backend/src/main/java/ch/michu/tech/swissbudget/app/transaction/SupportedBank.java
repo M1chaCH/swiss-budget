@@ -7,7 +7,7 @@ import lombok.Getter;
 
 @Getter
 public enum SupportedBank {
-    RAIFFEISEN("Raiffeisen", RaiffeisenMessageHandler.class);
+    RAIFFEISEN("raiffeisen", RaiffeisenMessageHandler.class);
 
     private final String key;
     private final Class<? extends MailContentHandler> handler;
@@ -18,8 +18,8 @@ public enum SupportedBank {
     }
 
     public static Optional<SupportedBank> fromKey(String key) {
-        return switch (key) {
-            case "Raiffeisen" -> Optional.of(RAIFFEISEN);
+        return switch (key.toLowerCase()) {
+            case "raiffeisen" -> Optional.of(RAIFFEISEN);
             default -> Optional.empty();
         };
     }

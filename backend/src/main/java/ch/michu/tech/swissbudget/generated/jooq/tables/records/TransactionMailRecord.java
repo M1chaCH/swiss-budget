@@ -6,6 +6,7 @@ package ch.michu.tech.swissbudget.generated.jooq.tables.records;
 
 import ch.michu.tech.swissbudget.generated.jooq.tables.TransactionMail;
 import java.time.LocalDateTime;
+import java.util.UUID;
 import org.jooq.Field;
 import org.jooq.Record1;
 import org.jooq.Record10;
@@ -18,7 +19,7 @@ import org.jooq.impl.UpdatableRecordImpl;
  */
 @SuppressWarnings({"all", "unchecked", "rawtypes", "this-escape"})
 public class TransactionMailRecord extends UpdatableRecordImpl<TransactionMailRecord> implements
-    Record10<String, Integer, String, String, LocalDateTime, String, String, String, String, String> {
+    Record10<UUID, Integer, String, String, LocalDateTime, String, String, UUID, UUID, String> {
 
     private static final long serialVersionUID = 1L;
 
@@ -32,8 +33,8 @@ public class TransactionMailRecord extends UpdatableRecordImpl<TransactionMailRe
     /**
      * Create a detached, initialised TransactionMailRecord
      */
-    public TransactionMailRecord(String id, Integer messageNumber, String fromMail, String toMail, LocalDateTime receivedDate,
-        String subject, String rawMessage, String transactionId, String userId, String bank) {
+    public TransactionMailRecord(UUID id, Integer messageNumber, String fromMail, String toMail, LocalDateTime receivedDate, String subject,
+        String rawMessage, UUID transactionId, UUID userId, String bank) {
         super(TransactionMail.TRANSACTION_MAIL);
 
         setId(id);
@@ -52,14 +53,14 @@ public class TransactionMailRecord extends UpdatableRecordImpl<TransactionMailRe
     /**
      * Getter for <code>public.transaction_mail.id</code>.
      */
-    public String getId() {
-        return (String) get(0);
+    public UUID getId() {
+        return (UUID) get(0);
     }
 
     /**
      * Setter for <code>public.transaction_mail.id</code>.
      */
-    public void setId(String value) {
+    public void setId(UUID value) {
         set(0, value);
     }
 
@@ -150,28 +151,28 @@ public class TransactionMailRecord extends UpdatableRecordImpl<TransactionMailRe
     /**
      * Getter for <code>public.transaction_mail.transaction_id</code>.
      */
-    public String getTransactionId() {
-        return (String) get(7);
+    public UUID getTransactionId() {
+        return (UUID) get(7);
     }
 
     /**
      * Setter for <code>public.transaction_mail.transaction_id</code>.
      */
-    public void setTransactionId(String value) {
+    public void setTransactionId(UUID value) {
         set(7, value);
     }
 
     /**
      * Getter for <code>public.transaction_mail.user_id</code>.
      */
-    public String getUserId() {
-        return (String) get(8);
+    public UUID getUserId() {
+        return (UUID) get(8);
     }
 
     /**
      * Setter for <code>public.transaction_mail.user_id</code>.
      */
-    public void setUserId(String value) {
+    public void setUserId(UUID value) {
         set(8, value);
     }
 
@@ -198,22 +199,22 @@ public class TransactionMailRecord extends UpdatableRecordImpl<TransactionMailRe
     }
 
     @Override
-    public Record1<String> key() {
+    public Record1<UUID> key() {
         return (Record1) super.key();
     }
 
     @Override
-    public Row10<String, Integer, String, String, LocalDateTime, String, String, String, String, String> fieldsRow() {
+    public Row10<UUID, Integer, String, String, LocalDateTime, String, String, UUID, UUID, String> fieldsRow() {
         return (Row10) super.fieldsRow();
     }
 
     @Override
-    public Row10<String, Integer, String, String, LocalDateTime, String, String, String, String, String> valuesRow() {
+    public Row10<UUID, Integer, String, String, LocalDateTime, String, String, UUID, UUID, String> valuesRow() {
         return (Row10) super.valuesRow();
     }
 
     @Override
-    public Field<String> field1() {
+    public Field<UUID> field1() {
         return TransactionMail.TRANSACTION_MAIL.ID;
     }
 
@@ -248,12 +249,12 @@ public class TransactionMailRecord extends UpdatableRecordImpl<TransactionMailRe
     }
 
     @Override
-    public Field<String> field8() {
+    public Field<UUID> field8() {
         return TransactionMail.TRANSACTION_MAIL.TRANSACTION_ID;
     }
 
     @Override
-    public Field<String> field9() {
+    public Field<UUID> field9() {
         return TransactionMail.TRANSACTION_MAIL.USER_ID;
     }
 
@@ -263,7 +264,7 @@ public class TransactionMailRecord extends UpdatableRecordImpl<TransactionMailRe
     }
 
     @Override
-    public String component1() {
+    public UUID component1() {
         return getId();
     }
 
@@ -298,12 +299,12 @@ public class TransactionMailRecord extends UpdatableRecordImpl<TransactionMailRe
     }
 
     @Override
-    public String component8() {
+    public UUID component8() {
         return getTransactionId();
     }
 
     @Override
-    public String component9() {
+    public UUID component9() {
         return getUserId();
     }
 
@@ -313,7 +314,7 @@ public class TransactionMailRecord extends UpdatableRecordImpl<TransactionMailRe
     }
 
     @Override
-    public String value1() {
+    public UUID value1() {
         return getId();
     }
 
@@ -348,12 +349,12 @@ public class TransactionMailRecord extends UpdatableRecordImpl<TransactionMailRe
     }
 
     @Override
-    public String value8() {
+    public UUID value8() {
         return getTransactionId();
     }
 
     @Override
-    public String value9() {
+    public UUID value9() {
         return getUserId();
     }
 
@@ -363,7 +364,7 @@ public class TransactionMailRecord extends UpdatableRecordImpl<TransactionMailRe
     }
 
     @Override
-    public TransactionMailRecord value1(String value) {
+    public TransactionMailRecord value1(UUID value) {
         setId(value);
         return this;
     }
@@ -405,13 +406,13 @@ public class TransactionMailRecord extends UpdatableRecordImpl<TransactionMailRe
     }
 
     @Override
-    public TransactionMailRecord value8(String value) {
+    public TransactionMailRecord value8(UUID value) {
         setTransactionId(value);
         return this;
     }
 
     @Override
-    public TransactionMailRecord value9(String value) {
+    public TransactionMailRecord value9(UUID value) {
         setUserId(value);
         return this;
     }
@@ -427,8 +428,8 @@ public class TransactionMailRecord extends UpdatableRecordImpl<TransactionMailRe
     }
 
     @Override
-    public TransactionMailRecord values(String value1, Integer value2, String value3, String value4, LocalDateTime value5, String value6,
-        String value7, String value8, String value9, String value10) {
+    public TransactionMailRecord values(UUID value1, Integer value2, String value3, String value4, LocalDateTime value5, String value6,
+        String value7, UUID value8, UUID value9, String value10) {
         value1(value1);
         value2(value2);
         value3(value3);
