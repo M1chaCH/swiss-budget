@@ -22,8 +22,8 @@ public class ResolveConflictDto {
     @ValidateLength(min = 1)
     private String transactionId;
     @ValidateAmount(min = 1)
-    private int selectedTagId;
+    private String selectedTagId;
     @ValidateAmount(min = 1)
-    private int matchingKeywordId;
+    private String matchingKeywordId;
     private boolean removeUnselectedKeywords;
 }

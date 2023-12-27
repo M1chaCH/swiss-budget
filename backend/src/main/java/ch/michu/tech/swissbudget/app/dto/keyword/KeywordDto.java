@@ -23,10 +23,10 @@ import lombok.ToString;
 public class KeywordDto {
 
     @ValidateAmount(min = 0)
-    private Integer id;
+    private String id;
     private String keyword;
     @Nullable
-    private Integer tagId;
+    private String tagId;
 
     public KeywordDto(KeywordRecord entity) {
         this.id = entity.getId();

@@ -21,7 +21,10 @@ import org.jooq.Record;
 
 @SuppressWarnings("unused")
 @ApplicationScoped
-public class TagProvider implements BaseRecordProvider<TagRecord, Integer> {
+public class TagProvider implements BaseRecordProvider<TagRecord, String> {
+
+    public static final String DEFAULT_TAG_COLOR = "#3c3e3c";
+    public static final String DEFAULT_TAG_ICON = "question_mark";
 
     protected final DataProvider data;
     protected final DSLContext db;
@@ -53,7 +56,7 @@ public class TagProvider implements BaseRecordProvider<TagRecord, Integer> {
 
     @Override
     @LoggedStatement
-    public boolean fetchExists(String userId, Integer recordId) {
+    public boolean fetchExists(String userId, String recordId) {
         Condition userCondition = TAG.USER_ID.eq(userId);
         Condition tagCondition = TAG.ID.eq(recordId);
 
@@ -119,7 +122,7 @@ public class TagProvider implements BaseRecordProvider<TagRecord, Integer> {
         db.transaction(ctx -> {
             DSLContext dsl = ctx.dsl();
 
-            int tagId = dsl.insertInto(TAG, TAG.NAME, TAG.COLOR, TAG.ICON, TAG.USER_ID)
+            String tagId = dsl.insertInto(TAG, TAG.NAME, TAG.COLOR, TAG.ICON, TAG.USER_ID)
                 .values(name, color, icon, userId)
                 .returning(TAG.ID)
                 .fetchOne(TAG.ID);
@@ -133,7 +136,7 @@ public class TagProvider implements BaseRecordProvider<TagRecord, Integer> {
     }
 
     @LoggedStatement
-    public void updateTag(String userId, int tagId, String name, String color, String icon) {
+    public void updateTag(String userId, String tagId, String name, String color, String icon) {
         db.update(TAG)
             .set(TAG.ICON, icon)
             .set(TAG.COLOR, color)
@@ -144,7 +147,7 @@ public class TagProvider implements BaseRecordProvider<TagRecord, Integer> {
     }
 
     @LoggedStatement
-    public void deleteById(String userId, int tagId) {
+    public void deleteById(String userId, String tagId) {
         db.deleteFrom(TAG).where(TAG.USER_ID.eq(userId)).and(TAG.ID.eq(tagId)).execute();
     }
 }

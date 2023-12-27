@@ -7,7 +7,7 @@
     <dependency>
       <artifactId>jooq-codegen</artifactId>
       <groupId>org.jooq</groupId>
-      <version>3.17.14</version>
+      <version>3.18.7</version>
     </dependency>
 
     <dependency>
@@ -40,11 +40,12 @@
   <packaging>maven-plugin</packaging>
 
   <properties>
-    <maven.compiler.source>17</maven.compiler.source>
-    <maven.compiler.target>17</maven.compiler.target>
+    <java.version>21</java.version>
+    <maven.compiler.source>21</maven.compiler.source>
+    <maven.compiler.target>21</maven.compiler.target>
   </properties>
 
   <url>http://maven.apache.org</url>
 
-  <version>0.0.1-SNAPSHOT</version>
+  <version>1.0.0</version>
 </project>

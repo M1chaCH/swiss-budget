@@ -100,8 +100,8 @@ public class TransactionProvider implements BaseRecordProvider<TransactionRecord
     }
 
     public TransactionDto asDto(Record result, TagDto tag, KeywordDto matchingKeyword, List<TransactionTagDuplicateDto> duplicatedTags) {
-        int tagId = tag == null ? 0 : tag.getId();
-        int matchingKeywordId = matchingKeyword == null ? 0 : matchingKeyword.getId();
+        String tagId = tag == null ? null : tag.getId();
+        String matchingKeywordId = matchingKeyword == null ? null : matchingKeyword.getId();
 
         return new TransactionDto(
             result.getValue(TRANSACTION.ID),
@@ -189,7 +189,7 @@ public class TransactionProvider implements BaseRecordProvider<TransactionRecord
             .map(result -> {
                 boolean alreadyHasTagMapped = false;
                 if (result.get(TRANSACTION.MATCHING_KEYWORD_ID) != null) {
-                    alreadyHasTagMapped = result.getValue(TRANSACTION.MATCHING_KEYWORD_ID) > 0;
+                    alreadyHasTagMapped = result.get(TRANSACTION.MATCHING_KEYWORD_ID) != null;
                 }
 
                 return new TransactionIdWithTagDuplicateCount(
@@ -204,7 +204,7 @@ public class TransactionProvider implements BaseRecordProvider<TransactionRecord
     public List<TransactionDto> selectTransactionsWithDependenciesWithFilterWithPageAsDto(
         String userId,
         String query,
-        int[] tagIds,
+        String[] tagIds,
         LocalDate from,
         LocalDate to,
         boolean needAttention,
@@ -331,9 +331,9 @@ public class TransactionProvider implements BaseRecordProvider<TransactionRecord
 
     @LoggedStatement
     public void updateTransactionUserInput(TransactionRecord transaction) {
-        if (transaction.getTagId() == 0) {
+        if (transaction.get(TRANSACTION.TAG_ID) == null) {
             transaction.store(TRANSACTION.ALIAS, TRANSACTION.NOTE);
-        } else if (transaction.getMatchingKeywordId() == 0) {
+        } else if (transaction.get(TRANSACTION.MATCHING_KEYWORD_ID) == null) {
             transaction.store(TRANSACTION.TAG_ID, TRANSACTION.ALIAS, TRANSACTION.NOTE);
         } else {
             transaction.store(TRANSACTION.TAG_ID, TRANSACTION.MATCHING_KEYWORD_ID, TRANSACTION.ALIAS, TRANSACTION.NOTE);
@@ -353,7 +353,7 @@ public class TransactionProvider implements BaseRecordProvider<TransactionRecord
      * don't send default tag id, this will break with the needUserAttention field. needUserAttention field is set to false here
      */
     @LoggedStatement
-    public void updateTransactionWithTagAndRemoveNeedAttention(String transactionId, int tagId) {
+    public void updateTransactionWithTagAndRemoveNeedAttention(String transactionId, String tagId) {
         db
             .update(TRANSACTION)
             .set(TRANSACTION.TAG_ID, tagId)
@@ -366,7 +366,7 @@ public class TransactionProvider implements BaseRecordProvider<TransactionRecord
      * don't send default tag id, this will break with the needUserAttention field. needUserAttention field is set to false here
      */
     @LoggedStatement
-    public void updateTransactionWithTagAndRemoveNeedAttention(String transactionId, int tagId, int matchingKeywordId) {
+    public void updateTransactionWithTagAndRemoveNeedAttention(String transactionId, String tagId, String matchingKeywordId) {
         db
             .update(TRANSACTION)
             .set(TRANSACTION.TAG_ID, tagId)

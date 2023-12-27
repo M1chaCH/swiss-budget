@@ -1,0 +1,13 @@
+::registered_user,,,,,,,,,,,
+id,mail,password,salt,disabled,demo_user,,,,,,
+{{genGuid(usr_tst)}},user@test.ch,{{hashWithSalt(test)}},{{salt()}},FALSE,TRUE,,,,,,
+{{genGuid(usr_dis)}},locked@test.ch,{{hashWithSalt(test)}},{{salt()}},TRUE,TRUE,,,,,,
+,,,,,,,,,,,
+::transaction,,,,,,,,,,,
+id,expense,transaction_date,bankaccount,amount,receiver,tag_id,matching_keyword_id,need_user_attention,alias,note,user_id
+{{genGuid()}},TRUE,{{date(Today)}},raiffeisen,100,TWINT Mami,,,TRUE,,,{{useGuid(usr_tst)}}
+{{genGuid()}},FALSE,{{date(-1&&DAY)}},raiffeisen,100,TWINT Mami,,,TRUE,,,{{useGuid(usr_tst)}}
+,,,,,,,,,,,
+::verified_device,,,,,,,,,,,
+id,user_id,user_agent,,,,,,,,,
+{{genGuid()}},{{useGuid(usr_tst)}},test-agent,,,,,,,,,

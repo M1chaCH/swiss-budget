@@ -20,7 +20,7 @@ import org.jooq.Record4;
 import org.jooq.exception.TooManyRowsException;
 
 @ApplicationScoped
-public class KeywordProvider implements BaseRecordProvider<KeywordRecord, Integer> {
+public class KeywordProvider implements BaseRecordProvider<KeywordRecord, String> {
 
     protected final DataProvider data;
     protected final DSLContext db;
@@ -50,7 +50,7 @@ public class KeywordProvider implements BaseRecordProvider<KeywordRecord, Intege
 
     @Override
     @LoggedStatement
-    public boolean fetchExists(String userId, Integer recordId) {
+    public boolean fetchExists(String userId, String recordId) {
         Condition userCondition = KEYWORD.USER_ID.eq(userId);
         Condition keywordCondition = KEYWORD.ID.eq(recordId);
 
@@ -72,7 +72,7 @@ public class KeywordProvider implements BaseRecordProvider<KeywordRecord, Intege
         Condition userCondition = KEYWORD.USER_ID.eq(userId);
         Condition keywordCondition = KEYWORD.KEYWORD_.likeIgnoreCase(keyword);
 
-        Record4<Integer, String, String, String> result = db
+        Record4<String, String, String, String> result = db
             .select(KEYWORD.ID, KEYWORD.KEYWORD_, KEYWORD.USER_ID, TAG.NAME.as("tag"))
             .from(KEYWORD)
             .leftJoin(TAG)
@@ -93,12 +93,12 @@ public class KeywordProvider implements BaseRecordProvider<KeywordRecord, Intege
     }
 
     @LoggedStatement
-    public List<KeywordRecord> selectKeywordsByTagId(String userId, int tagId) {
+    public List<KeywordRecord> selectKeywordsByTagId(String userId, String tagId) {
         return db.fetch(KEYWORD, KEYWORD.USER_ID.eq(userId), KEYWORD.TAG_ID.eq(tagId));
     }
 
     @LoggedStatement
-    public int insertKeywordToTag(String userId, int tagId, String keyword) {
+    public String insertKeywordToTag(String userId, String tagId, String keyword) {
         return db
             .insertInto(KEYWORD, KEYWORD.TAG_ID, KEYWORD.KEYWORD_, KEYWORD.USER_ID)
             .values(tagId, keyword, userId)
@@ -107,7 +107,7 @@ public class KeywordProvider implements BaseRecordProvider<KeywordRecord, Intege
     }
 
     @LoggedStatement()
-    public void insertKeywordsToTag(String userId, int tagId, List<String> keywords) {
+    public void insertKeywordsToTag(String userId, String tagId, List<String> keywords) {
         List<Query> insertKeywords = keywords
             .stream()
             .map(keyword -> (Query) db
@@ -119,13 +119,13 @@ public class KeywordProvider implements BaseRecordProvider<KeywordRecord, Intege
     }
 
     @LoggedStatement
-    public void deleteKeywordsByIds(String userId, int... keywordIds) {
+    public void deleteKeywordsByIds(String userId, String... keywordIds) {
         if (keywordIds.length == 0) {
             return;
         }
 
         List<Condition> conditions = new ArrayList<>(keywordIds.length);
-        for (int id : keywordIds) {
+        for (String id : keywordIds) {
             conditions.add(KEYWORD.ID.eq(id).and(KEYWORD.USER_ID.eq(userId)));
         }
 
@@ -136,7 +136,7 @@ public class KeywordProvider implements BaseRecordProvider<KeywordRecord, Intege
 
     public record KeywordWithTagEntity(
         String userId,
-        int keywordId,
+        String keywordId,
         String keyword,
         String tagName
     ) {

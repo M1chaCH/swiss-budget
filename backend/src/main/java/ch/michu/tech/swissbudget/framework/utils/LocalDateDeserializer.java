@@ -1,4 +1,4 @@
-package ch.michu.tech.swissbudget.framework;
+package ch.michu.tech.swissbudget.framework.utils;
 
 import jakarta.json.bind.serializer.DeserializationContext;
 import jakarta.json.bind.serializer.JsonbDeserializer;

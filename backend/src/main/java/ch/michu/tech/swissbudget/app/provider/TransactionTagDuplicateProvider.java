@@ -21,7 +21,7 @@ import org.jooq.Record;
 import org.jooq.RecordMapper;
 
 @ApplicationScoped
-public class TransactionTagDuplicateProvider implements BaseRecordProvider<TransactionTagDuplicateRecord, Integer> {
+public class TransactionTagDuplicateProvider implements BaseRecordProvider<TransactionTagDuplicateRecord, String> {
 
     protected final DataProvider data;
     protected final DSLContext db;
@@ -55,7 +55,7 @@ public class TransactionTagDuplicateProvider implements BaseRecordProvider<Trans
 
     @Override
     @LoggedStatement
-    public boolean fetchExists(String userId, Integer recordId) {
+    public boolean fetchExists(String userId, String recordId) {
         Condition transactionMailCondition = TRANSACTION_TAG_DUPLICATE.ID.eq(recordId);
 
         return db.fetchExists(TRANSACTION_TAG_DUPLICATE, transactionMailCondition);
@@ -76,7 +76,7 @@ public class TransactionTagDuplicateProvider implements BaseRecordProvider<Trans
     }
 
     @LoggedStatement
-    public int insertDuplicatedTag(String transactionId, int tagId, int matchingKeywordId) {
+    public String insertDuplicatedTag(String transactionId, String tagId, String matchingKeywordId) {
         return db
             .insertInto(TRANSACTION_TAG_DUPLICATE, TRANSACTION_TAG_DUPLICATE.TRANSACTION_ID, TRANSACTION_TAG_DUPLICATE.TAG_ID,
                 TRANSACTION_TAG_DUPLICATE.MATCHING_KEYWORD_ID)

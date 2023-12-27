@@ -1,13 +1,13 @@
 package ch.michu.tech.swissbudget.framework.authentication;
 
 import ch.michu.tech.swissbudget.app.dto.MfaCodeDto;
-import ch.michu.tech.swissbudget.framework.EncodingUtil;
 import ch.michu.tech.swissbudget.framework.data.DataProvider;
 import ch.michu.tech.swissbudget.framework.data.RequestSupport;
 import ch.michu.tech.swissbudget.framework.error.exception.AgentNotRegisteredException;
 import ch.michu.tech.swissbudget.framework.error.exception.LoginFailedException;
 import ch.michu.tech.swissbudget.framework.error.exception.LoginFromNewClientException;
 import ch.michu.tech.swissbudget.framework.error.exception.RemoteAddressNotPresentException;
+import ch.michu.tech.swissbudget.framework.utils.EncodingUtil;
 import ch.michu.tech.swissbudget.generated.jooq.tables.RegisteredUser;
 import ch.michu.tech.swissbudget.generated.jooq.tables.VerifiedDevice;
 import ch.michu.tech.swissbudget.generated.jooq.tables.records.RegisteredUserRecord;
@@ -87,6 +87,10 @@ public class AuthenticationService {
 
         if (user == null) {
             support.logFine(this, "%s tried to login, but user does not exist", mail);
+            throw new LoginFailedException(mail);
+        }
+        if (user.getDisabled()) {
+            support.logFine(this, "%s tried to login, but user is disabled", mail);
             throw new LoginFailedException(mail);
         }
 

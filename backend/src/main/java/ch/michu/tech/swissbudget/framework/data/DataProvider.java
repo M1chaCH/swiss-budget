@@ -3,6 +3,7 @@ package ch.michu.tech.swissbudget.framework.data;
 import ch.michu.tech.swissbudget.framework.event.EventHandlerPriority;
 import ch.michu.tech.swissbudget.framework.event.HandlerPriority;
 import ch.michu.tech.swissbudget.framework.event.OnAppStartupListener;
+import ch.michu.tech.swissbudget.framework.mail.MailSender;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import java.sql.Connection;
@@ -18,6 +19,7 @@ import org.jooq.Record;
 import org.jooq.Result;
 import org.jooq.SQLDialect;
 import org.jooq.SelectLimitStep;
+import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
 // TODO upgrade to connection pool (keep same connection per request) (either use plain hickari connection pool lib or use helidon integration)
@@ -45,7 +47,7 @@ public class DataProvider implements OnAppStartupListener {
         @ConfigProperty(name = "db.user") String dbUser,
         @ConfigProperty(name = "db.password") String dbPassword,
         @ConfigProperty(name = "db.url") String dbUrl,
-        @ConfigProperty(name = "db.limit.page.size", defaultValue = "100") int pageSize
+        @ConfigProperty(name = "db.limit.page.size", defaultValue = "100") int pageSize, MailSender sender
     ) {
         this.dbUser = dbUser;
         this.dbPassword = dbPassword;
@@ -58,8 +60,9 @@ public class DataProvider implements OnAppStartupListener {
     public void onAppStartup() {
         try {
             LOGGER.log(Level.INFO, "initializing database connection at: {0}", new Object[]{dbUrl});
+            final SQLDialect dialect = dbUrl.contains("h2") ? SQLDialect.H2 : SQLDialect.POSTGRES;
             dbConnection = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
-            dbContext = DSL.using(dbConnection, SQLDialect.POSTGRES);
+            dbContext = DSL.using(dbConnection, dialect, new Settings().withRenderSchema(false)); // h2 cant handle a rendered schema
             LOGGER.log(Level.INFO, "successfully initialized DB context");
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "connection to db failed", e);

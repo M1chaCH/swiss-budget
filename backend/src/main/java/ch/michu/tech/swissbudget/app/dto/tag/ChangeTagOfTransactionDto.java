@@ -22,5 +22,5 @@ public class ChangeTagOfTransactionDto {
     @ValidateLength(min = 1)
     private String transactionId;
     @ValidateAmount(min = 1)
-    private int tagId;
+    private String tagId;
 }

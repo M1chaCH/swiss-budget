@@ -109,7 +109,7 @@ public class TransactionTagMapper {
         }
     }
 
-    public void handleKeywordsAdded(String userId, int tagId, List<KeywordRecord> keywords) {
+    public void handleKeywordsAdded(String userId, String tagId, List<KeywordRecord> keywords) {
         LOGGER.log(Level.INFO, "handling {0} added keywords for user {1}", new Object[]{keywords.size(), userId});
 
         for (KeywordRecord addedKeyword : keywords) {

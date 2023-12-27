@@ -5,7 +5,7 @@ import static ch.michu.tech.swissbudget.generated.jooq.tables.Transaction.TRANSA
 import ch.michu.tech.swissbudget.app.dto.keyword.KeywordDto;
 import ch.michu.tech.swissbudget.app.dto.tag.TagDto;
 import ch.michu.tech.swissbudget.app.entity.CompleteTransactionEntity;
-import ch.michu.tech.swissbudget.framework.LocalDateDeserializer;
+import ch.michu.tech.swissbudget.framework.utils.LocalDateDeserializer;
 import ch.michu.tech.swissbudget.framework.validation.Nullable;
 import ch.michu.tech.swissbudget.framework.validation.ValidateAmount;
 import ch.michu.tech.swissbudget.framework.validation.ValidateLength;
@@ -42,12 +42,12 @@ public class TransactionDto {
 
     @Nullable
     @ValidateAmount(min = 0)
-    private int tagId;
+    private String tagId;
     @Nullable
     private TagDto tag;
     @Nullable
     @ValidateAmount(min = 0)
-    private int matchingKeywordId;
+    private String matchingKeywordId;
     @Nullable
     private KeywordDto matchingKeyword;
     @Nullable

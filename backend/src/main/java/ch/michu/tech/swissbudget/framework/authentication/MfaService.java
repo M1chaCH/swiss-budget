@@ -75,28 +75,32 @@ public class MfaService {
         String currentUserAgent = AuthenticationService.extractUserAgent(support.getRequest());
         DSLContext dataContext = data.getContext();
 
-        MfaCodeRecord mfaCodeRecord = dataContext
-            .fetchOne(MfaCode.MFA_CODE,
-                MfaCode.MFA_CODE.ID.eq(mfaProcessId)
-                    .and(MfaCode.MFA_CODE.USER_ID.eq(userId)
-                        .and(MfaCode.MFA_CODE.CODE.eq(providedCode))));
+        MfaCodeRecord mfaCode = dataContext
+            .fetchOne(MfaCode.MFA_CODE, MfaCode.MFA_CODE.ID.eq(mfaProcessId)
+                .and(MfaCode.MFA_CODE.USER_ID.eq(userId)));
 
-        if (mfaCodeRecord == null || !mfaCodeRecord.getUserAgent().equals(currentUserAgent)
-            || mfaCodeRecord.getTries() >= mfaCodeTryLimit) {
-            if (mfaCodeRecord != null) {
-                mfaCodeRecord.setTries(mfaCodeRecord.getTries() + 1);
-                mfaCodeRecord.store();
-            }
+        if (mfaCode == null) {
+            throw new InvalidMfaCodeException();
+        }
+        if (!mfaCode.getUserAgent().equals(currentUserAgent) || mfaCode.getExpiresAt().isBefore(LocalDateTime.now())
+            || mfaCode.getTries() >= mfaCodeTryLimit) {
+            mfaCode.delete();
+            throw new InvalidMfaCodeException();
+        }
+        if (mfaCode.getCode() != providedCode) {
+            mfaCode.setTries(mfaCode.getTries() + 1);
+            mfaCode.store();
 
             throw new InvalidMfaCodeException();
         }
 
         VerifiedDeviceRecord verifiedDeviceRecord = dataContext.newRecord(VerifiedDevice.VERIFIED_DEVICE);
+        verifiedDeviceRecord.setId(UUID.randomUUID().toString());
         verifiedDeviceRecord.setUserAgent(currentUserAgent);
         verifiedDeviceRecord.setUserId(userId);
         verifiedDeviceRecord.store();
 
         support.logInfo(this, "mfa process (%s) completed", mfaProcessId);
-        mfaCodeRecord.delete();
+        mfaCode.delete();
     }
 }

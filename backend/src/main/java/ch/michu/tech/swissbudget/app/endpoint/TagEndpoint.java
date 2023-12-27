@@ -62,7 +62,7 @@ public class TagEndpoint {
     @DELETE
     @Path("/{tagId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteTag(@PathParam("tagId") int tagId) {
+    public Response deleteTag(@PathParam("tagId") String tagId) {
         service.deleteTag(tagId);
         return Response.status(Status.NO_CONTENT).build();
     }

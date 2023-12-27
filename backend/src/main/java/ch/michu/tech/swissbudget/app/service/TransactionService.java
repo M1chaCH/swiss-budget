@@ -26,7 +26,8 @@ public class TransactionService {
         this.provider = provider;
     }
 
-    public List<TransactionDto> getTransactions(String query, int[] tagIds, LocalDate from, LocalDate to, boolean needAttention, int page) {
+    public List<TransactionDto> getTransactions(String query, String[] tagIds, LocalDate from, LocalDate to, boolean needAttention,
+        int page) {
         return provider.selectTransactionsWithDependenciesWithFilterWithPageAsDto(supportProvider.get().getUserIdOrThrow(),
             query, tagIds, from, to, needAttention, page);
     }

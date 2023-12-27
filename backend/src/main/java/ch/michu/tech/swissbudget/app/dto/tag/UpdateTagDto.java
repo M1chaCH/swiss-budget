@@ -23,12 +23,12 @@ public class UpdateTagDto {
 
     @ValidateAmount(min = 1)
     @Nullable
-    private int tagId;
+    private String tagId;
     private String icon;
     private String color;
     @ValidateLength(min = 3, max = 50)
     private String name;
     private List<String> keywordsToAdd;
     @Nullable
-    private int[] keywordIdsToDelete;
+    private String[] keywordIdsToDelete;
 }
