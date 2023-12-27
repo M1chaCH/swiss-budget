@@ -5,13 +5,11 @@ import static ch.michu.tech.swissbudget.generated.jooq.tables.Transaction.TRANSA
 import ch.michu.tech.swissbudget.app.dto.keyword.KeywordDto;
 import ch.michu.tech.swissbudget.app.dto.tag.TagDto;
 import ch.michu.tech.swissbudget.app.entity.CompleteTransactionEntity;
-import ch.michu.tech.swissbudget.framework.utils.LocalDateDeserializer;
 import ch.michu.tech.swissbudget.framework.validation.Nullable;
 import ch.michu.tech.swissbudget.framework.validation.ValidateAmount;
 import ch.michu.tech.swissbudget.framework.validation.ValidateLength;
 import ch.michu.tech.swissbudget.framework.validation.ValidatedDto;
 import ch.michu.tech.swissbudget.generated.jooq.tables.records.TransactionRecord;
-import jakarta.json.bind.annotation.JsonbTypeDeserializer;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +34,6 @@ public class TransactionDto {
     private boolean expense;
     @ValidateAmount(min = 0)
     private double amount;
-    @JsonbTypeDeserializer(LocalDateDeserializer.class)
     private LocalDate transactionDate;
     private String bankAccount;
     private String receiver;

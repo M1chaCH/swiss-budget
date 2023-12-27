@@ -5,7 +5,6 @@ import static ch.michu.tech.swissbudget.generated.jooq.tables.Tag.TAG;
 import ch.michu.tech.swissbudget.app.dto.keyword.KeywordDto;
 import ch.michu.tech.swissbudget.app.provider.TagProvider;
 import ch.michu.tech.swissbudget.framework.validation.Nullable;
-import ch.michu.tech.swissbudget.framework.validation.ValidateAmount;
 import ch.michu.tech.swissbudget.framework.validation.ValidateLength;
 import ch.michu.tech.swissbudget.framework.validation.ValidatedDto;
 import ch.michu.tech.swissbudget.generated.jooq.tables.records.TagRecord;
@@ -27,7 +26,6 @@ import lombok.ToString;
 @ValidatedDto
 public class TagDto {
 
-    @ValidateAmount(min = 0)
     private UUID id;
     private String icon;
     private String color;

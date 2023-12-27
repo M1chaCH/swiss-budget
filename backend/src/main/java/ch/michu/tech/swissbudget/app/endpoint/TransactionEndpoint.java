@@ -5,6 +5,7 @@ import ch.michu.tech.swissbudget.app.service.TransactionService;
 import ch.michu.tech.swissbudget.framework.authentication.Authenticated;
 import ch.michu.tech.swissbudget.framework.logging.LoggedRequest;
 import ch.michu.tech.swissbudget.framework.utils.LocalDateDeserializer;
+import ch.michu.tech.swissbudget.framework.utils.ParsingUtils;
 import ch.michu.tech.swissbudget.framework.validation.ValidateDtos;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
@@ -54,7 +55,11 @@ public class TransactionEndpoint {
         if (!toDate.isBlank()) {
             to = LocalDateDeserializer.parseLocalDate(toDate);
         }
-        UUID[] tags = (UUID[]) Arrays.stream(tagIds.split(";")).filter(s -> !s.isBlank()).map(UUID::fromString).toArray();
+
+        UUID[] tags = new UUID[0];
+        if (!tagIds.isBlank()) {
+            tags = ParsingUtils.toUUIDArray(Arrays.stream(tagIds.split(";")).filter(s -> !s.isBlank()).toArray());
+        }
 
         return Response.status(Status.OK).entity(service.getTransactions(query, tags, from, to, needAttention, page)).build();
     }

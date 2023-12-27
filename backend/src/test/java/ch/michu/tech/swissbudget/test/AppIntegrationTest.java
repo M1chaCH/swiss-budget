@@ -23,21 +23,26 @@ public abstract class AppIntegrationTest {
         client.setDefaultPath(path);
 
         try {
-            data.initDb(); // init DB on the very first run
+            data.initDbIfRequired();
+            data.applyTestData(useDemoUser());
         } catch (IOException | SQLException e) {
             fail(e);
         }
     }
 
     @AfterEach
-    public void cleanup() throws SQLException {
+    public void cleanup() throws SQLException { // TODO for the future: only cleanup changed tables
         if (wasDataModified()) {
-            data.applyTestData();
+            data.applyTestData(useDemoUser());
         }
         client.closeResponses();
     }
 
     protected boolean wasDataModified() {
         return true;
+    }
+
+    protected boolean useDemoUser() {
+        return false;
     }
 }

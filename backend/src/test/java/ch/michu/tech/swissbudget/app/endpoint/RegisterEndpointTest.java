@@ -1,6 +1,8 @@
 package ch.michu.tech.swissbudget.app.endpoint;
 
+import static ch.michu.tech.swissbudget.generated.jooq.tables.Keyword.KEYWORD;
 import static ch.michu.tech.swissbudget.generated.jooq.tables.RegisteredUser.REGISTERED_USER;
+import static ch.michu.tech.swissbudget.generated.jooq.tables.Tag.TAG;
 import static ch.michu.tech.swissbudget.generated.jooq.tables.TransactionMetaData.TRANSACTION_META_DATA;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -8,6 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import ch.michu.tech.swissbudget.app.dto.RegisterDto;
 import ch.michu.tech.swissbudget.app.exception.UserAlreadyExistsException;
+import ch.michu.tech.swissbudget.framework.error.exception.AgentNotRegisteredException;
 import ch.michu.tech.swissbudget.generated.jooq.tables.records.RegisteredUserRecord;
 import ch.michu.tech.swissbudget.generated.jooq.tables.records.TransactionMetaDataRecord;
 import ch.michu.tech.swissbudget.test.AppIntegrationTest;
@@ -36,6 +39,8 @@ class RegisterEndpointTest extends AppIntegrationTest {
 
         Response r = client.create().unauthorized().post(registerDto);
         assertEquals(Status.OK.getStatusCode(), r.getStatus());
+        String result = r.readEntity(String.class);
+        assertTrue(result.contains(AgentNotRegisteredException.class.getSimpleName()));
 
         RegisteredUserRecord user = data.getDsl().fetchOne(REGISTERED_USER, REGISTERED_USER.MAIL.eq(expectedMail));
         assertNotNull(user);
@@ -44,6 +49,12 @@ class RegisterEndpointTest extends AppIntegrationTest {
         assertNotNull(metaData);
         assertEquals("raiffeisen", metaData.getBank());
         assertEquals("test-folder", metaData.getTransactionsFolder());
+
+        int tags = data.getDsl().fetchCount(TAG, TAG.USER_ID.eq(user.getId()));
+        assertEquals(9, tags);
+
+        int keywords = data.getDsl().fetchCount(KEYWORD, KEYWORD.USER_ID.eq(user.getId()));
+        assertEquals(87, keywords);
     }
 
     @Test

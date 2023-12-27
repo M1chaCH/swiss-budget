@@ -104,6 +104,7 @@ public class DataLoader {
         if (variables == null) {
             variables = Map.of();
         }
+        builder = null;
 
         LOGGER.log(Level.INFO, "loading data from: {0}", new Object[]{path.toAbsolutePath()});
 
@@ -113,7 +114,7 @@ public class DataLoader {
         }
 
         try {
-            Queue<String> statements = buildStatements(Files.readAllLines(path, StandardCharsets.ISO_8859_1), variables);
+            Queue<String> statements = buildStatements(Files.readAllLines(path, StandardCharsets.UTF_8), variables);
             long duration = Instant.now().toEpochMilli() - startTime;
             LOGGER.log(Level.INFO, "loaded data into SQL. took:{0}ms", new Object[]{duration});
             return statements;
@@ -146,7 +147,7 @@ public class DataLoader {
     public void store(Queue<String> statements) {
         long startTime = Instant.now().toEpochMilli();
 
-        LOGGER.log(Level.INFO, "executing {0} import statements", new Object[]{statements});
+        LOGGER.log(Level.INFO, "executing {0} import statements", new Object[]{statements.size()});
 
         data.getContext().transaction(ctx -> statements.forEach(statement -> {
             LOGGER.log(Level.FINE, "executing: {0}", new Object[]{statement});

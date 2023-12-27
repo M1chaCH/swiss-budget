@@ -35,7 +35,8 @@ public class TestDataManager {
     private final DSLContext dsl;
     private final String setupScriptPath;
 
-    private final Queue<String> dataStatements;
+    private final Queue<String> testDataStatements;
+    private final Queue<String> demoDataStatements;
     private final Map<String, UUID> idAliasWithUUID;
 
     private boolean initialized = false;
@@ -56,12 +57,14 @@ public class TestDataManager {
         dsl = DSL.using(connection, SQLDialect.H2, new Settings().withRenderSchema(false));
         LOGGER.log(Level.INFO, "successfully connected to Test DB", new Object[]{});
 
-        Path p = Paths.get("src/main/resources/sql/test-data.csv");
-        dataStatements = dataLoader.load(p, Map.of());
+        Path testDataPath = Paths.get("src/main/resources/sql/test-data.csv");
+        testDataStatements = dataLoader.load(testDataPath, Map.of());
         idAliasWithUUID = dataLoader.getUuidCache();
+        Path demoUserPath = Paths.get("src/main/resources/sql/demo-user-data.csv");
+        demoDataStatements = dataLoader.load(demoUserPath, Map.of("user_id", idAliasWithUUID.get("usr_rt")));
     }
 
-    public void initDb() throws IOException, SQLException {
+    public void initDbIfRequired() throws IOException, SQLException {
         if (initialized) {
             return;
         }
@@ -84,8 +87,6 @@ public class TestDataManager {
         }
         statement.close();
 
-        dataLoader.store(dataStatements);
-
         LOGGER.log(Level.INFO, "DB setup completed", new Object[]{});
         initialized = true;
     }
@@ -94,9 +95,13 @@ public class TestDataManager {
         return idAliasWithUUID.get(alias);
     }
 
-    public void applyTestData() throws SQLException {
+    public void applyTestData(boolean loadDemoUser) throws SQLException {
         clearAllTables();
-        dataLoader.store(dataStatements);
+        dataLoader.store(testDataStatements);
+
+        if (loadDemoUser) {
+            dataLoader.store(demoDataStatements);
+        }
     }
 
     protected void clearAllTables() throws SQLException {
