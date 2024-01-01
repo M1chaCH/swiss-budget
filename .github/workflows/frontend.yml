@@ -9,16 +9,18 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./frontend
 
     steps:
       - uses: actions/checkout@v3
-      - name: nagivating to working dir
-        run: cd ./frontend
       - name: Use Node.js 20.x
         uses: actions/setup-node@v3
         with:
           node-version: '20.x'
           cache: 'npm'
+          cache-dependency-path: "frontend"
       - name: Install with npm
         run: npm ci
       - name: Build with npm
