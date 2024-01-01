@@ -21,6 +21,7 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
           cache: maven
+          cache-dependency-path: "backend"
       - name: Build jooq generator
         working-directory: ./jooq-code-generator
         run: mvn -B install -DskipTests
@@ -28,7 +29,3 @@ jobs:
         run: mvn -B package -DskipTests
       - name: Run tests
         run: mvn -B test
-
-      # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
-      - name: Update dependency graph
-        uses: advanced-security/maven-dependency-submission-action@571e99aab1055c2e71a1e2309b9691de18d6b7d6
