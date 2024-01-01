@@ -1,5 +1,6 @@
 package ch.michu.tech.swissbudget.framework.authentication;
 
+import static ch.michu.tech.swissbudget.framework.utils.DateBuilder.localDateTimeNow;
 import static ch.michu.tech.swissbudget.generated.jooq.tables.MfaCode.MFA_CODE;
 
 import ch.michu.tech.swissbudget.framework.data.DataProvider;
@@ -7,7 +8,6 @@ import ch.michu.tech.swissbudget.generated.jooq.tables.records.MfaCodeRecord;
 import io.helidon.microprofile.scheduling.FixedRate;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
@@ -30,7 +30,8 @@ public class MfaCodeCleaner {
     public void wipeExpiredCodes() {
         LOGGER.log(Level.FINE, "checking for expired mfa codes", new Object[]{});
         List<MfaCodeRecord> codes = data.getContext().selectFrom(MFA_CODE).stream().toList();
-        codes.stream().filter(code -> code.getExpiresAt().isBefore(LocalDateTime.now())).forEach(UpdatableRecordImpl::delete);
+        codes.stream().filter(code -> code.getExpiresAt().isBefore(localDateTimeNow()))
+            .forEach(UpdatableRecordImpl::delete);
         LOGGER.log(Level.FINE, "check for expired mfa codes completed", new Object[]{});
     }
 }

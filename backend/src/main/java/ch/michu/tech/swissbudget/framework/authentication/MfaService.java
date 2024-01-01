@@ -1,5 +1,7 @@
 package ch.michu.tech.swissbudget.framework.authentication;
 
+import static ch.michu.tech.swissbudget.framework.utils.DateBuilder.localDateTimeNow;
+
 import ch.michu.tech.swissbudget.app.service.mail.MailTemplateNames;
 import ch.michu.tech.swissbudget.framework.data.DataProvider;
 import ch.michu.tech.swissbudget.framework.data.RequestSupport;
@@ -14,7 +16,6 @@ import ch.michu.tech.swissbudget.generated.jooq.tables.records.VerifiedDeviceRec
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Provider;
-import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
@@ -51,7 +52,7 @@ public class MfaService {
         UUID mfaProcessId = UUID.randomUUID();
         MfaCodeRecord mfaCodeRecord = data.getContext().newRecord(MfaCode.MFA_CODE);
         mfaCodeRecord.setCode(random.nextInt(100000, 999999));
-        mfaCodeRecord.setExpiresAt(LocalDateTime.now().plusHours(mfaCodeLifetime));
+        mfaCodeRecord.setExpiresAt(localDateTimeNow().plusHours(mfaCodeLifetime));
         mfaCodeRecord.setUserId(user.getId());
         mfaCodeRecord.setId(mfaProcessId);
         mfaCodeRecord.setUserAgent(currentUserAgent);
@@ -82,7 +83,7 @@ public class MfaService {
         if (mfaCode == null) {
             throw new InvalidMfaCodeException();
         }
-        if (!mfaCode.getUserAgent().equals(currentUserAgent) || mfaCode.getExpiresAt().isBefore(LocalDateTime.now())
+        if (!mfaCode.getUserAgent().equals(currentUserAgent) || mfaCode.getExpiresAt().isBefore(localDateTimeNow())
             || mfaCode.getTries() >= mfaCodeTryLimit) {
             mfaCode.delete();
             throw new InvalidMfaCodeException();

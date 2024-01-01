@@ -1,5 +1,7 @@
 package ch.michu.tech.swissbudget.app.provider;
 
+import static ch.michu.tech.swissbudget.framework.utils.DateBuilder.localDateNow;
+import static ch.michu.tech.swissbudget.framework.utils.DateBuilder.localDateTimeNow;
 import static ch.michu.tech.swissbudget.generated.jooq.tables.Keyword.KEYWORD;
 import static ch.michu.tech.swissbudget.generated.jooq.tables.RegisteredUser.REGISTERED_USER;
 import static ch.michu.tech.swissbudget.generated.jooq.tables.Tag.TAG;
@@ -211,7 +213,7 @@ public class TransactionProvider implements BaseRecordProvider<TransactionRecord
         boolean needAttention,
         int page
     ) {
-        LocalDate tomorrow = LocalDate.now().plusDays(1);
+        LocalDate tomorrow = localDateNow().plusDays(1);
         SelectConditionStep<?> conditions = db
             .select(TRANSACTION.asterisk(), TAG.asterisk(), KEYWORD.asterisk(),
                 count(TRANSACTION_TAG_DUPLICATE.ID).as(DUPLICATES_COUNT_COLUMN))
@@ -394,7 +396,7 @@ public class TransactionProvider implements BaseRecordProvider<TransactionRecord
         db
             .update(TRANSACTION_META_DATA)
             .set(TRANSACTION_META_DATA.LAST_IMPORTED_TRANSACTION, lastImportedTransaction)
-            .set(TRANSACTION_META_DATA.LAST_IMPORT_CHECK, LocalDateTime.now())
+            .set(TRANSACTION_META_DATA.LAST_IMPORT_CHECK, localDateTimeNow())
             .where(TRANSACTION_META_DATA.USER_ID.eq(id))
             .execute();
     }
@@ -410,12 +412,12 @@ public class TransactionProvider implements BaseRecordProvider<TransactionRecord
     protected ImportDbData parseResultToImportData(Result<?> result, int index) {
         LocalDateTime lastImportedTransaction = result.getValue(index, TRANSACTION_META_DATA.LAST_IMPORTED_TRANSACTION);
         lastImportedTransaction = lastImportedTransaction == null ?
-            LocalDateTime.now().minusYears(TransactionImporter.MAX_IMPORT_SINCE_YEARS) :
+            localDateTimeNow().minusYears(TransactionImporter.MAX_IMPORT_SINCE_YEARS) :
             lastImportedTransaction;
 
         LocalDateTime lastImportCheck = result.getValue(index, TRANSACTION_META_DATA.LAST_IMPORT_CHECK);
         lastImportCheck = lastImportCheck == null ?
-            LocalDateTime.now().minusYears(TransactionImporter.MAX_IMPORT_SINCE_YEARS) :
+            localDateTimeNow().minusYears(TransactionImporter.MAX_IMPORT_SINCE_YEARS) :
             lastImportCheck;
 
         return new ImportDbData(

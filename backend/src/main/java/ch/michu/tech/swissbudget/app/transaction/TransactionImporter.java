@@ -1,5 +1,7 @@
 package ch.michu.tech.swissbudget.app.transaction;
 
+import static ch.michu.tech.swissbudget.framework.utils.DateBuilder.localDateTimeNow;
+
 import ch.michu.tech.swissbudget.app.entity.CompleteTransactionEntity;
 import ch.michu.tech.swissbudget.app.exception.BankNotSupportedException;
 import ch.michu.tech.swissbudget.app.exception.ProcessAlreadyStartedException;
@@ -99,7 +101,7 @@ public class TransactionImporter {
             .orElseThrow(() -> new BankNotSupportedException(dbData.mail(), dbData.bank()));
         final List<CompleteTransactionEntity> transactions = new ArrayList<>();
 
-        long minutesSinceLastImport = dbData.lastImportCheck().until(LocalDateTime.now(), ChronoUnit.MINUTES);
+        long minutesSinceLastImport = dbData.lastImportCheck().until(localDateTimeNow(), ChronoUnit.MINUTES);
         if (minutesSinceLastImport < 60) {
             LOGGER.log(Level.INFO, "last import was {0} minutes ago -> skipping this import (needs to be more than 1 hour)",
                 new Object[]{minutesSinceLastImport});

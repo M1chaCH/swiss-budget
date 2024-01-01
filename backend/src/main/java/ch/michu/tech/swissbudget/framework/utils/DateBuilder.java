@@ -1,6 +1,7 @@
 package ch.michu.tech.swissbudget.framework.utils;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.Year;
 import java.time.YearMonth;
 import java.time.ZoneId;
@@ -15,9 +16,26 @@ public class DateBuilder {
         this.current = date;
     }
 
+    /**
+     * used to centralize the use of Zone.
+     *
+     * @return a {@link LocalDate} now
+     */
+    public static LocalDate localDateNow() {
+        return LocalDate.now(ZoneId.of("CET"));
+    }
+
+    /**
+     * used to centralize the use of Zone.
+     *
+     * @return a {@link LocalDateTime} now
+     */
+    public static LocalDateTime localDateTimeNow() {
+        return LocalDateTime.now(ZoneId.of("CET"));
+    }
+
     public static DateBuilder today() {
-        LocalDate current = LocalDate.now(ZoneId.of("CET"));
-        return new DateBuilder(current);
+        return new DateBuilder(localDateNow());
     }
 
     public static DateBuilder from(LocalDate date) {

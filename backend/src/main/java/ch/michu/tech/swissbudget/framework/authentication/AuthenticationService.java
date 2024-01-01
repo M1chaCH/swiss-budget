@@ -1,5 +1,7 @@
 package ch.michu.tech.swissbudget.framework.authentication;
 
+import static ch.michu.tech.swissbudget.framework.utils.DateBuilder.localDateTimeNow;
+
 import ch.michu.tech.swissbudget.app.dto.MfaCodeDto;
 import ch.michu.tech.swissbudget.framework.data.DataProvider;
 import ch.michu.tech.swissbudget.framework.data.RequestSupport;
@@ -19,7 +21,6 @@ import io.helidon.webserver.http.ServerRequest;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Provider;
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -136,7 +137,7 @@ public class AuthenticationService {
         SessionToken token = tokenService.newSessionToken(user.getId(), stay);
 
         user.setCurrentSession(token.getSessionId());
-        user.setLastLogin(LocalDateTime.now());
+        user.setLastLogin(localDateTimeNow());
         user.store();
         userSessionCache.put(token.getUserId(), token.getSessionId());
 
