@@ -201,7 +201,7 @@ public class TransactionProvider implements BaseRecordProvider<TransactionRecord
             });
     }
 
-    @LoggedStatement // TODO verify in detail if this condition building doesn't destroy the userId check
+    @LoggedStatement
     public List<TransactionDto> selectTransactionsWithDependenciesWithFilterWithPageAsDto(
         UUID userId,
         String query,
