@@ -79,9 +79,10 @@ public class TransactionTagDuplicateProvider implements BaseRecordProvider<Trans
     @LoggedStatement
     public UUID insertDuplicatedTag(UUID transactionId, UUID tagId, UUID matchingKeywordId) {
         return db
-            .insertInto(TRANSACTION_TAG_DUPLICATE, TRANSACTION_TAG_DUPLICATE.TRANSACTION_ID, TRANSACTION_TAG_DUPLICATE.TAG_ID,
+            .insertInto(TRANSACTION_TAG_DUPLICATE, TRANSACTION_TAG_DUPLICATE.ID, TRANSACTION_TAG_DUPLICATE.TRANSACTION_ID,
+                TRANSACTION_TAG_DUPLICATE.TAG_ID,
                 TRANSACTION_TAG_DUPLICATE.MATCHING_KEYWORD_ID)
-            .values(transactionId, tagId, matchingKeywordId)
+            .values(UUID.randomUUID(), transactionId, tagId, matchingKeywordId)
             .returningResult(TRANSACTION_TAG_DUPLICATE.ID)
             .fetchOne(TRANSACTION_TAG_DUPLICATE.ID);
     }

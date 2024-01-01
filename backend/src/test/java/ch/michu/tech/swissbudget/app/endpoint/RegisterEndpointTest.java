@@ -19,8 +19,11 @@ import ch.michu.tech.swissbudget.test.TestHttpClient;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.Status;
+import org.junit.jupiter.api.MethodOrderer.MethodName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 
+@TestMethodOrder(MethodName.class)
 @SuppressWarnings("resource") // all responses will be closed by TestHttpClient
 class RegisterEndpointTest extends AppIntegrationTest {
 
@@ -31,13 +34,23 @@ class RegisterEndpointTest extends AppIntegrationTest {
         super("/register", data, client);
     }
 
+    @Override
+    protected boolean wasDataModified() {
+        return changesData;
+    }
+
+    @Override
+    protected boolean useDemoUser() {
+        return false;
+    }
+
     @Test
     void register_happy() {
         changesData = true;
         final String expectedMail = "test@mail.com";
         RegisterDto registerDto = new RegisterDto("test-folder", "raiffeisen", expectedMail, "test", "mailPass");
 
-        Response r = client.create().unauthorized().post(registerDto);
+        Response r = client.create().unauthenticated().post(registerDto);
         assertEquals(Status.OK.getStatusCode(), r.getStatus());
         String result = r.readEntity(String.class);
         assertTrue(result.contains(AgentNotRegisteredException.class.getSimpleName()));
@@ -62,14 +75,9 @@ class RegisterEndpointTest extends AppIntegrationTest {
         changesData = false;
         RegisterDto registerDto = new RegisterDto("test-folder", "raiffeisen", TestHttpClient.ROOT_MAIL, "test", "mailPass");
 
-        Response r = client.create().unauthorized().post(registerDto);
+        Response r = client.create().unauthenticated().post(registerDto);
         assertEquals(Status.BAD_REQUEST.getStatusCode(), r.getStatus());
         String body = r.readEntity(String.class);
         assertTrue(body.contains(UserAlreadyExistsException.class.getSimpleName()));
-    }
-
-    @Override
-    protected boolean wasDataModified() {
-        return changesData;
     }
 }

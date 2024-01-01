@@ -43,6 +43,6 @@ public abstract class AppIntegrationTest {
     }
 
     protected boolean useDemoUser() {
-        return false;
+        return true;
     }
 }

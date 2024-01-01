@@ -64,6 +64,11 @@ public class TagProvider implements BaseRecordProvider<TagRecord, UUID> {
         return db.fetchExists(TAG, userCondition, tagCondition);
     }
 
+    @LoggedStatement
+    public boolean fetchExists(UUID userId, UUID excludedTagId, String name) {
+        return db.fetchExists(TAG, TAG.USER_ID.eq(userId), TAG.NAME.equalIgnoreCase(name), TAG.ID.ne(excludedTagId));
+    }
+
     public TagDto asDto(Record result, List<KeywordDto> keywords) {
         return new TagDto(
             result.getValue(TAG.ID),
@@ -73,6 +78,11 @@ public class TagProvider implements BaseRecordProvider<TagRecord, UUID> {
             result.getValue(TAG.DEFAULT_TAG),
             keywords
         );
+    }
+
+    @LoggedStatement
+    public UUID selectDefaultTagId(UUID userId) {
+        return db.select(TAG.ID).from(TAG).where(TAG.USER_ID.eq(userId)).and(TAG.DEFAULT_TAG.eq(true)).fetchOne(TAG.ID);
     }
 
     /**
@@ -119,18 +129,17 @@ public class TagProvider implements BaseRecordProvider<TagRecord, UUID> {
     }
 
     @LoggedStatement
-    public void insertCompleteTag(UUID userId, String name, String color, String icon, List<String> keywords) {
+    public void insertCompleteTag(UUID userId, UUID tagId, String name, String color, String icon, List<String> keywords) {
         db.transaction(ctx -> {
             DSLContext dsl = ctx.dsl();
 
-            UUID tagId = dsl.insertInto(TAG, TAG.NAME, TAG.COLOR, TAG.ICON, TAG.USER_ID)
-                .values(name, color, icon, userId)
-                .returning(TAG.ID)
-                .fetchOne(TAG.ID);
+            dsl.insertInto(TAG, TAG.ID, TAG.NAME, TAG.COLOR, TAG.ICON, TAG.USER_ID)
+                .values(tagId, name, color, icon, userId)
+                .execute();
 
             for (String keyword : keywords) {
-                dsl.insertInto(KEYWORD, KEYWORD.KEYWORD_, KEYWORD.USER_ID, KEYWORD.TAG_ID)
-                    .values(keyword, userId, tagId)
+                dsl.insertInto(KEYWORD, KEYWORD.ID, KEYWORD.KEYWORD_, KEYWORD.USER_ID, KEYWORD.TAG_ID)
+                    .values(UUID.randomUUID(), keyword, userId, tagId)
                     .execute();
             }
         });

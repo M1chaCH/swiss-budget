@@ -3,9 +3,46 @@ id,mail,password,salt,disabled,demo_user
 {{genGuid(usr_tst)}},user@test.ch,{{hashWithSalt(test)}},{{salt()}},FALSE,TRUE
 {{genGuid(usr_dis)}},locked@test.ch,{{hashWithSalt(test)}},{{salt()}},TRUE,TRUE
 {{genGuid(usr_rt)}},root@test.ch,{{hashWithSalt(test)}},{{salt()}},FALSE,TRUE
+{{genGuid(usr_bak)}},bak@test.ch,{{hashWithSalt(test)}},{{salt()}},FALSE,TRUE
 ,,,,,
 ::verified_device,,,,,
 id,user_id,user_agent,,,
 {{genGuid()}},{{useGuid(usr_tst)}},test-agent,,,
 {{genGuid()}},{{useGuid(usr_dis)}},test2-agent,,,
 {{genGuid()}},{{useGuid(usr_rt)}},root-agent,,,
+{{genGuid()}},{{useGuid(usr_bak)}},other-agent,,,
+,,,,,,,,,,,
+::tag,,,,,,,,,,,
+id,icon,color,name,user_id,default_tag,,,,,,
+{{genGuid(tag_bak_def)}},question_mark,#3c3e3c,Other,{{useGuid(usr_bak)}},TRUE,,,,,,
+{{genGuid(tag_bak_res)}},nightlife,#3c3e3c,Restaurant,{{useGuid(usr_bak)}},FALSE,,,,,,
+{{genGuid(tag_bak_hob)}},sports_soccer,#3c3e3c,Hobby,{{useGuid(usr_bak)}},FALSE,,,,,,
+,,,,,,,,,,,
+::keyword,,,,,,,,,,,
+id,keyword,tag_id,user_id,,,,,,,,
+{{genGuid(kew_bak_sub)}},subway,{{useGuid(tag_bak_res)}},{{useGuid(usr_bak)}},,,,,,,,
+{{genGuid(kew_bak_and)}},andy's place,{{useGuid(tag_bak_res)}},{{useGuid(usr_bak)}},,,,,,,,
+{{genGuid(kew_bak_piz)}},pizzeria,{{useGuid(tag_bak_res)}},{{useGuid(usr_bak)}},,,,,,,,
+{{genGuid(kew_bak_res)}},restaurant,{{useGuid(tag_bak_res)}},{{useGuid(usr_bak)}},,,,,,,,
+{{genGuid(kew_bak_mcd)}},mcdonalds,{{useGuid(tag_bak_res)}},{{useGuid(usr_bak)}},,,,,,,,
+{{genGuid(kew_bak_bur)}},burger king,{{useGuid(tag_bak_res)}},{{useGuid(usr_bak)}},,,,,,,,
+{{genGuid(kew_bak_pz)}},pizza,{{useGuid(tag_bak_res)}},{{useGuid(usr_bak)}},,,,,,,,
+{{genGuid(kew_bak_caf)}},café,{{useGuid(tag_bak_res)}},{{useGuid(usr_bak)}},,,,,,,,
+{{genGuid(kew_bak_cae)}},cafe,{{useGuid(tag_bak_res)}},{{useGuid(usr_bak)}},,,,,,,,
+{{genGuid(kew_bak_gal)}},galaxus,{{useGuid(tag_bak_hob)}},{{useGuid(usr_bak)}},,,,,,,,
+{{genGuid(kew_bak_int)}},interdicount,{{useGuid(tag_bak_hob)}},{{useGuid(usr_bak)}},,,,,,,,
+{{genGuid(kew_bak_med)}},media,{{useGuid(tag_bak_hob)}},{{useGuid(usr_bak)}},,,,,,,,
+{{genGuid(kew_bak_bik)}},bike,{{useGuid(tag_bak_hob)}},{{useGuid(usr_bak)}},,,,,,,,
+{{genGuid(kew_bak_kin)}},kino,{{useGuid(tag_bak_hob)}},{{useGuid(usr_bak)}},,,,,,,,
+{{genGuid(kew_bak_coi)}},coiffeur,{{useGuid(tag_bak_hob)}},{{useGuid(usr_bak)}},,,,,,,,
+{{genGuid(kew_bak_ama)}},amazon,{{useGuid(tag_bak_hob)}},{{useGuid(usr_bak)}},,,,,,,,
+{{genGuid(kew_bak_ali)}},aliexpress,{{useGuid(tag_bak_hob)}},{{useGuid(usr_bak)}},,,,,,,,
+{{genGuid(kew_bak_cty)}},city,{{useGuid(tag_bak_hob)}},{{useGuid(usr_bak)}},,,,,,,,
+::transaction,,,,,,,,,,,
+id,expense,transaction_date,bankaccount,amount,receiver,tag_id,matching_keyword_id,need_user_attention,alias,note,user_id
+{{genGuid(tra_bak_con)}},TRUE,{{date(-2&&day)}},main,12.5,City Pizza,{{useGuid(tag_bak_hob)}},{{useGuid(kew_bak_cty)}},TRUE,,Mittagessen,{{useGuid(usr_bak)}}
+{{genGuid(tra_bak_oth)}},TRUE,{{date(-6&&day)}},main,15,City order,{{useGuid(tag_bak_hob)}},{{useGuid(kew_bak_cty)}},FALSE,,,{{useGuid(usr_bak)}}
+,,,,,,,,,,,
+::transaction_tag_duplicate
+id,transaction_id,tag_id,matching_keyword_id
+{{genGuid(tra_bak_con_dup)}},{{useGuid(tra_bak_con)}},{{useGuid(tag_bak_res)}},{{useGuid(kew_bak_pz)}}

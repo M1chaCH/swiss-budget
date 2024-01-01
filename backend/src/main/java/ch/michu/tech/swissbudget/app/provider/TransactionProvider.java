@@ -350,6 +350,17 @@ public class TransactionProvider implements BaseRecordProvider<TransactionRecord
             .execute();
     }
 
+    @LoggedStatement
+    public void updateTransactionsByTagWithDefaultTag(UUID oldTagId, UUID defaultTagId) {
+        db
+            .update(TRANSACTION)
+            .set(TRANSACTION.TAG_ID, defaultTagId)
+            .set(TRANSACTION.NEED_USER_ATTENTION, true)
+            .set(TRANSACTION.MATCHING_KEYWORD_ID, (UUID) null)
+            .where(TRANSACTION.TAG_ID.eq(oldTagId))
+            .execute();
+    }
+
     /**
      * don't send default tag id, this will break with the needUserAttention field. needUserAttention field is set to false here
      */
@@ -359,6 +370,7 @@ public class TransactionProvider implements BaseRecordProvider<TransactionRecord
             .update(TRANSACTION)
             .set(TRANSACTION.TAG_ID, tagId)
             .set(TRANSACTION.NEED_USER_ATTENTION, false)
+            .set(TRANSACTION.MATCHING_KEYWORD_ID, (UUID) null)
             .where(TRANSACTION.ID.eq(transactionId))
             .execute();
     }

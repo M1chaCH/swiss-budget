@@ -42,8 +42,6 @@ public class TransactionService {
         TransactionRecord transaction = provider.selectTransaction(support.getUserIdOrThrow(), toUpdate.getId())
             .orElseThrow(() -> new ResourceNotFoundException("transaction", toUpdate.getId()));
 
-        transaction.setTagId(toUpdate.getTagId());
-        transaction.setMatchingKeywordId(toUpdate.getMatchingKeywordId());
         transaction.setAlias(toUpdate.getAlias());
         transaction.setNote(toUpdate.getNote());
         provider.updateTransactionUserInput(transaction);

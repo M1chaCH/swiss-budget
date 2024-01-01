@@ -99,12 +99,11 @@ public class KeywordProvider implements BaseRecordProvider<KeywordRecord, UUID> 
     }
 
     @LoggedStatement
-    public UUID insertKeywordToTag(UUID userId, UUID tagId, String keyword) {
-        return db
-            .insertInto(KEYWORD, KEYWORD.TAG_ID, KEYWORD.KEYWORD_, KEYWORD.USER_ID)
-            .values(tagId, keyword, userId)
-            .returning(KEYWORD.ID)
-            .fetchOne(KEYWORD.ID);
+    public void insertKeywordToTag(UUID userId, UUID keywordId, UUID tagId, String keyword) {
+        db
+            .insertInto(KEYWORD, KEYWORD.ID, KEYWORD.TAG_ID, KEYWORD.KEYWORD_, KEYWORD.USER_ID)
+            .values(keywordId, tagId, keyword, userId)
+            .execute();
     }
 
     @LoggedStatement()
@@ -112,8 +111,8 @@ public class KeywordProvider implements BaseRecordProvider<KeywordRecord, UUID> 
         List<Query> insertKeywords = keywords
             .stream()
             .map(keyword -> (Query) db
-                .insertInto(KEYWORD, KEYWORD.KEYWORD_, KEYWORD.USER_ID, KEYWORD.TAG_ID)
-                .values(keyword, userId, tagId))
+                .insertInto(KEYWORD, KEYWORD.ID, KEYWORD.KEYWORD_, KEYWORD.USER_ID, KEYWORD.TAG_ID)
+                .values(UUID.randomUUID(), keyword, userId, tagId))
             .toList();
 
         db.batch(insertKeywords).execute();

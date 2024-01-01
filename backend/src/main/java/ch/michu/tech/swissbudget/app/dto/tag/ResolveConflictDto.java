@@ -1,7 +1,5 @@
 package ch.michu.tech.swissbudget.app.dto.tag;
 
-import ch.michu.tech.swissbudget.framework.validation.ValidateAmount;
-import ch.michu.tech.swissbudget.framework.validation.ValidateLength;
 import ch.michu.tech.swissbudget.framework.validation.ValidatedDto;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
@@ -20,11 +18,8 @@ import lombok.ToString;
 @ValidatedDto
 public class ResolveConflictDto {
 
-    @ValidateLength(min = 1)
     private UUID transactionId;
-    @ValidateAmount(min = 1)
     private UUID selectedTagId;
-    @ValidateAmount(min = 1)
     private UUID matchingKeywordId;
     private boolean removeUnselectedKeywords;
 }

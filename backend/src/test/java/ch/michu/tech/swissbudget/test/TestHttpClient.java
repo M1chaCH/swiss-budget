@@ -1,5 +1,7 @@
 package ch.michu.tech.swissbudget.test;
 
+import static org.junit.jupiter.api.Assertions.fail;
+
 import ch.michu.tech.swissbudget.app.dto.CredentialDto;
 import ch.michu.tech.swissbudget.app.dto.LoginDto;
 import ch.michu.tech.swissbudget.framework.authentication.AuthenticationService;
@@ -12,13 +14,17 @@ import jakarta.ws.rs.client.Invocation;
 import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import lombok.Getter;
 import lombok.Setter;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 @ApplicationScoped
 public class TestHttpClient {
@@ -27,18 +33,22 @@ public class TestHttpClient {
     public static final String ROOT_PASSWORD = "test";
     public static final String ROOT_AGENT = "root-agent";
     public static final String ROOT_IP = "185.244.115.101";
-
+    private static final Logger LOGGER = Logger.getLogger(TestHttpClient.class.getSimpleName());
     @Getter
     private final WebTarget target;
     private final List<Response> openResponses = new ArrayList<>();
+    private final int defaultMaxTestRequestMillis;
 
     @Setter
     private String defaultPath = "";
+    private int activeMaxTestRequestMillis;
     private String rootSessionToken;
 
     @Inject
-    public TestHttpClient(WebTarget target) {
+    public TestHttpClient(WebTarget target, @ConfigProperty(name = "ch.michu.tech.test.max.request") int defaultMaxTestRequestMillis) {
         this.target = target;
+        this.defaultMaxTestRequestMillis = defaultMaxTestRequestMillis;
+        this.activeMaxTestRequestMillis = defaultMaxTestRequestMillis;
     }
 
     public String getDefaultToken() {
@@ -76,6 +86,10 @@ public class TestHttpClient {
         return new RequestBuilder(opts);
     }
 
+    public void setMaxRequestTimeOnce(int millis) {
+        this.activeMaxTestRequestMillis = millis;
+    }
+
     public class AuthenticationBuilder {
 
         protected String userAgent = TestHttpClient.ROOT_AGENT;
@@ -101,7 +115,7 @@ public class TestHttpClient {
             return this;
         }
 
-        public RequestBuilder unauthorized() {
+        public RequestBuilder unauthenticated() {
             this.authToken = "invalid";
             return new RequestBuilder(this);
         }
@@ -142,26 +156,38 @@ public class TestHttpClient {
         }
 
         public Response get() {
-            Response r = buildRequestBase().get();
+            Invocation.Builder builder = buildRequestBase();
+            long startMillis = Instant.now().toEpochMilli();
+            Response r = builder.get();
             openResponses.add(r);
+            handleDuration(startMillis, "GET");
             return r;
         }
 
         public Response post(Object body) {
-            Response r = buildRequestBase().post(Entity.entity(body, MediaType.APPLICATION_JSON_TYPE));
+            Invocation.Builder builder = buildRequestBase();
+            long startMillis = Instant.now().toEpochMilli();
+            Response r = builder.post(Entity.entity(body, MediaType.APPLICATION_JSON_TYPE));
             openResponses.add(r);
+            handleDuration(startMillis, "POST");
             return r;
         }
 
         public Response put(Object body) {
-            Response r = buildRequestBase().put(Entity.entity(body, MediaType.APPLICATION_JSON_TYPE));
+            Invocation.Builder builder = buildRequestBase();
+            long startMillis = Instant.now().toEpochMilli();
+            Response r = builder.put(Entity.entity(body, MediaType.APPLICATION_JSON_TYPE));
             openResponses.add(r);
+            handleDuration(startMillis, "PUT");
             return r;
         }
 
         public Response delete() {
-            Response r = buildRequestBase().delete();
+            Invocation.Builder builder = buildRequestBase();
+            long startMillis = Instant.now().toEpochMilli();
+            Response r = builder.delete();
             openResponses.add(r);
+            handleDuration(startMillis, "DELETE");
             return r;
         }
 
@@ -176,6 +202,21 @@ public class TestHttpClient {
                 .header(HeaderNames.X_FORWARDED_FOR.defaultCase(), headers.ip)
                 .header(HeaderNames.USER_AGENT.defaultCase(), headers.userAgent)
                 .header(AuthenticationService.HEADER_AUTH_TOKEN, headers.authToken);
+        }
+
+        protected void handleDuration(long start, String method) {
+            int allowedDuration = activeMaxTestRequestMillis;
+            // since fail() throws an exception I can't reset active to default after fail,
+            // so it has to be done here, but I still need the actual active value
+            activeMaxTestRequestMillis = defaultMaxTestRequestMillis;
+
+            long duration = Instant.now().toEpochMilli() - start;
+            LOGGER.log(Level.INFO, "sent test request to {0}:{1}, took {2}ms", new Object[]{method, path, duration});
+
+            if (duration > allowedDuration) {
+                fail("long running request to %s:%s, took: %sms, but max is %sms".formatted(method, path, duration,
+                    allowedDuration));
+            }
         }
     }
 }

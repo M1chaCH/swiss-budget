@@ -29,28 +29,33 @@ public class RuntimeExceptionMapper implements ExceptionMapper<RuntimeException>
 
     @Override
     public Response toResponse(RuntimeException exception) {
-        if (exception instanceof WebApplicationException webException) {
-            support.logInfo(this, "caught web exception: %s: %s",
-                exception.getClass().getSimpleName(), exception.getMessage());
-            return webException.getResponse();
-        } else if (exception instanceof ProcessingException) {
-            String exceptionName = exception.getClass().getSimpleName();
-            String causeName = exception.getCause().getClass().getSimpleName();
-            support.logInfo(this, "caught %s - %s: %s", exceptionName, causeName, exception.getMessage());
+        return switch (exception) {
+            case WebApplicationException we -> {
+                support.logInfo(this, "caught web exception: %s: %s",
+                    exception.getClass().getSimpleName(), exception.getMessage());
+                yield we.getResponse();
+            }
+            case ProcessingException pe -> {
+                String exceptionName = pe.getClass().getSimpleName();
+                String causeName = pe.getCause().getClass().getSimpleName();
+                support.logInfo(this, "caught %s - %s: %s", exceptionName, causeName, pe.getMessage());
 
-            return Response.status(Status.BAD_REQUEST)
-                .entity(new ErrorDto(exceptionName, Map.of("cause", causeName, "message", exception.getMessage())))
-                .build();
-        } else if (exception instanceof DataAccessException dataAccessException) {
-            UnexpectedDbException dbException = new UnexpectedDbException(dataAccessException);
-            support.logWarning(this, dbException.getServerMessage(), dataAccessException);
-            errorReporter.reportError(exception);
-            return dbException.buildResponse();
-        }
-
-        errorReporter.reportError(exception);
-        support.logWarning(this, "RuntimeException: %s: %s", exception,
-            exception.getClass().getSimpleName(), exception.getMessage());
-        return Response.status(Status.INTERNAL_SERVER_ERROR).build();
+                yield Response.status(Status.BAD_REQUEST)
+                    .entity(new ErrorDto(exceptionName, Map.of("cause", causeName, "message", exception.getMessage())))
+                    .build();
+            }
+            case DataAccessException da -> {
+                UnexpectedDbException dbException = new UnexpectedDbException(da);
+                support.logWarning(this, dbException.getServerMessage(), da);
+                errorReporter.reportError(exception);
+                yield dbException.buildResponse();
+            }
+            default -> {
+                errorReporter.reportError(exception);
+                support.logWarning(this, "RuntimeException: %s: %s", exception,
+                    exception.getClass().getSimpleName(), exception.getMessage());
+                yield Response.status(Status.INTERNAL_SERVER_ERROR).build();
+            }
+        };
     }
 }

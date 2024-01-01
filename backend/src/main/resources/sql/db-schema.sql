@@ -53,7 +53,8 @@ CREATE TABLE IF NOT EXISTS tag
     name        varchar(250) not null,
     user_id     uuid         not null,
     default_tag bool         not null default false,
-    FOREIGN KEY (user_id) REFERENCES registered_user (id) ON DELETE CASCADE
+    FOREIGN KEY (user_id) REFERENCES registered_user (id) ON DELETE CASCADE,
+    CONSTRAINT unique_name UNIQUE (user_id, name)
 );
 
 -- keywords are used to map transactions to tags
@@ -65,7 +66,8 @@ CREATE TABLE IF NOT EXISTS keyword
     tag_id  uuid         not null,
     user_id uuid         not null,
     FOREIGN KEY (user_id) REFERENCES registered_user (id) ON DELETE CASCADE,
-    FOREIGN KEY (tag_id) REFERENCES tag (id) ON DELETE CASCADE
+    FOREIGN KEY (tag_id) REFERENCES tag (id) ON DELETE CASCADE,
+    CONSTRAINT unique_keyword UNIQUE (user_id, keyword)
 );
 
 -- transactions are the equivalent of a bank transaction
@@ -77,7 +79,7 @@ CREATE TABLE IF NOT EXISTS transaction
     expense             bool             not null,
     transaction_date    date             not null,
     bankaccount         varchar(250)     not null,
-    amount              double precision not null check ( amount > 0 ),
+    amount              double precision not null check (amount > 0),
     receiver            varchar(250)     not null,
     tag_id              uuid,
     matching_keyword_id uuid,

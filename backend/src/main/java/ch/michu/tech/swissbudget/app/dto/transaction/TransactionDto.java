@@ -39,12 +39,10 @@ public class TransactionDto {
     private String receiver;
 
     @Nullable
-    @ValidateAmount(min = 0)
     private UUID tagId;
     @Nullable
     private TagDto tag;
     @Nullable
-    @ValidateAmount(min = 0)
     private UUID matchingKeywordId;
     @Nullable
     private KeywordDto matchingKeyword;

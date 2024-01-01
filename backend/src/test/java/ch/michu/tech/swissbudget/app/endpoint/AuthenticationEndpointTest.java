@@ -51,6 +51,11 @@ class AuthenticationEndpointTest extends AppIntegrationTest {
         return wroteData;
     }
 
+    @Override
+    protected boolean useDemoUser() {
+        return false;
+    }
+
     @Test
     @Order(0)
     void login_happy() {

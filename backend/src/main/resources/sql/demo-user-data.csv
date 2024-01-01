@@ -104,7 +104,7 @@ id,keyword,tag_id,user_id,,,,,,,,
 ,,,,,,,,,,,
 ::transaction,,,,,,,,,,,
 id,expense,transaction_date,bankaccount,amount,receiver,tag_id,matching_keyword_id,need_user_attention,alias,note,user_id
-{{genGuid(tra_cpm)}},TRUE,{{date(-2&&day)}},main,12.5,City Pizza,{{useGuid(tag_res)}},{{useGuid(kew_pz)}},FALSE,,Mittagessen,{{useVar(user_id)}}
+{{genGuid(tra_cpm)}},TRUE,{{date()}},main,12.5,City Pizza,{{useGuid(tag_res)}},{{useGuid(kew_pz)}},FALSE,,Mittagessen,{{useVar(user_id)}}
 {{genGuid(tra_gsg)}},TRUE,{{date(-1&&month)->date(firstofmonth)->date(26&&day)}},main,0.92,Online Einkauf GOOGLE*GSUITE (Domains),{{useGuid(tag_hob)}},{{useGuid(kew_gog)}},FALSE,,,{{useVar(user_id)}}
 {{genGuid(tra_spa)}},FALSE,{{date(-1&&month)->date(firstofmonth)->date(5&&day)}},main,3300,E-Banking Auftrag (Kontoübertrag) Patrik Müller YoungMember Sparkonto CH5789144419938272825,{{useGuid(tag_hob)}},,FALSE,,neues notebook (:,{{useVar(user_id)}}
 {{genGuid(tra_twi)}},TRUE,{{date(-1&&month)->date(firstofmonth)->date(15&&day)}},main,16,Überweisung TWINT an HAUSER ERIK TWINT Nr. 2745919,,,TRUE,,,{{useVar(user_id)}}
