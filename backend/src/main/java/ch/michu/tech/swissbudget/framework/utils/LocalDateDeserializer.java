@@ -1,16 +1,12 @@
-package ch.michu.tech.swissbudget.framework;
+package ch.michu.tech.swissbudget.framework.utils;
 
-import jakarta.json.bind.serializer.DeserializationContext;
-import jakarta.json.bind.serializer.JsonbDeserializer;
-import jakarta.json.stream.JsonParser;
-import java.lang.reflect.Type;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class LocalDateDeserializer implements JsonbDeserializer<LocalDate> {
+public class LocalDateDeserializer {
 
     public static final String DEFAULT_LOCAL_DATE_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
     public static final String FALLBACK_LOCAL_DATE_PATTERN = "yyyy-MM-dd";
@@ -29,10 +25,5 @@ public class LocalDateDeserializer implements JsonbDeserializer<LocalDate> {
                 return LocalDate.parse(dateString, DateTimeFormatter.ofPattern(FALLBACK_LOCAL_DATE_PATTERN));
             }
         }
-    }
-
-    @Override
-    public LocalDate deserialize(JsonParser parser, DeserializationContext ctx, Type rtType) {
-        return LocalDateDeserializer.parseLocalDate(parser.getString());
     }
 }

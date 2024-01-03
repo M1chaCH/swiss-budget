@@ -5,7 +5,7 @@ import java.util.Map;
 
 public class ResourceNotFoundException extends AppException {
 
-    public ResourceNotFoundException(String entity, String value) {
-        super("no '%s' found by '%s'".formatted(entity, value), Status.NOT_FOUND, Map.of("entity", entity, "value", value));
+    public ResourceNotFoundException(String entity, Object value) {
+        super("no '%s' found by '%s'".formatted(entity, value), Status.NOT_FOUND, Map.of("entity", entity, "value", value.toString()));
     }
 }

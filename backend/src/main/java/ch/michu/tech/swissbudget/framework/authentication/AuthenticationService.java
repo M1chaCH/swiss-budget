@@ -1,13 +1,15 @@
 package ch.michu.tech.swissbudget.framework.authentication;
 
+import static ch.michu.tech.swissbudget.framework.utils.DateBuilder.localDateTimeNow;
+
 import ch.michu.tech.swissbudget.app.dto.MfaCodeDto;
-import ch.michu.tech.swissbudget.framework.EncodingUtil;
 import ch.michu.tech.swissbudget.framework.data.DataProvider;
 import ch.michu.tech.swissbudget.framework.data.RequestSupport;
 import ch.michu.tech.swissbudget.framework.error.exception.AgentNotRegisteredException;
 import ch.michu.tech.swissbudget.framework.error.exception.LoginFailedException;
 import ch.michu.tech.swissbudget.framework.error.exception.LoginFromNewClientException;
 import ch.michu.tech.swissbudget.framework.error.exception.RemoteAddressNotPresentException;
+import ch.michu.tech.swissbudget.framework.utils.EncodingUtil;
 import ch.michu.tech.swissbudget.generated.jooq.tables.RegisteredUser;
 import ch.michu.tech.swissbudget.generated.jooq.tables.VerifiedDevice;
 import ch.michu.tech.swissbudget.generated.jooq.tables.records.RegisteredUserRecord;
@@ -19,10 +21,10 @@ import io.helidon.webserver.http.ServerRequest;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Provider;
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 import org.apache.commons.validator.routines.InetAddressValidator;
 
 @ApplicationScoped
@@ -39,7 +41,7 @@ public class AuthenticationService {
     /**
      * map of userId to sessionId
      */
-    private final Map<String, String> userSessionCache = new HashMap<>();
+    private final Map<UUID, UUID> userSessionCache = new HashMap<>();
 
     private final Provider<RequestSupport> supportProvider;
 
@@ -89,13 +91,17 @@ public class AuthenticationService {
             support.logFine(this, "%s tried to login, but user does not exist", mail);
             throw new LoginFailedException(mail);
         }
+        if (user.getDisabled()) {
+            support.logFine(this, "%s tried to login, but user is disabled", mail);
+            throw new LoginFailedException(mail);
+        }
 
         String userAgent = AuthenticationService.extractUserAgent(support.getRequest());
 
         String hashedPassword = EncodingUtil.hashString(password, user.getSalt());
         if (user.getPassword().equals(hashedPassword)) { // password correct
             if (!isUserAgentVerified(user.getId(), userAgent)) {
-                String processId = mfaService.startMfaProcess(user);
+                UUID processId = mfaService.startMfaProcess(user);
                 throw new AgentNotRegisteredException(mail, userAgent,
                     new MfaCodeDto(processId, user.getId(), -1));
             }
@@ -116,7 +122,7 @@ public class AuthenticationService {
         throw new LoginFromNewClientException();
     }
 
-    public String validateMfaCode(String userId, String mfaProcessId, int providedCode) {
+    public String validateMfaCode(UUID userId, UUID mfaProcessId, int providedCode) {
         mfaService.verifyMfaCode(userId, mfaProcessId, providedCode);
 
         RegisteredUserRecord user = data.getContext()
@@ -131,7 +137,7 @@ public class AuthenticationService {
         SessionToken token = tokenService.newSessionToken(user.getId(), stay);
 
         user.setCurrentSession(token.getSessionId());
-        user.setLastLogin(LocalDateTime.now());
+        user.setLastLogin(localDateTimeNow());
         user.store();
         userSessionCache.put(token.getUserId(), token.getSessionId());
 
@@ -140,7 +146,7 @@ public class AuthenticationService {
         return tokenService.buildJwt(token);
     }
 
-    protected boolean isUserAgentVerified(String userId, String userAgent) {
+    protected boolean isUserAgentVerified(UUID userId, String userAgent) {
         VerifiedDeviceRecord verifiedDevice = data.getContext()
             .fetchOne(VerifiedDevice.VERIFIED_DEVICE,
                 VerifiedDevice.VERIFIED_DEVICE.USER_ID.eq(userId)
@@ -148,8 +154,8 @@ public class AuthenticationService {
         return verifiedDevice != null;
     }
 
-    protected boolean isCurrentSession(String userId, String currentSession) {
-        String cachedSessionId = userSessionCache.get(userId);
+    protected boolean isCurrentSession(UUID userId, UUID currentSession) {
+        UUID cachedSessionId = userSessionCache.get(userId);
         if (cachedSessionId != null) {
             return cachedSessionId.equals(currentSession);
         }

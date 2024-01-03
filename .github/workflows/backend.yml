@@ -1,0 +1,31 @@
+name: Build & Test backend
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  test-backend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./backend
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up JDK 21
+        uses: actions/setup-java@v3
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven
+          cache-dependency-path: "backend"
+      - name: Build jooq generator
+        working-directory: ./jooq-code-generator
+        run: mvn -B install -DskipTests
+      - name: Build with Maven
+        run: mvn -B package -DskipTests
+      - name: Run tests
+        run: mvn -B test

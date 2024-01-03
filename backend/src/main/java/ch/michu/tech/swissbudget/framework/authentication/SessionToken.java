@@ -1,6 +1,7 @@
 package ch.michu.tech.swissbudget.framework.authentication;
 
 import java.util.Date;
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,9 +15,9 @@ public class SessionToken {
 
     protected Date issuedAt;
     protected Date expiresAt;
-    protected String userId;
+    protected UUID userId;
     protected String userAgent;
     protected String remoteAddress;
     protected boolean stay;
-    protected String sessionId;
+    protected UUID sessionId;
 }

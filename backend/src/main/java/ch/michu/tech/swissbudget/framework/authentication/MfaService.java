@@ -1,5 +1,7 @@
 package ch.michu.tech.swissbudget.framework.authentication;
 
+import static ch.michu.tech.swissbudget.framework.utils.DateBuilder.localDateTimeNow;
+
 import ch.michu.tech.swissbudget.app.service.mail.MailTemplateNames;
 import ch.michu.tech.swissbudget.framework.data.DataProvider;
 import ch.michu.tech.swissbudget.framework.data.RequestSupport;
@@ -14,7 +16,6 @@ import ch.michu.tech.swissbudget.generated.jooq.tables.records.VerifiedDeviceRec
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Provider;
-import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
@@ -45,13 +46,13 @@ public class MfaService {
         this.mfaCodeTryLimit = mfaCodeTryLimit;
     }
 
-    public String startMfaProcess(RegisteredUserRecord user) {
+    public UUID startMfaProcess(RegisteredUserRecord user) {
         String currentUserAgent = AuthenticationService.extractUserAgent(
             supportProvider.get().getRequest());
-        String mfaProcessId = UUID.randomUUID().toString();
+        UUID mfaProcessId = UUID.randomUUID();
         MfaCodeRecord mfaCodeRecord = data.getContext().newRecord(MfaCode.MFA_CODE);
         mfaCodeRecord.setCode(random.nextInt(100000, 999999));
-        mfaCodeRecord.setExpiresAt(LocalDateTime.now().plusHours(mfaCodeLifetime));
+        mfaCodeRecord.setExpiresAt(localDateTimeNow().plusHours(mfaCodeLifetime));
         mfaCodeRecord.setUserId(user.getId());
         mfaCodeRecord.setId(mfaProcessId);
         mfaCodeRecord.setUserAgent(currentUserAgent);
@@ -70,33 +71,37 @@ public class MfaService {
         return mfaProcessId;
     }
 
-    public void verifyMfaCode(String userId, String mfaProcessId, int providedCode) {
+    public void verifyMfaCode(UUID userId, UUID mfaProcessId, int providedCode) {
         RequestSupport support = supportProvider.get();
         String currentUserAgent = AuthenticationService.extractUserAgent(support.getRequest());
         DSLContext dataContext = data.getContext();
 
-        MfaCodeRecord mfaCodeRecord = dataContext
-            .fetchOne(MfaCode.MFA_CODE,
-                MfaCode.MFA_CODE.ID.eq(mfaProcessId)
-                    .and(MfaCode.MFA_CODE.USER_ID.eq(userId)
-                        .and(MfaCode.MFA_CODE.CODE.eq(providedCode))));
+        MfaCodeRecord mfaCode = dataContext
+            .fetchOne(MfaCode.MFA_CODE, MfaCode.MFA_CODE.ID.eq(mfaProcessId)
+                .and(MfaCode.MFA_CODE.USER_ID.eq(userId)));
 
-        if (mfaCodeRecord == null || !mfaCodeRecord.getUserAgent().equals(currentUserAgent)
-            || mfaCodeRecord.getTries() >= mfaCodeTryLimit) {
-            if (mfaCodeRecord != null) {
-                mfaCodeRecord.setTries(mfaCodeRecord.getTries() + 1);
-                mfaCodeRecord.store();
-            }
+        if (mfaCode == null) {
+            throw new InvalidMfaCodeException();
+        }
+        if (!mfaCode.getUserAgent().equals(currentUserAgent) || mfaCode.getExpiresAt().isBefore(localDateTimeNow())
+            || mfaCode.getTries() >= mfaCodeTryLimit) {
+            mfaCode.delete();
+            throw new InvalidMfaCodeException();
+        }
+        if (mfaCode.getCode() != providedCode) {
+            mfaCode.setTries(mfaCode.getTries() + 1);
+            mfaCode.store();
 
             throw new InvalidMfaCodeException();
         }
 
         VerifiedDeviceRecord verifiedDeviceRecord = dataContext.newRecord(VerifiedDevice.VERIFIED_DEVICE);
+        verifiedDeviceRecord.setId(UUID.randomUUID());
         verifiedDeviceRecord.setUserAgent(currentUserAgent);
         verifiedDeviceRecord.setUserId(userId);
         verifiedDeviceRecord.store();
 
         support.logInfo(this, "mfa process (%s) completed", mfaProcessId);
-        mfaCodeRecord.delete();
+        mfaCode.delete();
     }
 }

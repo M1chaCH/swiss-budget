@@ -1,12 +1,14 @@
-<app-dialog-content-wrapper title="Change Tag" width="750px">
+<app-dialog-content-wrapper title="Change Tag"
+                            width="750px">
     <p class="smaller-text">
         You can change the tag for this specific transaction. <br/>
     </p>
     <div class="divider"></div>
     <div class="content">
         <app-transaction-preview [transaction]="transaction"></app-transaction-preview>
-        <app-tag-selector (selectedTagsChange)="selectTag($event)" [multiple]="false"
-                          [selectedTagIds]="[transaction.tagId ?? -1]"></app-tag-selector>
+        <app-tag-selector (selectedTagsChange)="selectTag($event)"
+                          [multiple]="false"
+                          [selectedTagIds]="[transaction.tagId ?? '']"></app-tag-selector>
     </div>
     <ng-container dialogFooter>
         <app-button (onClick)="cancel()"

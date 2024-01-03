@@ -6,6 +6,7 @@ import ch.michu.tech.swissbudget.framework.validation.Nullable;
 import ch.michu.tech.swissbudget.framework.validation.ValidateAmount;
 import ch.michu.tech.swissbudget.framework.validation.ValidatedDto;
 import ch.michu.tech.swissbudget.generated.jooq.tables.records.KeywordRecord;
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -23,10 +24,10 @@ import lombok.ToString;
 public class KeywordDto {
 
     @ValidateAmount(min = 0)
-    private Integer id;
+    private UUID id;
     private String keyword;
     @Nullable
-    private Integer tagId;
+    private UUID tagId;
 
     public KeywordDto(KeywordRecord entity) {
         this.id = entity.getId();

@@ -9,6 +9,7 @@ import jakarta.ws.rs.core.Context;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import lombok.Getter;
@@ -55,7 +56,7 @@ public class RequestSupport {
         return Optional.of(sessionToken);
     }
 
-    public String getUserIdOrThrow() {
+    public UUID getUserIdOrThrow() {
         return getSessionToken().orElseThrow(InvalidSessionTokenException::new).getUserId();
     }
 

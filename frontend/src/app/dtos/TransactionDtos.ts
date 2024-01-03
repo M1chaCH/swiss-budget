@@ -8,9 +8,9 @@ export type TransactionDto = {
   receiver: string,
   amount: number,
 
-  tagId?: number,
+  tagId?: string,
   tag: TagDto,
-  matchingKeywordId?: number,
+  matchingKeywordId?: string,
   matchingKeyword: KeywordDto,
   alias?: string,
   note?: string,
@@ -20,7 +20,7 @@ export type TransactionDto = {
 }
 
 export type TagDto = {
-  id: number,
+  id: string,
   icon: string,
   color: string,
   name: string,
@@ -29,9 +29,9 @@ export type TagDto = {
 }
 
 export type KeywordDto = {
-  id: number,
+  id: string,
   keyword: string,
-  tagId?: number,
+  tagId?: string,
 }
 
 export type TransactionTagDuplicateDto = {

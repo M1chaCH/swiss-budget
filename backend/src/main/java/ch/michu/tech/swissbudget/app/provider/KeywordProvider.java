@@ -12,6 +12,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Query;
@@ -20,7 +21,7 @@ import org.jooq.Record4;
 import org.jooq.exception.TooManyRowsException;
 
 @ApplicationScoped
-public class KeywordProvider implements BaseRecordProvider<KeywordRecord, Integer> {
+public class KeywordProvider implements BaseRecordProvider<KeywordRecord, UUID> {
 
     protected final DataProvider data;
     protected final DSLContext db;
@@ -50,7 +51,7 @@ public class KeywordProvider implements BaseRecordProvider<KeywordRecord, Intege
 
     @Override
     @LoggedStatement
-    public boolean fetchExists(String userId, Integer recordId) {
+    public boolean fetchExists(UUID userId, UUID recordId) {
         Condition userCondition = KEYWORD.USER_ID.eq(userId);
         Condition keywordCondition = KEYWORD.ID.eq(recordId);
 
@@ -66,13 +67,13 @@ public class KeywordProvider implements BaseRecordProvider<KeywordRecord, Intege
     }
 
     @LoggedStatement
-    public KeywordWithTagEntity selectByKeywordWithTagName(String userId, String keyword) throws TooManyRowsException {
+    public KeywordWithTagEntity selectByKeywordWithTagName(UUID userId, String keyword) throws TooManyRowsException {
         keyword = "%" + keyword + "%";
 
         Condition userCondition = KEYWORD.USER_ID.eq(userId);
         Condition keywordCondition = KEYWORD.KEYWORD_.likeIgnoreCase(keyword);
 
-        Record4<Integer, String, String, String> result = db
+        Record4<UUID, String, UUID, String> result = db
             .select(KEYWORD.ID, KEYWORD.KEYWORD_, KEYWORD.USER_ID, TAG.NAME.as("tag"))
             .from(KEYWORD)
             .leftJoin(TAG)
@@ -93,39 +94,38 @@ public class KeywordProvider implements BaseRecordProvider<KeywordRecord, Intege
     }
 
     @LoggedStatement
-    public List<KeywordRecord> selectKeywordsByTagId(String userId, int tagId) {
+    public List<KeywordRecord> selectKeywordsByTagId(UUID userId, UUID tagId) {
         return db.fetch(KEYWORD, KEYWORD.USER_ID.eq(userId), KEYWORD.TAG_ID.eq(tagId));
     }
 
     @LoggedStatement
-    public int insertKeywordToTag(String userId, int tagId, String keyword) {
-        return db
-            .insertInto(KEYWORD, KEYWORD.TAG_ID, KEYWORD.KEYWORD_, KEYWORD.USER_ID)
-            .values(tagId, keyword, userId)
-            .returning(KEYWORD.ID)
-            .fetchOne(KEYWORD.ID);
+    public void insertKeywordToTag(UUID userId, UUID keywordId, UUID tagId, String keyword) {
+        db
+            .insertInto(KEYWORD, KEYWORD.ID, KEYWORD.TAG_ID, KEYWORD.KEYWORD_, KEYWORD.USER_ID)
+            .values(keywordId, tagId, keyword, userId)
+            .execute();
     }
 
     @LoggedStatement()
-    public void insertKeywordsToTag(String userId, int tagId, List<String> keywords) {
+    public void insertKeywordsToTag(UUID userId, UUID tagId, List<String> keywords) {
         List<Query> insertKeywords = keywords
             .stream()
             .map(keyword -> (Query) db
-                .insertInto(KEYWORD, KEYWORD.KEYWORD_, KEYWORD.USER_ID, KEYWORD.TAG_ID)
-                .values(keyword, userId, tagId))
+                .insertInto(KEYWORD, KEYWORD.ID, KEYWORD.KEYWORD_, KEYWORD.USER_ID, KEYWORD.TAG_ID)
+                .values(UUID.randomUUID(), keyword, userId, tagId))
             .toList();
 
         db.batch(insertKeywords).execute();
     }
 
     @LoggedStatement
-    public void deleteKeywordsByIds(String userId, int... keywordIds) {
+    public void deleteKeywordsByIds(UUID userId, UUID... keywordIds) {
         if (keywordIds.length == 0) {
             return;
         }
 
         List<Condition> conditions = new ArrayList<>(keywordIds.length);
-        for (int id : keywordIds) {
+        for (UUID id : keywordIds) {
             conditions.add(KEYWORD.ID.eq(id).and(KEYWORD.USER_ID.eq(userId)));
         }
 
@@ -135,8 +135,8 @@ public class KeywordProvider implements BaseRecordProvider<KeywordRecord, Intege
     }
 
     public record KeywordWithTagEntity(
-        String userId,
-        int keywordId,
+        UUID userId,
+        UUID keywordId,
         String keyword,
         String tagName
     ) {

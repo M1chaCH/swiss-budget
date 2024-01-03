@@ -1,5 +1,7 @@
 package ch.michu.tech.swissbudget.app.provider;
 
+import static ch.michu.tech.swissbudget.framework.utils.DateBuilder.localDateNow;
+import static ch.michu.tech.swissbudget.framework.utils.DateBuilder.localDateTimeNow;
 import static ch.michu.tech.swissbudget.generated.jooq.tables.Keyword.KEYWORD;
 import static ch.michu.tech.swissbudget.generated.jooq.tables.RegisteredUser.REGISTERED_USER;
 import static ch.michu.tech.swissbudget.generated.jooq.tables.Tag.TAG;
@@ -31,6 +33,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Query;
@@ -43,7 +46,7 @@ import org.jooq.impl.UpdatableRecordImpl;
 // TODO cache for improved read times
 // TODO write tests with demo data
 @ApplicationScoped
-public class TransactionProvider implements BaseRecordProvider<TransactionRecord, String> {
+public class TransactionProvider implements BaseRecordProvider<TransactionRecord, UUID> {
 
     protected static final String DUPLICATES_COUNT_COLUMN = "duplicates";
 
@@ -92,7 +95,7 @@ public class TransactionProvider implements BaseRecordProvider<TransactionRecord
 
     @Override
     @LoggedStatement
-    public boolean fetchExists(String userId, String transactionId) {
+    public boolean fetchExists(UUID userId, UUID transactionId) {
         Condition userCondition = TRANSACTION.USER_ID.eq(userId);
         Condition transactionCondition = TRANSACTION.ID.eq(transactionId);
 
@@ -100,8 +103,8 @@ public class TransactionProvider implements BaseRecordProvider<TransactionRecord
     }
 
     public TransactionDto asDto(Record result, TagDto tag, KeywordDto matchingKeyword, List<TransactionTagDuplicateDto> duplicatedTags) {
-        int tagId = tag == null ? 0 : tag.getId();
-        int matchingKeywordId = matchingKeyword == null ? 0 : matchingKeyword.getId();
+        UUID tagId = tag == null ? null : tag.getId();
+        UUID matchingKeywordId = matchingKeyword == null ? null : matchingKeyword.getId();
 
         return new TransactionDto(
             result.getValue(TRANSACTION.ID),
@@ -122,7 +125,7 @@ public class TransactionProvider implements BaseRecordProvider<TransactionRecord
     }
 
     @LoggedStatement
-    public Optional<TransactionRecord> selectTransaction(String userId, String transactionId) {
+    public Optional<TransactionRecord> selectTransaction(UUID userId, UUID transactionId) {
         TransactionRecord transaction = db.fetchOne(TRANSACTION, TRANSACTION.USER_ID.eq(userId).and(TRANSACTION.ID.eq(transactionId)));
 
         if (transaction == null) {
@@ -132,7 +135,7 @@ public class TransactionProvider implements BaseRecordProvider<TransactionRecord
     }
 
     @LoggedStatement
-    public CompleteTransactionEntity selectCompleteTransaction(String userId, String transactionId) {
+    public CompleteTransactionEntity selectCompleteTransaction(UUID userId, UUID transactionId) {
         Record result = db
             .select(TRANSACTION_MAIL.asterisk(),
                 TRANSACTION.asterisk(),
@@ -149,7 +152,7 @@ public class TransactionProvider implements BaseRecordProvider<TransactionRecord
             .fetchOne();
 
         if (result == null) {
-            throw new ResourceNotFoundException("transaction", transactionId);
+            throw new ResourceNotFoundException("transaction", transactionId.toString());
         }
 
         TransactionMailRecord transactionMail = transactionMailProvider.fromRecord(result);
@@ -176,7 +179,7 @@ public class TransactionProvider implements BaseRecordProvider<TransactionRecord
     }
 
     @LoggedStatement
-    public List<TransactionIdWithTagDuplicateCount> selectTransactionIdsByMatchingKeyword(String userId, String keyword) {
+    public List<TransactionIdWithTagDuplicateCount> selectTransactionIdsByMatchingKeyword(UUID userId, String keyword) {
         keyword = "%" + keyword + "%";
 
         return db
@@ -189,7 +192,7 @@ public class TransactionProvider implements BaseRecordProvider<TransactionRecord
             .map(result -> {
                 boolean alreadyHasTagMapped = false;
                 if (result.get(TRANSACTION.MATCHING_KEYWORD_ID) != null) {
-                    alreadyHasTagMapped = result.getValue(TRANSACTION.MATCHING_KEYWORD_ID) > 0;
+                    alreadyHasTagMapped = result.get(TRANSACTION.MATCHING_KEYWORD_ID) != null;
                 }
 
                 return new TransactionIdWithTagDuplicateCount(
@@ -200,17 +203,17 @@ public class TransactionProvider implements BaseRecordProvider<TransactionRecord
             });
     }
 
-    @LoggedStatement // TODO verify in detail if this condition building doesn't destroy the userId check
+    @LoggedStatement
     public List<TransactionDto> selectTransactionsWithDependenciesWithFilterWithPageAsDto(
-        String userId,
+        UUID userId,
         String query,
-        int[] tagIds,
+        UUID[] tagIds,
         LocalDate from,
         LocalDate to,
         boolean needAttention,
         int page
     ) {
-        LocalDate tomorrow = LocalDate.now().plusDays(1);
+        LocalDate tomorrow = localDateNow().plusDays(1);
         SelectConditionStep<?> conditions = db
             .select(TRANSACTION.asterisk(), TAG.asterisk(), KEYWORD.asterisk(),
                 count(TRANSACTION_TAG_DUPLICATE.ID).as(DUPLICATES_COUNT_COLUMN))
@@ -266,7 +269,7 @@ public class TransactionProvider implements BaseRecordProvider<TransactionRecord
     }
 
     @LoggedStatement
-    public ImportDbData selectImportDataByUserId(String userId) {
+    public ImportDbData selectImportDataByUserId(UUID userId) {
         Result<?> result = db
             .select(REGISTERED_USER.MAIL, REGISTERED_USER.MAIL_PASSWORD, REGISTERED_USER.ID,
                 TRANSACTION_META_DATA.LAST_IMPORTED_TRANSACTION, TRANSACTION_META_DATA.LAST_IMPORT_CHECK,
@@ -331,9 +334,9 @@ public class TransactionProvider implements BaseRecordProvider<TransactionRecord
 
     @LoggedStatement
     public void updateTransactionUserInput(TransactionRecord transaction) {
-        if (transaction.getTagId() == 0) {
+        if (transaction.get(TRANSACTION.TAG_ID) == null) {
             transaction.store(TRANSACTION.ALIAS, TRANSACTION.NOTE);
-        } else if (transaction.getMatchingKeywordId() == 0) {
+        } else if (transaction.get(TRANSACTION.MATCHING_KEYWORD_ID) == null) {
             transaction.store(TRANSACTION.TAG_ID, TRANSACTION.ALIAS, TRANSACTION.NOTE);
         } else {
             transaction.store(TRANSACTION.TAG_ID, TRANSACTION.MATCHING_KEYWORD_ID, TRANSACTION.ALIAS, TRANSACTION.NOTE);
@@ -341,7 +344,7 @@ public class TransactionProvider implements BaseRecordProvider<TransactionRecord
     }
 
     @LoggedStatement
-    public void updateTransactionNeedsUserAttention(String transactionId, boolean needAttention) {
+    public void updateTransactionNeedsUserAttention(UUID transactionId, boolean needAttention) {
         db
             .update(TRANSACTION)
             .set(TRANSACTION.NEED_USER_ATTENTION, needAttention)
@@ -349,15 +352,27 @@ public class TransactionProvider implements BaseRecordProvider<TransactionRecord
             .execute();
     }
 
+    @LoggedStatement
+    public void updateTransactionsByTagWithDefaultTag(UUID oldTagId, UUID defaultTagId) {
+        db
+            .update(TRANSACTION)
+            .set(TRANSACTION.TAG_ID, defaultTagId)
+            .set(TRANSACTION.NEED_USER_ATTENTION, true)
+            .set(TRANSACTION.MATCHING_KEYWORD_ID, (UUID) null)
+            .where(TRANSACTION.TAG_ID.eq(oldTagId))
+            .execute();
+    }
+
     /**
      * don't send default tag id, this will break with the needUserAttention field. needUserAttention field is set to false here
      */
     @LoggedStatement
-    public void updateTransactionWithTagAndRemoveNeedAttention(String transactionId, int tagId) {
+    public void updateTransactionWithTagAndRemoveNeedAttention(UUID transactionId, UUID tagId) {
         db
             .update(TRANSACTION)
             .set(TRANSACTION.TAG_ID, tagId)
             .set(TRANSACTION.NEED_USER_ATTENTION, false)
+            .set(TRANSACTION.MATCHING_KEYWORD_ID, (UUID) null)
             .where(TRANSACTION.ID.eq(transactionId))
             .execute();
     }
@@ -366,7 +381,7 @@ public class TransactionProvider implements BaseRecordProvider<TransactionRecord
      * don't send default tag id, this will break with the needUserAttention field. needUserAttention field is set to false here
      */
     @LoggedStatement
-    public void updateTransactionWithTagAndRemoveNeedAttention(String transactionId, int tagId, int matchingKeywordId) {
+    public void updateTransactionWithTagAndRemoveNeedAttention(UUID transactionId, UUID tagId, UUID matchingKeywordId) {
         db
             .update(TRANSACTION)
             .set(TRANSACTION.TAG_ID, tagId)
@@ -377,17 +392,17 @@ public class TransactionProvider implements BaseRecordProvider<TransactionRecord
     }
 
     @LoggedStatement
-    public void updateLastImport(String id, LocalDateTime lastImportedTransaction) {
+    public void updateLastImport(UUID id, LocalDateTime lastImportedTransaction) {
         db
             .update(TRANSACTION_META_DATA)
             .set(TRANSACTION_META_DATA.LAST_IMPORTED_TRANSACTION, lastImportedTransaction)
-            .set(TRANSACTION_META_DATA.LAST_IMPORT_CHECK, LocalDateTime.now())
+            .set(TRANSACTION_META_DATA.LAST_IMPORT_CHECK, localDateTimeNow())
             .where(TRANSACTION_META_DATA.USER_ID.eq(id))
             .execute();
     }
 
     @LoggedStatement
-    public void deleteAllTagDuplicates(String transactionId) {
+    public void deleteAllTagDuplicates(UUID transactionId) {
         db
             .delete(TRANSACTION_TAG_DUPLICATE)
             .where(TRANSACTION_TAG_DUPLICATE.TRANSACTION_ID.eq(transactionId))
@@ -397,12 +412,12 @@ public class TransactionProvider implements BaseRecordProvider<TransactionRecord
     protected ImportDbData parseResultToImportData(Result<?> result, int index) {
         LocalDateTime lastImportedTransaction = result.getValue(index, TRANSACTION_META_DATA.LAST_IMPORTED_TRANSACTION);
         lastImportedTransaction = lastImportedTransaction == null ?
-            LocalDateTime.now().minusYears(TransactionImporter.MAX_IMPORT_SINCE_YEARS) :
+            localDateTimeNow().minusYears(TransactionImporter.MAX_IMPORT_SINCE_YEARS) :
             lastImportedTransaction;
 
         LocalDateTime lastImportCheck = result.getValue(index, TRANSACTION_META_DATA.LAST_IMPORT_CHECK);
         lastImportCheck = lastImportCheck == null ?
-            LocalDateTime.now().minusYears(TransactionImporter.MAX_IMPORT_SINCE_YEARS) :
+            localDateTimeNow().minusYears(TransactionImporter.MAX_IMPORT_SINCE_YEARS) :
             lastImportCheck;
 
         return new ImportDbData(
@@ -455,7 +470,7 @@ public class TransactionProvider implements BaseRecordProvider<TransactionRecord
      * @param bank                    the SupportedBank key
      */
     public record ImportDbData(
-        String id,
+        UUID id,
         String mail,
         String password,
         LocalDateTime lastImportedTransaction,
@@ -466,7 +481,7 @@ public class TransactionProvider implements BaseRecordProvider<TransactionRecord
     }
 
     public record TransactionIdWithTagDuplicateCount(
-        String transactionId,
+        UUID transactionId,
         int tagDuplicateCount,
         boolean alreadyMappedToAnyTag
     ) {

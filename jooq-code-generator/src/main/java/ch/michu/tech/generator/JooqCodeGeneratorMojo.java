@@ -20,6 +20,27 @@ import org.jooq.meta.jaxb.Generator;
 import org.jooq.meta.jaxb.Jdbc;
 import org.jooq.meta.jaxb.Target;
 
+/**
+ * <p>This is a small maven plugin that helps me to generate the Jooq Record Classes
+ * and it also automatically creates the DB using a provided script.</p>
+ *
+ * <p>Use it with this command:
+ * <code>mvn clean package ch.michu.tech.jooq:generator:generate-code -DskipTests=true</code>
+ * </p>
+ * <p>
+ * properties:
+ * <ul>
+ *     <li>ch.michu.tech.jooq.generator.dir - path to the target directory of the generated files</li>
+ *     <li>ch.michu.tech.jooq.generator.dialect - the dialect of the DB for the generator</li>
+ *     <li>ch.michu.tech.jooq.generator.package - the java package name for the generated classes</li>
+ *     <li>ch.michu.tech.jooq.generator.init.script - the path to SQL Script that should be executed with the code generation</li>
+ *     <li>db.user - the user for the db</li>
+ *     <li>db.password - the password for the db connection</li>
+ *     <li>db.schema - the schema for the db connection</li>
+ *     <li>db.driver - the drive for the db connection</li>
+ * </ul>
+ * </p>
+ */
 @Mojo(name = "generate-code", defaultPhase = LifecyclePhase.GENERATE_SOURCES)
 public class JooqCodeGeneratorMojo extends AbstractMojo {
 

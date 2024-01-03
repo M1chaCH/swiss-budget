@@ -66,8 +66,7 @@ public class TemplatedMailSender {
         LOGGER.log(Level.FINE, "mail:{0} - loading template at: {1}",
             new Object[]{id, templatePath.toAbsolutePath()});
         try {
-            byte[] templateBytes = Files.readAllBytes(templatePath);
-            return new String(templateBytes, StandardCharsets.UTF_8);
+            return Files.readString(templatePath, StandardCharsets.UTF_8);
         } catch (IOException e) {
             throw new MailTemplateNotFoundException(templateName, e);
         }

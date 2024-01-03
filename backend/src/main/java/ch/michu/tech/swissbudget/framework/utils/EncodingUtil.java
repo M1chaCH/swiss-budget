@@ -1,4 +1,4 @@
-package ch.michu.tech.swissbudget.framework;
+package ch.michu.tech.swissbudget.framework.utils;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;

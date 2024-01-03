@@ -27,18 +27,18 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 public class MailSender {
 
     public static final String HTML_MESSAGE_TYPE = "text/html; charset=utf-8";
-    private static final Logger LOGGER = Logger.getLogger(MailSender.class.getSimpleName());
+    protected static final Logger LOGGER = Logger.getLogger(MailSender.class.getSimpleName());
 
-    private final InternetAddress adminReceiver;
-    private final InternetAddress senderAddress;
-    private final String smtpUser;
-    private final String smtpPassword;
-    private final String smtpPort;
-    private final String smtpServer;
+    protected final InternetAddress adminReceiver;
+    protected final InternetAddress senderAddress;
+    protected final String smtpUser;
+    protected final String smtpPassword;
+    protected final String smtpPort;
+    protected final String smtpServer;
 
-    private final Session session;
-    private final AtomicInteger mailIdCounter = new AtomicInteger(0);
-    private final ExecutorService sendExecutor = Executors.newSingleThreadExecutor();
+    protected final Session session;
+    protected final AtomicInteger mailIdCounter = new AtomicInteger(0);
+    protected final ExecutorService sendExecutor = Executors.newSingleThreadExecutor();
 
     @Inject
     public MailSender(

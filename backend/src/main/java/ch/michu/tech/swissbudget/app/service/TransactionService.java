@@ -11,6 +11,7 @@ import jakarta.inject.Inject;
 import jakarta.inject.Provider;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 @ApplicationScoped
 public class TransactionService {
@@ -26,7 +27,8 @@ public class TransactionService {
         this.provider = provider;
     }
 
-    public List<TransactionDto> getTransactions(String query, int[] tagIds, LocalDate from, LocalDate to, boolean needAttention, int page) {
+    public List<TransactionDto> getTransactions(String query, UUID[] tagIds, LocalDate from, LocalDate to, boolean needAttention,
+        int page) {
         return provider.selectTransactionsWithDependenciesWithFilterWithPageAsDto(supportProvider.get().getUserIdOrThrow(),
             query, tagIds, from, to, needAttention, page);
     }
@@ -40,8 +42,6 @@ public class TransactionService {
         TransactionRecord transaction = provider.selectTransaction(support.getUserIdOrThrow(), toUpdate.getId())
             .orElseThrow(() -> new ResourceNotFoundException("transaction", toUpdate.getId()));
 
-        transaction.setTagId(toUpdate.getTagId());
-        transaction.setMatchingKeywordId(toUpdate.getMatchingKeywordId());
         transaction.setAlias(toUpdate.getAlias());
         transaction.setNote(toUpdate.getNote());
         provider.updateTransactionUserInput(transaction);

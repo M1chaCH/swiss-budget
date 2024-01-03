@@ -4,9 +4,9 @@ import {TagDto} from "../../../dtos/TransactionDtos";
 import {TagService} from "../../../services/tag.service";
 
 @Component({
-  selector: 'app-tag-selector',
-  templateUrl: './tag-selector.component.html',
-  styleUrls: ['./tag-selector.component.scss']
+  selector: "app-tag-selector",
+  templateUrl: "./tag-selector.component.html",
+  styleUrls: ["./tag-selector.component.scss"]
 })
 export class TagSelectorComponent implements OnInit {
 
@@ -14,8 +14,8 @@ export class TagSelectorComponent implements OnInit {
   @Input() allTags$: Observable<TagDto[] | undefined> | undefined;
   @Input() selectedTags?: TagDto[];
   @Output() selectedTagsChange = new EventEmitter<TagDto[]>();
-  @Input() selectedTagIds?: number[] = [];
-  @Output() selectedTagIdsChange = new EventEmitter<number[]>();
+  @Input() selectedTagIds?: string[] = [];
+  @Output() selectedTagIdsChange = new EventEmitter<string[]>();
 
   constructor(
       private tagService: TagService,
@@ -38,7 +38,7 @@ export class TagSelectorComponent implements OnInit {
     }
   }
 
-  selectTag(tags: TagDto[], id: number) {
+  selectTag(tags: TagDto[], id: string) {
     if (this.multiple) {
       const existingIndex = this.selectedTagIds!.indexOf(id);
       if (existingIndex === -1)
@@ -52,7 +52,7 @@ export class TagSelectorComponent implements OnInit {
     this.selectedTagsChange.emit(tags.filter(t => this.selectedTagIds!.includes(t.id)));
   }
 
-  isSelected(id: number) {
+  isSelected(id: string) {
     return this.selectedTagIds!.includes(id);
   }
 }

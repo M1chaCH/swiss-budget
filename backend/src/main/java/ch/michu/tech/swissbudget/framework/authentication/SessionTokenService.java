@@ -45,13 +45,13 @@ public class SessionTokenService {
         this.supportProvider = supportProvider;
     }
 
-    public SessionToken newSessionToken(String userId, boolean stay) {
+    public SessionToken newSessionToken(UUID userId, boolean stay) {
         ServerRequest request = supportProvider.get().getRequest();
         String userAgent = AuthenticationService.extractUserAgent(request);
         String remoteAddress = AuthenticationService.extractRemoteAddress(request);
 
         return new SessionToken(new Date(), constructExpiration(stay), userId, userAgent,
-            remoteAddress, stay, UUID.randomUUID().toString());
+            remoteAddress, stay, UUID.randomUUID());
     }
 
     public String buildJwt(SessionToken token) {
@@ -80,8 +80,8 @@ public class SessionTokenService {
             token.setRemoteAddress(split[1]);
 
             token.setStay(claims.get(CLAIM_STAY, Boolean.class));
-            token.setUserId(claims.get(CLAIM_USER_ID, String.class));
-            token.setSessionId(claims.get(CLAIM_SESSION_ID, String.class));
+            token.setUserId(UUID.fromString(claims.get(CLAIM_USER_ID, String.class)));
+            token.setSessionId(UUID.fromString(claims.get(CLAIM_SESSION_ID, String.class)));
             token.setIssuedAt(claims.getIssuedAt());
             token.setExpiresAt(claims.getExpiration());
             return token;

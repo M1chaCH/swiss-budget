@@ -2,9 +2,10 @@ package ch.michu.tech.swissbudget.app.endpoint;
 
 import ch.michu.tech.swissbudget.app.dto.transaction.TransactionDto;
 import ch.michu.tech.swissbudget.app.service.TransactionService;
-import ch.michu.tech.swissbudget.framework.LocalDateDeserializer;
 import ch.michu.tech.swissbudget.framework.authentication.Authenticated;
 import ch.michu.tech.swissbudget.framework.logging.LoggedRequest;
+import ch.michu.tech.swissbudget.framework.utils.LocalDateDeserializer;
+import ch.michu.tech.swissbudget.framework.utils.ParsingUtils;
 import ch.michu.tech.swissbudget.framework.validation.ValidateDtos;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
@@ -20,6 +21,7 @@ import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.Status;
 import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.UUID;
 
 @Path("/transaction")
 @RequestScoped
@@ -53,7 +55,11 @@ public class TransactionEndpoint {
         if (!toDate.isBlank()) {
             to = LocalDateDeserializer.parseLocalDate(toDate);
         }
-        int[] tags = Arrays.stream(tagIds.split(";")).filter(s -> !s.isBlank()).mapToInt(Integer::parseInt).toArray();
+
+        UUID[] tags = new UUID[0];
+        if (!tagIds.isBlank()) {
+            tags = ParsingUtils.toUUIDArray(Arrays.stream(tagIds.split(";")).filter(s -> !s.isBlank()).toArray());
+        }
 
         return Response.status(Status.OK).entity(service.getTransactions(query, tags, from, to, needAttention, page)).build();
     }

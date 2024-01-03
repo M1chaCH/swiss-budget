@@ -7,6 +7,7 @@ import ch.michu.tech.swissbudget.generated.jooq.tables.records.TransactionRecord
 import java.io.IOException;
 import java.time.ZoneId;
 import java.util.Arrays;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import javax.mail.Address;
 import javax.mail.Message;
@@ -29,7 +30,7 @@ public abstract class MailContentHandler {
     public void parseMail(TransactionMailRecord entity, Message message) {
         try {
             entity.setMessageNumber(message.getMessageNumber());
-            entity.setId(entity.getUserId() + "-" + entity.getMessageNumber()); // userId & messageId should form a unique primary key
+            entity.setId(UUID.randomUUID());
 
             Address[] froms = message.getFrom();
             entity.setFromMail(froms[0].toString());

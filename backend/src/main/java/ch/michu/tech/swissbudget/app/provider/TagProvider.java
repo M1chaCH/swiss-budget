@@ -15,13 +15,17 @@ import jakarta.inject.Inject;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Record;
 
 @SuppressWarnings("unused")
 @ApplicationScoped
-public class TagProvider implements BaseRecordProvider<TagRecord, Integer> {
+public class TagProvider implements BaseRecordProvider<TagRecord, UUID> {
+
+    public static final String DEFAULT_TAG_COLOR = "#3c3e3c";
+    public static final String DEFAULT_TAG_ICON = "question_mark";
 
     protected final DataProvider data;
     protected final DSLContext db;
@@ -53,11 +57,16 @@ public class TagProvider implements BaseRecordProvider<TagRecord, Integer> {
 
     @Override
     @LoggedStatement
-    public boolean fetchExists(String userId, Integer recordId) {
+    public boolean fetchExists(UUID userId, UUID recordId) {
         Condition userCondition = TAG.USER_ID.eq(userId);
         Condition tagCondition = TAG.ID.eq(recordId);
 
         return db.fetchExists(TAG, userCondition, tagCondition);
+    }
+
+    @LoggedStatement
+    public boolean fetchExists(UUID userId, UUID excludedTagId, String name) {
+        return db.fetchExists(TAG, TAG.USER_ID.eq(userId), TAG.NAME.equalIgnoreCase(name), TAG.ID.ne(excludedTagId));
     }
 
     public TagDto asDto(Record result, List<KeywordDto> keywords) {
@@ -71,6 +80,11 @@ public class TagProvider implements BaseRecordProvider<TagRecord, Integer> {
         );
     }
 
+    @LoggedStatement
+    public UUID selectDefaultTagId(UUID userId) {
+        return db.select(TAG.ID).from(TAG).where(TAG.USER_ID.eq(userId)).and(TAG.DEFAULT_TAG.eq(true)).fetchOne(TAG.ID);
+    }
+
     /**
      * selects all tags with their records from the DB <br> NOTE: executes a lot of queries, don't use too regularly
      *
@@ -78,7 +92,7 @@ public class TagProvider implements BaseRecordProvider<TagRecord, Integer> {
      * @return a map of Tags with their Keywords
      */
     @LoggedStatement
-    public Map<TagRecord, List<KeywordRecord>> selectTagsWithKeywordsByUserId(String userId) {
+    public Map<TagRecord, List<KeywordRecord>> selectTagsWithKeywordsByUserId(UUID userId) {
         Map<TagRecord, List<KeywordRecord>> entities = new HashMap<>();
 
         List<TagRecord> tags = db.selectFrom(TAG)
@@ -99,7 +113,7 @@ public class TagProvider implements BaseRecordProvider<TagRecord, Integer> {
     }
 
     @LoggedStatement
-    public List<TagDto> selectTagsWithKeywordsByUserIdAsDto(String userId) {
+    public List<TagDto> selectTagsWithKeywordsByUserIdAsDto(UUID userId) {
         List<TagDto> tags = db
             .selectFrom(TAG)
             .where(TAG.USER_ID.eq(userId))
@@ -115,25 +129,24 @@ public class TagProvider implements BaseRecordProvider<TagRecord, Integer> {
     }
 
     @LoggedStatement
-    public void insertCompleteTag(String userId, String name, String color, String icon, List<String> keywords) {
+    public void insertCompleteTag(UUID userId, UUID tagId, String name, String color, String icon, List<String> keywords) {
         db.transaction(ctx -> {
             DSLContext dsl = ctx.dsl();
 
-            int tagId = dsl.insertInto(TAG, TAG.NAME, TAG.COLOR, TAG.ICON, TAG.USER_ID)
-                .values(name, color, icon, userId)
-                .returning(TAG.ID)
-                .fetchOne(TAG.ID);
+            dsl.insertInto(TAG, TAG.ID, TAG.NAME, TAG.COLOR, TAG.ICON, TAG.USER_ID)
+                .values(tagId, name, color, icon, userId)
+                .execute();
 
             for (String keyword : keywords) {
-                dsl.insertInto(KEYWORD, KEYWORD.KEYWORD_, KEYWORD.USER_ID, KEYWORD.TAG_ID)
-                    .values(keyword, userId, tagId)
+                dsl.insertInto(KEYWORD, KEYWORD.ID, KEYWORD.KEYWORD_, KEYWORD.USER_ID, KEYWORD.TAG_ID)
+                    .values(UUID.randomUUID(), keyword, userId, tagId)
                     .execute();
             }
         });
     }
 
     @LoggedStatement
-    public void updateTag(String userId, int tagId, String name, String color, String icon) {
+    public void updateTag(UUID userId, UUID tagId, String name, String color, String icon) {
         db.update(TAG)
             .set(TAG.ICON, icon)
             .set(TAG.COLOR, color)
@@ -144,7 +157,7 @@ public class TagProvider implements BaseRecordProvider<TagRecord, Integer> {
     }
 
     @LoggedStatement
-    public void deleteById(String userId, int tagId) {
+    public void deleteById(UUID userId, UUID tagId) {
         db.deleteFrom(TAG).where(TAG.USER_ID.eq(userId)).and(TAG.ID.eq(tagId)).execute();
     }
 }

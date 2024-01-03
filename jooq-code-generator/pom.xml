@@ -3,11 +3,36 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <artifactId>generator</artifactId>
 
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-plugin-plugin</artifactId>
+        <configuration>
+          <goal>generate-code</goal>
+          <goalPrefix>generator</goalPrefix>
+          <requiredJavaVersion>17</requiredJavaVersion>
+          <requiredMavenVersion>3</requiredMavenVersion>
+          <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>descriptor</goal>
+            </goals>
+            <id>default-descriptor</id>
+          </execution>
+        </executions>
+        <groupId>org.apache.maven.plugins</groupId>
+        <version>3.9.0</version>
+      </plugin>
+    </plugins>
+  </build>
+
   <dependencies>
     <dependency>
       <artifactId>jooq-codegen</artifactId>
       <groupId>org.jooq</groupId>
-      <version>3.17.14</version>
+      <version>3.18.7</version>
     </dependency>
 
     <dependency>
@@ -19,6 +44,7 @@
     <dependency>
       <artifactId>maven-plugin-api</artifactId>
       <groupId>org.apache.maven</groupId>
+      <scope>provided</scope>
       <version>3.9.0</version>
     </dependency>
     <dependency>
@@ -30,6 +56,7 @@
     <dependency>
       <artifactId>maven-project</artifactId>
       <groupId>org.apache.maven</groupId>
+      <scope>provided</scope>
       <version>2.2.1</version>
     </dependency>
   </dependencies>
@@ -40,11 +67,10 @@
   <packaging>maven-plugin</packaging>
 
   <properties>
-    <maven.compiler.source>17</maven.compiler.source>
-    <maven.compiler.target>17</maven.compiler.target>
+    <java.version>21</java.version>
+    <maven.compiler.source>21</maven.compiler.source>
+    <maven.compiler.target>21</maven.compiler.target>
   </properties>
 
-  <url>http://maven.apache.org</url>
-
-  <version>0.0.1-SNAPSHOT</version>
+  <version>1.0.0</version>
 </project>

@@ -8,12 +8,13 @@ import ch.michu.tech.swissbudget.framework.data.LoggedStatement;
 import ch.michu.tech.swissbudget.generated.jooq.tables.records.TransactionMailRecord;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import java.util.UUID;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Record;
 
 @ApplicationScoped
-public class TransactionMailProvider implements BaseRecordProvider<TransactionMailRecord, String> {
+public class TransactionMailProvider implements BaseRecordProvider<TransactionMailRecord, UUID> {
 
     protected final DataProvider data;
     protected final DSLContext db;
@@ -49,7 +50,7 @@ public class TransactionMailProvider implements BaseRecordProvider<TransactionMa
 
     @Override
     @LoggedStatement
-    public boolean fetchExists(String userId, String recordId) {
+    public boolean fetchExists(UUID userId, UUID recordId) {
         Condition userCondition = TRANSACTION_MAIL.USER_ID.eq(userId);
         Condition transactionMailCondition = TRANSACTION_MAIL.ID.eq(recordId);
 
