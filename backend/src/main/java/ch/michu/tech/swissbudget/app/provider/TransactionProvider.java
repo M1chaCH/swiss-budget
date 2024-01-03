@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Query;
@@ -54,28 +55,31 @@ public class TransactionProvider implements BaseRecordProvider<TransactionRecord
     protected final TagProvider tagProvider;
     protected final KeywordProvider keywordProvider;
     protected final TransactionTagDuplicateProvider transactionTagDuplicateProvider;
-    protected final DataProvider data;
-    protected final DSLContext db;
+    protected final int pageSize;
 
     @Inject
-    public TransactionProvider(TransactionMailProvider transactionMailProvider, TagProvider tagProvider, KeywordProvider keywordProvider,
-        TransactionTagDuplicateProvider transactionTagDuplicateProvider, DataProvider data) {
+    public TransactionProvider(
+        @ConfigProperty(name = "db.limit.page.size", defaultValue = "100") int pageSize,
+        TransactionMailProvider transactionMailProvider,
+        TagProvider tagProvider,
+        KeywordProvider keywordProvider,
+        TransactionTagDuplicateProvider transactionTagDuplicateProvider
+    ) {
         this.transactionMailProvider = transactionMailProvider;
         this.tagProvider = tagProvider;
         this.keywordProvider = keywordProvider;
         this.transactionTagDuplicateProvider = transactionTagDuplicateProvider;
-        this.data = data;
-        this.db = data.getContext();
+        this.pageSize = pageSize;
     }
 
     @Override
-    public TransactionRecord newRecord() {
+    public TransactionRecord newRecord(DSLContext db) {
         return db.newRecord(TRANSACTION);
     }
 
     @Override
-    public TransactionRecord fromRecord(Record result) {
-        TransactionRecord transaction = newRecord();
+    public TransactionRecord fromRecord(DSLContext db, Record result) {
+        TransactionRecord transaction = newRecord(db);
 
         transaction.setId(result.getValue(TRANSACTION.ID));
         transaction.setExpense(result.getValue(TRANSACTION.EXPENSE));
@@ -95,7 +99,7 @@ public class TransactionProvider implements BaseRecordProvider<TransactionRecord
 
     @Override
     @LoggedStatement
-    public boolean fetchExists(UUID userId, UUID transactionId) {
+    public boolean fetchExists(DSLContext db, UUID userId, UUID transactionId) {
         Condition userCondition = TRANSACTION.USER_ID.eq(userId);
         Condition transactionCondition = TRANSACTION.ID.eq(transactionId);
 
@@ -125,7 +129,7 @@ public class TransactionProvider implements BaseRecordProvider<TransactionRecord
     }
 
     @LoggedStatement
-    public Optional<TransactionRecord> selectTransaction(UUID userId, UUID transactionId) {
+    public Optional<TransactionRecord> selectTransaction(DSLContext db, UUID userId, UUID transactionId) {
         TransactionRecord transaction = db.fetchOne(TRANSACTION, TRANSACTION.USER_ID.eq(userId).and(TRANSACTION.ID.eq(transactionId)));
 
         if (transaction == null) {
@@ -135,7 +139,7 @@ public class TransactionProvider implements BaseRecordProvider<TransactionRecord
     }
 
     @LoggedStatement
-    public CompleteTransactionEntity selectCompleteTransaction(UUID userId, UUID transactionId) {
+    public CompleteTransactionEntity selectCompleteTransaction(DSLContext db, UUID userId, UUID transactionId) {
         Record result = db
             .select(TRANSACTION_MAIL.asterisk(),
                 TRANSACTION.asterisk(),
@@ -155,31 +159,31 @@ public class TransactionProvider implements BaseRecordProvider<TransactionRecord
             throw new ResourceNotFoundException("transaction", transactionId.toString());
         }
 
-        TransactionMailRecord transactionMail = transactionMailProvider.fromRecord(result);
-        TransactionRecord transaction = fromRecord(result);
+        TransactionMailRecord transactionMail = transactionMailProvider.fromRecord(db, result);
+        TransactionRecord transaction = fromRecord(db, result);
 
         TagRecord tag = null;
         if (result.get(TRANSACTION.TAG_ID) != null) {
-            tag = tagProvider.fromRecord(result);
+            tag = tagProvider.fromRecord(db, result);
         }
 
         KeywordRecord matchingKeyword = null;
         if (result.get(TRANSACTION.MATCHING_KEYWORD_ID) != null) {
-            matchingKeyword = keywordProvider.fromRecord(result);
+            matchingKeyword = keywordProvider.fromRecord(db, result);
         }
 
         int duplicatedCount = result.get(DUPLICATES_COUNT_COLUMN, Integer.class);
         List<TransactionTagDuplicateEntity> duplicates = new ArrayList<>(duplicatedCount);
         if (duplicatedCount > 0) {
-            duplicates.addAll(transactionTagDuplicateProvider.selectTagDuplicatesForTransaction(transactionId,
-                transactionTagDuplicateProvider.getRecordToEntityMapper()));
+            duplicates.addAll(transactionTagDuplicateProvider.selectTagDuplicatesForTransaction(db, transactionId,
+                transactionTagDuplicateProvider.getRecordToEntityMapper(db)));
         }
 
         return new CompleteTransactionEntity(transactionMail, transaction, tag, matchingKeyword, duplicates);
     }
 
     @LoggedStatement
-    public List<TransactionIdWithTagDuplicateCount> selectTransactionIdsByMatchingKeyword(UUID userId, String keyword) {
+    public List<TransactionIdWithTagDuplicateCount> selectTransactionIdsByMatchingKeyword(DSLContext db, UUID userId, String keyword) {
         keyword = "%" + keyword + "%";
 
         return db
@@ -205,6 +209,7 @@ public class TransactionProvider implements BaseRecordProvider<TransactionRecord
 
     @LoggedStatement
     public List<TransactionDto> selectTransactionsWithDependenciesWithFilterWithPageAsDto(
+        DSLContext db,
         UUID userId,
         String query,
         UUID[] tagIds,
@@ -264,12 +269,12 @@ public class TransactionProvider implements BaseRecordProvider<TransactionRecord
             .groupBy(TRANSACTION.ID, TAG.ID, KEYWORD.ID)
             .orderBy(TRANSACTION.TRANSACTION_DATE.desc());
 
-        Result<?> result = data.fetchWithLimit(limitStep, page);
-        return parseDeepResultToDtos(result);
+        Result<?> result = DataProvider.fetchWithLimit(limitStep, page, pageSize);
+        return parseDeepResultToDtos(db, result);
     }
 
     @LoggedStatement
-    public ImportDbData selectImportDataByUserId(UUID userId) {
+    public ImportDbData selectImportDataByUserId(DSLContext db, UUID userId) {
         Result<?> result = db
             .select(REGISTERED_USER.MAIL, REGISTERED_USER.MAIL_PASSWORD, REGISTERED_USER.ID,
                 TRANSACTION_META_DATA.LAST_IMPORTED_TRANSACTION, TRANSACTION_META_DATA.LAST_IMPORT_CHECK,
@@ -288,7 +293,7 @@ public class TransactionProvider implements BaseRecordProvider<TransactionRecord
     }
 
     @LoggedStatement
-    public List<ImportDbData> selectImportData() {
+    public List<ImportDbData> selectImportData(DSLContext db) {
         Result<?> result = db
             .select(REGISTERED_USER.MAIL, REGISTERED_USER.MAIL_PASSWORD, REGISTERED_USER.ID,
                 TRANSACTION_META_DATA.LAST_IMPORTED_TRANSACTION, TRANSACTION_META_DATA.LAST_IMPORT_CHECK,
@@ -307,7 +312,7 @@ public class TransactionProvider implements BaseRecordProvider<TransactionRecord
     }
 
     @LoggedStatement
-    public void insertCompleteTransactions(List<CompleteTransactionEntity> transactions) {
+    public void insertCompleteTransactions(DSLContext db, List<CompleteTransactionEntity> transactions) {
         List<Query> queries = new ArrayList<>();
 
         for (CompleteTransactionEntity entity : transactions) {
@@ -328,12 +333,12 @@ public class TransactionProvider implements BaseRecordProvider<TransactionRecord
     }
 
     @LoggedStatement
-    public void insertTransactions(List<TransactionRecord> transactions) {
+    public void insertTransactions(DSLContext db, List<TransactionRecord> transactions) {
         db.transaction(c -> transactions.forEach(UpdatableRecordImpl::store));
     }
 
     @LoggedStatement
-    public void updateTransactionUserInput(TransactionRecord transaction) {
+    public void updateTransactionUserInput(DSLContext db, TransactionRecord transaction) {
         if (transaction.get(TRANSACTION.TAG_ID) == null) {
             transaction.store(TRANSACTION.ALIAS, TRANSACTION.NOTE);
         } else if (transaction.get(TRANSACTION.MATCHING_KEYWORD_ID) == null) {
@@ -344,7 +349,7 @@ public class TransactionProvider implements BaseRecordProvider<TransactionRecord
     }
 
     @LoggedStatement
-    public void updateTransactionNeedsUserAttention(UUID transactionId, boolean needAttention) {
+    public void updateTransactionNeedsUserAttention(DSLContext db, UUID transactionId, boolean needAttention) {
         db
             .update(TRANSACTION)
             .set(TRANSACTION.NEED_USER_ATTENTION, needAttention)
@@ -353,7 +358,7 @@ public class TransactionProvider implements BaseRecordProvider<TransactionRecord
     }
 
     @LoggedStatement
-    public void updateTransactionsByTagWithDefaultTag(UUID oldTagId, UUID defaultTagId) {
+    public void updateTransactionsByTagWithDefaultTag(DSLContext db, UUID oldTagId, UUID defaultTagId) {
         db
             .update(TRANSACTION)
             .set(TRANSACTION.TAG_ID, defaultTagId)
@@ -367,7 +372,7 @@ public class TransactionProvider implements BaseRecordProvider<TransactionRecord
      * don't send default tag id, this will break with the needUserAttention field. needUserAttention field is set to false here
      */
     @LoggedStatement
-    public void updateTransactionWithTagAndRemoveNeedAttention(UUID transactionId, UUID tagId) {
+    public void updateTransactionWithTagAndRemoveNeedAttention(DSLContext db, UUID transactionId, UUID tagId) {
         db
             .update(TRANSACTION)
             .set(TRANSACTION.TAG_ID, tagId)
@@ -381,7 +386,7 @@ public class TransactionProvider implements BaseRecordProvider<TransactionRecord
      * don't send default tag id, this will break with the needUserAttention field. needUserAttention field is set to false here
      */
     @LoggedStatement
-    public void updateTransactionWithTagAndRemoveNeedAttention(UUID transactionId, UUID tagId, UUID matchingKeywordId) {
+    public void updateTransactionWithTagAndRemoveNeedAttention(DSLContext db, UUID transactionId, UUID tagId, UUID matchingKeywordId) {
         db
             .update(TRANSACTION)
             .set(TRANSACTION.TAG_ID, tagId)
@@ -392,7 +397,7 @@ public class TransactionProvider implements BaseRecordProvider<TransactionRecord
     }
 
     @LoggedStatement
-    public void updateLastImport(UUID id, LocalDateTime lastImportedTransaction) {
+    public void updateLastImport(DSLContext db, UUID id, LocalDateTime lastImportedTransaction) {
         db
             .update(TRANSACTION_META_DATA)
             .set(TRANSACTION_META_DATA.LAST_IMPORTED_TRANSACTION, lastImportedTransaction)
@@ -402,7 +407,7 @@ public class TransactionProvider implements BaseRecordProvider<TransactionRecord
     }
 
     @LoggedStatement
-    public void deleteAllTagDuplicates(UUID transactionId) {
+    public void deleteAllTagDuplicates(DSLContext db, UUID transactionId) {
         db
             .delete(TRANSACTION_TAG_DUPLICATE)
             .where(TRANSACTION_TAG_DUPLICATE.TRANSACTION_ID.eq(transactionId))
@@ -431,7 +436,7 @@ public class TransactionProvider implements BaseRecordProvider<TransactionRecord
         );
     }
 
-    protected List<TransactionDto> parseDeepResultToDtos(Result<?> result) {
+    protected List<TransactionDto> parseDeepResultToDtos(DSLContext db, Result<?> result) {
         final List<TransactionDto> dtos = new ArrayList<>();
         for (Record currentResult : result) {
             KeywordDto matchingKeyword = null;
@@ -448,7 +453,7 @@ public class TransactionProvider implements BaseRecordProvider<TransactionRecord
             final List<TransactionTagDuplicateDto> duplicatedTags = new ArrayList<>(duplicatesCount);
             if (duplicatesCount > 0) {
                 duplicatedTags.addAll(
-                    transactionTagDuplicateProvider.selectTagDuplicatesForTransaction(currentResult.getValue(TRANSACTION.ID),
+                    transactionTagDuplicateProvider.selectTagDuplicatesForTransaction(db, currentResult.getValue(TRANSACTION.ID),
                         transactionTagDuplicateProvider.getRecordToDtoMapper()));
             }
 

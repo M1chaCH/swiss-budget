@@ -6,12 +6,10 @@ import static ch.michu.tech.swissbudget.generated.jooq.tables.Tag.TAG;
 import ch.michu.tech.swissbudget.app.dto.keyword.KeywordDto;
 import ch.michu.tech.swissbudget.app.dto.tag.TagDto;
 import ch.michu.tech.swissbudget.framework.data.BaseRecordProvider;
-import ch.michu.tech.swissbudget.framework.data.DataProvider;
 import ch.michu.tech.swissbudget.framework.data.LoggedStatement;
 import ch.michu.tech.swissbudget.generated.jooq.tables.records.KeywordRecord;
 import ch.michu.tech.swissbudget.generated.jooq.tables.records.TagRecord;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,23 +25,14 @@ public class TagProvider implements BaseRecordProvider<TagRecord, UUID> {
     public static final String DEFAULT_TAG_COLOR = "#3c3e3c";
     public static final String DEFAULT_TAG_ICON = "question_mark";
 
-    protected final DataProvider data;
-    protected final DSLContext db;
-
-    @Inject
-    public TagProvider(DataProvider data) {
-        this.data = data;
-        this.db = data.getContext();
-    }
-
     @Override
-    public TagRecord newRecord() {
+    public TagRecord newRecord(DSLContext db) {
         return db.newRecord(TAG);
     }
 
     @Override
-    public TagRecord fromRecord(Record result) {
-        TagRecord tag = newRecord();
+    public TagRecord fromRecord(DSLContext db, Record result) {
+        TagRecord tag = newRecord(db);
 
         tag.setId(result.getValue(TAG.ID));
         tag.setIcon(result.getValue(TAG.ICON));
@@ -57,7 +46,7 @@ public class TagProvider implements BaseRecordProvider<TagRecord, UUID> {
 
     @Override
     @LoggedStatement
-    public boolean fetchExists(UUID userId, UUID recordId) {
+    public boolean fetchExists(DSLContext db, UUID userId, UUID recordId) {
         Condition userCondition = TAG.USER_ID.eq(userId);
         Condition tagCondition = TAG.ID.eq(recordId);
 
@@ -65,7 +54,7 @@ public class TagProvider implements BaseRecordProvider<TagRecord, UUID> {
     }
 
     @LoggedStatement
-    public boolean fetchExists(UUID userId, UUID excludedTagId, String name) {
+    public boolean fetchExists(DSLContext db, UUID userId, UUID excludedTagId, String name) {
         return db.fetchExists(TAG, TAG.USER_ID.eq(userId), TAG.NAME.equalIgnoreCase(name), TAG.ID.ne(excludedTagId));
     }
 
@@ -81,7 +70,7 @@ public class TagProvider implements BaseRecordProvider<TagRecord, UUID> {
     }
 
     @LoggedStatement
-    public UUID selectDefaultTagId(UUID userId) {
+    public UUID selectDefaultTagId(DSLContext db, UUID userId) {
         return db.select(TAG.ID).from(TAG).where(TAG.USER_ID.eq(userId)).and(TAG.DEFAULT_TAG.eq(true)).fetchOne(TAG.ID);
     }
 
@@ -92,7 +81,7 @@ public class TagProvider implements BaseRecordProvider<TagRecord, UUID> {
      * @return a map of Tags with their Keywords
      */
     @LoggedStatement
-    public Map<TagRecord, List<KeywordRecord>> selectTagsWithKeywordsByUserId(UUID userId) {
+    public Map<TagRecord, List<KeywordRecord>> selectTagsWithKeywordsByUserId(DSLContext db, UUID userId) {
         Map<TagRecord, List<KeywordRecord>> entities = new HashMap<>();
 
         List<TagRecord> tags = db.selectFrom(TAG)
@@ -113,7 +102,7 @@ public class TagProvider implements BaseRecordProvider<TagRecord, UUID> {
     }
 
     @LoggedStatement
-    public List<TagDto> selectTagsWithKeywordsByUserIdAsDto(UUID userId) {
+    public List<TagDto> selectTagsWithKeywordsByUserIdAsDto(DSLContext db, UUID userId) {
         List<TagDto> tags = db
             .selectFrom(TAG)
             .where(TAG.USER_ID.eq(userId))
@@ -129,7 +118,7 @@ public class TagProvider implements BaseRecordProvider<TagRecord, UUID> {
     }
 
     @LoggedStatement
-    public void insertCompleteTag(UUID userId, UUID tagId, String name, String color, String icon, List<String> keywords) {
+    public void insertCompleteTag(DSLContext db, UUID userId, UUID tagId, String name, String color, String icon, List<String> keywords) {
         db.transaction(ctx -> {
             DSLContext dsl = ctx.dsl();
 
@@ -146,7 +135,7 @@ public class TagProvider implements BaseRecordProvider<TagRecord, UUID> {
     }
 
     @LoggedStatement
-    public void updateTag(UUID userId, UUID tagId, String name, String color, String icon) {
+    public void updateTag(DSLContext db, UUID userId, UUID tagId, String name, String color, String icon) {
         db.update(TAG)
             .set(TAG.ICON, icon)
             .set(TAG.COLOR, color)
@@ -157,7 +146,7 @@ public class TagProvider implements BaseRecordProvider<TagRecord, UUID> {
     }
 
     @LoggedStatement
-    public void deleteById(UUID userId, UUID tagId) {
+    public void deleteById(DSLContext db, UUID userId, UUID tagId) {
         db.deleteFrom(TAG).where(TAG.USER_ID.eq(userId)).and(TAG.ID.eq(tagId)).execute();
     }
 }

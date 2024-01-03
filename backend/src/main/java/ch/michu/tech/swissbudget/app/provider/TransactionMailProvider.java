@@ -3,11 +3,9 @@ package ch.michu.tech.swissbudget.app.provider;
 import static ch.michu.tech.swissbudget.generated.jooq.tables.TransactionMail.TRANSACTION_MAIL;
 
 import ch.michu.tech.swissbudget.framework.data.BaseRecordProvider;
-import ch.michu.tech.swissbudget.framework.data.DataProvider;
 import ch.michu.tech.swissbudget.framework.data.LoggedStatement;
 import ch.michu.tech.swissbudget.generated.jooq.tables.records.TransactionMailRecord;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
 import java.util.UUID;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
@@ -16,23 +14,14 @@ import org.jooq.Record;
 @ApplicationScoped
 public class TransactionMailProvider implements BaseRecordProvider<TransactionMailRecord, UUID> {
 
-    protected final DataProvider data;
-    protected final DSLContext db;
-
-    @Inject
-    public TransactionMailProvider(DataProvider data) {
-        this.data = data;
-        this.db = data.getContext();
-    }
-
     @Override
-    public TransactionMailRecord newRecord() {
+    public TransactionMailRecord newRecord(DSLContext db) {
         return db.newRecord(TRANSACTION_MAIL);
     }
 
     @Override
-    public TransactionMailRecord fromRecord(Record result) {
-        TransactionMailRecord mail = newRecord();
+    public TransactionMailRecord fromRecord(DSLContext db, Record result) {
+        TransactionMailRecord mail = newRecord(db);
 
         mail.setId(result.getValue(TRANSACTION_MAIL.ID));
         mail.setMessageNumber(result.getValue(TRANSACTION_MAIL.MESSAGE_NUMBER));
@@ -50,7 +39,7 @@ public class TransactionMailProvider implements BaseRecordProvider<TransactionMa
 
     @Override
     @LoggedStatement
-    public boolean fetchExists(UUID userId, UUID recordId) {
+    public boolean fetchExists(DSLContext db, UUID userId, UUID recordId) {
         Condition userCondition = TRANSACTION_MAIL.USER_ID.eq(userId);
         Condition transactionMailCondition = TRANSACTION_MAIL.ID.eq(recordId);
 
