@@ -29,21 +29,23 @@ public class TransactionService {
 
     public List<TransactionDto> getTransactions(String query, UUID[] tagIds, LocalDate from, LocalDate to, boolean needAttention,
         int page) {
-        return provider.selectTransactionsWithDependenciesWithFilterWithPageAsDto(supportProvider.get().getUserIdOrThrow(),
+        final RequestSupport support = supportProvider.get();
+        return provider.selectTransactionsWithDependenciesWithFilterWithPageAsDto(support.db(), support.getUserIdOrThrow(),
             query, tagIds, from, to, needAttention, page);
     }
 
     public List<TransactionDto> importTransactions() {
-        return importer.importTransactions(supportProvider.get().getUserIdOrThrow()).stream().map(TransactionDto::new).toList();
+        final RequestSupport support = supportProvider.get();
+        return importer.importTransactions(support.db(), support.getUserIdOrThrow()).stream().map(TransactionDto::new).toList();
     }
 
     public void updateTransactionUserInput(TransactionDto toUpdate) {
-        RequestSupport support = supportProvider.get();
-        TransactionRecord transaction = provider.selectTransaction(support.getUserIdOrThrow(), toUpdate.getId())
+        final RequestSupport support = supportProvider.get();
+        TransactionRecord transaction = provider.selectTransaction(support.db(), support.getUserIdOrThrow(), toUpdate.getId())
             .orElseThrow(() -> new ResourceNotFoundException("transaction", toUpdate.getId()));
 
         transaction.setAlias(toUpdate.getAlias());
         transaction.setNote(toUpdate.getNote());
-        provider.updateTransactionUserInput(transaction);
+        provider.updateTransactionUserInput(support.db(), transaction);
     }
 }

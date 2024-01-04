@@ -14,6 +14,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import lombok.Getter;
 import lombok.Setter;
+import org.jooq.DSLContext;
 
 @RequestScoped
 public class RequestSupport {
@@ -25,6 +26,8 @@ public class RequestSupport {
     private final ServerRequest request;
     @Setter
     private SessionToken sessionToken;
+    @Setter
+    private DSLContext ctx;
 
     @Inject
     public RequestSupport(@Context ServerRequest request) {
@@ -52,12 +55,16 @@ public class RequestSupport {
         }
     }
 
-    public Optional<SessionToken> getSessionToken() {
-        return Optional.of(sessionToken);
+    public UUID getUserIdOrThrow() {
+        if (sessionToken == null) {
+            throw new InvalidSessionTokenException();
+        }
+
+        return sessionToken.getUserId();
     }
 
-    public UUID getUserIdOrThrow() {
-        return getSessionToken().orElseThrow(InvalidSessionTokenException::new).getUserId();
+    public DSLContext db() {
+        return ctx;
     }
 
     public void logInfo(Object instance, String formattedMessage, Object... args) {

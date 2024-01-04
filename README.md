@@ -64,7 +64,7 @@ _should be publicly available at: 01.08.2024_
   - 
 
 ### Framework
-- [ ] write tests for complicated data manipulations (assign tag / resolve tag conflicts -> they have a lot of edge cases)
+- [x] write tests for complicated data manipulations (assign tag / resolve tag conflicts -> they have a lot of edge cases)
 - [ ] db connection pooling 
   - one db connection per request
   - limit max requests handled at the same time (maybe make "getConnection" blocking if no "slot" is open)
@@ -75,10 +75,10 @@ _should be publicly available at: 01.08.2024_
 - [ ] TODOs all over the project for improvements
 - [ ] dockerize
 - [ ] load test
-- [ ] detailed tests that user can't access data he's not allowed to
+- [x] detailed tests that user can't access data he's not allowed to
 - [ ] add support for more banks
   - post, migros. NAB, UBS, ZKB, CS
-- [ ] fronted: handle unauthorized response (send to login)
+- [x] fronted: handle unauthorized response (send to login)
 
 (GPT finance adviser)
 - create a custom GPT that knows how SwissBudget works and knows how the datastructures is built

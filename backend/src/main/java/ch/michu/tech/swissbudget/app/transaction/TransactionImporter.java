@@ -11,6 +11,7 @@ import ch.michu.tech.swissbudget.app.provider.TransactionMailProvider;
 import ch.michu.tech.swissbudget.app.provider.TransactionProvider;
 import ch.michu.tech.swissbudget.app.provider.TransactionProvider.ImportDbData;
 import ch.michu.tech.swissbudget.app.transaction.mail.MailContentHandler;
+import ch.michu.tech.swissbudget.framework.data.connection.DBConnectionFactory;
 import ch.michu.tech.swissbudget.framework.error.ErrorReporter;
 import ch.michu.tech.swissbudget.framework.error.exception.UnexpectedServerException;
 import ch.michu.tech.swissbudget.framework.mail.MailReader;
@@ -38,6 +39,7 @@ import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Store;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
+import org.jooq.DSLContext;
 import org.jooq.exception.DataAccessException;
 
 @ApplicationScoped
@@ -47,6 +49,7 @@ public class TransactionImporter {
 
     private static final Logger LOGGER = Logger.getLogger(TransactionImporter.class.getSimpleName());
 
+    private final DBConnectionFactory connectionFactory;
     private final TransactionProvider transactionProvider;
     private final TransactionMailProvider transactionMailProvider;
     private final TagProvider tagProvider;
@@ -58,11 +61,17 @@ public class TransactionImporter {
     private final List<UUID> currentUserIds = new ArrayList<>();
 
     @Inject
-    public TransactionImporter(TransactionProvider transactionProvider, TransactionMailProvider transactionMailProvider,
-        TagProvider tagProvider, MailReader mailReader,
+    public TransactionImporter(
+        DBConnectionFactory connectionFactory,
+        TransactionProvider transactionProvider,
+        TransactionMailProvider transactionMailProvider,
+        TagProvider tagProvider,
+        MailReader mailReader,
         ErrorReporter errorReporter,
         TransactionTagMapper tagMapper,
-        @ConfigProperty(name = "ch.michu.tech.threads.user-amount-breakpoint", defaultValue = "8") int userAmountMultithreadingBreakpoint) {
+        @ConfigProperty(name = "ch.michu.tech.threads.user-amount-breakpoint", defaultValue = "8") int userAmountMultithreadingBreakpoint
+    ) {
+        this.connectionFactory = connectionFactory;
         this.transactionProvider = transactionProvider;
         this.transactionMailProvider = transactionMailProvider;
         this.tagProvider = tagProvider;
@@ -73,15 +82,15 @@ public class TransactionImporter {
     }
 
     /**
-     * same as here {@link #importTransactions(ImportDbData)}
+     * same as here {@link #importTransactions(DSLContext, ImportDbData)}
      * <p>
      * (also select the required data)
      *
      * @param userId the user to import the transactions for
      * @return the imported transactions
      */
-    public List<CompleteTransactionEntity> importTransactions(UUID userId) {
-        return importTransactions(transactionProvider.selectImportDataByUserId(userId));
+    public List<CompleteTransactionEntity> importTransactions(DSLContext db, UUID userId) {
+        return importTransactions(db, transactionProvider.selectImportDataByUserId(db, userId));
     }
 
     /**
@@ -92,7 +101,7 @@ public class TransactionImporter {
      * @param dbData the data required for the import
      * @return all imported transaction mails with their transactions with their tag and the matching keyword
      */
-    public List<CompleteTransactionEntity> importTransactions(ImportDbData dbData) {
+    public List<CompleteTransactionEntity> importTransactions(DSLContext db, ImportDbData dbData) {
         long startSeconds = Instant.now().getEpochSecond();
         handleAlreadyStarted(dbData.id());
         LOGGER.log(Level.INFO, "importing transactions for {0}", new Object[]{dbData.mail()});
@@ -115,13 +124,13 @@ public class TransactionImporter {
             MailContentHandler contentHandler = bank.getHandler().getDeclaredConstructor().newInstance();
             Message[] messages = mailReader.findMessages(mailConnection, dbData.folder(), lastImportedMail);
 
-            Map<TagRecord, List<KeywordRecord>> tags = tagProvider.selectTagsWithKeywordsByUserId(dbData.id());
+            Map<TagRecord, List<KeywordRecord>> tags = tagProvider.selectTagsWithKeywordsByUserId(db, dbData.id());
             TagRecord defaultTag = tagMapper.getDefaultTag(tags.keySet());
 
             int skippedCount = 0;
             for (Message message : messages) {
                 CompleteTransactionEntity entity = new CompleteTransactionEntity();
-                TransactionMailRecord mail = transactionMailProvider.newRecord();
+                TransactionMailRecord mail = transactionMailProvider.newRecord(db);
                 mail.setUserId(dbData.id());
                 contentHandler.parseMail(mail, message);
                 entity.setMail(mail);
@@ -131,7 +140,7 @@ public class TransactionImporter {
                     continue;
                 }
 
-                TransactionRecord transaction = transactionProvider.newRecord();
+                TransactionRecord transaction = transactionProvider.newRecord(db);
                 transaction.setUserId(dbData.id());
                 contentHandler.parseTransaction(transaction, mail);
 
@@ -143,8 +152,8 @@ public class TransactionImporter {
                 transactions.add(entity);
             }
 
-            transactionProvider.updateLastImport(dbData.id(), lastImportedMail);
-            transactionProvider.insertCompleteTransactions(transactions);
+            transactionProvider.updateLastImport(db, dbData.id(), lastImportedMail);
+            transactionProvider.insertCompleteTransactions(db, transactions);
             long durationSeconds = Instant.now().getEpochSecond() - startSeconds;
             LOGGER.log(Level.INFO, "successfully imported {0} transactions for {1}. (skipped: {2}, took: {3}s)",
                 new Object[]{transactions.size(), dbData.mail(), skippedCount, durationSeconds});
@@ -167,16 +176,22 @@ public class TransactionImporter {
     @Scheduled("0 0 3 ? * *")
     public void importTransactionsForAllUsers() {
         try {
-            List<ImportDbData> data = transactionProvider.selectImportData();
+            final DSLContext db = connectionFactory.createContext();
+
+            List<ImportDbData> data = transactionProvider.selectImportData(db);
             int userCount = data.size();
             if (userCount >= userAmountMultithreadingBreakpoint) {
                 LOGGER.log(Level.INFO, "importing transactions (Multithreaded ({0} Threads)) for {1} users",
                     new Object[]{getThreadPoolSize(userCount), userCount});
-                importAllMT(data);
+                importAllMT(db, data);
             } else {
                 long start = Instant.now().getEpochSecond();
                 LOGGER.log(Level.INFO, "importing transactions (Single thread) for {0} users", new Object[]{userCount});
-                data.forEach(this::importTransactions);
+                data.forEach(d -> {
+                    db.startTransaction().execute();
+                    importTransactions(db, d);
+                    db.commit().execute();
+                });
                 LOGGER.log(Level.INFO, "completed transactions import after {0} minutes",
                     new Object[]{(Instant.now().getEpochSecond() - start) / 60d});
             }
@@ -190,13 +205,13 @@ public class TransactionImporter {
         }
     }
 
-    private void importAllMT(List<ImportDbData> data) {
+    private void importAllMT(DSLContext db, List<ImportDbData> data) {
         long start = Instant.now().getEpochSecond();
         @SuppressWarnings({"java:S2095", "resource"})
         ExecutorService executor = Executors.newFixedThreadPool(getThreadPoolSize(data.size()));
 
         try {
-            data.forEach(row -> executor.submit(() -> importTransactions(row)));
+            data.forEach(row -> executor.submit(() -> importTransactions(db, row)));
             if (executor.awaitTermination(55, TimeUnit.MINUTES)) {
                 LOGGER.log(Level.INFO, "successfully ran MT transaction importer! total duration: {0} minutes",
                     new Object[]{(Instant.now().getEpochSecond() - start) / 60d});

@@ -5,11 +5,9 @@ import static ch.michu.tech.swissbudget.generated.jooq.tables.Tag.TAG;
 
 import ch.michu.tech.swissbudget.app.dto.keyword.KeywordDto;
 import ch.michu.tech.swissbudget.framework.data.BaseRecordProvider;
-import ch.michu.tech.swissbudget.framework.data.DataProvider;
 import ch.michu.tech.swissbudget.framework.data.LoggedStatement;
 import ch.michu.tech.swissbudget.generated.jooq.tables.records.KeywordRecord;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -23,23 +21,14 @@ import org.jooq.exception.TooManyRowsException;
 @ApplicationScoped
 public class KeywordProvider implements BaseRecordProvider<KeywordRecord, UUID> {
 
-    protected final DataProvider data;
-    protected final DSLContext db;
-
-    @Inject
-    public KeywordProvider(DataProvider data) {
-        this.data = data;
-        this.db = data.getContext();
-    }
-
     @Override
-    public KeywordRecord newRecord() {
+    public KeywordRecord newRecord(DSLContext db) {
         return db.newRecord(KEYWORD);
     }
 
     @Override
-    public KeywordRecord fromRecord(Record result) {
-        KeywordRecord keyword = newRecord();
+    public KeywordRecord fromRecord(DSLContext db, Record result) {
+        KeywordRecord keyword = newRecord(db);
 
         keyword.setId(result.getValue(KEYWORD.ID));
         keyword.setKeyword(result.getValue(KEYWORD.KEYWORD_));
@@ -51,7 +40,7 @@ public class KeywordProvider implements BaseRecordProvider<KeywordRecord, UUID> 
 
     @Override
     @LoggedStatement
-    public boolean fetchExists(UUID userId, UUID recordId) {
+    public boolean fetchExists(DSLContext db, UUID userId, UUID recordId) {
         Condition userCondition = KEYWORD.USER_ID.eq(userId);
         Condition keywordCondition = KEYWORD.ID.eq(recordId);
 
@@ -67,7 +56,7 @@ public class KeywordProvider implements BaseRecordProvider<KeywordRecord, UUID> 
     }
 
     @LoggedStatement
-    public KeywordWithTagEntity selectByKeywordWithTagName(UUID userId, String keyword) throws TooManyRowsException {
+    public KeywordWithTagEntity selectByKeywordWithTagName(DSLContext db, UUID userId, String keyword) throws TooManyRowsException {
         keyword = "%" + keyword + "%";
 
         Condition userCondition = KEYWORD.USER_ID.eq(userId);
@@ -94,12 +83,12 @@ public class KeywordProvider implements BaseRecordProvider<KeywordRecord, UUID> 
     }
 
     @LoggedStatement
-    public List<KeywordRecord> selectKeywordsByTagId(UUID userId, UUID tagId) {
+    public List<KeywordRecord> selectKeywordsByTagId(DSLContext db, UUID userId, UUID tagId) {
         return db.fetch(KEYWORD, KEYWORD.USER_ID.eq(userId), KEYWORD.TAG_ID.eq(tagId));
     }
 
     @LoggedStatement
-    public void insertKeywordToTag(UUID userId, UUID keywordId, UUID tagId, String keyword) {
+    public void insertKeywordToTag(DSLContext db, UUID userId, UUID keywordId, UUID tagId, String keyword) {
         db
             .insertInto(KEYWORD, KEYWORD.ID, KEYWORD.TAG_ID, KEYWORD.KEYWORD_, KEYWORD.USER_ID)
             .values(keywordId, tagId, keyword, userId)
@@ -107,7 +96,7 @@ public class KeywordProvider implements BaseRecordProvider<KeywordRecord, UUID> 
     }
 
     @LoggedStatement()
-    public void insertKeywordsToTag(UUID userId, UUID tagId, List<String> keywords) {
+    public void insertKeywordsToTag(DSLContext db, UUID userId, UUID tagId, List<String> keywords) {
         List<Query> insertKeywords = keywords
             .stream()
             .map(keyword -> (Query) db
@@ -119,7 +108,7 @@ public class KeywordProvider implements BaseRecordProvider<KeywordRecord, UUID> 
     }
 
     @LoggedStatement
-    public void deleteKeywordsByIds(UUID userId, UUID... keywordIds) {
+    public void deleteKeywordsByIds(DSLContext db, UUID userId, UUID... keywordIds) {
         if (keywordIds.length == 0) {
             return;
         }

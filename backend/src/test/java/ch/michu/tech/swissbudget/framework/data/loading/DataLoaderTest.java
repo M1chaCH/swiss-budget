@@ -38,7 +38,7 @@ class DataLoaderTest {
             "value"
         );
 
-        Queue<String> statements = new DataLoader(null).buildStatements(lines, Map.of());
+        Queue<String> statements = new DataLoader().buildStatements(lines, Map.of());
         assertEquals(2, statements.size());
         String firstQuery = statements.poll();
         assertNotNull(firstQuery);
@@ -76,7 +76,7 @@ class DataLoaderTest {
 
         // TODO will need to wait for mockito to run with java 21 https://github.com/mockito/mockito/issues/3037
 //        Map<String, String> statements = dataLoader.buildStatements(lines, Map.of());
-        Queue<String> statements = new DataLoader(null).buildStatements(lines, Map.of());
+        Queue<String> statements = new DataLoader().buildStatements(lines, Map.of());
         String firstStatement = statements.poll();
         assertNotNull(firstStatement);
         assertFalse(firstStatement.contains("genGuid("));
@@ -101,7 +101,7 @@ class DataLoaderTest {
             "{{hashWithSalt(cool-string)}},{{salt()}},mostvalue"
         );
 
-        Queue<String> statements = new DataLoader(null).buildStatements(lines, Map.of());
+        Queue<String> statements = new DataLoader().buildStatements(lines, Map.of());
         String firstStatement = statements.poll();
         assertNotNull(firstStatement);
         assertFalse(firstStatement.contains("hashWithSalt"));
@@ -128,7 +128,7 @@ class DataLoaderTest {
             "{{date(firstofyear)}}"
         );
 
-        Queue<String> statements = new DataLoader(null).buildStatements(lines, Map.of());
+        Queue<String> statements = new DataLoader().buildStatements(lines, Map.of());
         String todayStatement = statements.poll();
         assertNotNull(todayStatement);
         final String expectedToday = DateBuilder.today().formatted(TEST_PATTERN);
@@ -181,7 +181,7 @@ class DataLoaderTest {
             "column1",
             "{{date(5&&year)}}"
         );
-        Queue<String> statements = new DataLoader(null).buildStatements(lines, Map.of());
+        Queue<String> statements = new DataLoader().buildStatements(lines, Map.of());
 
         String dayStatement = statements.poll();
         assertNotNull(dayStatement);
@@ -219,7 +219,7 @@ class DataLoaderTest {
             "column1",
             "{{date(1&&year)->date(4&&month)->date(firstofmonth)->date(10&&day)->date(-1&&week)}}"
         );
-        Queue<String> statements = new DataLoader(null).buildStatements(lines, Map.of());
+        Queue<String> statements = new DataLoader().buildStatements(lines, Map.of());
 
         String stmt = statements.poll();
         assertNotNull(stmt);
@@ -236,7 +236,7 @@ class DataLoaderTest {
             "column1",
             "{{useVar(test)}}"
         );
-        Queue<String> statements = new DataLoader(null).buildStatements(lines, Map.of("test", "cooler string"));
+        Queue<String> statements = new DataLoader().buildStatements(lines, Map.of("test", "cooler string"));
 
         String stmt = statements.poll();
         assertNotNull(stmt);

@@ -7,7 +7,6 @@ import static ch.michu.tech.swissbudget.generated.jooq.tables.TransactionTagDupl
 import ch.michu.tech.swissbudget.app.dto.transaction.TransactionTagDuplicateDto;
 import ch.michu.tech.swissbudget.app.entity.TransactionTagDuplicateEntity;
 import ch.michu.tech.swissbudget.framework.data.BaseRecordProvider;
-import ch.michu.tech.swissbudget.framework.data.DataProvider;
 import ch.michu.tech.swissbudget.framework.data.LoggedStatement;
 import ch.michu.tech.swissbudget.generated.jooq.tables.records.KeywordRecord;
 import ch.michu.tech.swissbudget.generated.jooq.tables.records.TagRecord;
@@ -24,27 +23,23 @@ import org.jooq.RecordMapper;
 @ApplicationScoped
 public class TransactionTagDuplicateProvider implements BaseRecordProvider<TransactionTagDuplicateRecord, UUID> {
 
-    protected final DataProvider data;
-    protected final DSLContext db;
     protected final TagProvider tagProvider;
     protected final KeywordProvider keywordProvider;
 
     @Inject
-    public TransactionTagDuplicateProvider(DataProvider data, TagProvider tagProvider, KeywordProvider keywordProvider) {
-        this.data = data;
-        this.db = data.getContext();
+    public TransactionTagDuplicateProvider(TagProvider tagProvider, KeywordProvider keywordProvider) {
         this.tagProvider = tagProvider;
         this.keywordProvider = keywordProvider;
     }
 
     @Override
-    public TransactionTagDuplicateRecord newRecord() {
+    public TransactionTagDuplicateRecord newRecord(DSLContext db) {
         return db.newRecord(TRANSACTION_TAG_DUPLICATE);
     }
 
     @Override
-    public TransactionTagDuplicateRecord fromRecord(Record result) {
-        TransactionTagDuplicateRecord duplicate = newRecord();
+    public TransactionTagDuplicateRecord fromRecord(DSLContext db, Record result) {
+        TransactionTagDuplicateRecord duplicate = newRecord(db);
 
         duplicate.setId(result.getValue(TRANSACTION_TAG_DUPLICATE.ID));
         duplicate.setTransactionId(result.getValue(TRANSACTION_TAG_DUPLICATE.TRANSACTION_ID));
@@ -56,14 +51,14 @@ public class TransactionTagDuplicateProvider implements BaseRecordProvider<Trans
 
     @Override
     @LoggedStatement
-    public boolean fetchExists(UUID userId, UUID recordId) {
+    public boolean fetchExists(DSLContext db, UUID userId, UUID recordId) {
         Condition transactionMailCondition = TRANSACTION_TAG_DUPLICATE.ID.eq(recordId);
 
         return db.fetchExists(TRANSACTION_TAG_DUPLICATE, transactionMailCondition);
     }
 
     @LoggedStatement
-    public <T> List<T> selectTagDuplicatesForTransaction(UUID transactionId, RecordMapper<Record, T> mapper) {
+    public <T> List<T> selectTagDuplicatesForTransaction(DSLContext db, UUID transactionId, RecordMapper<Record, T> mapper) {
         return db
             .select(TRANSACTION_TAG_DUPLICATE.TRANSACTION_ID, TAG.asterisk(), KEYWORD.asterisk())
             .from(TAG)
@@ -77,7 +72,7 @@ public class TransactionTagDuplicateProvider implements BaseRecordProvider<Trans
     }
 
     @LoggedStatement
-    public UUID insertDuplicatedTag(UUID transactionId, UUID tagId, UUID matchingKeywordId) {
+    public UUID insertDuplicatedTag(DSLContext db, UUID transactionId, UUID tagId, UUID matchingKeywordId) {
         return db
             .insertInto(TRANSACTION_TAG_DUPLICATE, TRANSACTION_TAG_DUPLICATE.ID, TRANSACTION_TAG_DUPLICATE.TRANSACTION_ID,
                 TRANSACTION_TAG_DUPLICATE.TAG_ID,
@@ -98,10 +93,10 @@ public class TransactionTagDuplicateProvider implements BaseRecordProvider<Trans
         };
     }
 
-    public RecordMapper<Record, TransactionTagDuplicateEntity> getRecordToEntityMapper() {
+    public RecordMapper<Record, TransactionTagDuplicateEntity> getRecordToEntityMapper(final DSLContext db) {
         return result -> {
-            final TagRecord tag = tagProvider.fromRecord(result);
-            final KeywordRecord keyword = keywordProvider.fromRecord(result);
+            final TagRecord tag = tagProvider.fromRecord(db, result);
+            final KeywordRecord keyword = keywordProvider.fromRecord(db, result);
 
             return new TransactionTagDuplicateEntity(result.getValue(TRANSACTION_TAG_DUPLICATE.TRANSACTION_ID), tag, keyword);
         };

@@ -9,7 +9,6 @@ import ch.michu.tech.swissbudget.app.exception.UserAlreadyExistsException;
 import ch.michu.tech.swissbudget.app.service.mail.MailService;
 import ch.michu.tech.swissbudget.app.transaction.SupportedBank;
 import ch.michu.tech.swissbudget.framework.authentication.AuthenticationService;
-import ch.michu.tech.swissbudget.framework.data.DataProvider;
 import ch.michu.tech.swissbudget.framework.data.RequestSupport;
 import ch.michu.tech.swissbudget.framework.dto.MessageDto;
 import ch.michu.tech.swissbudget.framework.utils.EncodingUtil;
@@ -28,16 +27,14 @@ import java.util.UUID;
 public class RegistrationService {
 
     private final MailService mailService;
-    private final DataProvider data;
     private final AuthenticationService authService;
     private final Provider<RequestSupport> supportProvider;
     private final DataLoaderService dataLoaderService;
 
     @Inject
-    public RegistrationService(MailService mailService, DataProvider dataProvider,
+    public RegistrationService(MailService mailService,
         AuthenticationService authService, Provider<RequestSupport> supportProvider, DataLoaderService dataLoaderService) {
         this.mailService = mailService;
-        this.data = dataProvider;
         this.authService = authService;
         this.supportProvider = supportProvider;
         this.dataLoaderService = dataLoaderService;
@@ -61,6 +58,7 @@ public class RegistrationService {
     }
 
     public MessageDto register(RegisterDto dto) {
+        RequestSupport support = supportProvider.get();
         if (doesUserExist(dto.getMail())) {
             throw new UserAlreadyExistsException(dto.getMail());
         }
@@ -68,7 +66,7 @@ public class RegistrationService {
         String passwordSalt = EncodingUtil.generateSalt();
         String hashedPassword = EncodingUtil.hashString(dto.getPassword(), passwordSalt);
 
-        RegisteredUserRecord user = data.getContext().newRecord(RegisteredUser.REGISTERED_USER);
+        RegisteredUserRecord user = support.db().newRecord(RegisteredUser.REGISTERED_USER);
         user.setId(UUID.randomUUID());
         user.setMail(dto.getMail());
         user.setSalt(passwordSalt);
@@ -80,7 +78,7 @@ public class RegistrationService {
         SupportedBank bank = SupportedBank.fromKey(dto.getBank())
             .orElseThrow(() -> new BankNotSupportedException(dto.getMail(), dto.getBank()));
 
-        TransactionMetaDataRecord metaData = data.getContext().newRecord(TransactionMetaData.TRANSACTION_META_DATA);
+        TransactionMetaDataRecord metaData = support.db().newRecord(TransactionMetaData.TRANSACTION_META_DATA);
         metaData.setUserId(user.getId());
         metaData.setBank(bank.getKey());
         metaData.setTransactionsFolder(dto.getFolderName()); // TODO validate if folter exists
@@ -88,18 +86,18 @@ public class RegistrationService {
 
         dataLoaderService.insertUserDefaultData(user.getId());
 
-        supportProvider.get().logInfo("created user %s", dto.getMail());
+        support.logInfo("created user %s", dto.getMail());
 
         String sessionToken = authService.login(dto.getMail(), dto.getPassword(), false);
         return new MessageDto(sessionToken);
     }
 
     public boolean doesUserExist(String mail) {
-        return data.getContext().fetchExists(RegisteredUser.REGISTERED_USER, RegisteredUser.REGISTERED_USER.MAIL.eq(mail));
+        return supportProvider.get().db().fetchExists(RegisteredUser.REGISTERED_USER, RegisteredUser.REGISTERED_USER.MAIL.eq(mail));
     }
 
     public boolean doesUsernameExist(String username) {
-        return data.getContext().fetchExists(RegisteredUser.REGISTERED_USER, RegisteredUser.REGISTERED_USER.USERNAME.eq(username));
+        return supportProvider.get().db().fetchExists(RegisteredUser.REGISTERED_USER, RegisteredUser.REGISTERED_USER.USERNAME.eq(username));
     }
 
     public MessageDto createDemoUser(RegisterDemoUserDto dto) {
@@ -107,7 +105,7 @@ public class RegistrationService {
             throw new UserAlreadyExistsException(dto.getUsername());
         }
 
-        RegisteredUserRecord user = data.getContext().newRecord(RegisteredUser.REGISTERED_USER);
+        RegisteredUserRecord user = supportProvider.get().db().newRecord(RegisteredUser.REGISTERED_USER);
         user.setId(UUID.randomUUID());
         user.setDemoUser(true);
         user.setUsername(dto.getUsername());

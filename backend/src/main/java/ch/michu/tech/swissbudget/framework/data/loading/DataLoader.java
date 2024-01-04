@@ -1,10 +1,8 @@
 package ch.michu.tech.swissbudget.framework.data.loading;
 
-import ch.michu.tech.swissbudget.framework.data.DataProvider;
 import ch.michu.tech.swissbudget.framework.utils.DateBuilder;
 import ch.michu.tech.swissbudget.framework.utils.EncodingUtil;
 import jakarta.enterprise.context.Dependent;
-import jakarta.inject.Inject;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -22,6 +20,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import lombok.Getter;
+import org.jooq.DSLContext;
 
 /**
  * Inserts data from a CSV File into tables. CSV File needs to be trusted, inserts are unsafe!
@@ -81,19 +80,12 @@ public class DataLoader {
     private static final String ARROW = "->";
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ISO_DATE;
 
-    private final DataProvider data;
     /**
      * ID alias with value cache, but remember this class is not application scoped
      */
     @Getter
     private final Map<String, UUID> uuidCache = new HashMap<>();
     private SQLInsertStringBuilder builder;
-
-    @Inject
-    public DataLoader(DataProvider data) {
-        this.data = data;
-        LOGGER.log(Level.INFO, "constructed", new Object[]{}); // TODO remove, but test if really created on every use
-    }
 
     /**
      * @param path CSV file to read
@@ -144,12 +136,12 @@ public class DataLoader {
         return statements;
     }
 
-    public void store(Queue<String> statements) {
+    public void store(DSLContext db, Queue<String> statements) {
         long startTime = Instant.now().toEpochMilli();
 
         LOGGER.log(Level.INFO, "executing {0} import statements", new Object[]{statements.size()});
 
-        data.getContext().transaction(ctx -> statements.forEach(statement -> {
+        db.batched(ctx -> statements.forEach(statement -> {
             LOGGER.log(Level.FINE, "executing: {0}", new Object[]{statement});
             //noinspection SqlSourceToSinkFlow (i know /:)
             ctx.dsl().execute(statement);

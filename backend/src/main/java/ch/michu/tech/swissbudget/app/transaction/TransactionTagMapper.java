@@ -20,6 +20,7 @@ import java.util.Map.Entry;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.jooq.DSLContext;
 
 @ApplicationScoped
 public class TransactionTagMapper {
@@ -45,16 +46,16 @@ public class TransactionTagMapper {
      * @param transactions the transactions to modify
      * @param store        whether the changes should be stored in the DB or not (would store using a transaction)
      */
-    public void mapAll(UUID userId, List<CompleteTransactionEntity> transactions, boolean store) {
+    public void mapAll(DSLContext db, UUID userId, List<CompleteTransactionEntity> transactions, boolean store) {
         LOGGER.log(Level.INFO, "mapping {0} transactions for user {1}", new Object[]{transactions.size(), userId});
-        Map<TagRecord, List<KeywordRecord>> tags = tagProvider.selectTagsWithKeywordsByUserId(userId);
+        Map<TagRecord, List<KeywordRecord>> tags = tagProvider.selectTagsWithKeywordsByUserId(db, userId);
 
         TagRecord defaultTag = getDefaultTag(tags.keySet());
         transactions.forEach(transaction -> map(transaction, tags, defaultTag));
 
         LOGGER.log(Level.INFO, "successfully mapped tags to transactions for {0}", new Object[]{userId});
         if (store) {
-            transactionProvider.insertTransactions(transactions.stream().map(CompleteTransactionEntity::getTransaction).toList());
+            transactionProvider.insertTransactions(db, transactions.stream().map(CompleteTransactionEntity::getTransaction).toList());
         }
     }
 
@@ -65,9 +66,9 @@ public class TransactionTagMapper {
      * @param userId      the user to select the tags from
      * @param transaction the transaction to modify
      */
-    public void map(UUID userId, CompleteTransactionEntity transaction) {
+    public void map(DSLContext db, UUID userId, CompleteTransactionEntity transaction) {
         LOGGER.log(Level.INFO, "mapping tags to transaction for {0}", new Object[]{userId});
-        Map<TagRecord, List<KeywordRecord>> tags = tagProvider.selectTagsWithKeywordsByUserId(userId);
+        Map<TagRecord, List<KeywordRecord>> tags = tagProvider.selectTagsWithKeywordsByUserId(db, userId);
         map(transaction, tags, getDefaultTag(tags.keySet()));
         LOGGER.log(Level.INFO, "successfully mapped tags to transaction for {0}", new Object[]{userId});
     }
@@ -110,21 +111,21 @@ public class TransactionTagMapper {
         }
     }
 
-    public void handleKeywordsAdded(UUID userId, UUID tagId, List<KeywordRecord> keywords) {
+    public void handleKeywordsAdded(DSLContext db, UUID userId, UUID tagId, List<KeywordRecord> keywords) {
         LOGGER.log(Level.INFO, "handling {0} added keywords for user {1}", new Object[]{keywords.size(), userId});
 
         for (KeywordRecord addedKeyword : keywords) {
-            List<TransactionIdWithTagDuplicateCount> transactions = transactionProvider.selectTransactionIdsByMatchingKeyword(userId,
+            List<TransactionIdWithTagDuplicateCount> transactions = transactionProvider.selectTransactionIdsByMatchingKeyword(db, userId,
                 addedKeyword.getKeyword());
 
             LOGGER.log(Level.INFO, "updating {0} transaction with new keyword", new Object[]{transactions.size()});
             for (TransactionIdWithTagDuplicateCount transaction : transactions) {
                 if (transaction.alreadyMappedToAnyTag()) {
-                    transactionTagDuplicateProvider.insertDuplicatedTag(transaction.transactionId(), tagId, addedKeyword.getId());
+                    transactionTagDuplicateProvider.insertDuplicatedTag(db, transaction.transactionId(), tagId, addedKeyword.getId());
                     // transaction now has duplicates -> needs user attention
-                    transactionProvider.updateTransactionNeedsUserAttention(transaction.transactionId(), true);
+                    transactionProvider.updateTransactionNeedsUserAttention(db, transaction.transactionId(), true);
                 } else {
-                    transactionProvider.updateTransactionWithTagAndRemoveNeedAttention(transaction.transactionId(), tagId,
+                    transactionProvider.updateTransactionWithTagAndRemoveNeedAttention(db, transaction.transactionId(), tagId,
                         addedKeyword.getId());
                 }
             }

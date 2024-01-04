@@ -1,5 +1,6 @@
 package ch.michu.tech.swissbudget.app.service;
 
+import ch.michu.tech.swissbudget.framework.data.RequestSupport;
 import ch.michu.tech.swissbudget.framework.data.loading.DataLoader;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -16,17 +17,18 @@ public class DataLoaderService {
         .getClassLoader()
         .getResource("sql/default-user-data.csv")
         .getPath());
-
+    private final Provider<RequestSupport> supportProvider;
     private final Provider<DataLoader> dataLoaderProvider;
 
     @Inject
-    public DataLoaderService(Provider<DataLoader> dataLoaderProvider) {
+    public DataLoaderService(Provider<RequestSupport> supportProvider, Provider<DataLoader> dataLoaderProvider) {
+        this.supportProvider = supportProvider;
         this.dataLoaderProvider = dataLoaderProvider;
     }
 
     public void insertUserDefaultData(UUID userId) {
         DataLoader loader = dataLoaderProvider.get();
         Queue<String> statements = loader.load(DEFAULT_USER_DATA, Map.of("user_id", userId));
-        loader.store(statements);
+        loader.store(supportProvider.get().db(), statements);
     }
 }

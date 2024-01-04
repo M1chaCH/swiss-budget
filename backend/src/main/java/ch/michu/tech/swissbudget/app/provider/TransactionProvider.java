@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Query;
@@ -54,28 +55,86 @@ public class TransactionProvider implements BaseRecordProvider<TransactionRecord
     protected final TagProvider tagProvider;
     protected final KeywordProvider keywordProvider;
     protected final TransactionTagDuplicateProvider transactionTagDuplicateProvider;
-    protected final DataProvider data;
-    protected final DSLContext db;
+    protected final int pageSize;
 
     @Inject
-    public TransactionProvider(TransactionMailProvider transactionMailProvider, TagProvider tagProvider, KeywordProvider keywordProvider,
-        TransactionTagDuplicateProvider transactionTagDuplicateProvider, DataProvider data) {
+    public TransactionProvider(
+        @ConfigProperty(name = "db.limit.page.size", defaultValue = "100") int pageSize,
+        TransactionMailProvider transactionMailProvider,
+        TagProvider tagProvider,
+        KeywordProvider keywordProvider,
+        TransactionTagDuplicateProvider transactionTagDuplicateProvider
+    ) {
         this.transactionMailProvider = transactionMailProvider;
         this.tagProvider = tagProvider;
         this.keywordProvider = keywordProvider;
         this.transactionTagDuplicateProvider = transactionTagDuplicateProvider;
-        this.data = data;
-        this.db = data.getContext();
+        this.pageSize = pageSize;
+    }
+
+    @LoggedStatement
+    public Optional<TransactionRecord> selectTransaction(DSLContext db, UUID userId, UUID transactionId) {
+        TransactionRecord transaction = db.fetchOne(TRANSACTION, TRANSACTION.USER_ID.eq(userId).and(TRANSACTION.ID.eq(transactionId)));
+
+        if (transaction == null) {
+            return Optional.empty();
+        }
+        return Optional.of(transaction);
+    }
+
+    @LoggedStatement
+    public CompleteTransactionEntity selectCompleteTransaction(DSLContext db, UUID userId, UUID transactionId) {
+        Record result = db
+                            .select(TRANSACTION_MAIL.asterisk(),
+                                    TRANSACTION.asterisk(),
+                                    TAG.asterisk(),
+                                    KEYWORD.asterisk(),
+                                    count(TRANSACTION_TAG_DUPLICATE.ID).as(DUPLICATES_COUNT_COLUMN))
+                            .from(TRANSACTION)
+                            .leftJoin(TRANSACTION_MAIL).on(TRANSACTION_MAIL.TRANSACTION_ID.eq(TRANSACTION.ID))
+                            .leftJoin(TAG).on(TRANSACTION.TAG_ID.eq(TAG.ID))
+                            .leftJoin(KEYWORD).on(TRANSACTION.MATCHING_KEYWORD_ID.eq(KEYWORD.ID))
+                            .leftJoin(TRANSACTION_TAG_DUPLICATE).on(TRANSACTION.ID.eq(TRANSACTION_TAG_DUPLICATE.TRANSACTION_ID))
+                            .where(TRANSACTION.USER_ID.eq(userId)).and(TRANSACTION.ID.eq(transactionId))
+                            .groupBy(TRANSACTION.ID, TAG.ID, KEYWORD.ID, TRANSACTION_MAIL.ID)
+                            .fetchOne();
+
+        if (result == null) {
+            throw new ResourceNotFoundException("transaction", transactionId.toString());
+        }
+
+        TransactionMailRecord transactionMail = transactionMailProvider.fromRecord(db, result);
+        TransactionRecord transaction = fromRecord(db, result);
+
+        TagRecord tag = null;
+        if (result.get(TRANSACTION.TAG_ID) != null) {
+            tag = tagProvider.fromRecord(db, result);
+        }
+
+        KeywordRecord matchingKeyword = null;
+        if (result.get(TRANSACTION.MATCHING_KEYWORD_ID) != null) {
+            matchingKeyword = keywordProvider.fromRecord(db, result);
+        }
+
+        int duplicatedCount = result.get(DUPLICATES_COUNT_COLUMN, Integer.class);
+        List<TransactionTagDuplicateEntity> duplicates = new ArrayList<>(duplicatedCount);
+        if (duplicatedCount > 0) {
+            duplicates.addAll(transactionTagDuplicateProvider.selectTagDuplicatesForTransaction(db, transactionId,
+                                                                                                transactionTagDuplicateProvider.getRecordToEntityMapper(
+                                                                                                    db)));
+        }
+
+        return new CompleteTransactionEntity(transactionMail, transaction, tag, matchingKeyword, duplicates);
     }
 
     @Override
-    public TransactionRecord newRecord() {
+    public TransactionRecord newRecord(DSLContext db) {
         return db.newRecord(TRANSACTION);
     }
 
     @Override
-    public TransactionRecord fromRecord(Record result) {
-        TransactionRecord transaction = newRecord();
+    public TransactionRecord fromRecord(DSLContext db, Record result) {
+        TransactionRecord transaction = newRecord(db);
 
         transaction.setId(result.getValue(TRANSACTION.ID));
         transaction.setExpense(result.getValue(TRANSACTION.EXPENSE));
@@ -95,11 +154,129 @@ public class TransactionProvider implements BaseRecordProvider<TransactionRecord
 
     @Override
     @LoggedStatement
-    public boolean fetchExists(UUID userId, UUID transactionId) {
+    public boolean fetchExists(DSLContext db, UUID userId, UUID transactionId) {
         Condition userCondition = TRANSACTION.USER_ID.eq(userId);
         Condition transactionCondition = TRANSACTION.ID.eq(transactionId);
 
         return db.fetchExists(TRANSACTION, userCondition, transactionCondition);
+    }
+
+    @LoggedStatement
+    public List<TransactionIdWithTagDuplicateCount> selectTransactionIdsByMatchingKeyword(DSLContext db, UUID userId, String keyword) {
+        keyword = "%" + keyword + "%";
+
+        return db
+                   .select(TRANSACTION.ID, TRANSACTION.MATCHING_KEYWORD_ID, count(TRANSACTION_TAG_DUPLICATE.ID).as(DUPLICATES_COUNT_COLUMN))
+                   .from(TRANSACTION)
+                   .leftJoin(TRANSACTION_TAG_DUPLICATE).on(TRANSACTION_TAG_DUPLICATE.TRANSACTION_ID.eq(TRANSACTION.ID))
+                   .where(TRANSACTION.USER_ID.eq(userId).and(TRANSACTION.RECEIVER.likeIgnoreCase(keyword)))
+                   .groupBy(TRANSACTION.ID, TRANSACTION.MATCHING_KEYWORD_ID)
+                   .fetch()
+                   .map(result -> {
+                       boolean alreadyHasTagMapped = false;
+                       if (result.get(TRANSACTION.MATCHING_KEYWORD_ID) != null) {
+                           alreadyHasTagMapped = result.get(TRANSACTION.MATCHING_KEYWORD_ID) != null;
+                       }
+
+                       return new TransactionIdWithTagDuplicateCount(
+                           result.getValue(TRANSACTION.ID),
+                           result.getValue(DUPLICATES_COUNT_COLUMN, Integer.class),
+                           alreadyHasTagMapped
+                       );
+                   });
+    }
+
+    @LoggedStatement
+    public List<TransactionDto> selectTransactionsWithDependenciesWithFilterWithPageAsDto(
+        DSLContext db,
+        UUID userId,
+        String query,
+        UUID[] tagIds,
+        LocalDate from,
+        LocalDate to,
+        boolean needAttention,
+        int page
+    ) {
+        LocalDate tomorrow = localDateNow().plusDays(1);
+        SelectConditionStep<?> conditions = db
+                                                .select(TRANSACTION.asterisk(), TAG.asterisk(), KEYWORD.asterisk(),
+                                                        count(TRANSACTION_TAG_DUPLICATE.ID).as(DUPLICATES_COUNT_COLUMN))
+                                                .from(TRANSACTION)
+                                                .leftJoin(TAG)
+                                                .on(TRANSACTION.TAG_ID.eq(TAG.ID))
+                                                .leftJoin(KEYWORD)
+                                                .on(TRANSACTION.MATCHING_KEYWORD_ID.eq(KEYWORD.ID))
+                                                .leftJoin(TRANSACTION_TAG_DUPLICATE)
+                                                .on(TRANSACTION.ID.eq(TRANSACTION_TAG_DUPLICATE.TRANSACTION_ID))
+                                                .where(TRANSACTION.USER_ID.eq(userId));
+
+        if (query != null && !query.isBlank()) {
+            if (!query.startsWith("%")) {
+                query = "%" + query;
+            }
+            if (!query.endsWith("%")) {
+                query += "%";
+            }
+
+            conditions = conditions
+                             .and(TRANSACTION.ALIAS.likeIgnoreCase(query)
+                                                   .or(TRANSACTION.NOTE.likeIgnoreCase(query)
+                                                                       .or(TRANSACTION.RECEIVER.likeIgnoreCase(query))));
+        }
+
+        if (needAttention) {
+            conditions = conditions.and(TRANSACTION.NEED_USER_ATTENTION.eq(true));
+        }
+
+        if (tagIds != null && tagIds.length > 0) {
+            Condition tagsCondition = TRANSACTION.TAG_ID.eq(tagIds[0]);
+            for (int i = 1; i < tagIds.length; i++) {
+                tagsCondition = tagsCondition.or(TRANSACTION.TAG_ID.eq(tagIds[i]));
+            }
+            conditions = conditions.and(tagsCondition);
+        }
+
+        if (from != null && from.isBefore(tomorrow)) {
+            conditions = conditions.and(TRANSACTION.TRANSACTION_DATE.ge(from));
+        }
+
+        if (to != null && to.isBefore(tomorrow)) {
+            conditions = conditions.and(TRANSACTION.TRANSACTION_DATE.le(to));
+        }
+
+        SelectLimitStep<?> limitStep = conditions
+                                           .groupBy(TRANSACTION.ID, TAG.ID, KEYWORD.ID)
+                                           .orderBy(TRANSACTION.TRANSACTION_DATE.desc());
+
+        Result<?> result = DataProvider.fetchWithLimit(limitStep, page, pageSize);
+        return parseDeepResultToDtos(db, result);
+    }
+
+    protected List<TransactionDto> parseDeepResultToDtos(DSLContext db, Result<?> result) {
+        final List<TransactionDto> dtos = new ArrayList<>();
+        for (Record currentResult : result) {
+            KeywordDto matchingKeyword = null;
+            if (currentResult.get(TRANSACTION.MATCHING_KEYWORD_ID) != null) {
+                matchingKeyword = keywordProvider.asDto(currentResult);
+            }
+
+            TagDto tag = null;
+            if (currentResult.get(TRANSACTION.TAG_ID) != null) {
+                tag = tagProvider.asDto(currentResult, List.of());
+            }
+
+            int duplicatesCount = currentResult.get(DUPLICATES_COUNT_COLUMN, int.class);
+            final List<TransactionTagDuplicateDto> duplicatedTags = new ArrayList<>(duplicatesCount);
+            if (duplicatesCount > 0) {
+                duplicatedTags.addAll(
+                    transactionTagDuplicateProvider.selectTagDuplicatesForTransaction(db, currentResult.getValue(TRANSACTION.ID),
+                                                                                      transactionTagDuplicateProvider.getRecordToDtoMapper()));
+            }
+
+            dtos.add(asDto(currentResult, tag, matchingKeyword, duplicatedTags));
+        }
+
+        return dtos;
     }
 
     public TransactionDto asDto(Record result, TagDto tag, KeywordDto matchingKeyword, List<TransactionTagDuplicateDto> duplicatedTags) {
@@ -125,160 +302,16 @@ public class TransactionProvider implements BaseRecordProvider<TransactionRecord
     }
 
     @LoggedStatement
-    public Optional<TransactionRecord> selectTransaction(UUID userId, UUID transactionId) {
-        TransactionRecord transaction = db.fetchOne(TRANSACTION, TRANSACTION.USER_ID.eq(userId).and(TRANSACTION.ID.eq(transactionId)));
-
-        if (transaction == null) {
-            return Optional.empty();
-        }
-        return Optional.of(transaction);
-    }
-
-    @LoggedStatement
-    public CompleteTransactionEntity selectCompleteTransaction(UUID userId, UUID transactionId) {
-        Record result = db
-            .select(TRANSACTION_MAIL.asterisk(),
-                TRANSACTION.asterisk(),
-                TAG.asterisk(),
-                KEYWORD.asterisk(),
-                count(TRANSACTION_TAG_DUPLICATE.ID).as(DUPLICATES_COUNT_COLUMN))
-            .from(TRANSACTION)
-            .leftJoin(TRANSACTION_MAIL).on(TRANSACTION_MAIL.TRANSACTION_ID.eq(TRANSACTION.ID))
-            .leftJoin(TAG).on(TRANSACTION.TAG_ID.eq(TAG.ID))
-            .leftJoin(KEYWORD).on(TRANSACTION.MATCHING_KEYWORD_ID.eq(KEYWORD.ID))
-            .leftJoin(TRANSACTION_TAG_DUPLICATE).on(TRANSACTION.ID.eq(TRANSACTION_TAG_DUPLICATE.TRANSACTION_ID))
-            .where(TRANSACTION.USER_ID.eq(userId)).and(TRANSACTION.ID.eq(transactionId))
-            .groupBy(TRANSACTION.ID, TAG.ID, KEYWORD.ID, TRANSACTION_MAIL.ID)
-            .fetchOne();
-
-        if (result == null) {
-            throw new ResourceNotFoundException("transaction", transactionId.toString());
-        }
-
-        TransactionMailRecord transactionMail = transactionMailProvider.fromRecord(result);
-        TransactionRecord transaction = fromRecord(result);
-
-        TagRecord tag = null;
-        if (result.get(TRANSACTION.TAG_ID) != null) {
-            tag = tagProvider.fromRecord(result);
-        }
-
-        KeywordRecord matchingKeyword = null;
-        if (result.get(TRANSACTION.MATCHING_KEYWORD_ID) != null) {
-            matchingKeyword = keywordProvider.fromRecord(result);
-        }
-
-        int duplicatedCount = result.get(DUPLICATES_COUNT_COLUMN, Integer.class);
-        List<TransactionTagDuplicateEntity> duplicates = new ArrayList<>(duplicatedCount);
-        if (duplicatedCount > 0) {
-            duplicates.addAll(transactionTagDuplicateProvider.selectTagDuplicatesForTransaction(transactionId,
-                transactionTagDuplicateProvider.getRecordToEntityMapper()));
-        }
-
-        return new CompleteTransactionEntity(transactionMail, transaction, tag, matchingKeyword, duplicates);
-    }
-
-    @LoggedStatement
-    public List<TransactionIdWithTagDuplicateCount> selectTransactionIdsByMatchingKeyword(UUID userId, String keyword) {
-        keyword = "%" + keyword + "%";
-
-        return db
-            .select(TRANSACTION.ID, TRANSACTION.MATCHING_KEYWORD_ID, count(TRANSACTION_TAG_DUPLICATE.ID).as(DUPLICATES_COUNT_COLUMN))
-            .from(TRANSACTION)
-            .leftJoin(TRANSACTION_TAG_DUPLICATE).on(TRANSACTION_TAG_DUPLICATE.TRANSACTION_ID.eq(TRANSACTION.ID))
-            .where(TRANSACTION.USER_ID.eq(userId).and(TRANSACTION.RECEIVER.likeIgnoreCase(keyword)))
-            .groupBy(TRANSACTION.ID, TRANSACTION.MATCHING_KEYWORD_ID)
-            .fetch()
-            .map(result -> {
-                boolean alreadyHasTagMapped = false;
-                if (result.get(TRANSACTION.MATCHING_KEYWORD_ID) != null) {
-                    alreadyHasTagMapped = result.get(TRANSACTION.MATCHING_KEYWORD_ID) != null;
-                }
-
-                return new TransactionIdWithTagDuplicateCount(
-                    result.getValue(TRANSACTION.ID),
-                    result.getValue(DUPLICATES_COUNT_COLUMN, Integer.class),
-                    alreadyHasTagMapped
-                );
-            });
-    }
-
-    @LoggedStatement
-    public List<TransactionDto> selectTransactionsWithDependenciesWithFilterWithPageAsDto(
-        UUID userId,
-        String query,
-        UUID[] tagIds,
-        LocalDate from,
-        LocalDate to,
-        boolean needAttention,
-        int page
-    ) {
-        LocalDate tomorrow = localDateNow().plusDays(1);
-        SelectConditionStep<?> conditions = db
-            .select(TRANSACTION.asterisk(), TAG.asterisk(), KEYWORD.asterisk(),
-                count(TRANSACTION_TAG_DUPLICATE.ID).as(DUPLICATES_COUNT_COLUMN))
-            .from(TRANSACTION)
-            .leftJoin(TAG)
-            .on(TRANSACTION.TAG_ID.eq(TAG.ID))
-            .leftJoin(KEYWORD)
-            .on(TRANSACTION.MATCHING_KEYWORD_ID.eq(KEYWORD.ID))
-            .leftJoin(TRANSACTION_TAG_DUPLICATE)
-            .on(TRANSACTION.ID.eq(TRANSACTION_TAG_DUPLICATE.TRANSACTION_ID))
-            .where(TRANSACTION.USER_ID.eq(userId));
-
-        if (query != null && !query.isBlank()) {
-            if (!query.startsWith("%")) {
-                query = "%" + query;
-            }
-            if (!query.endsWith("%")) {
-                query += "%";
-            }
-
-            conditions = conditions
-                .and(TRANSACTION.ALIAS.likeIgnoreCase(query)
-                    .or(TRANSACTION.NOTE.likeIgnoreCase(query)
-                        .or(TRANSACTION.RECEIVER.likeIgnoreCase(query))));
-        }
-
-        if (needAttention) {
-            conditions = conditions.and(TRANSACTION.NEED_USER_ATTENTION.eq(true));
-        }
-
-        if (tagIds != null && tagIds.length > 0) {
-            Condition tagsCondition = TRANSACTION.TAG_ID.eq(tagIds[0]);
-            for (int i = 1; i < tagIds.length; i++) {
-                tagsCondition = tagsCondition.or(TRANSACTION.TAG_ID.eq(tagIds[i]));
-            }
-            conditions = conditions.and(tagsCondition);
-        }
-
-        if (from != null && from.isBefore(tomorrow)) {
-            conditions = conditions.and(TRANSACTION.TRANSACTION_DATE.ge(from));
-        }
-
-        if (to != null && to.isBefore(tomorrow)) {
-            conditions = conditions.and(TRANSACTION.TRANSACTION_DATE.le(to));
-        }
-
-        SelectLimitStep<?> limitStep = conditions
-            .groupBy(TRANSACTION.ID, TAG.ID, KEYWORD.ID)
-            .orderBy(TRANSACTION.TRANSACTION_DATE.desc());
-
-        Result<?> result = data.fetchWithLimit(limitStep, page);
-        return parseDeepResultToDtos(result);
-    }
-
-    @LoggedStatement
-    public ImportDbData selectImportDataByUserId(UUID userId) {
+    public ImportDbData selectImportDataByUserId(DSLContext db, UUID userId) {
         Result<?> result = db
-            .select(REGISTERED_USER.MAIL, REGISTERED_USER.MAIL_PASSWORD, REGISTERED_USER.ID,
-                TRANSACTION_META_DATA.LAST_IMPORTED_TRANSACTION, TRANSACTION_META_DATA.LAST_IMPORT_CHECK,
-                TRANSACTION_META_DATA.TRANSACTIONS_FOLDER, TRANSACTION_META_DATA.BANK)
-            .from(REGISTERED_USER)
-            .join(TRANSACTION_META_DATA)
-            .on(TRANSACTION_META_DATA.USER_ID.eq(REGISTERED_USER.ID))
-            .where(REGISTERED_USER.ID.eq(userId))
-            .fetch();
+                               .select(REGISTERED_USER.MAIL, REGISTERED_USER.MAIL_PASSWORD, REGISTERED_USER.ID,
+                                       TRANSACTION_META_DATA.LAST_IMPORTED_TRANSACTION, TRANSACTION_META_DATA.LAST_IMPORT_CHECK,
+                                       TRANSACTION_META_DATA.TRANSACTIONS_FOLDER, TRANSACTION_META_DATA.BANK)
+                               .from(REGISTERED_USER)
+                               .join(TRANSACTION_META_DATA)
+                               .on(TRANSACTION_META_DATA.USER_ID.eq(REGISTERED_USER.ID))
+                               .where(REGISTERED_USER.ID.eq(userId))
+                               .fetch();
 
         if (result.size() != 1) {
             throw new ResourceNotFoundException("user", userId);
@@ -287,16 +320,38 @@ public class TransactionProvider implements BaseRecordProvider<TransactionRecord
         return parseResultToImportData(result, 0);
     }
 
+    protected ImportDbData parseResultToImportData(Result<?> result, int index) {
+        LocalDateTime lastImportedTransaction = result.getValue(index, TRANSACTION_META_DATA.LAST_IMPORTED_TRANSACTION);
+        lastImportedTransaction = lastImportedTransaction == null ?
+                                  localDateTimeNow().minusYears(TransactionImporter.MAX_IMPORT_SINCE_YEARS) :
+                                  lastImportedTransaction;
+
+        LocalDateTime lastImportCheck = result.getValue(index, TRANSACTION_META_DATA.LAST_IMPORT_CHECK);
+        lastImportCheck = lastImportCheck == null ?
+                          localDateTimeNow().minusYears(TransactionImporter.MAX_IMPORT_SINCE_YEARS) :
+                          lastImportCheck;
+
+        return new ImportDbData(
+            result.getValue(index, REGISTERED_USER.ID),
+            result.getValue(index, REGISTERED_USER.MAIL),
+            result.getValue(index, REGISTERED_USER.MAIL_PASSWORD),
+            lastImportedTransaction,
+            lastImportCheck,
+            result.getValue(index, TRANSACTION_META_DATA.TRANSACTIONS_FOLDER),
+            result.getValue(index, TRANSACTION_META_DATA.BANK)
+        );
+    }
+
     @LoggedStatement
-    public List<ImportDbData> selectImportData() {
+    public List<ImportDbData> selectImportData(DSLContext db) {
         Result<?> result = db
-            .select(REGISTERED_USER.MAIL, REGISTERED_USER.MAIL_PASSWORD, REGISTERED_USER.ID,
-                TRANSACTION_META_DATA.LAST_IMPORTED_TRANSACTION, TRANSACTION_META_DATA.LAST_IMPORT_CHECK,
-                TRANSACTION_META_DATA.TRANSACTIONS_FOLDER, TRANSACTION_META_DATA.BANK)
-            .from(REGISTERED_USER)
-            .join(TRANSACTION_META_DATA)
-            .on(TRANSACTION_META_DATA.USER_ID.eq(REGISTERED_USER.ID))
-            .fetch();
+                               .select(REGISTERED_USER.MAIL, REGISTERED_USER.MAIL_PASSWORD, REGISTERED_USER.ID,
+                                       TRANSACTION_META_DATA.LAST_IMPORTED_TRANSACTION, TRANSACTION_META_DATA.LAST_IMPORT_CHECK,
+                                       TRANSACTION_META_DATA.TRANSACTIONS_FOLDER, TRANSACTION_META_DATA.BANK)
+                               .from(REGISTERED_USER)
+                               .join(TRANSACTION_META_DATA)
+                               .on(TRANSACTION_META_DATA.USER_ID.eq(REGISTERED_USER.ID))
+                               .fetch();
 
         List<ImportDbData> importedDbData = new ArrayList<>();
         for (int i = 0; i < result.size(); i++) {
@@ -307,7 +362,7 @@ public class TransactionProvider implements BaseRecordProvider<TransactionRecord
     }
 
     @LoggedStatement
-    public void insertCompleteTransactions(List<CompleteTransactionEntity> transactions) {
+    public void insertCompleteTransactions(DSLContext db, List<CompleteTransactionEntity> transactions) {
         List<Query> queries = new ArrayList<>();
 
         for (CompleteTransactionEntity entity : transactions) {
@@ -317,9 +372,9 @@ public class TransactionProvider implements BaseRecordProvider<TransactionRecord
             for (TransactionTagDuplicateEntity otherMatch : entity.getTagDuplicates()) {
                 queries.add(
                     db.insertInto(TRANSACTION_TAG_DUPLICATE,
-                            TRANSACTION_TAG_DUPLICATE.TRANSACTION_ID, TRANSACTION_TAG_DUPLICATE.TAG_ID,
-                            TRANSACTION_TAG_DUPLICATE.MATCHING_KEYWORD_ID)
-                        .values(otherMatch.getTransactionId(), otherMatch.getTag().getId(), otherMatch.getMatchingKeyword().getId())
+                                  TRANSACTION_TAG_DUPLICATE.TRANSACTION_ID, TRANSACTION_TAG_DUPLICATE.TAG_ID,
+                                  TRANSACTION_TAG_DUPLICATE.MATCHING_KEYWORD_ID)
+                      .values(otherMatch.getTransactionId(), otherMatch.getTag().getId(), otherMatch.getMatchingKeyword().getId())
                 );
             }
         }
@@ -328,12 +383,12 @@ public class TransactionProvider implements BaseRecordProvider<TransactionRecord
     }
 
     @LoggedStatement
-    public void insertTransactions(List<TransactionRecord> transactions) {
-        db.transaction(c -> transactions.forEach(UpdatableRecordImpl::store));
+    public void insertTransactions(DSLContext db, List<TransactionRecord> transactions) {
+        db.batched(c -> transactions.forEach(UpdatableRecordImpl::store));
     }
 
     @LoggedStatement
-    public void updateTransactionUserInput(TransactionRecord transaction) {
+    public void updateTransactionUserInput(DSLContext db, TransactionRecord transaction) {
         if (transaction.get(TRANSACTION.TAG_ID) == null) {
             transaction.store(TRANSACTION.ALIAS, TRANSACTION.NOTE);
         } else if (transaction.get(TRANSACTION.MATCHING_KEYWORD_ID) == null) {
@@ -344,7 +399,7 @@ public class TransactionProvider implements BaseRecordProvider<TransactionRecord
     }
 
     @LoggedStatement
-    public void updateTransactionNeedsUserAttention(UUID transactionId, boolean needAttention) {
+    public void updateTransactionNeedsUserAttention(DSLContext db, UUID transactionId, boolean needAttention) {
         db
             .update(TRANSACTION)
             .set(TRANSACTION.NEED_USER_ATTENTION, needAttention)
@@ -353,7 +408,7 @@ public class TransactionProvider implements BaseRecordProvider<TransactionRecord
     }
 
     @LoggedStatement
-    public void updateTransactionsByTagWithDefaultTag(UUID oldTagId, UUID defaultTagId) {
+    public void updateTransactionsByTagWithDefaultTag(DSLContext db, UUID oldTagId, UUID defaultTagId) {
         db
             .update(TRANSACTION)
             .set(TRANSACTION.TAG_ID, defaultTagId)
@@ -367,7 +422,7 @@ public class TransactionProvider implements BaseRecordProvider<TransactionRecord
      * don't send default tag id, this will break with the needUserAttention field. needUserAttention field is set to false here
      */
     @LoggedStatement
-    public void updateTransactionWithTagAndRemoveNeedAttention(UUID transactionId, UUID tagId) {
+    public void updateTransactionWithTagAndRemoveNeedAttention(DSLContext db, UUID transactionId, UUID tagId) {
         db
             .update(TRANSACTION)
             .set(TRANSACTION.TAG_ID, tagId)
@@ -381,7 +436,7 @@ public class TransactionProvider implements BaseRecordProvider<TransactionRecord
      * don't send default tag id, this will break with the needUserAttention field. needUserAttention field is set to false here
      */
     @LoggedStatement
-    public void updateTransactionWithTagAndRemoveNeedAttention(UUID transactionId, UUID tagId, UUID matchingKeywordId) {
+    public void updateTransactionWithTagAndRemoveNeedAttention(DSLContext db, UUID transactionId, UUID tagId, UUID matchingKeywordId) {
         db
             .update(TRANSACTION)
             .set(TRANSACTION.TAG_ID, tagId)
@@ -392,7 +447,7 @@ public class TransactionProvider implements BaseRecordProvider<TransactionRecord
     }
 
     @LoggedStatement
-    public void updateLastImport(UUID id, LocalDateTime lastImportedTransaction) {
+    public void updateLastImport(DSLContext db, UUID id, LocalDateTime lastImportedTransaction) {
         db
             .update(TRANSACTION_META_DATA)
             .set(TRANSACTION_META_DATA.LAST_IMPORTED_TRANSACTION, lastImportedTransaction)
@@ -402,60 +457,11 @@ public class TransactionProvider implements BaseRecordProvider<TransactionRecord
     }
 
     @LoggedStatement
-    public void deleteAllTagDuplicates(UUID transactionId) {
+    public void deleteAllTagDuplicates(DSLContext db, UUID transactionId) {
         db
             .delete(TRANSACTION_TAG_DUPLICATE)
             .where(TRANSACTION_TAG_DUPLICATE.TRANSACTION_ID.eq(transactionId))
             .execute();
-    }
-
-    protected ImportDbData parseResultToImportData(Result<?> result, int index) {
-        LocalDateTime lastImportedTransaction = result.getValue(index, TRANSACTION_META_DATA.LAST_IMPORTED_TRANSACTION);
-        lastImportedTransaction = lastImportedTransaction == null ?
-            localDateTimeNow().minusYears(TransactionImporter.MAX_IMPORT_SINCE_YEARS) :
-            lastImportedTransaction;
-
-        LocalDateTime lastImportCheck = result.getValue(index, TRANSACTION_META_DATA.LAST_IMPORT_CHECK);
-        lastImportCheck = lastImportCheck == null ?
-            localDateTimeNow().minusYears(TransactionImporter.MAX_IMPORT_SINCE_YEARS) :
-            lastImportCheck;
-
-        return new ImportDbData(
-            result.getValue(index, REGISTERED_USER.ID),
-            result.getValue(index, REGISTERED_USER.MAIL),
-            result.getValue(index, REGISTERED_USER.MAIL_PASSWORD),
-            lastImportedTransaction,
-            lastImportCheck,
-            result.getValue(index, TRANSACTION_META_DATA.TRANSACTIONS_FOLDER),
-            result.getValue(index, TRANSACTION_META_DATA.BANK)
-        );
-    }
-
-    protected List<TransactionDto> parseDeepResultToDtos(Result<?> result) {
-        final List<TransactionDto> dtos = new ArrayList<>();
-        for (Record currentResult : result) {
-            KeywordDto matchingKeyword = null;
-            if (currentResult.get(TRANSACTION.MATCHING_KEYWORD_ID) != null) {
-                matchingKeyword = keywordProvider.asDto(currentResult);
-            }
-
-            TagDto tag = null;
-            if (currentResult.get(TRANSACTION.TAG_ID) != null) {
-                tag = tagProvider.asDto(currentResult, List.of());
-            }
-
-            int duplicatesCount = currentResult.get(DUPLICATES_COUNT_COLUMN, int.class);
-            final List<TransactionTagDuplicateDto> duplicatedTags = new ArrayList<>(duplicatesCount);
-            if (duplicatesCount > 0) {
-                duplicatedTags.addAll(
-                    transactionTagDuplicateProvider.selectTagDuplicatesForTransaction(currentResult.getValue(TRANSACTION.ID),
-                        transactionTagDuplicateProvider.getRecordToDtoMapper()));
-            }
-
-            dtos.add(asDto(currentResult, tag, matchingKeyword, duplicatedTags));
-        }
-
-        return dtos;
     }
 
     /**
@@ -476,7 +482,8 @@ public class TransactionProvider implements BaseRecordProvider<TransactionRecord
         LocalDateTime lastImportedTransaction,
         LocalDateTime lastImportCheck,
         String folder,
-        String bank) {
+        String bank
+    ) {
 
     }
 

@@ -1,5 +1,6 @@
 package ch.michu.tech.swissbudget.test;
 
+import ch.michu.tech.swissbudget.framework.data.connection.DBConnectionFactory;
 import ch.michu.tech.swissbudget.framework.data.loading.DataLoader;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -8,7 +9,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -20,9 +20,6 @@ import java.util.logging.Logger;
 import lombok.Getter;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jooq.DSLContext;
-import org.jooq.SQLDialect;
-import org.jooq.conf.Settings;
-import org.jooq.impl.DSL;
 
 @ApplicationScoped
 public class TestDataManager {
@@ -43,18 +40,15 @@ public class TestDataManager {
 
     @Inject
     public TestDataManager(
-        DataLoader dataLoader,
-        @ConfigProperty(name = "db.user") String dbUser,
-        @ConfigProperty(name = "db.password") String dbPassword,
-        @ConfigProperty(name = "db.url") String dbUrl,
+        DataLoader dataLoader, DBConnectionFactory connectionFactory,
         @ConfigProperty(name = "db.setup.script") String setupScriptPath
-    ) throws SQLException {
+    ) {
         this.dataLoader = dataLoader;
         this.setupScriptPath = setupScriptPath;
 
-        LOGGER.log(Level.INFO, "connecting test db at: {0}", new Object[]{dbUrl});
-        connection = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
-        dsl = DSL.using(connection, SQLDialect.H2, new Settings().withRenderSchema(false));
+        LOGGER.log(Level.INFO, "connecting test db", new Object[]{});
+        connection = connectionFactory.createConnection();
+        dsl = connectionFactory.createContext(connection);
         LOGGER.log(Level.INFO, "successfully connected to Test DB", new Object[]{});
 
         Path testDataPath = Paths.get("src/main/resources/sql/test-data.csv");
@@ -85,6 +79,7 @@ public class TestDataManager {
             LOGGER.log(Level.FINE, "running: {0}", new Object[]{sql});
             statement.execute(sql);
         }
+        connection.commit();
         statement.close();
 
         LOGGER.log(Level.INFO, "DB setup completed", new Object[]{});
@@ -97,11 +92,13 @@ public class TestDataManager {
 
     public void applyTestData(boolean loadDemoUser) throws SQLException {
         clearAllTables();
-        dataLoader.store(testDataStatements);
+        dataLoader.store(dsl, testDataStatements);
 
         if (loadDemoUser) {
-            dataLoader.store(demoDataStatements);
+            dataLoader.store(dsl, demoDataStatements);
         }
+
+        dsl.commit().execute();
     }
 
     protected void clearAllTables() throws SQLException {
@@ -113,6 +110,7 @@ public class TestDataManager {
             clearTable(resultSet.getString(1));
         }
 
+        connection.commit();
         resultSet.close();
         statement.close();
     }
