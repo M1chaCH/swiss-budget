@@ -187,7 +187,11 @@ public class TransactionImporter {
             } else {
                 long start = Instant.now().getEpochSecond();
                 LOGGER.log(Level.INFO, "importing transactions (Single thread) for {0} users", new Object[]{userCount});
-                data.forEach(d -> importTransactions(db, d));
+                data.forEach(d -> {
+                    db.startTransaction().execute();
+                    importTransactions(db, d);
+                    db.commit().execute();
+                });
                 LOGGER.log(Level.INFO, "completed transactions import after {0} minutes",
                     new Object[]{(Instant.now().getEpochSecond() - start) / 60d});
             }

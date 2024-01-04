@@ -3,8 +3,8 @@ package ch.michu.tech.swissbudget.framework.authentication;
 import static ch.michu.tech.swissbudget.framework.utils.DateBuilder.localDateTimeNow;
 
 import ch.michu.tech.swissbudget.app.service.mail.MailTemplateNames;
-import ch.michu.tech.swissbudget.framework.data.DataProvider;
 import ch.michu.tech.swissbudget.framework.data.RequestSupport;
+import ch.michu.tech.swissbudget.framework.data.RequestTransactionCommitter;
 import ch.michu.tech.swissbudget.framework.error.exception.InvalidMfaCodeException;
 import ch.michu.tech.swissbudget.framework.error.exception.mail.MailSendException;
 import ch.michu.tech.swissbudget.framework.mail.TemplatedMailSender;
@@ -22,13 +22,11 @@ import java.util.UUID;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
-import org.jooq.DSLContext;
 
 @ApplicationScoped
 public class MfaService {
 
     private final TemplatedMailSender mailSender;
-    private final DataProvider data;
     private final Provider<RequestSupport> supportProvider;
     private final int mfaCodeLifetime;
     private final int mfaCodeTryLimit;
@@ -36,21 +34,22 @@ public class MfaService {
     private final Random random = new Random();
 
     @Inject
-    public MfaService(TemplatedMailSender mailSender, DataProvider data, Provider<RequestSupport> supportProvider,
+    public MfaService(
+        TemplatedMailSender mailSender, Provider<RequestSupport> supportProvider,
         @ConfigProperty(name = "session.mfa.lifetime", defaultValue = "4") int mfaCodeLifetimeHours,
-        @ConfigProperty(name = "session.mfa.tries", defaultValue = "5") int mfaCodeTryLimit) {
+        @ConfigProperty(name = "session.mfa.tries", defaultValue = "5") int mfaCodeTryLimit
+    ) {
         this.mailSender = mailSender;
-        this.data = data;
         this.supportProvider = supportProvider;
         this.mfaCodeLifetime = mfaCodeLifetimeHours;
         this.mfaCodeTryLimit = mfaCodeTryLimit;
     }
 
     public UUID startMfaProcess(RegisteredUserRecord user) {
-        String currentUserAgent = AuthenticationService.extractUserAgent(
-            supportProvider.get().getRequest());
+        RequestSupport support = supportProvider.get();
+        String currentUserAgent = AuthenticationService.extractUserAgent(support.getRequest());
         UUID mfaProcessId = UUID.randomUUID();
-        MfaCodeRecord mfaCodeRecord = data.getContext().newRecord(MfaCode.MFA_CODE);
+        MfaCodeRecord mfaCodeRecord = support.db().newRecord(MfaCode.MFA_CODE);
         mfaCodeRecord.setCode(random.nextInt(100000, 999999));
         mfaCodeRecord.setExpiresAt(localDateTimeNow().plusHours(mfaCodeLifetime));
         mfaCodeRecord.setUserId(user.getId());
@@ -61,9 +60,9 @@ public class MfaService {
 
         try {
             mailSender.sendMail(new InternetAddress(user.getMail(), false),
-                "SwissBudget verification",
-                MailTemplateNames.MFA_MESSAGE,
-                Map.of("code", Integer.toString(mfaCodeRecord.getCode())));
+                                "SwissBudget verification",
+                                MailTemplateNames.MFA_MESSAGE,
+                                Map.of("code", Integer.toString(mfaCodeRecord.getCode())));
         } catch (AddressException e) {
             throw new MailSendException("not available", e);
         }
@@ -73,12 +72,12 @@ public class MfaService {
 
     public void verifyMfaCode(UUID userId, UUID mfaProcessId, int providedCode) {
         RequestSupport support = supportProvider.get();
+        support.storeProperty(RequestTransactionCommitter.FORCE_COMMIT_PROP, true);
         String currentUserAgent = AuthenticationService.extractUserAgent(support.getRequest());
-        DSLContext dataContext = data.getContext();
 
-        MfaCodeRecord mfaCode = dataContext
-            .fetchOne(MfaCode.MFA_CODE, MfaCode.MFA_CODE.ID.eq(mfaProcessId)
-                .and(MfaCode.MFA_CODE.USER_ID.eq(userId)));
+        MfaCodeRecord mfaCode = support.db()
+                                       .fetchOne(MfaCode.MFA_CODE, MfaCode.MFA_CODE.ID.eq(mfaProcessId)
+                                                                                      .and(MfaCode.MFA_CODE.USER_ID.eq(userId)));
 
         if (mfaCode == null) {
             throw new InvalidMfaCodeException();
@@ -95,7 +94,7 @@ public class MfaService {
             throw new InvalidMfaCodeException();
         }
 
-        VerifiedDeviceRecord verifiedDeviceRecord = dataContext.newRecord(VerifiedDevice.VERIFIED_DEVICE);
+        VerifiedDeviceRecord verifiedDeviceRecord = support.db().newRecord(VerifiedDevice.VERIFIED_DEVICE);
         verifiedDeviceRecord.setId(UUID.randomUUID());
         verifiedDeviceRecord.setUserAgent(currentUserAgent);
         verifiedDeviceRecord.setUserId(userId);

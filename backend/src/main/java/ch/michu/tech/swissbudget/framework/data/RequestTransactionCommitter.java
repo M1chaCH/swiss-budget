@@ -20,6 +20,11 @@ import org.jooq.exception.DataAccessException;
 @Priority(Priorities.USER)
 public class RequestTransactionCommitter implements ContainerResponseFilter {
 
+    /**
+     * if true is stored in the request store, then the RequestTransactionCommitter will commit the request transaction even if the request
+     * failed.
+     */
+    public static final String FORCE_COMMIT_PROP = "force-db-transaction-commit";
     private final RequestSupport support;
 
     @Inject
@@ -31,7 +36,8 @@ public class RequestTransactionCommitter implements ContainerResponseFilter {
     public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) throws IOException {
         DSLContext ctx = support.db();
         try {
-            if (responseContext.getStatus() < 400) {
+            boolean forceCommit = support.loadProperty(FORCE_COMMIT_PROP, Boolean.class).orElse(false);
+            if (forceCommit || responseContext.getStatus() < 400) {
                 support.logFine(this, "committing request transaction");
                 ctx.commit().execute();
             } else {
@@ -50,7 +56,7 @@ public class RequestTransactionCommitter implements ContainerResponseFilter {
             support.logFine(this, "cleaned request db connection");
         } catch (DataAccessException | NullPointerException e) {
             support.logWarning(this, "could not cleanup request db connection: %s - %s", null, e.getClass().getSimpleName(),
-                e.getMessage());
+                               e.getMessage());
         }
     }
 }

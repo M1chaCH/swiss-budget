@@ -15,13 +15,15 @@ public abstract class DBConnectionFactory {
     protected final String user;
     protected final String password;
     protected final String url;
+    protected final int maxDbPoolSize;
     private final HikariConfig dataConfig;
     private final HikariDataSource dataSource;
 
-    protected DBConnectionFactory(String user, String password, String url) {
+    protected DBConnectionFactory(String user, String password, String url, int maxDbPoolSize) {
         this.user = user;
         this.password = password;
         this.url = url;
+        this.maxDbPoolSize = maxDbPoolSize;
 
         dataConfig = createHikariConfig();
         dataSource = new HikariDataSource(dataConfig);

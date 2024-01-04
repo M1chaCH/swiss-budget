@@ -33,7 +33,8 @@ public class StatementLogger {
         StringJoiner paramJoiner = new StringJoiner(", ");
         final Parameter[] parameters = context.getMethod().getParameters();
         final Object[] parameterValues = context.getParameters();
-        for (int i = 0; i < parameters.length; i++) {
+        // start at index 1: usually the providers have the DB as the first property, we don't need to always log this.
+        for (int i = 1; i < parameters.length; i++) {
             String value;
             if (parameterValues[i] instanceof Collection<?> list) {
                 value = "[size:%s]".formatted(list.size());
@@ -50,7 +51,8 @@ public class StatementLogger {
 
             paramJoiner.add("%s: %s".formatted(parameters[i].getType().getSimpleName(), value));
         }
-        final String name = "%s(%s)".formatted(context.getMethod().getName(), paramJoiner.toString());
+        final String name = "%s->%s(%s)".formatted(context.getMethod().getDeclaringClass().getSimpleName(), context.getMethod().getName(),
+                                                   paramJoiner.toString());
 
         Object result = context.proceed();
         final long durationMillis = Instant.now().toEpochMilli() - startMillis;

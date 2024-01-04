@@ -30,7 +30,6 @@ public class RequestConnectionAppender implements ContainerRequestFilter {
 
     @Override
     public void filter(ContainerRequestContext requestContext) throws IOException {
-        support.logFine(this, "creating request DB connection");
         Connection requestConnection = connectionFactory.createConnection();
         DSLContext ctx = connectionFactory.createContext(requestConnection);
 
