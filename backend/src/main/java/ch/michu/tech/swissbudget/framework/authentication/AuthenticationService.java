@@ -4,6 +4,7 @@ import static ch.michu.tech.swissbudget.framework.utils.DateBuilder.localDateTim
 
 import ch.michu.tech.swissbudget.app.dto.MfaCodeDto;
 import ch.michu.tech.swissbudget.framework.data.RequestSupport;
+import ch.michu.tech.swissbudget.framework.data.connection.DBConnectionFactory;
 import ch.michu.tech.swissbudget.framework.error.exception.AgentNotRegisteredException;
 import ch.michu.tech.swissbudget.framework.error.exception.LoginFailedException;
 import ch.michu.tech.swissbudget.framework.error.exception.LoginFromNewClientException;
@@ -43,15 +44,19 @@ public class AuthenticationService {
     private final Map<UUID, UUID> userSessionCache = new HashMap<>();
 
     private final Provider<RequestSupport> supportProvider;
+    private final DBConnectionFactory connectionFactory;
 
     @Inject
     public AuthenticationService(
         SessionTokenService tokenService,
-        MfaService mfaService, Provider<RequestSupport> supportProvider
+        MfaService mfaService,
+        Provider<RequestSupport> supportProvider,
+        DBConnectionFactory connectionFactory
     ) {
         this.tokenService = tokenService;
         this.mfaService = mfaService;
         this.supportProvider = supportProvider;
+        this.connectionFactory = connectionFactory;
     }
 
     public static String extractRemoteAddress(ServerRequest request) {
@@ -137,20 +142,24 @@ public class AuthenticationService {
 
     public SessionToken validateToken(String jwt) {
         SessionToken token = tokenService.validateJwt(jwt);
-        if (isCurrentSession(supportProvider.get().db(), token.getUserId(), token.getSessionId())) {
+        if (isCurrentSession(token.getUserId(), token.getSessionId())) {
             return token;
         }
 
         throw new LoginFromNewClientException();
     }
 
-    protected boolean isCurrentSession(DSLContext db, UUID userId, UUID currentSession) {
+    protected boolean isCurrentSession(UUID userId, UUID currentSession) {
         UUID cachedSessionId = userSessionCache.get(userId);
         if (cachedSessionId != null) {
             return cachedSessionId.equals(currentSession);
         }
 
         supportProvider.get().logFine(this, "could not find session in cache, checking DB");
+        // this method is called before the DB connection init in the request pipe,
+        // so need to create connection manually.
+        // since this will be cached, this is not too bad.
+        DSLContext db = connectionFactory.createContext();
         RegisteredUserRecord user = db.fetchOne(RegisteredUser.REGISTERED_USER,
                                                 RegisteredUser.REGISTERED_USER.ID.eq(userId)
                                                                                  .and(RegisteredUser.REGISTERED_USER.CURRENT_SESSION.eq(

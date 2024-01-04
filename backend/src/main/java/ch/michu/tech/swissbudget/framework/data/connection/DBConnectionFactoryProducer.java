@@ -1,18 +1,20 @@
 package ch.michu.tech.swissbudget.framework.data.connection;
 
-import jakarta.enterprise.context.Dependent;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Produces;
 import jakarta.enterprise.inject.spi.InjectionPoint;
 import jakarta.inject.Inject;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
-@Dependent
+@ApplicationScoped
 public class DBConnectionFactoryProducer {
 
     private final String url;
     private final String user;
     private final String password;
     private final int maxPoolSize;
+
+    private DBConnectionFactory currentFactory;
 
     @Inject
     public DBConnectionFactoryProducer(
@@ -29,10 +31,16 @@ public class DBConnectionFactoryProducer {
 
     @Produces
     public DBConnectionFactory produceDbConnectionFactory(InjectionPoint injectionPoint) {
-        if (url.contains("h2")) {
-            return new H2ConnectionFactory(user, password, url, maxPoolSize);
+        if (currentFactory != null) {
+            return currentFactory;
         }
 
-        return new PostgresConnectionFactory(user, password, url, maxPoolSize);
+        if (url.contains("h2")) {
+            currentFactory = new H2ConnectionFactory(user, password, url, maxPoolSize);
+        } else {
+            currentFactory = new PostgresConnectionFactory(user, password, url, maxPoolSize);
+        }
+
+        return currentFactory;
     }
 }

@@ -25,9 +25,17 @@ public abstract class DBConnectionFactory {
         this.url = url;
         this.maxDbPoolSize = maxDbPoolSize;
 
+        // only run this once in the entire application.
+        // otherwise multiple can pools exist
         dataConfig = createHikariConfig();
         dataSource = new HikariDataSource(dataConfig);
+    }
 
+    protected abstract HikariConfig createHikariConfig();
+
+    public DSLContext createContext() {
+        Connection connection = createConnection();
+        return createContext(connection);
     }
 
     public Connection createConnection() {
@@ -39,13 +47,6 @@ public abstract class DBConnectionFactory {
             throw new UnexpectedServerException("db connection failed", e);
         }
     }
-
-    public DSLContext createContext() {
-        Connection connection = createConnection();
-        return createContext(connection);
-    }
-
-    protected abstract HikariConfig createHikariConfig();
 
     public abstract DSLContext createContext(Connection connection);
 }

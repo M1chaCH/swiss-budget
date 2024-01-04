@@ -65,10 +65,10 @@ _should be publicly available at: 01.08.2024_
 
 ### Framework
 - [x] write tests for complicated data manipulations (assign tag / resolve tag conflicts -> they have a lot of edge cases)
-- [ ] db connection pooling 
+- [x] db connection pooling 
   - one db connection per request
   - limit max requests handled at the same time (maybe make "getConnection" blocking if no "slot" is open)
-- [ ] one db transaction per request, if one statement fails rollback all changes from request
+- [x] one db transaction per request, if one statement fails rollback all changes from request
 - [ ] fix page transitions
   - page WAS positioned absolutely, removing this broke transitions
 - [ ] allow opening dialog in dialog
