@@ -1,6 +1,7 @@
 import {Component} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {AuthService} from '../../../services/auth.service';
+import {WindowScrollService} from '../../../services/window-scroll.service';
 
 @Component({
              selector: 'app-login-form',
@@ -14,6 +15,7 @@ export class LoginFormComponent {
 
   constructor(
     private auth: AuthService,
+    private scrollService: WindowScrollService,
   ) {
     this.form = new LoginForm();
   }
@@ -23,6 +25,7 @@ export class LoginFormComponent {
       this.loading = true;
       this.errorMessage = undefined;
       this.auth.login(this.form.mail.value, this.form.password.value, this.form.stay.value).subscribe(response => {
+        this.scrollService.scrollTo(0);
         this.loading = false;
         if (response)
           this.errorMessage = response;

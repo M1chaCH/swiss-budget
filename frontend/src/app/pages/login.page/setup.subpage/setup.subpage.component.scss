@@ -9,38 +9,52 @@
   padding: 24px;
   box-sizing: border-box;
 
-  .setup-step-container {
-    display: flex;
-    flex-flow: column;
+  app-steps-panel {
+    display: block;
+    height: 64vh;
 
-    h3 {
-      margin: 12px 0 10px 0;
+    .setup-step-container {
+      display: flex;
+      flex-flow: column;
+
+      h3 {
+        margin: 12px 0 10px 0;
+      }
+
+      p {
+        margin: 0 0 5px 0;
+      }
+
+      .controls {
+        min-width: 200px;
+        width: 100%;
+        max-width: 300px;
+        align-self: center;
+
+        margin-top: 20px;
+      }
     }
 
-    p {
-      margin: 0 0 5px 0;
-    }
+    .folder-controls {
+      display: grid;
+      grid-template-columns: repeat(2, calc(50% - 5px));
+      grid-auto-rows: 60px;
+      gap: 10px;
 
-    .controls {
-      min-width: 200px;
-      width: 100%;
-      max-width: 300px;
-      align-self: center;
-
-      margin-top: 20px;
+      .wide-control {
+        grid-column: 1/3;
+        display: block;
+        height: 100%;
+      }
     }
   }
 
-  .folder-controls {
-    display: grid;
-    grid-template-columns: repeat(2, calc(50% - 5px));
-    grid-auto-rows: 60px;
-    gap: 10px;
-
-    .wide-control {
-      grid-column: 1/3;
-      display: block;
-      height: 100%;
-    }
+  .footer-controls {
+    align-self: flex-start;
+    margin-top: 10px;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+    width: 100%;
   }
 }

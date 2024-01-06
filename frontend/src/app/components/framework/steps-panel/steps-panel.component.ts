@@ -1,4 +1,4 @@
-import {Component, ContentChildren, EventEmitter, Input, Output, QueryList} from '@angular/core';
+import {AfterViewInit, booleanAttribute, Component, ContentChildren, ElementRef, EventEmitter, Input, Output, QueryList, ViewChild} from '@angular/core';
 import {stepSliderAnimation} from '../../../animations';
 import {PanelStepDirective} from './panel-step.directive';
 
@@ -8,39 +8,44 @@ import {PanelStepDirective} from './panel-step.directive';
              styleUrls: ['./steps-panel.component.scss'],
              animations: [stepSliderAnimation],
            })
-export class StepsPanelComponent {
+export class StepsPanelComponent implements AfterViewInit {
 
   @Input() nextLabel: string = 'Next';
   @Input() previousLabel: string = 'Back';
   @Input() firstPreviousLabel: string | undefined;
   @Input() lastNextLabel: string | undefined;
-  @Input() firstPreviousClickable: boolean = false;
-  @Input() lastNextClickable: boolean = false;
+  @Input({transform: booleanAttribute}) firstPreviousClickable: boolean = false;
+  @Input({transform: booleanAttribute}) lastNextClickable: boolean = false;
   @Input() navigationPlace: 'above' | 'bellow' = 'bellow';
-  @Input() showNavigation: boolean = true;
+  @Input({transform: booleanAttribute}) showNavigation: boolean = true;
 
   @Output() firstPreviousClicked: EventEmitter<void> = new EventEmitter<void>();
   @Output() lastNextClicked: EventEmitter<void> = new EventEmitter<void>();
-  @Output() stepChanged: EventEmitter<number> = new EventEmitter<number>();
-
-  @ContentChildren(PanelStepDirective) steps?: QueryList<PanelStepDirective>;
   @Output() cursorChange: EventEmitter<number> = new EventEmitter<number>();
+
+  @ViewChild('stepContainer', {read: ElementRef<HTMLDivElement>, static: true}) stepContainer: ElementRef<HTMLDivElement> | undefined;
+  @ContentChildren(PanelStepDirective) steps?: QueryList<PanelStepDirective>;
+  private currentStep: PanelStepDirective | undefined;
 
   constructor() {
   }
 
   private _cursor: number = 0;
 
-  @Input()
   get cursor() {
     return this._cursor;
   }
 
+  @Input()
   set cursor(n: number) {
     const length = this.steps?.length ?? 0;
     const maxN = length > 0 ? length - 1 : 0;
     this._cursor = Math.max(0, Math.min(n, maxN));
     this.cursorChange.emit(this._cursor);
+    this.updateChildren();
+  }
+
+  ngAfterViewInit(): void {
     this.updateChildren();
   }
 
@@ -70,11 +75,13 @@ export class StepsPanelComponent {
     return (this.steps?.length ?? 0) - 1 === this.cursor;
   }
 
-
   private updateChildren() {
-    this.stepChanged.emit(this.cursor);
-    this.steps?.forEach((step, i) => {
-      step.current = i === this.cursor;
-    });
+    this.stepContainer?.nativeElement.scrollTo({
+                                                 top: 0,
+                                                 behavior: 'smooth',
+                                               });
+    this.currentStep?.hide();
+    this.currentStep = this.steps?.get(this.cursor);
+    this.currentStep?.show();
   }
 }

@@ -1,8 +1,9 @@
-import {Component} from '@angular/core';
+import {Component, ViewChild} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {Router} from '@angular/router';
 import {Observable, of, shareReplay, switchMap} from 'rxjs';
 import {pages} from '../../../app-routing.module';
+import {StepsPanelComponent} from '../../../components/framework/steps-panel/steps-panel.component';
 import {ErrorDto} from '../../../dtos/ErrorDto';
 import {SupportedBankDto} from '../../../dtos/SupportedBankDto';
 import {ApiService, endpoint} from '../../../services/api.service';
@@ -16,7 +17,6 @@ import {AuthService} from '../../../services/auth.service';
 export class SetupSubpageComponent {
 
   form: SetupForm = new SetupForm();
-  cursor: number = 0;
   currentError: ErrorDto | undefined;
   showGoogleMessage: boolean = false;
   loadingMailTest: boolean = false;
@@ -25,6 +25,7 @@ export class SetupSubpageComponent {
   secondPasswordControl: FormControl = new FormControl(null, [Validators.required]);
   supportedBanks$: Observable<string[]>;
   protected readonly pages = pages;
+  @ViewChild('stepper') private stepperComponent: StepsPanelComponent | undefined;
 
   constructor(
     private api: ApiService,
@@ -79,7 +80,7 @@ export class SetupSubpageComponent {
       }).subscribe({
                      next: _ => {
                        this.loadingMailTest = false;
-                       this.cursor++;
+                       this.stepperComponent?.next();
                      },
                      error: (err: { error: ErrorDto }) => {
                        this.loadingMailTest = false;
@@ -92,7 +93,7 @@ export class SetupSubpageComponent {
   continueAfterCreateFolder(noFolder: boolean) {
     if (noFolder)
       this.form.folderName.setValue('INBOX');
-    this.cursor++;
+    this.stepperComponent?.next();
   }
 
   completeSetup() {

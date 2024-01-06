@@ -53,16 +53,8 @@ body {
 .page-container {
   width: 100%;
   position: relative;
-  padding: 2vw;
+  padding: 12px;
   box-sizing: border-box;
-}
-
-.steps-panel-step {
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
 }
 
 .form-error-message {

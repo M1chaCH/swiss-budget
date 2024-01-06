@@ -19,7 +19,7 @@ export class NavigationTreeComponent {
   }
 
   onNavLinkClicked() {
-    this.scrollService.scrollTo(0, false);
+    this.scrollService.scrollTo(0);
     if (window.innerWidth < 1001)
       this.pageService.setSideMenuOpen(false);
   }

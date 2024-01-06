@@ -1,27 +1,32 @@
 <div class="steps-panel">
-  <ng-container *ngIf="navigationPlace === 'above' && showNavigation">
-    <ng-template [ngTemplateOutlet]="navigation"></ng-template>
-  </ng-container>
-  <div [@stepSliderAnimation]="cursor" class="steps">
-    <ng-content></ng-content>
-  </div>
-  <ng-container *ngIf="navigationPlace === 'bellow' && showNavigation">
-    <ng-template [ngTemplateOutlet]="navigation"></ng-template>
-  </ng-container>
+    <ng-container *ngIf="navigationPlace === 'above' && showNavigation">
+        <ng-template [ngTemplateOutlet]="navigation"></ng-template>
+    </ng-container>
+    <div #stepContainer
+         [@stepSliderAnimation]="cursor"
+         class="steps">
+        <ng-content></ng-content>
+    </div>
+    <ng-container *ngIf="navigationPlace === 'bellow' && showNavigation">
+        <ng-template [ngTemplateOutlet]="navigation"></ng-template>
+    </ng-container>
 </div>
 
 <ng-template #navigation>
-  <div class="controls">
-    <app-button (onClick)="previous()" [disabled]="isFirst() && !firstPreviousClickable"
-                design="secondary"
-                leftIcon="chevron_left"
-                style="justify-self: start">
-      {{isFirst() && firstPreviousLabel ? firstPreviousLabel : previousLabel}}
-    </app-button>
-    <app-button (onClick)="next()" [disabled]="isLast() && !lastNextClickable" design="primary"
-                rightIcon="chevron_right"
-                style="justify-self: end">
-      {{isLast() && lastNextLabel ? lastNextLabel : nextLabel}}
-    </app-button>
-  </div>
+    <div class="controls">
+        <app-button (onClick)="previous()"
+                    [disabled]="isFirst() && !firstPreviousClickable"
+                    design="secondary"
+                    leftIcon="chevron_left"
+                    style="justify-self: start">
+            {{ isFirst() && firstPreviousLabel ? firstPreviousLabel : previousLabel }}
+        </app-button>
+        <app-button (onClick)="next()"
+                    [disabled]="isLast() && !lastNextClickable"
+                    design="primary"
+                    rightIcon="chevron_right"
+                    style="justify-self: end">
+            {{ isLast() && lastNextLabel ? lastNextLabel : nextLabel }}
+        </app-button>
+    </div>
 </ng-template>

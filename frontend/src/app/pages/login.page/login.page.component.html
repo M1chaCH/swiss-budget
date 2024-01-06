@@ -13,12 +13,12 @@
 
     <app-welcome/>
 
-    @if (subrouteActive) {
-        <div class="page-container">
+    <div class="content">
+        @if (subrouteActive) {
             <router-outlet></router-outlet>
-        </div>
-    } @else {
-        <app-login-form></app-login-form>
-    }
+        } @else {
+            <app-login-form></app-login-form>
+        }
+    </div>
 </div>
 

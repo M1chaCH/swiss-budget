@@ -1,7 +1,7 @@
 .root {
   width: 100%;
   max-width: 2000px;
-  margin: auto;
+  margin: 0 auto;
 
   .header-container {
     position: fixed;
@@ -31,10 +31,12 @@
     height: 100%;
     width: auto;
 
-    padding-top: var(--header-height);
+    margin-top: var(--header-height);
     box-sizing: border-box;
 
     transition: all 150ms ease-out;
+
+    position: relative;
   }
 }
 
