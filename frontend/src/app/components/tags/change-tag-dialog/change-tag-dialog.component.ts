@@ -1,13 +1,13 @@
 import {Component} from '@angular/core';
-import {TagDto, TransactionDto} from "../../../dtos/TransactionDtos";
-import {DialogService} from "../../dialog/dialog.service";
-import {TagService} from "../../../services/tag.service";
+import {TagDto, TransactionDto} from '../../../dtos/TransactionDtos';
+import {TagService} from '../../../services/tag.service';
+import {DialogService} from '../../framework/dialog/dialog.service';
 
 @Component({
-  selector: 'app-change-tag-dialog',
-  templateUrl: './change-tag-dialog.component.html',
-  styleUrls: ['./change-tag-dialog.component.scss']
-})
+             selector: 'app-change-tag-dialog',
+             templateUrl: './change-tag-dialog.component.html',
+             styleUrls: ['./change-tag-dialog.component.scss'],
+           })
 export class ChangeTagDialogComponent {
   data!: TransactionDto;
   saving: boolean = false;
@@ -15,8 +15,8 @@ export class ChangeTagDialogComponent {
   selectedTag: TagDto | undefined;
 
   constructor(
-      private dialogService: DialogService,
-      private tagService: TagService,
+    private dialogService: DialogService,
+    private tagService: TagService,
   ) {
   }
 
@@ -35,10 +35,10 @@ export class ChangeTagDialogComponent {
 
       this.saving = true;
       this.tagService.changeTag(this.transaction.id, this.selectedTag.id)
-      .subscribe({
-        next: _ => this.closeDialog(),
-        error: _ => this.closeDialog(),
-      });
+          .subscribe({
+                       next: _ => this.closeDialog(),
+                       error: _ => this.closeDialog(),
+                     });
     }
   }
 

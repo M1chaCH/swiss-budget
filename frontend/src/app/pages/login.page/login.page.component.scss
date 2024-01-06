@@ -1,0 +1,32 @@
+.login-background {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  pointer-events: none;
+  filter: blur(12px);
+  z-index: -1;
+
+  img {
+    object-fit: cover;
+  }
+}
+
+.login-page {
+  display: grid;
+  grid-template-rows: 92svh;
+  grid-template-columns: repeat(2, 46vw);
+  align-items: center;
+  justify-items: center;
+
+  padding: 4vw;
+  box-sizing: border-box;
+}
+
+@media (max-width: 950px) {
+  .login-page {
+    grid-template-rows: repeat(2, 100vh);
+    grid-template-columns: 92vw;
+  }
+}

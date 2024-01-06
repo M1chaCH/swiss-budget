@@ -21,6 +21,7 @@ _should be publicly available at: 01.08.2024_
     - change only for this transaction and automatically remove matching keyword. bulk changes can be made in configuration page.
   - [ ] implement transaction splitting
     - you can split a transaction into multiple tags, this way, f.e. cash retrieval can be split into the actual tags. 
+  - [ ] fix / cleanup import behaviour
 
 ### Configuration Page
 - [ ] CRUD for tags, including bulk changes into the past
@@ -79,6 +80,7 @@ _should be publicly available at: 01.08.2024_
 - [ ] add support for more banks
   - post, migros. NAB, UBS, ZKB, CS
 - [x] fronted: handle unauthorized response (send to login)
+- [ ] frontend: generalize zindex and debounce times
 
 (GPT finance adviser)
 - create a custom GPT that knows how SwissBudget works and knows how the datastructures is built

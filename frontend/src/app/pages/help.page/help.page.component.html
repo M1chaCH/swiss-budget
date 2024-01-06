@@ -1,18 +1,17 @@
-<div *ngIf="(authService.isLoggedIn$ | async) !== 'in' else loggedInContent" appFullscreenPage appPage class="page-container"
-     pageRoute="help" pageTitle="Help">
-    <ng-template [ngTemplateOutlet]="helpPageContent"></ng-template>
-</div>
-<ng-template #loggedInContent>
-    <div appPage class="page-container" pageRoute="help" pageTitle="Help">
-        <ng-template [ngTemplateOutlet]="helpPageContent"></ng-template>
-    </div>
-</ng-template>
-
-<ng-template #helpPageContent>
+<div [useFullscreen]="(authService.isLoggedIn$ | async) !== 'in'"
+     appPage
+     class="page-container"
+     pageRoute="help"
+     pageTitle="Help">
     <div class="logo">
         <div class="image">
-            <img alt="michu-tech.com" height="120px" src="/assets/michu-tech-icon.svg" width="120"/>
-            <a href="https://michu-tech.com" id="developedBy" target="_blank">Developed by michu-tech.com</a>
+            <img alt="michu-tech.com"
+                 height="120px"
+                 src="/assets/michu-tech-icon.svg"
+                 width="120"/>
+            <a href="https://michu-tech.com"
+               id="developedBy"
+               target="_blank">Developed by michu-tech.com</a>
         </div>
         <h1>Help / FAQ</h1>
     </div>
@@ -77,22 +76,27 @@
         <h3>Savings</h3>
 
         <h2>Need more help?</h2>
-        <app-button (onClick)="openHelpDialog()" height="60px" rightIcon="support_agent" width="250px">
+        <app-button (onClick)="openHelpDialog()"
+                    height="60px"
+                    rightIcon="support_agent"
+                    width="250px">
             Ask for help
         </app-button>
 
         <h2>Github</h2>
         <p>
             This project is public source. So feel free to checkout the code
-            <a href="https://github.com/M1chaCH/swiss-budget" target="_blank">here</a>.
+            <a href="https://github.com/M1chaCH/swiss-budget"
+               target="_blank">here</a>.
         </p>
 
         <app-button [useAnchor]="true"
                     height="60px"
                     leftIcon="arrow_back_ios"
                     routerLink="/"
-                    style="display: inline-block; margin-top: 10px; align-self: flex-end;" width="250px">
+                    style="display: inline-block; margin-top: 10px; align-self: flex-end;"
+                    width="250px">
             Back
         </app-button>
     </div>
-</ng-template>
+</div>

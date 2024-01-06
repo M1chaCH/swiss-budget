@@ -1,20 +1,26 @@
-<div appPage class="page-container" pageRoute="transactions" pageTitle="Transactions">
+<div appPage
+     pageRoute="transactions"
+     pageTitle="Transactions">
     <app-page-with-header *ngIf="transactions$ | async as transactions else loadingTransactions">
         <ng-container pageHeader>
             <app-transaction-filter></app-transaction-filter>
         </ng-container>
         <p *ngIf="!transactions || transactions.size < 1">Found no transactions / no transactions imported yet!</p>
 
-        <app-expansion-list-toggle *ngIf="transactions && transactions.size > 0" topic="transaction"></app-expansion-list-toggle>
+        <app-expansion-list-toggle *ngIf="transactions && transactions.size > 0"
+                                   topic="transaction"></app-expansion-list-toggle>
         <div *ngFor="let key of transactions.keys()">
-            <h3>{{key}}</h3>
+            <h3>{{ key }}</h3>
             <div class="transactions">
-                <app-transaction *ngFor="let transaction of transactions.get(key)" [transaction]="transaction">
+                <app-transaction *ngFor="let transaction of transactions.get(key)"
+                                 [transaction]="transaction">
                 </app-transaction>
             </div>
         </div>
 
-        <div #loadMore *ngIf="moreTransactionsAvailable" id="loadMore">
+        <div #loadMore
+             *ngIf="moreTransactionsAvailable"
+             id="loadMore">
             <ng-template [ngTemplateOutlet]="loadingTransactions"></ng-template>
         </div>
     </app-page-with-header>

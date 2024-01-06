@@ -1,95 +1,30 @@
-<div *ngIf="currentPage$ | async as currentPage" class="root">
-    <header *ngIf="!fullscreenPage">
-        <ng-template #menuButton>
-            <button (click)="sideMenuOpen = true"
-                    class="icon-button">
-                <span class="material-symbols-rounded">menu</span>
-            </button>
-        </ng-template>
-        <button (click)="sideMenuOpen = false" *ngIf="sideMenuOpen else menuButton"
-                class="icon-button">
-            <span class="material-symbols-rounded">menu_open</span>
-        </button>
-        <h2 class="page-header" id="swiss-budget">Swiss Budget</h2>
-        <div [@switchAnimation]="currentPage.title" class="current-page-title">
-            <div *contentReplacer="currentPage.title" class="title">
-                <h2>{{currentPage.title}}</h2>
-            </div>
+<div *ngIf="pageService.pageState$ | async as pageState"
+     class="root">
+    @if (pageState.fullscreen) {
+        <main [@routeChangeTrigger]="currentRoute">
+            <router-outlet></router-outlet>
+        </main>
+    } @else {
+        <div class="header-container">
+            <app-header/>
         </div>
-        <button (click)="logout()" class="icon-button">
-            <span class="material-symbols-rounded">logout</span>
-        </button>
-    </header>
-
-    <div [style.height]="fullscreenPage ? 'calc(100%)' : 'calc(100% - 20px - 80px)'"
-         class="center">
-        <nav *ngIf="!fullscreenPage"
-             [style.width]="sideMenuOpen ? 'var(--nav-open-width)' : '0px'">
-            <div class="menu-container">
-                <a (click)="onNavLinkClicked()"
-                   [class.active-menu-item]="currentPage.route === pages.HOME"
-                   [routerLink]="'app/' + pages.HOME"
-                   class="menu-item">
-                    <span>Home</span>
-                    <span class="material-symbols-rounded">account_balance</span>
-                </a>
-                <a (click)="onNavLinkClicked()"
-                   [class.active-menu-item]="currentPage.route === pages.BUDGET"
-                   [routerLink]="'app/' + pages.BUDGET"
-                   class="menu-item">
-                    <span>Budget</span>
-                    <span class="material-symbols-rounded">trending_up</span>
-                </a>
-                <a (click)="onNavLinkClicked()"
-                   [class.active-menu-item]="currentPage.route === pages.TRANSACTIONS"
-                   [routerLink]="'app/' + pages.TRANSACTIONS"
-                   class="menu-item">
-                    <span>Transactions</span>
-                    <span class="material-symbols-rounded">payments</span>
-                </a>
-                <a (click)="onNavLinkClicked()"
-                   [class.active-menu-item]="currentPage.route === pages.SAVE"
-                   [routerLink]="'app/' + pages.SAVE"
-                   class="menu-item">
-                    <span>Save</span>
-                    <span class="material-symbols-rounded">savings</span>
-                </a>
-                <a (click)="onNavLinkClicked()"
-                   [class.active-menu-item]="currentPage.route === pages.CONFIGURATION"
-                   [routerLink]="'app/' + pages.CONFIGURATION"
-                   class="menu-item">
-                    <span>Configuration</span>
-                    <span class="material-symbols-rounded">tune</span>
-                </a>
-                <a (click)="onNavLinkClicked()"
-                   [class.active-menu-item]="currentPage.route === pages.PROFILE"
-                   [routerLink]="'app/' + pages.PROFILE"
-                   class="menu-item">
-                    <span>Profile</span>
-                    <span class="material-symbols-rounded">account_circle</span>
-                </a>
-                <a (click)="onNavLinkClicked()"
-                   [class.active-menu-item]="currentPage.route === pages.HELP"
-                   [routerLink]="'app/' + pages.HELP"
-                   class="menu-item">
-                    <span>Help</span>
-                    <span class="material-symbols-rounded">support_agent</span>
-                </a>
-            </div>
-        </nav>
-        <div (click)="sideMenuOpen = false" *ngIf="sideMenuOpen" class="nav-overlay"></div>
-
-        <main #pageContainer
-              [@routeChangeTrigger]="currentRoute"
-              [style.width]="!sideMenuOpen || fullscreenPage ? '100%' : 'calc(100% - 300px)'"
+        <div class="navigation-container"
+             [style.width]="pageState.sideMenuOpen ? 'var(--nav-open-width)' : '0px'">
+            <app-navigation-tree/>
+        </div>
+        <div class="medium-menu-backdrop"
+             *ngIf="pageState.sideMenuOpen"
+             (click)="pageService.setSideMenuOpen(false)">
+        </div>
+        <main [@routeChangeTrigger]="currentRoute"
+              [style.margin-left]="pageState.sideMenuOpen && pageState.useLargeMenu ? 'var(--nav-open-width)' : '0px'"
               class="main-page-container">
             <router-outlet></router-outlet>
         </main>
-    </div>
-
-    <footer *ngIf="!fullscreenPage"></footer>
+    }
 </div>
 <ng-container *ngIf="auth.isLoggedIn$ | async as loggedIn">
+    <!--    TODO create global "banner" functionality -->
     <app-transaction-importer *ngIf="loggedIn === 'in'"></app-transaction-importer>
 </ng-container>
 <app-dialog></app-dialog>

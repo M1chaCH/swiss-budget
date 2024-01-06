@@ -1,35 +1,35 @@
-import {ChangeDetectionStrategy, Component, ElementRef, ViewChild} from "@angular/core";
-import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
-import * as moment from "moment";
-import {map, Observable, tap} from "rxjs";
-import {TransactionDto} from "../../dtos/TransactionDtos";
-import {ScrollService} from "../../services/scroll.service";
-import {TransactionService} from "../../services/transaction.service";
+import {ChangeDetectionStrategy, Component, ElementRef, ViewChild} from '@angular/core';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import * as moment from 'moment';
+import {map, Observable, tap} from 'rxjs';
+import {TransactionDto} from '../../dtos/TransactionDtos';
+import {TransactionService} from '../../services/transaction.service';
+import {WindowScrollService} from '../../services/window-scroll.service';
 
 @Component({
-  selector: "app-transaction.page",
-  templateUrl: "./transaction.page.component.html",
-  styleUrls: ["./transaction.page.component.scss"],
-  changeDetection: ChangeDetectionStrategy.OnPush
-})
+             selector: 'app-transaction.page',
+             templateUrl: './transaction.page.component.html',
+             styleUrls: ['./transaction.page.component.scss'],
+             changeDetection: ChangeDetectionStrategy.OnPush,
+           })
 export class TransactionPageComponent {
-  @ViewChild("loadMore", {static: false}) loadMoreDiv: ElementRef<HTMLDivElement> | undefined;
+  @ViewChild('loadMore', {static: false}) loadMoreDiv: ElementRef<HTMLDivElement> | undefined;
   transactions$: Observable<Map<string, TransactionDto[]>>;
   moreTransactionsAvailable: boolean = true;
 
   // FIXME 1. filter (so that 0 results) 2. leave page 3. invalidate data 4. return page 5. never stops loading
   constructor(
-      private service: TransactionService,
-      scrollService: ScrollService,
+    private service: TransactionService,
+    scrollService: WindowScrollService,
   ) {
     // expects sorted results from backend
     this.transactions$ = service.get$().pipe(
-        map(t => this.mapTransactionsToDates(t)),
-        tap(() => this.moreTransactionsAvailable = service.hasNextPage()),
+      map(t => this.mapTransactionsToDates(t)),
+      tap(() => this.moreTransactionsAvailable = service.hasNextPage()),
     );
 
     scrollService.scrollChange$.pipe(takeUntilDestroyed())
-    .subscribe(() => this.checkVisibilityOfLoadMore());
+                 .subscribe(() => this.checkVisibilityOfLoadMore());
   }
 
   private checkVisibilityOfLoadMore() {
@@ -61,18 +61,18 @@ export class TransactionPageComponent {
 
   private calcMapKey(transaction: TransactionDto): string {
     const date = moment(transaction.transactionDate);
-    const yesterday = moment(new Date()).add(-1, "days");
-    const lastMonth = moment(new Date()).add(-1, "months");
+    const yesterday = moment(new Date()).add(-1, 'days');
+    const lastMonth = moment(new Date()).add(-1, 'months');
 
-    if (date.isSame(new Date(), "day"))
-      return "Today";
-    else if (date.isSame(yesterday, "day"))
-      return "Yesterday";
-    else if (date.isSame(new Date(), "month"))
-      return "This month";
-    else if (date.isSame(lastMonth, "month"))
-      return "Last month";
+    if (date.isSame(new Date(), 'day'))
+      return 'Today';
+    else if (date.isSame(yesterday, 'day'))
+      return 'Yesterday';
+    else if (date.isSame(new Date(), 'month'))
+      return 'This month';
+    else if (date.isSame(lastMonth, 'month'))
+      return 'Last month';
     else
-      return date.format("MMM yyyy");
+      return date.format('MMM yyyy');
   }
 }

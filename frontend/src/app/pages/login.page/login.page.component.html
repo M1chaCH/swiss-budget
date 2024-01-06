@@ -1,0 +1,24 @@
+<div class="login-background">
+    <img [ngSrc]="imageUrl"
+         alt=""
+         fill
+         priority/>
+</div>
+
+<div appPage
+     class="login-page"
+     pageRoute="login"
+     pageTitle="Login"
+     useFullscreen>
+
+    <app-welcome/>
+
+    @if (subrouteActive) {
+        <div class="page-container">
+            <router-outlet></router-outlet>
+        </div>
+    } @else {
+        <app-login-form></app-login-form>
+    }
+</div>
+

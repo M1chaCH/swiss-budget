@@ -9,6 +9,9 @@
   --michu-tech-accent: #E28521;
   --michu-tech-warn: #C13D2B;
 
+  --nav-open-width: 300px;
+  --header-height: 80px;
+
   transition: all 200ms ease-out;
 }
 
@@ -37,12 +40,20 @@ html {
 
 body {
   padding: 0;
+  margin: 0;
+  min-height: 100svh;
+}
+
+.scroll-blocker {
+  height: 100svh;
+  width: 100svw;
+  overflow: hidden;
 }
 
 .page-container {
   width: 100%;
   position: relative;
-  padding: 0 2vw;
+  padding: 2vw;
   box-sizing: border-box;
 }
 
