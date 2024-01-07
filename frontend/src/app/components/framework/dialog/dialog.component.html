@@ -1,0 +1,14 @@
+<div (mousedown)="closeDialog($event)"
+     (touchstart)="closeDialog($event)"
+     [class.closed]="!open"
+     id="dialog-container">
+    <div [style.opacity]="open ? 1 : 0"
+         [style.scale]="open ? 1 : 0.95"
+         class="dialog">
+        <ng-template appDialogHost></ng-template>
+        <button (click)="closeDialog()"
+                class="close icon-button">
+            <span class="material-symbols-rounded">close</span>
+        </button>
+    </div>
+</div>

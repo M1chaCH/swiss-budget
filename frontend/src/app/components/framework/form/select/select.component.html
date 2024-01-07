@@ -1,0 +1,28 @@
+<div #selectInput
+     (click)="openSelect()"
+     class="input-container">
+    <input (keydown.escape)="open = false"
+           (keydown.tab)="handleCompleteRequest()"
+           [formControl]="value"
+           [placeholder]="placeholder"
+           class="input"/>
+    <span [class.input-icon-open]="open"
+          class="material-symbols-rounded input-icon">expand_more</span>
+    <span *ngIf="value.invalid"
+          class="form-error-message">{{ errorMessage }}</span>
+</div>
+
+<ng-template (fieldExtensionClosed)="open = false"
+             [appFieldExtension]="open"
+             [fieldExtensionFor]="selectInput"
+             fieldExtensionMatchParentWidth
+             fieldExtensionSide="bottom">
+    <div class="options">
+        <button (click)="select(option)"
+                *ngFor="let option of filteredOptions"
+                [class.option-selected]="isSelected(option)"
+                class="option">
+            <span>{{ option }}</span>
+        </button>
+    </div>
+</ng-template>

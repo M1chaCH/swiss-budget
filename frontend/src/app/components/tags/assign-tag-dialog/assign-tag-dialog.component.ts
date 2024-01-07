@@ -1,16 +1,16 @@
 import {Component, OnInit} from '@angular/core';
-import {AppDialogComponent, DialogService} from "../../dialog/dialog.service";
-import {TagDto, TransactionDto} from "../../../dtos/TransactionDtos";
-import {FormControl} from "@angular/forms";
-import {catchError, debounceTime, filter, of, switchMap, tap, throttleTime} from "rxjs";
-import {TagService} from "../../../services/tag.service";
-import {ErrorService} from "../../../services/error.service";
+import {FormControl} from '@angular/forms';
+import {catchError, debounceTime, filter, of, switchMap, tap, throttleTime} from 'rxjs';
+import {TagDto, TransactionDto} from '../../../dtos/TransactionDtos';
+import {ErrorService} from '../../../services/error.service';
+import {TagService} from '../../../services/tag.service';
+import {AppDialogComponent, DialogService} from '../../framework/dialog/dialog.service';
 
 @Component({
-  selector: 'app-assign-tag-dialog',
-  templateUrl: './assign-tag-dialog.component.html',
-  styleUrls: ['./assign-tag-dialog.component.scss']
-})
+             selector: 'app-assign-tag-dialog',
+             templateUrl: './assign-tag-dialog.component.html',
+             styleUrls: ['./assign-tag-dialog.component.scss'],
+           })
 export class AssignTagDialogComponent implements AppDialogComponent<TransactionDto>, OnInit {
   data!: TransactionDto;
 
@@ -22,8 +22,8 @@ export class AssignTagDialogComponent implements AppDialogComponent<TransactionD
   saving: boolean = false;
 
   constructor(
-      private dialogService: DialogService,
-      private tagService: TagService,
+    private dialogService: DialogService,
+    private tagService: TagService,
   ) {
   }
 
@@ -33,28 +33,28 @@ export class AssignTagDialogComponent implements AppDialogComponent<TransactionD
 
   ngOnInit() {
     this.keywordControl.valueChanges.pipe(
-        tap(() => this.keywordChecked = false),
-        debounceTime(500),
-        filter(() => this.addKeywordControl.value),
-        switchMap((keyword) => {
-          if (!keyword) {
-            this.errorMessage = "Keyword can't be empty";
-            return of(true);
-          }
+      tap(() => this.keywordChecked = false),
+      debounceTime(500),
+      filter(() => this.addKeywordControl.value),
+      switchMap((keyword) => {
+        if (!keyword) {
+          this.errorMessage = 'Keyword can\'t be empty';
+          return of(true);
+        }
 
-          if (!this.transaction.receiver.toLowerCase().includes(keyword.toLowerCase())) {
-            this.errorMessage = "Keyword could not be found in transaction";
-            return of(true);
-          }
+        if (!this.transaction.receiver.toLowerCase().includes(keyword.toLowerCase())) {
+          this.errorMessage = 'Keyword could not be found in transaction';
+          return of(true);
+        }
 
-          return this.tagService.isKeywordInTag(keyword).pipe(
-              switchMap(() => of(false)),
-              catchError(e => {
-                this.errorMessage = ErrorService.parseErrorMessage(e?.error)
-                return of(true)
-              }),
-          );
-        }),
+        return this.tagService.isKeywordInTag(keyword).pipe(
+          switchMap(() => of(false)),
+          catchError(e => {
+            this.errorMessage = ErrorService.parseErrorMessage(e?.error);
+            return of(true);
+          }),
+        );
+      }),
     ).subscribe(error => {
       if (!error)
         this.errorMessage = undefined;
@@ -64,10 +64,10 @@ export class AssignTagDialogComponent implements AppDialogComponent<TransactionD
     this.addKeywordControl.valueChanges.pipe(throttleTime(500)).subscribe(add => {
       this.errorMessage = undefined;
       if (add)
-        this.keywordControl.setValue(this.transaction.receiver.split("\n")[0]);
+        this.keywordControl.setValue(this.transaction.receiver.split('\n')[0]);
       else
         this.keywordControl.setValue(null);
-    })
+    });
   }
 
   tagSelected(tag: TagDto[]) {
@@ -82,16 +82,16 @@ export class AssignTagDialogComponent implements AppDialogComponent<TransactionD
         newKeyword = this.keywordControl.value;
 
       this.tagService.assignTag(this.transaction.id, this.selectedTag.id, newKeyword)
-      .pipe(catchError(() => {
-        this.dialogService.closeCurrentDialog();
-        return of(true);
-      }))
-      .subscribe(error => {
-        if (!error) {
-          this.saving = false;
-          this.dialogService.closeCurrentDialog();
-        }
-      });
+          .pipe(catchError(() => {
+            this.dialogService.closeCurrentDialog();
+            return of(true);
+          }))
+          .subscribe(error => {
+            if (!error) {
+              this.saving = false;
+              this.dialogService.closeCurrentDialog();
+            }
+          });
     }
   }
 

@@ -7,7 +7,7 @@
   box-sizing: border-box;
   background-color: color-mix(in srgb, var(--michu-tech-foreground) 50%, var(--michu-tech-background));
   color: var(--michu-tech-background);
-  z-index: 899;
+  z-index: var(--z-index-lifted);
 
   .state {
     display: flex;

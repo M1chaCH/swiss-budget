@@ -1,0 +1,28 @@
+<ng-container *ngIf="pageService.pageState$ | async as pageState">
+    <header>
+        <ng-template #menuButton>
+            <button (click)="pageService.setSideMenuOpen(true)"
+                    class="icon-button">
+                <span class="material-symbols-rounded">menu</span>
+            </button>
+        </ng-template>
+        <button (click)="pageService.setSideMenuOpen(false)"
+                *ngIf="pageState.sideMenuOpen else menuButton"
+                class="icon-button">
+            <span class="material-symbols-rounded">menu_open</span>
+        </button>
+        <h2 class="page-header"
+            id="swiss-budget">Swiss Budget</h2>
+        <div [@switchAnimation]="pageState.title"
+             class="current-page-title">
+            <div *contentReplacer="pageState.title"
+                 class="title">
+                <h2>{{ pageState.title }}</h2>
+            </div>
+        </div>
+        <button (click)="logout()"
+                class="icon-button">
+            <span class="material-symbols-rounded">logout</span>
+        </button>
+    </header>
+</ng-container>

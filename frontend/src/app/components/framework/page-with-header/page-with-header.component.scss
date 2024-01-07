@@ -1,0 +1,20 @@
+.page-with-header {
+  width: 100%;
+  position: relative;
+  display: flex;
+  flex-flow: column;
+  gap: 10px;
+
+  .page-header {
+    position: sticky;
+    top: calc(var(--header-height) + 20px);
+    right: 0;
+    left: 0;
+    z-index: 1;
+  }
+
+  .page-content {
+    z-index: 2;
+    background-color: var(--michu-tech-background);
+  }
+}

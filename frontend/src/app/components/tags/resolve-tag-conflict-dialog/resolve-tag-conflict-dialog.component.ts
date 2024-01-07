@@ -1,15 +1,15 @@
-import {Component, OnInit} from "@angular/core";
-import {FormControl} from "@angular/forms";
-import {catchError, Observable, of} from "rxjs";
-import {TagDto, TransactionDto} from "../../../dtos/TransactionDtos";
-import {TagService} from "../../../services/tag.service";
-import {AppDialogComponent, DialogService} from "../../dialog/dialog.service";
+import {Component, OnInit} from '@angular/core';
+import {FormControl} from '@angular/forms';
+import {catchError, Observable, of} from 'rxjs';
+import {TagDto, TransactionDto} from '../../../dtos/TransactionDtos';
+import {TagService} from '../../../services/tag.service';
+import {AppDialogComponent, DialogService} from '../../framework/dialog/dialog.service';
 
 @Component({
-  selector: "app-resolve-tag-conflict-dialog",
-  templateUrl: "./resolve-tag-conflict-dialog.component.html",
-  styleUrls: ["./resolve-tag-conflict-dialog.component.scss"]
-})
+             selector: 'app-resolve-tag-conflict-dialog',
+             templateUrl: './resolve-tag-conflict-dialog.component.html',
+             styleUrls: ['./resolve-tag-conflict-dialog.component.scss'],
+           })
 export class ResolveTagConflictDialogComponent implements AppDialogComponent<TransactionDto>, OnInit {
   data!: TransactionDto;
   possibleTags?: Observable<TagDto[]>;
@@ -19,8 +19,8 @@ export class ResolveTagConflictDialogComponent implements AppDialogComponent<Tra
   selectedTag: TagDto | undefined;
 
   constructor(
-      private dialogService: DialogService,
-      private tagService: TagService,
+    private dialogService: DialogService,
+    private tagService: TagService,
   ) {
   }
 
@@ -49,30 +49,28 @@ export class ResolveTagConflictDialogComponent implements AppDialogComponent<Tra
     if (this.selectedTag) {
       let matchingKeywordId;
       if (this.selectedTag.id === this.transaction.tagId) {
-        matchingKeywordId = this.transaction.matchingKeywordId ?? "";
-        console.log("already matched", matchingKeywordId);
+        matchingKeywordId = this.transaction.matchingKeywordId ?? '';
       } else {
         matchingKeywordId = this.transaction.duplicatedTagMatches!
         .filter(duplicate => duplicate.tag.id === this.selectedTag!.id)
         .map(duplicate => duplicate.matchingKeyword.id)[0];
-        console.log("from dups", matchingKeywordId);
       }
 
       this.tagService.resolveConflict(
-          this.transaction.id,
-          this.selectedTag.id,
-          matchingKeywordId,
-          this.removeKeywordsControl.value ?? true
+        this.transaction.id,
+        this.selectedTag.id,
+        matchingKeywordId,
+        this.removeKeywordsControl.value ?? true,
       ).pipe(catchError(() => {
         this.dialogService.closeCurrentDialog();
         return of(true);
       }))
-      .subscribe(error => {
-        if (!error) {
-          this.saving = false;
-          this.dialogService.closeCurrentDialog();
-        }
-      });
+          .subscribe(error => {
+            if (!error) {
+              this.saving = false;
+              this.dialogService.closeCurrentDialog();
+            }
+          });
     }
   }
 }
