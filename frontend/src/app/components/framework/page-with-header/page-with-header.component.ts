@@ -16,7 +16,6 @@ export class PageWithHeaderComponent implements AfterViewInit {
   }
 
   ngAfterViewInit() {
-    console.log(this.header?.nativeElement.getBoundingClientRect().height);
     if (this.header)
       // plus 10px gap between header and body plus 12px padding of .page-container
       this.scrollService.scrollTo(this.header.nativeElement.getBoundingClientRect().height + 10 + 12);

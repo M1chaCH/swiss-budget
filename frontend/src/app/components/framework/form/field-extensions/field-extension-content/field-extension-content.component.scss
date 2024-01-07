@@ -1,6 +1,6 @@
 .extension {
   display: block;
-  z-index: 1001;
+  z-index: var(--z-index-highest);
   background-color: color-mix(in srgb, var(--michu-tech-background) 95%, var(--michu-tech-foreground));
   border-radius: 2px;
   padding: 5px;

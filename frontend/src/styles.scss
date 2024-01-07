@@ -12,6 +12,15 @@
   --nav-open-width: 300px;
   --header-height: 80px;
 
+  --z-index-background: -1;
+  --z-index-default: 1;
+  //header
+  --z-index-lifted: 555;
+  //mobile menu
+  --z-index-high: 777;
+  //dialog
+  --z-index-highest: 999;
+
   transition: all 200ms ease-out;
 }
 
@@ -140,7 +149,6 @@ a:visited {
     transform: translateY(0);
   }
 }
-
 
 @keyframes messageFlyIn {
   0% {

@@ -1,5 +1,5 @@
 #extension-container {
-  z-index: 1001;
+  z-index: var(--z-index-highest);
   position: fixed;
   top: 0;
   right: 0;

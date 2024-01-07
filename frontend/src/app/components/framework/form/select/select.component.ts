@@ -27,6 +27,11 @@ export class SelectComponent implements OnInit {
     this.handleValueChange(this.value);
   }
 
+  openSelect() {
+    this.handleValueChange(this.value);
+    this.open = true;
+  }
+
   isSelected(v: string): boolean {
     return this.value.value === v;
   }
@@ -34,13 +39,6 @@ export class SelectComponent implements OnInit {
   select(v: string) {
     this.value.setValue(v);
     this.open = false;
-  }
-
-  close(event?: any) {
-    const hitBackdrop = event ? event.target.id === 'backdrop' : true;
-    if (hitBackdrop) {
-      this.open = false;
-    }
   }
 
   handleCompleteRequest() {
@@ -51,7 +49,7 @@ export class SelectComponent implements OnInit {
 
   private handleValueChange(control: FormControl<string | null>): void {
     control.setErrors(null);
-    const currentValue: string | null = control.value as string;
+    const currentValue: string = control.value ?? '';
 
     this.filteredOptions = this.filteredOptions.filter(o => o.toLowerCase().includes(currentValue.toLowerCase()));
 

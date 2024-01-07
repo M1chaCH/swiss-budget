@@ -16,7 +16,7 @@ export class FieldExtensionsComponent {
   constructor(
     private service: FieldExtensionsService,
   ) {
-    this.open = service.open.pipe(
+    this.open = service.open!.pipe(
       map(value => {
         if (value)
           this.openExtension(service.currentExtension);

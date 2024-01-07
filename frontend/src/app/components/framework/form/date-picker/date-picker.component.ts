@@ -1,8 +1,8 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {FormControl, Validators} from '@angular/forms';
 import * as moment from 'moment/moment';
-import {auditTime, BehaviorSubject, merge} from 'rxjs';
+import {auditTime, merge} from 'rxjs';
 
 @Component({
              selector: 'app-date-picker',
@@ -24,10 +24,11 @@ export class DatePickerComponent implements OnInit {
   yearControl: FormControl<number | null>;
   disabled: boolean;
 
-  calendarOpen: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
-  readonly formId: string = `datePickerForm${crypto.randomUUID()}`;
+  calendarOpen = false;
 
-  constructor() {
+  constructor(
+    private changeDetector: ChangeDetectorRef,
+  ) {
     this.dayControl = new FormControl<number | null>(null, [Validators.min(1), Validators.max(31)]);
     this.monthControl = new FormControl<number | null>(null, [Validators.min(1), Validators.max(12)]);
     this.yearControl = new FormControl<number | null>(null, [Validators.min(1), Validators.max(9999)]);
@@ -100,6 +101,6 @@ export class DatePickerComponent implements OnInit {
     this.yearControl.setValue(value.get('year'));
 
     this.control.setValue(value);
-    this.calendarOpen.next(false);
+    this.calendarOpen = false;
   }
 }

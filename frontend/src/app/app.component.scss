@@ -9,7 +9,7 @@
     right: 0;
     left: 0;
     height: var(--header-height);
-    z-index: 888;
+    z-index: var(--z-index-lifted);
   }
 
   .navigation-container {
@@ -47,7 +47,7 @@
     }
 
     .navigation-container {
-      z-index: 900;
+      z-index: var(--z-index-high);
       background-color: var(--michu-tech-background);
     }
   }
@@ -61,7 +61,7 @@
     right: 0;
     bottom: 0;
     left: 0;
-    z-index: 899;
+    z-index: var(--z-index-high);
     cursor: pointer;
 
     background-color: color-mix(in srgb, var(--michu-tech-background) 80%, transparent);

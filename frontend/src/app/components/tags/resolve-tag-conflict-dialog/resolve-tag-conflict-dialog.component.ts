@@ -50,12 +50,10 @@ export class ResolveTagConflictDialogComponent implements AppDialogComponent<Tra
       let matchingKeywordId;
       if (this.selectedTag.id === this.transaction.tagId) {
         matchingKeywordId = this.transaction.matchingKeywordId ?? '';
-        console.log('already matched', matchingKeywordId);
       } else {
         matchingKeywordId = this.transaction.duplicatedTagMatches!
         .filter(duplicate => duplicate.tag.id === this.selectedTag!.id)
         .map(duplicate => duplicate.matchingKeyword.id)[0];
-        console.log('from dups', matchingKeywordId);
       }
 
       this.tagService.resolveConflict(

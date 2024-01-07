@@ -1,7 +1,11 @@
-<div (click)="closeExtension($event)"
+<div (mousedown)="closeExtension($event)"
+     (touchstart)="closeExtension($event)"
      [class.closed]="!(open | async)"
      id="extension-container">
-    <app-field-extension-content *ngIf="(open | async) && extension" [root]="extension.root" [side]="extension.side">
+    <app-field-extension-content *ngIf="(open | async) && extension"
+                                 [root]="extension.root"
+                                 [side]="extension.side"
+                                 [useParentWidth]="extension.useParentWidth">
         <ng-container *ngTemplateOutlet="extension.content"></ng-container>
     </app-field-extension-content>
 </div>

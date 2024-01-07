@@ -1,4 +1,4 @@
-import {AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Input, ViewChild} from '@angular/core';
+import {AfterViewInit, booleanAttribute, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Input, ViewChild} from '@angular/core';
 import {ExtensionSide} from '../field-extensions.service';
 
 export type ContentPosition = {
@@ -15,6 +15,7 @@ export class FieldExtensionContentComponent implements AfterViewInit {
   @ViewChild('content', {read: ElementRef}) content!: ElementRef;
   @Input() root!: HTMLElement;
   @Input() side: ExtensionSide = 'bottom';
+  @Input({transform: booleanAttribute}) useParentWidth: boolean = false;
   position: ContentPosition | undefined;
 
   constructor(
@@ -25,7 +26,7 @@ export class FieldExtensionContentComponent implements AfterViewInit {
   ngAfterViewInit(): void {
     // keep in mind:
     // rect bottom & right are pixels from the top left to the bottom or right of the element
-    // css bottom & right are pixels from the bottom to the bottom of the element...
+    // css bottom & right are pixels from the bottom to the bottom of the element...🤌
     // (this.position is used in css)
     const contentElementRect = this.content.nativeElement.getBoundingClientRect();
     const rootElementRect = this.root.getBoundingClientRect();
@@ -57,13 +58,13 @@ export class FieldExtensionContentComponent implements AfterViewInit {
       const horizontalCenter = (window.innerWidth / 2) - (contentElementRect.width / 2);
       this.position = {
         top: `${verticalCenter}px`,
-        right: 'unset',
+        right: this.useParentWidth ? `${horizontalCenter + rootElementRect.width}px` : 'unset',
         bottom: 'unset',
         left: `${horizontalCenter}px`,
       };
     }
 
-    this.changeDetector.markForCheck(); // todo fix expression changed after check
+    this.changeDetector.detectChanges();
   }
 
   private doesElementFitBottom(root: DOMRect, content: DOMRect): ContentPosition | undefined {
@@ -73,7 +74,7 @@ export class FieldExtensionContentComponent implements AfterViewInit {
 
     return {
       top: `${root.bottom}px`,
-      right: 'unset',
+      right: this.useParentWidth ? `${window.innerWidth - root.right}px` : 'unset',
       bottom: 'unset',
       left: `${root.x}px`,
     };
@@ -85,7 +86,7 @@ export class FieldExtensionContentComponent implements AfterViewInit {
 
     return {
       top: `${root.top - content.height}px`,
-      right: 'unset',
+      right: this.useParentWidth ? `${window.innerWidth - root.right}px` : 'unset',
       bottom: 'unset',
       left: `${root.left}px`,
     };
@@ -93,26 +94,26 @@ export class FieldExtensionContentComponent implements AfterViewInit {
 
   private doesElementFitRight(root: DOMRect, content: DOMRect): ContentPosition | undefined {
     const spaceRight = window.innerWidth - root.right;
-    if (spaceRight < content.width)
+    if ((this.useParentWidth && spaceRight < root.width) || spaceRight < content.width)
       return undefined;
 
     return {
       top: `${root.top}px`,
       left: `${root.right}px`,
       bottom: 'unset',
-      right: 'unset',
+      right: this.useParentWidth ? `${window.innerWidth - root.right - root.width}px` : 'unset',
     };
   }
 
   private doesElementFitLeft(root: DOMRect, content: DOMRect): ContentPosition | undefined {
-    if (root.left < content.width)
+    if ((this.useParentWidth && root.left < root.width) || root.left < content.width)
       return undefined;
 
     return {
       top: `${root.top}px`,
-      right: 'unset',
+      right: this.useParentWidth ? `${window.innerWidth - root.right + root.width}px` : 'unset',
       bottom: 'unset',
-      left: `${root.left - content.width}px`,
+      left: this.useParentWidth ? `${root.left - root.width}px` : `${root.left - content.width}px`,
     };
   }
 }

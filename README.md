@@ -70,7 +70,7 @@ _should be publicly available at: 01.08.2024_
   - one db connection per request
   - limit max requests handled at the same time (maybe make "getConnection" blocking if no "slot" is open)
 - [x] one db transaction per request, if one statement fails rollback all changes from request
-- [ ] fix page transitions
+- [x] fix page transitions
   - page WAS positioned absolutely, removing this broke transitions
 - [ ] allow opening dialog in dialog
 - [ ] TODOs all over the project for improvements
@@ -80,7 +80,8 @@ _should be publicly available at: 01.08.2024_
 - [ ] add support for more banks
   - post, migros. NAB, UBS, ZKB, CS
 - [x] fronted: handle unauthorized response (send to login)
-- [ ] frontend: generalize zindex and debounce times
+- [x] frontend: generalize zindex 
+- [ ] frontend: and debounce times
 
 (GPT finance adviser)
 - create a custom GPT that knows how SwissBudget works and knows how the datastructures is built
