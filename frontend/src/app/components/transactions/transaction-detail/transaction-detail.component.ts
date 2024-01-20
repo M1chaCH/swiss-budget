@@ -53,7 +53,7 @@ export class TransactionDetailComponent implements OnInit {
     this.dialogService.openDialog(ResolveTagConflictDialogComponent, this.transaction);
   }
 
-  private saveTransaction(): Observable<void> {
+  private saveTransaction(): Observable<unknown> {
     this.transaction.alias = this.aliasInput.value;
     this.transaction.note = this.noteInput.value;
     return this.transactionService.saveTransaction(this.transaction);

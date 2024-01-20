@@ -12,25 +12,40 @@
                               [multiple]="true"></app-tag-selector>
         </div>
         <div id="from">
-            <app-date-picker #fromDatePicker [control]="fromControl" height="60px" hint="Search from"></app-date-picker>
+            <app-date-picker #fromDatePicker
+                             [control]="fromControl"
+                             height="60px"
+                             hint="Search from"></app-date-picker>
         </div>
         <div id="to">
-            <app-date-picker #toDatePicker [control]="toControl" height="60px" hint="Search until"></app-date-picker>
+            <app-date-picker #toDatePicker
+                             [control]="toControl"
+                             height="60px"
+                             hint="Search until"></app-date-picker>
         </div>
         <div id="quickDates">
-            <app-button (onClick)="filterToday()" design="secondary" height="30px">
+            <app-button (onClick)="filterToday()"
+                        design="secondary"
+                        height="30px">
                 Today
             </app-button>
-            <app-button (onClick)="filterLastWeek()" design="secondary" height="30px">
+            <app-button (onClick)="filterLastWeek()"
+                        design="secondary"
+                        height="30px">
                 Week
             </app-button>
         </div>
         <div id="needAttention">
-            <app-checkbox [value]="needAttentionControl" label="Need attention"></app-checkbox>
+            <app-checkbox [value]="needAttentionControl"
+                          label="Need attention"></app-checkbox>
         </div>
         <div></div>
         <div id="resetButton">
-            <app-button (onClick)="resetFilter()" design="primary" height="60px" rightIcon="restart_alt" width="180px">
+            <app-button (onClick)="resetFilter()"
+                        design="primary"
+                        height="60px"
+                        rightIcon="restart_alt"
+                        width="180px">
                 Reset
             </app-button>
         </div>
@@ -39,6 +54,6 @@
         <div class="icon">
             <span class="material-symbols-rounded">priority_high</span>
         </div>
-        <span class="smaller-text">Either couldn't assign a tag or found multiple tags and you need to decide.</span>
+        <span class="smaller-text"> => Either couldn't assign a tag or found multiple tags and you need to decide.</span>
     </div>
 </div>

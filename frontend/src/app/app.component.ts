@@ -1,9 +1,9 @@
 import {Component, OnInit} from '@angular/core';
 import {NavigationStart, Router} from '@angular/router';
 import {fadePageTransition} from './animations';
-import {AuthService} from './services/auth.service';
 import {PageStateService} from './services/page-state.service';
 import {ThemeService} from './services/theme.service';
+import {TransactionService} from './services/transaction.service';
 
 @Component({
              selector: 'app-root',
@@ -17,7 +17,7 @@ export class AppComponent implements OnInit {
   constructor(
     private router: Router,
     private theme: ThemeService,
-    public auth: AuthService,
+    private transactions: TransactionService,
     public pageService: PageStateService,
   ) {
     this.theme.init();
@@ -28,5 +28,7 @@ export class AppComponent implements OnInit {
       if (e instanceof NavigationStart)
         this.currentRoute = e.url;
     });
+
+    this.transactions.importTransactionsWhenLogin();
   }
 }

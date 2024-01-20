@@ -6,13 +6,13 @@ import {BrowserModule} from '@angular/platform-browser';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {CookieService} from 'ngx-cookie-service';
 import {ContentReplacerDirective} from './animations';
-
 import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
+import {BannerOutletComponent} from './components/framework/banner/banner-outlet/banner-outlet.component';
 import {ConfirmDialogComponent} from './components/framework/dialog/confirm-dialog/confirm-dialog.component';
 import {DialogHostDirective} from './components/framework/dialog/dialog-host.directive';
+import {DialogOutletComponent} from './components/framework/dialog/dialog-outlet.component';
 import {DialogContentWrapperComponent} from './components/framework/dialog/dialog-wrapper/dialog-content-wrapper.component';
-import {DialogComponent} from './components/framework/dialog/dialog.component';
 import {DisplayErrorDialogComponent} from './components/framework/display-error/display-error-dialog.component';
 import {ExpansionListToggleComponent} from './components/framework/expansion-panel/expansion-panel-toggle/expansion-list-toggle.component';
 import {ExpansionPanelComponent} from './components/framework/expansion-panel/expansion-panel.component';
@@ -33,7 +33,6 @@ import {StepsPanelComponent} from './components/framework/steps-panel/steps-pane
 import {HelpDialogComponent} from './components/help/help-dialog.component';
 import {HeaderComponent} from './components/layout/header/header.component';
 import {NavigationTreeComponent} from './components/layout/navigation-tree/navigation-tree.component';
-import {NavigationComponent} from './components/layout/navigation/navigation.component';
 import {LoginFormComponent} from './components/login/login-form/login-form.component';
 import {WelcomeComponent} from './components/login/welcome/welcome.component';
 import {AssignTagDialogComponent} from './components/tags/assign-tag-dialog/assign-tag-dialog.component';
@@ -48,7 +47,7 @@ import {TagComponent} from './components/tags/tag/tag.component';
 import {StyledAmountComponent} from './components/transactions/styled-amount/styled-amount.component';
 import {TransactionDetailComponent} from './components/transactions/transaction-detail/transaction-detail.component';
 import {TransactionFilterComponent} from './components/transactions/transaction-filter/transaction-filter.component';
-import {TransactionImporterComponent} from './components/transactions/transaction-importer/transaction-importer.component';
+import {TransactionImportBannerComponent} from './components/transactions/transaction-importer/transaction-import-banner.component';
 import {TransactionPreviewComponent} from './components/transactions/transaction-preview/transaction-preview.component';
 import {TransactionComponent} from './components/transactions/transaction/transaction.component';
 import {BudgetPageComponent} from './pages/budget.page/budget.page.component';
@@ -75,7 +74,7 @@ import {AuthTokenInterceptor} from './services/auth.service';
               TextInputComponent,
               StepsPanelComponent,
               PanelStepDirective,
-              DialogComponent,
+              DialogOutletComponent,
               HelpDialogComponent,
               TextAreaComponent,
               SelectComponent,
@@ -87,7 +86,7 @@ import {AuthTokenInterceptor} from './services/auth.service';
               ContentReplacerDirective,
               TransactionPageComponent,
               TransactionComponent,
-              TransactionImporterComponent,
+              TransactionImportBannerComponent,
               ExpansionPanelComponent,
               TransactionDetailComponent,
               TagIconComponent,
@@ -117,9 +116,9 @@ import {AuthTokenInterceptor} from './services/auth.service';
               TagColorSelectorComponent,
               TagIconSelectorComponent,
               HeaderComponent,
-              NavigationComponent,
               WelcomeComponent,
               NavigationTreeComponent,
+              BannerOutletComponent,
             ],
             imports: [
               BrowserModule,

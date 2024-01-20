@@ -4,6 +4,7 @@ import ch.michu.tech.swissbudget.app.dto.transaction.TransactionDto;
 import ch.michu.tech.swissbudget.app.provider.TransactionProvider;
 import ch.michu.tech.swissbudget.app.transaction.TransactionImporter;
 import ch.michu.tech.swissbudget.framework.data.RequestSupport;
+import ch.michu.tech.swissbudget.framework.dto.PaginationResultDto;
 import ch.michu.tech.swissbudget.framework.error.exception.ResourceNotFoundException;
 import ch.michu.tech.swissbudget.generated.jooq.tables.records.TransactionRecord;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -27,25 +28,40 @@ public class TransactionService {
         this.provider = provider;
     }
 
-    public List<TransactionDto> getTransactions(String query, UUID[] tagIds, LocalDate from, LocalDate to, boolean needAttention,
-        int page) {
+    public PaginationResultDto<TransactionDto> getTransactions(
+        String query, UUID[] tagIds, LocalDate from, LocalDate to, boolean needAttention, int page
+    ) {
         final RequestSupport support = supportProvider.get();
-        return provider.selectTransactionsWithDependenciesWithFilterWithPageAsDto(support.db(), support.getUserIdOrThrow(),
-            query, tagIds, from, to, needAttention, page);
+        List<TransactionDto> data = provider.selectTransactionsWithDependenciesWithFilterWithPageAsDto(support.db(),
+                                                                                                       support.getUserIdOrThrow(),
+                                                                                                       query,
+                                                                                                       tagIds,
+                                                                                                       from,
+                                                                                                       to,
+                                                                                                       needAttention,
+                                                                                                       page);
+        long count = provider.countTransactions(support.db(), support.getUserIdOrThrow(), query, tagIds, from, to, needAttention);
+
+        return new PaginationResultDto<>(provider.getPageSize(), count, data);
     }
 
-    public List<TransactionDto> importTransactions() {
+    /**
+     * imports all new transactions for a user.
+     *
+     * @return true: if some transactions were imported
+     */
+    public boolean importTransactions() {
         final RequestSupport support = supportProvider.get();
-        return importer.importTransactions(support.db(), support.getUserIdOrThrow()).stream().map(TransactionDto::new).toList();
+        return !importer.importTransactions(support.db(), support.getUserIdOrThrow()).isEmpty();
     }
 
     public void updateTransactionUserInput(TransactionDto toUpdate) {
         final RequestSupport support = supportProvider.get();
         TransactionRecord transaction = provider.selectTransaction(support.db(), support.getUserIdOrThrow(), toUpdate.getId())
-            .orElseThrow(() -> new ResourceNotFoundException("transaction", toUpdate.getId()));
+                                                .orElseThrow(() -> new ResourceNotFoundException("transaction", toUpdate.getId()));
 
         transaction.setAlias(toUpdate.getAlias());
         transaction.setNote(toUpdate.getNote());
-        provider.updateTransactionUserInput(support.db(), transaction);
+        provider.updateTransactionUserInput(transaction);
     }
 }

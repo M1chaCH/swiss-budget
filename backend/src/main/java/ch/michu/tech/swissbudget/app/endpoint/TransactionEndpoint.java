@@ -12,6 +12,7 @@ import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
@@ -58,17 +59,17 @@ public class TransactionEndpoint {
 
         UUID[] tags = new UUID[0];
         if (!tagIds.isBlank()) {
-            tags = ParsingUtils.toUUIDArray(Arrays.stream(tagIds.split(";")).filter(s -> !s.isBlank()).toArray());
+            tags = ParsingUtils.toUUIDArray(Arrays.stream(tagIds.split(",")).filter(s -> !s.isBlank()).toArray());
         }
 
         return Response.status(Status.OK).entity(service.getTransactions(query, tags, from, to, needAttention, page)).build();
     }
 
-    @GET
+    @POST
     @Path("/import")
-    @Produces(MediaType.APPLICATION_JSON)
     public Response getImportTransactions() {
-        return Response.status(Status.OK).entity(service.importTransactions()).build();
+        Status status = service.importTransactions() ? Status.OK : Status.NO_CONTENT;
+        return Response.status(status).build();
     }
 
     @PUT

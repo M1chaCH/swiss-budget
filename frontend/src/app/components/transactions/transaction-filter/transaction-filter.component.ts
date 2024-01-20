@@ -1,9 +1,9 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import {FormControl} from '@angular/forms';
 import * as moment from 'moment/moment';
 import {BehaviorSubject, debounceTime, filter, merge, of, skip, switchMap} from 'rxjs';
 import {ApiService} from '../../../services/api.service';
-import {TransactionService} from '../../../services/transaction.service';
+import {TransactionRequest} from '../../../services/transaction.service';
 import {DatePickerComponent} from '../../framework/form/date-picker/date-picker.component';
 
 @Component({
@@ -13,6 +13,7 @@ import {DatePickerComponent} from '../../framework/form/date-picker/date-picker.
            })
 export class TransactionFilterComponent implements OnInit {
 
+  @Input() transactionRequest!: TransactionRequest;
   @ViewChild('fromDatePicker', {static: true}) fromDatePicker!: DatePickerComponent;
   @ViewChild('toDatePicker', {static: true}) toDatePicker!: DatePickerComponent;
   queryControl: FormControl;
@@ -20,9 +21,7 @@ export class TransactionFilterComponent implements OnInit {
   toControl: FormControl<moment.Moment | null>;
   needAttentionControl: FormControl;
 
-  constructor(
-    private transactionService: TransactionService,
-  ) {
+  constructor() {
     this.queryControl = new FormControl('');
     this._selectedTags = new BehaviorSubject<string[]>([]);
     this.fromControl = new FormControl(null);
@@ -41,7 +40,7 @@ export class TransactionFilterComponent implements OnInit {
   }
 
   ngOnInit() {
-    const currentFilter = this.transactionService.currentFilter;
+    const currentFilter = this.transactionRequest.currentFilter;
     if (currentFilter !== undefined) {
       this.queryControl.setValue(currentFilter.query);
       this.fromControl.setValue(currentFilter.from ?? null);
@@ -49,7 +48,7 @@ export class TransactionFilterComponent implements OnInit {
       this.toControl.setValue(currentFilter.to ?? null);
       this.toDatePicker.setValue(currentFilter.to ?? null);
       this.needAttentionControl.setValue(currentFilter.needAttention);
-      this.selectedTags = currentFilter.tags ?? [];
+      this.selectedTags = currentFilter.tagIds ?? [];
     }
 
     merge(
@@ -62,7 +61,7 @@ export class TransactionFilterComponent implements OnInit {
       skip(1),
       debounceTime(500),
       filter(() => {
-        const lastValues = this.transactionService.currentFilter;
+        const lastValues = this.transactionRequest.currentFilter;
         if (lastValues === undefined)
           return true;
 
@@ -76,7 +75,7 @@ export class TransactionFilterComponent implements OnInit {
           || fromMoment?.format(ApiService.API_DATE_FORMAT) !== lastValues.from?.format(ApiService.API_DATE_FORMAT)
           || toMoment?.format(ApiService.API_DATE_FORMAT) !== lastValues.to?.format(ApiService.API_DATE_FORMAT)
           || needAttention !== lastValues.needAttention
-          || JSON.stringify(tagIds) !== JSON.stringify(lastValues.tags);
+          || JSON.stringify(tagIds) !== JSON.stringify(lastValues.tagIds);
       }),
       switchMap(() => {
         const fromMoment = this.fromControl.valid ? this.fromControl.value ?? undefined : undefined;
@@ -84,7 +83,14 @@ export class TransactionFilterComponent implements OnInit {
         const query = this.queryControl.value;
         const tagIds = [...this.selectedTags];
 
-        this.transactionService.reloadFilteredTransactions(query, tagIds, fromMoment, toMoment, this.needAttentionControl.value);
+        console.log('updating', tagIds);
+        this.transactionRequest.updateFilter({
+                                               from: fromMoment,
+                                               to: toMoment,
+                                               query: query,
+                                               tagIds: tagIds,
+                                               needAttention: this.needAttentionControl.value ?? undefined,
+                                             });
         return of();
       }),
     ).subscribe();

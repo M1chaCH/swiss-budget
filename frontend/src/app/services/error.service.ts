@@ -57,6 +57,8 @@ export class ErrorService {
         return `Please try again later or contact admin. Reason: ${error.args.cause}: ${error.args.message}`;
       case 'KeywordAlreadyExistsException':
         return `Keyword '${error.args.keyword}' already exists in tag: '${error.args.tag}'`;
+      case 'LoginFromNewClientException':
+        return 'An other client just logged in to this account. If this wasn\'t you, please contact the admin and change your password immediately.';
       default:
         return 'Failed, please contact admin.';
     }

@@ -1,13 +1,15 @@
-import {Component, EventEmitter, Input, OnInit, Output} from "@angular/core";
-import {firstValueFrom, map, Observable} from "rxjs";
-import {TagDto} from "../../../dtos/TransactionDtos";
-import {TagService} from "../../../services/tag.service";
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {UntilDestroy, untilDestroyed} from '@ngneat/until-destroy';
+import {firstValueFrom, map, Observable} from 'rxjs';
+import {TagDto} from '../../../dtos/TransactionDtos';
+import {TagService} from '../../../services/tag.service';
 
 @Component({
-  selector: "app-tag-selector",
-  templateUrl: "./tag-selector.component.html",
-  styleUrls: ["./tag-selector.component.scss"]
-})
+             selector: 'app-tag-selector',
+             templateUrl: './tag-selector.component.html',
+             styleUrls: ['./tag-selector.component.scss'],
+           })
+@UntilDestroy()
 export class TagSelectorComponent implements OnInit {
 
   @Input() multiple: boolean = false;
@@ -18,14 +20,15 @@ export class TagSelectorComponent implements OnInit {
   @Output() selectedTagIdsChange = new EventEmitter<string[]>();
 
   constructor(
-      private tagService: TagService,
+    private tagService: TagService,
   ) {
   }
 
   async ngOnInit() {
     if (!this.allTags$)
-      this.allTags$ = this.tagService.get$().pipe(
-          map(tags => tags?.filter(t => !t.defaultTag)),
+      this.allTags$ = this.tagService.get().result$.pipe(
+        untilDestroyed(this),
+        map(tags => tags?.filter(t => !t.defaultTag)),
       );
 
     if (!this.selectedTags && !this.selectedTagIds) {

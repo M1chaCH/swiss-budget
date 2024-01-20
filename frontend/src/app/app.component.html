@@ -2,30 +2,27 @@
      class="root">
     @if (pageState.fullscreen) {
         <main [@routeChangeTrigger]="currentRoute">
-            <router-outlet></router-outlet>
+            <router-outlet/>
         </main>
     } @else {
         <div class="header-container">
             <app-header/>
         </div>
-        <div class="navigation-container"
-             [style.width]="pageState.sideMenuOpen ? 'var(--nav-open-width)' : '0px'">
-            <app-navigation-tree/>
-        </div>
         <div class="medium-menu-backdrop"
              *ngIf="pageState.sideMenuOpen"
              (click)="pageService.setSideMenuOpen(false)">
         </div>
+        <div class="navigation-container"
+             [style.width]="pageState.sideMenuOpen ? 'var(--nav-open-width)' : '0px'">
+            <app-navigation-tree/>
+        </div>
         <main [@routeChangeTrigger]="currentRoute"
               [style.margin-left]="pageState.sideMenuOpen && pageState.useLargeMenu ? 'var(--nav-open-width)' : '0px'"
               class="main-page-container">
-            <router-outlet></router-outlet>
+            <router-outlet/>
         </main>
     }
 </div>
-<ng-container *ngIf="auth.isLoggedIn$ | async as loggedIn">
-    <!--    TODO create global "banner" functionality -->
-    <app-transaction-importer *ngIf="loggedIn === 'in'"></app-transaction-importer>
-</ng-container>
-<app-dialog></app-dialog>
-<app-field-extensions></app-field-extensions>
+<app-banner-outlet/>
+<app-dialog-outlet/>
+<app-field-extensions/>

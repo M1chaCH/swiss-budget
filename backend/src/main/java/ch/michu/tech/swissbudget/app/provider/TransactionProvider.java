@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import lombok.Getter;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
@@ -44,8 +45,6 @@ import org.jooq.SelectConditionStep;
 import org.jooq.SelectLimitStep;
 import org.jooq.impl.UpdatableRecordImpl;
 
-// TODO cache for improved read times
-// TODO write tests with demo data
 @ApplicationScoped
 public class TransactionProvider implements BaseRecordProvider<TransactionRecord, UUID> {
 
@@ -55,11 +54,12 @@ public class TransactionProvider implements BaseRecordProvider<TransactionRecord
     protected final TagProvider tagProvider;
     protected final KeywordProvider keywordProvider;
     protected final TransactionTagDuplicateProvider transactionTagDuplicateProvider;
+    @Getter
     protected final int pageSize;
 
     @Inject
     public TransactionProvider(
-        @ConfigProperty(name = "db.limit.page.size", defaultValue = "100") int pageSize,
+        @ConfigProperty(name = "db.limit.page.size", defaultValue = "50") int pageSize,
         TransactionMailProvider transactionMailProvider,
         TagProvider tagProvider,
         KeywordProvider keywordProvider,
@@ -70,6 +70,68 @@ public class TransactionProvider implements BaseRecordProvider<TransactionRecord
         this.keywordProvider = keywordProvider;
         this.transactionTagDuplicateProvider = transactionTagDuplicateProvider;
         this.pageSize = pageSize;
+    }
+
+    @LoggedStatement
+    public long countTransactions(
+        DSLContext db, UUID userId,
+        String query,
+        UUID[] tagIds,
+        LocalDate from,
+        LocalDate to,
+        boolean needAttention
+    ) {
+        SelectConditionStep<?> conditions = db.select(TRANSACTION.ID)
+                                              .from(TRANSACTION)
+                                              .where(TRANSACTION.USER_ID.eq(userId));
+        conditions = buildTransactionsFilterCondition(conditions, query, tagIds, from, to, needAttention);
+        return conditions.fetch().size();
+    }
+
+    protected <T extends Record> SelectConditionStep<T> buildTransactionsFilterCondition(
+        SelectConditionStep<T> step,
+        String query,
+        UUID[] tagIds,
+        LocalDate from,
+        LocalDate to,
+        boolean needAttention
+    ) {
+        final LocalDate tomorrow = localDateNow().plusDays(1);
+
+        if (query != null && !query.isBlank()) {
+            if (!query.startsWith("%")) {
+                query = "%" + query;
+            }
+            if (!query.endsWith("%")) {
+                query += "%";
+            }
+
+            step = step.and(TRANSACTION.ALIAS.likeIgnoreCase(query))
+                       .or(TRANSACTION.NOTE.likeIgnoreCase(query))
+                       .or(TRANSACTION.RECEIVER.likeIgnoreCase(query));
+        }
+
+        if (needAttention) {
+            step = step.and(TRANSACTION.NEED_USER_ATTENTION.eq(true));
+        }
+
+        if (tagIds != null && tagIds.length > 0) {
+            Condition tagsCondition = TRANSACTION.TAG_ID.eq(tagIds[0]);
+            for (int i = 1; i < tagIds.length; i++) {
+                tagsCondition = tagsCondition.or(TRANSACTION.TAG_ID.eq(tagIds[i]));
+            }
+            step = step.and(tagsCondition);
+        }
+
+        if (from != null && from.isBefore(tomorrow)) {
+            step = step.and(TRANSACTION.TRANSACTION_DATE.ge(from));
+        }
+
+        if (to != null && to.isBefore(tomorrow)) {
+            step = step.and(TRANSACTION.TRANSACTION_DATE.le(to));
+        }
+
+        return step;
     }
 
     @LoggedStatement
@@ -197,7 +259,6 @@ public class TransactionProvider implements BaseRecordProvider<TransactionRecord
         boolean needAttention,
         int page
     ) {
-        LocalDate tomorrow = localDateNow().plusDays(1);
         SelectConditionStep<?> conditions = db
                                                 .select(TRANSACTION.asterisk(), TAG.asterisk(), KEYWORD.asterisk(),
                                                         count(TRANSACTION_TAG_DUPLICATE.ID).as(DUPLICATES_COUNT_COLUMN))
@@ -210,41 +271,7 @@ public class TransactionProvider implements BaseRecordProvider<TransactionRecord
                                                 .on(TRANSACTION.ID.eq(TRANSACTION_TAG_DUPLICATE.TRANSACTION_ID))
                                                 .where(TRANSACTION.USER_ID.eq(userId));
 
-        if (query != null && !query.isBlank()) {
-            if (!query.startsWith("%")) {
-                query = "%" + query;
-            }
-            if (!query.endsWith("%")) {
-                query += "%";
-            }
-
-            conditions = conditions
-                             .and(TRANSACTION.ALIAS.likeIgnoreCase(query)
-                                                   .or(TRANSACTION.NOTE.likeIgnoreCase(query)
-                                                                       .or(TRANSACTION.RECEIVER.likeIgnoreCase(query))));
-        }
-
-        if (needAttention) {
-            conditions = conditions.and(TRANSACTION.NEED_USER_ATTENTION.eq(true));
-        }
-
-        if (tagIds != null && tagIds.length > 0) {
-            Condition tagsCondition = TRANSACTION.TAG_ID.eq(tagIds[0]);
-            for (int i = 1; i < tagIds.length; i++) {
-                tagsCondition = tagsCondition.or(TRANSACTION.TAG_ID.eq(tagIds[i]));
-            }
-            conditions = conditions.and(tagsCondition);
-        }
-
-        if (from != null && from.isBefore(tomorrow)) {
-            conditions = conditions.and(TRANSACTION.TRANSACTION_DATE.ge(from));
-        }
-
-        if (to != null && to.isBefore(tomorrow)) {
-            conditions = conditions.and(TRANSACTION.TRANSACTION_DATE.le(to));
-        }
-
-        SelectLimitStep<?> limitStep = conditions
+        SelectLimitStep<?> limitStep = buildTransactionsFilterCondition(conditions, query, tagIds, from, to, needAttention)
                                            .groupBy(TRANSACTION.ID, TAG.ID, KEYWORD.ID)
                                            .orderBy(TRANSACTION.TRANSACTION_DATE.desc());
 
@@ -388,7 +415,7 @@ public class TransactionProvider implements BaseRecordProvider<TransactionRecord
     }
 
     @LoggedStatement
-    public void updateTransactionUserInput(DSLContext db, TransactionRecord transaction) {
+    public void updateTransactionUserInput(TransactionRecord transaction) {
         if (transaction.get(TRANSACTION.TAG_ID) == null) {
             transaction.store(TRANSACTION.ALIAS, TRANSACTION.NOTE);
         } else if (transaction.get(TRANSACTION.MATCHING_KEYWORD_ID) == null) {

@@ -2,9 +2,11 @@
      pageRoute="home"
      pageTitle="Home">
     <p>home.page works!</p>
-    <button (click)="reset()"
-            class="icon-button">
-        reset
+    <button (click)="reset()">
+        invalidate tag cache
+    </button>
+    <button (click)="resetTransaction()">
+        invalidate transaction cache
     </button>
 
     <div style="height: 300vh;">

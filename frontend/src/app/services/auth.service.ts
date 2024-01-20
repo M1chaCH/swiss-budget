@@ -1,33 +1,33 @@
-import {HttpEvent, HttpHandler, HttpInterceptor, HttpRequest} from "@angular/common/http";
-import {inject, Injectable} from "@angular/core";
-import {ActivatedRouteSnapshot, CanActivateFn, Router, RouterStateSnapshot, UrlTree} from "@angular/router";
-import * as moment from "moment";
-import {CookieService} from "ngx-cookie-service";
-import {BehaviorSubject, catchError, concatMap, Observable, of, tap} from "rxjs";
-import {environment} from "../../environments/environment";
-import {pages} from "../app-routing.module";
-import {ErrorDto} from "../dtos/ErrorDto";
-import {MessageDto} from "../dtos/MessageDto";
-import {ApiService, endpoint} from "./api.service";
-import {ErrorService} from "./error.service";
+import {HttpEvent, HttpHandler, HttpInterceptor, HttpRequest} from '@angular/common/http';
+import {inject, Injectable} from '@angular/core';
+import {ActivatedRouteSnapshot, CanActivateFn, Router, RouterStateSnapshot, UrlTree} from '@angular/router';
+import * as moment from 'moment';
+import {CookieService} from 'ngx-cookie-service';
+import {BehaviorSubject, catchError, concatMap, first, firstValueFrom, Observable, of, tap} from 'rxjs';
+import {environment} from '../../environments/environment';
+import {pages} from '../app-routing.module';
+import {ErrorDto} from '../dtos/ErrorDto';
+import {MessageDto} from '../dtos/MessageDto';
+import {ApiService, endpoint} from './api.service';
+import {ErrorService} from './error.service';
 
-export type LoginState = "in" | "out" | "loading";
+export type LoginState = 'in' | 'out' | 'loading';
 
 @Injectable({
-  providedIn: "root",
-})
+              providedIn: 'root',
+            })
 export class AuthService {
-  static readonly AUTH_TOKEN = "Auth-Token";
-  static readonly MFA_PROCESS_ID = "mfa";
-  static readonly USER_ID = "id";
+  static readonly AUTH_TOKEN = 'Auth-Token';
+  static readonly MFA_PROCESS_ID = 'mfa';
+  static readonly USER_ID = 'id';
 
-  private loginSubject: BehaviorSubject<LoginState> = new BehaviorSubject<LoginState>("loading");
+  private loginSubject: BehaviorSubject<LoginState> = new BehaviorSubject<LoginState>('loading');
   public isLoggedIn$: Observable<LoginState> = this.loginSubject.asObservable();
 
   constructor(
-      private api: ApiService,
-      private router: Router,
-      private tokenService: TokenService,
+    private api: ApiService,
+    private router: Router,
+    private tokenService: TokenService,
   ) {
     this.loadLoginState();
   }
@@ -36,98 +36,104 @@ export class AuthService {
     this.tokenService.removeToken();
     return this.api.post<MessageDto | ErrorDto>(endpoint.AUTH, {
       credentials: {
-        mail, password
-      }, stay
+        mail, password,
+      }, stay,
     }).pipe(
-        tap(response => {
-          const token: string | undefined = (response as MessageDto).message;
-          if (token) {
-            this.tokenService.token = token;
-            this.loginSubject.next("in");
-            this.router.navigate([pages.HOME]).then();
-          } else {
-            const newDeviceError: ErrorDto = response as ErrorDto;
-            if (newDeviceError.errorKey === "AgentNotRegisteredException") {
-              const processId = newDeviceError.args.processId;
-              const userId = newDeviceError.args.userId;
-              localStorage.setItem(AuthService.MFA_PROCESS_ID, processId);
-              localStorage.setItem(AuthService.USER_ID, userId);
-              this.router.navigate([pages.LOGIN, pages.login.MFA]).then();
-            }
+      tap(response => {
+        const token: string | undefined = (response as MessageDto).message;
+        if (token) {
+          this.tokenService.token = token;
+          this.loginSubject.next('in');
+          this.router.navigate([pages.HOME]).then();
+        } else {
+          const newDeviceError: ErrorDto = response as ErrorDto;
+          if (newDeviceError.errorKey === 'AgentNotRegisteredException') {
+            const processId = newDeviceError.args.processId;
+            const userId = newDeviceError.args.userId;
+            localStorage.setItem(AuthService.MFA_PROCESS_ID, processId);
+            localStorage.setItem(AuthService.USER_ID, userId);
+            this.router.navigate([pages.LOGIN, pages.login.MFA]).then();
           }
-        }),
-        concatMap(_ => of("")),
-        catchError(err => {
-          this.loginSubject.next("out");
-          return of(ErrorService.parseErrorMessage(err.error));
-        }),
+        }
+      }),
+      concatMap(_ => of('')),
+      catchError(err => {
+        this.loginSubject.next('out');
+        return of(ErrorService.parseErrorMessage(err.error));
+      }),
     );
   }
 
   logout() {
-    this.loginSubject.next("out");
+    this.loginSubject.next('out');
     this.tokenService.removeToken();
     location.reload();
   }
 
   validateMfaToken(processId: string, userId: string, code: number): Observable<boolean> {
     return this.api.post<MessageDto>(endpoint.MFA, {
-      processId, userId, code
+      processId, userId, code,
     }).pipe(
-        tap(dto => {
-          this.tokenService.token = dto.message;
-          localStorage.removeItem(AuthService.MFA_PROCESS_ID);
-          this.loginSubject.next("in");
-          this.router.navigate([pages.HOME]).then();
-        }),
-        concatMap(_ => of(true)),
-        catchError(_ => of(false))
+      tap(dto => {
+        this.tokenService.token = dto.message;
+        localStorage.removeItem(AuthService.MFA_PROCESS_ID);
+        this.loginSubject.next('in');
+        this.router.navigate([pages.HOME]).then();
+      }),
+      concatMap(_ => of(true)),
+      catchError(_ => of(false)),
     );
+  }
+
+  whenLoggedIn(): Promise<LoginState> {
+    return firstValueFrom(this.isLoggedIn$.pipe(first(v => v === 'in')));
   }
 
   private loadLoginState(): void {
     if (this.tokenService.hasToken()) {
       this.api.getRaw(endpoint.AUTH).subscribe({
-        next: _ => this.loginSubject.next("in"),
-        error: _ => {
-          this.tokenService.removeToken();
-          this.loginSubject.next("out");
-        }
-      });
+                                                 next: _ => this.loginSubject.next('in'),
+                                                 error: _ => {
+                                                   this.tokenService.removeToken();
+                                                   this.loginSubject.next('out');
+                                                 },
+                                               });
     } else {
-      this.loginSubject.next("out");
+      this.loginSubject.next('out');
     }
   }
 }
 
 @Injectable({
-  providedIn: "root",
-})
+              providedIn: 'root',
+            })
 export class AuthTokenInterceptor implements HttpInterceptor {
 
   constructor(
-      private tokenService: TokenService,
+    private tokenService: TokenService,
   ) {
   }
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     const requestWithHeaders = req.clone({
-      setHeaders: {[AuthService.AUTH_TOKEN]: this.tokenService.token},
-    });
+                                           setHeaders: {[AuthService.AUTH_TOKEN]: this.tokenService.token},
+                                         });
     return next.handle(requestWithHeaders);
   }
 }
 
-export const authenticationGuard: CanActivateFn = (_route: ActivatedRouteSnapshot, _state: RouterStateSnapshot): Observable<UrlTree | boolean> => {
+export const authenticationGuard: CanActivateFn = (_route: ActivatedRouteSnapshot,
+                                                   _state: RouterStateSnapshot,
+): Observable<UrlTree | boolean> => {
   const authService = inject(AuthService);
   const router = inject(Router);
 
   return new Observable(obs => {
     authService.isLoggedIn$.subscribe(loggedIn => {
-      if (loggedIn === "loading")
+      if (loggedIn === 'loading')
         return;
 
-      if (loggedIn === "in")
+      if (loggedIn === 'in')
         obs.next(true);
       else
         obs.next(router.parseUrl(pages.LOGIN));
@@ -136,11 +142,11 @@ export const authenticationGuard: CanActivateFn = (_route: ActivatedRouteSnapsho
 };
 
 @Injectable({
-  providedIn: "root",
-})
+              providedIn: 'root',
+            })
 export class TokenService {
   constructor(
-      private cookie: CookieService,
+    private cookie: CookieService,
   ) {
   }
 
@@ -153,8 +159,8 @@ export class TokenService {
   }
 
   set token(token: string) {
-    let expires = moment(new Date()).add(300, "days");
-    this.cookie.set(AuthService.AUTH_TOKEN, token, expires.toDate(), "/", environment.DOMAIN, true, "Strict");
+    let expires = moment(new Date()).add(300, 'days');
+    this.cookie.set(AuthService.AUTH_TOKEN, token, expires.toDate(), '/', environment.DOMAIN, true, 'Strict');
     this._token = token;
   }
 
@@ -163,6 +169,6 @@ export class TokenService {
   }
 
   removeToken() {
-    this.cookie.delete(AuthService.AUTH_TOKEN, "/", environment.DOMAIN, true, "Strict");
+    this.cookie.delete(AuthService.AUTH_TOKEN, '/', environment.DOMAIN, true, 'Strict');
   }
 }

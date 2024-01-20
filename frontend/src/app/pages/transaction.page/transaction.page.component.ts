@@ -1,9 +1,9 @@
 import {ChangeDetectionStrategy, Component, ElementRef, ViewChild} from '@angular/core';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import * as moment from 'moment';
-import {map, Observable, tap} from 'rxjs';
+import {map, Observable} from 'rxjs';
 import {TransactionDto} from '../../dtos/TransactionDtos';
-import {TransactionService} from '../../services/transaction.service';
+import {TransactionRequest, TransactionService} from '../../services/transaction.service';
 import {WindowScrollService} from '../../services/window-scroll.service';
 
 @Component({
@@ -14,22 +14,24 @@ import {WindowScrollService} from '../../services/window-scroll.service';
            })
 export class TransactionPageComponent {
   @ViewChild('loadMore', {static: false}) loadMoreDiv: ElementRef<HTMLDivElement> | undefined;
+  request: TransactionRequest;
   transactions$: Observable<Map<string, TransactionDto[]>>;
-  moreTransactionsAvailable: boolean = true;
+  hasNextPage: boolean = false;
 
-  // FIXME 1. filter (so that 0 results) 2. leave page 3. invalidate data 4. return page 5. never stops loading
   constructor(
-    private service: TransactionService,
+    service: TransactionService,
     scrollService: WindowScrollService,
   ) {
     // expects sorted results from backend
-    this.transactions$ = service.get$().pipe(
-      map(t => this.mapTransactionsToDates(t)),
-      tap(() => this.moreTransactionsAvailable = service.hasNextPage()),
-    );
+    this.request = service.get();
+    this.transactions$ = this.request.result$.pipe(takeUntilDestroyed(), map(r => this.mapTransactionsToDates(r)));
 
     scrollService.scrollChange$.pipe(takeUntilDestroyed())
                  .subscribe(() => this.checkVisibilityOfLoadMore());
+
+    this.request.result$
+        .pipe(takeUntilDestroyed())
+        .subscribe(() => this.hasNextPage = this.request.hasNextPage());
   }
 
   private checkVisibilityOfLoadMore() {
@@ -41,7 +43,7 @@ export class TransactionPageComponent {
     const visiblePercent = Math.max(0, Math.min(rect.bottom, window.innerHeight) - Math.max(rect.top, 0)) / rect.height * 100;
 
     if (visiblePercent > 60) {
-      this.service.loadNextPage();
+      this.request.loadNextPage();
     }
   }
 

@@ -1,6 +1,6 @@
 import {Injectable, TemplateRef, Type} from '@angular/core';
 import {WindowScrollService} from '../../../services/window-scroll.service';
-import {DialogComponent} from './dialog.component';
+import {DialogOutletComponent} from './dialog-outlet.component';
 
 @Injectable({
               providedIn: 'root',
@@ -15,9 +15,9 @@ export class DialogService {
   ) {
   }
 
-  private _dialogHostComponent!: DialogComponent;
+  private _dialogHostComponent!: DialogOutletComponent;
 
-  set dialogHostComponent(component: DialogComponent) {
+  set dialogHostComponent(component: DialogOutletComponent) {
     this._dialogHostComponent = component;
   }
 

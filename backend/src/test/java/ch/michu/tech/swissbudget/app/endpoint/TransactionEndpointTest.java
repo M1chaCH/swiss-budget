@@ -35,7 +35,12 @@ class TransactionEndpointTest extends AppIntegrationTest {
         Response happyResponse = client.createAsRootUser().get();
         String result = happyResponse.readEntity(String.class);
         String expectedTransactionId = data.getGeneratedId("tra_cpm").toString();
-        JSONArray items = new JSONArray(result);
+
+        JSONObject data = new JSONObject(result);
+        assertEquals(3, data.getInt("pageSize"));
+        assertEquals(11, data.getInt("totalSize"));
+
+        JSONArray items = data.getJSONArray("pageData");
         assertEquals(3, items.length());
 
         JSONObject first = items.getJSONObject(0);
@@ -43,14 +48,28 @@ class TransactionEndpointTest extends AppIntegrationTest {
         assertEquals(12.5, first.getDouble("amount"));
 
         Response secondPage = client.createAsRootUser().queryParam("page", "2").get();
-        JSONArray secondPageItems = new JSONArray(secondPage.readEntity(String.class));
+        JSONArray secondPageItems = new JSONObject(secondPage.readEntity(String.class)).getJSONArray("pageData");
         assertEquals(3, secondPageItems.length());
         String expectedDate = DateBuilder.today().addMonths(-1).firstDayOfMonth().addDays(26).formatted("yyyy-MM-dd");
         assertEquals(expectedDate, secondPageItems.getJSONObject(0).getString("transactionDate"));
 
         Response lastPage = client.createAsRootUser().queryParam("page", "4").get();
-        JSONArray lastPageItems = new JSONArray(lastPage.readEntity(String.class));
+        JSONArray lastPageItems = new JSONObject(lastPage.readEntity(String.class)).getJSONArray("pageData");
         assertEquals(2, lastPageItems.length()); // in total, there are 11 data rows (11 % 3 = 2)
+    }
+
+    @Test
+    void getTransactions_happyFilter() {
+        Response queryResponse = client.createAsRootUser().queryParam("query", "auerauftra").get();
+        JSONObject result = new JSONObject(queryResponse.readEntity(String.class));
+        assertEquals(2, result.getInt("totalSize"));
+        assertEquals(2, result.getJSONArray("pageData").length());
+
+        UUID tagId = super.data.getGeneratedId("tag_res");
+        Response tagResponse = client.createAsRootUser().queryParam("tagIds", tagId.toString()).get();
+        JSONObject tagResult = new JSONObject(tagResponse.readEntity(String.class));
+        assertEquals(2, tagResult.getInt("totalSize"));
+        assertEquals(2, tagResult.getJSONArray("pageData").length());
     }
 
     @Test
@@ -74,7 +93,7 @@ class TransactionEndpointTest extends AppIntegrationTest {
         assertEquals(originalTransaction.getExpense(), changedTransaction.getExpense());
         assertEquals(originalTransaction.getAmount(), changedTransaction.getAmount());
         assertEquals(originalTransaction.getTransactionDate().format(DateBuilder.DEFAULT_DATE_FORMATTER),
-            changedTransaction.getTransactionDate().format(DateBuilder.DEFAULT_DATE_FORMATTER));
+                     changedTransaction.getTransactionDate().format(DateBuilder.DEFAULT_DATE_FORMATTER));
         assertEquals("cool note", changedTransaction.getNote());
         assertEquals("test", changedTransaction.getAlias());
 
@@ -95,7 +114,7 @@ class TransactionEndpointTest extends AppIntegrationTest {
 
         Response unauthorized = client.create().withUserAgent("other-agent").loginUser("bak@test.ch").put(transaction);
         assertEquals(Status.NOT_FOUND.getStatusCode(), unauthorized.getStatus());
-        
+
         transaction.setId(UUID.randomUUID());
         Response notFount = client.createAsRootUser().put(transaction);
         assertEquals(Status.NOT_FOUND.getStatusCode(), notFount.getStatus());

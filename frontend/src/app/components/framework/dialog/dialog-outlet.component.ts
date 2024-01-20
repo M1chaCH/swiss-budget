@@ -3,11 +3,11 @@ import {DialogHostDirective} from './dialog-host.directive';
 import {AppDialogOpenItem, DialogService} from './dialog.service';
 
 @Component({
-             selector: 'app-dialog',
-             templateUrl: './dialog.component.html',
-             styleUrls: ['./dialog.component.scss'],
+             selector: 'app-dialog-outlet',
+             templateUrl: './dialog-outlet.component.html',
+             styleUrls: ['./dialog-outlet.component.scss'],
            })
-export class DialogComponent {
+export class DialogOutletComponent {
   open: boolean = false;
   @ViewChild(DialogHostDirective, {static: true}) host!: DialogHostDirective;
 

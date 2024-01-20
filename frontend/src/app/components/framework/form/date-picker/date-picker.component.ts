@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {FormControl, Validators} from '@angular/forms';
 import * as moment from 'moment/moment';
@@ -26,9 +26,7 @@ export class DatePickerComponent implements OnInit {
 
   calendarOpen = false;
 
-  constructor(
-    private changeDetector: ChangeDetectorRef,
-  ) {
+  constructor() {
     this.dayControl = new FormControl<number | null>(null, [Validators.min(1), Validators.max(31)]);
     this.monthControl = new FormControl<number | null>(null, [Validators.min(1), Validators.max(12)]);
     this.yearControl = new FormControl<number | null>(null, [Validators.min(1), Validators.max(9999)]);
