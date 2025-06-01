@@ -1,0 +1,10 @@
+ktor:
+  application:
+    modules:
+      - com.michu_tech.swiss_budget.backend.ApplicationKt.module
+  deployment:
+    port: 8080
+postgres:
+  url: "jdbc:postgresql://localhost:5432/swiss-budget-console"
+  user: postgres
+  password: postgres

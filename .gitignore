@@ -88,3 +88,5 @@ yarn-error.log
 *.iml
 
 microprofile-config.properties
+
+.gradle/

@@ -1,0 +1,36 @@
+<configuration>
+  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>%d{YYYY-MM-dd HH:mm:ss.SSS} [%thread] %X{call-id} %-5level %logger{36} - %msg%n</pattern>
+    </encoder>
+  </appender>
+
+  <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>logs/app.json</file>
+    <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+      <includeContext>true</includeContext>
+      <includeMdc>true</includeMdc>
+      <customFields>{"service":"swiss-budget-backend"}</customFields>
+      <fieldNames>
+        <timestamp>@timestamp</timestamp>
+        <level>level</level>
+        <logger>logger</logger>
+        <message>message</message>
+      </fieldNames>
+    </encoder>
+    <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+      <fileNamePattern>logs/app.%d{yyyy-MM-dd}.%i.json</fileNamePattern>
+      <maxFileSize>5MB</maxFileSize>
+      <maxHistory>5</maxHistory>
+      <totalSizeCap>25MB</totalSizeCap>
+    </rollingPolicy>
+  </appender>
+
+  <root level="INFO">
+    <appender-ref ref="STDOUT"/>
+    <appender-ref ref="FILE"/>
+  </root>
+
+  <logger name="org.eclipse.jetty" level="INFO"/>
+  <logger name="io.netty" level="INFO"/>
+</configuration>

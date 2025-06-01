@@ -1,91 +1,55 @@
 # Swiss Budget 💰🇨🇭 <img src="https://github.com/M1chaCH/swiss-budget/assets/67689103/3aa9b887-93fc-4ebc-82ef-8d1e1b0cdc14" alt="app-icon" height="80px" style="float: right" />
 
-A WebApp (tried making it a IOS App, but I'd rather go back to the old web stack) that lets you
+A WebApp (tried making it an IOS App, but I'd rather go back to the old web stack) that lets you
 manage your money in a breeze. It features automatic transaction import via E-Mail!
 
-
-
-There are a lot of money managers out there, but none of them support automatic transaction import in Switzerland. The reason for this is probably that none of the Banks really support access to transactions from a third party. My solution to this problem sounds a bit sketchy but it works perfectly fine.  
-For the most modern bank accounts you can enable an E-Mail notification for each transaction that occured. I plan on reading these E-Mails and importing them into my money manager. This means that you have to grant my app access to your IMAP Server.
+There are a lot of money managers out there, but none of them support automatic transaction import in Switzerland.
+The reason for this is probably that none of the Banks really support access to transactions from a third party.
+My solution to this problem sounds a bit sketchy, but it works perfectly fine.  
+For the most modern bank accounts you can enable an E-Mail notification for each transaction that occurred.
+I plan on reading these E-Mails and importing them into my money manager.
+This means that you have to grant my app access to your IMAP Server.
 
 ## Progress
-_should be ready for personal use: 28.04.2024_  
-_should be publicly available at: 01.08.2024_
 
-### Transaction Page
-- [x] filter
-  - [x] filter by tags
-  - [x] improve filter UI design
-- [x] transaction list
-  - [x] change tag for transaction
-    - change only for this transaction and automatically remove matching keyword. bulk changes can be made in configuration page.
-  - [ ] implement transaction splitting
-    - you can split a transaction into multiple tags, this way, f.e. cash retrieval can be split into the actual tags. 
-  - [ ] fix / cleanup import behaviour
+This is one of these project ideas that I absolutely want to complete one day but can't find the time to do so.
+Since the first commit in the project, I've changed the fundamental implementation Idea twice.  
+Initially I wanted to create an IOS mobile app. But after some time I got so fed up with SwiftUI that I changed the entire stack.
+I've decided to use the stack that I know best.
+At the time this was a Java Helidon REST server with an Angular frontend.
+Using this stack, I've made quite good progress.
+But again, after some time I've realized that what I am doing is way too close to what I do on my Job.
+And I don't want to work eight hours a day for a company and then continue doing the same thing again in the evenings for another two hours.
+So I've come to the decision to start over for a second time.
+It is a bit sad to just throw away all the progress I've made.
+But I do not only want to have a good finished product but also fun while building it.
+So the current decision is to focus on the business logic and framework work rather than good looks and perfect UX.
+This means I'll build the app as a console application.
 
-### Configuration Page
-- [ ] CRUD for tags, including bulk changes into the past
-  - [x] color & icon picker
-  - [ ] add keyword to tag & apply into past
-- [ ] CURD for keywords, including bulk changes into the past
-  - [ ] move keyword & its transactions to different tag
-- [ ] manage mail notifications
-- [ ] rerun entire transaction -> tag mapping
-- [ ] reset budget data
-- [ ] reset saving data
-- [ ] delete account
-- [ ] exit demo mode 
+### Planned business features
 
-### Home Page
-- [ ] graphs with money spent in budgets
-- [ ] current saldo in favourite budgets 
-- [ ] saving state
-- [ ] last 5 transactions
+- [ ] automatic transaction import
+- [ ] automatic transaction grouping
+- [ ] some mechanism that helps users to save money
+- [ ] some mechanism to track spending
+- [ ] some mechanism to create a budget
 
-### Budget Page
-- [ ] add budget plan for tag
-    - monthly & yearly & custom time span?
-- [ ] view available money for every budget in their timespan
-- [ ] TODO figure out how to handle if too much money has been spent in budget
-  - probably subtract proportionally from other budgets
-    - (spent 100 bucks too much ob budget a -> budget b 100 bucks/month: subtract 66 buchs -> budget c 50 b/m: subtract 33 bucks...)
+### Planned technical features
 
-### Saving Page
-- [ ] define x saving goals
-  - a saving "budget" is also a tag: income & expense will add up to currently saved
-- [ ] see how long it takes until goal achieved
-- [ ] TODO, what if saving is not a transaction?
-  - just subtract from monthly available?
+- Backend: Kotlin Ktor server
+    - Endpoint to execute commands from the "Terminal"
+    - Websocket for Terminal autocomplete suggestions
+- TransactionImporter: Kotlin App
+    - check for new transactions periodically
+- Console App: Kotlin console application
+    - frontend in the native terminal
+- Web Console App: Angular (?)
+    - frontend in browser
+- Native Mobile Apps (?)
+    - frontend as native mobile apps
+- Integrated OAuth with deployment-controller
+- proper observability
 
-### Demo accounts
-- [ ] option to start with demo account
-- [ ] load default data, including user, but user is marked as demo
-- [ ] dont allow certain things
-  - importing transactions
-  - 
-
-### Framework
-- [x] write tests for complicated data manipulations (assign tag / resolve tag conflicts -> they have a lot of edge cases)
-- [x] db connection pooling 
-  - one db connection per request
-  - limit max requests handled at the same time (maybe make "getConnection" blocking if no "slot" is open)
-- [x] one db transaction per request, if one statement fails rollback all changes from request
-- [x] fix page transitions
-  - page WAS positioned absolutely, removing this broke transitions
-- [ ] allow opening dialog in dialog
-- [ ] TODOs all over the project for improvements
-- [ ] dockerize
-- [ ] load test
-- [x] detailed tests that user can't access data he's not allowed to
-- [ ] add support for more banks
-  - post, migros. NAB, UBS, ZKB, CS
-- [x] fronted: handle unauthorized response (send to login)
-- [x] frontend: generalize zindex 
-- [ ] frontend: and debounce times
-
-(GPT finance adviser)
-- create a custom GPT that knows how SwissBudget works and knows how the datastructures is built
-- let the user ask the custom GPT questions about their money
-  - These are my finances, how would you start investing money and how much would you invest
-  - I live in switzerland. currently still in the same house as my parents, how much money do I have to save to be able to move out.
-  - Do you have any tips on how I can spend less money per year?
+Goal: Keep the "frontends" as tiny as possible.
+Try to do as much as possible of the "rendering" in the backend using Ascii.
+Most views will be tables.

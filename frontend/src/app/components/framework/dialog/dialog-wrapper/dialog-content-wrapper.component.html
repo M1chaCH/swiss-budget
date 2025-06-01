@@ -1,9 +1,0 @@
-<div [style.max-width]="width" class="dialog-wrapper">
-    <div class="dialog-wrapper-body">
-        <h2 *ngIf="title">{{title}}</h2>
-        <ng-content></ng-content>
-    </div>
-    <div class="dialog-wrapper-footer">
-        <ng-content select="[dialogFooter]"></ng-content>
-    </div>
-</div>
