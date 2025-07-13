@@ -30,6 +30,24 @@ class CommandParser(private val commandStore: CommandStore) {
 
     private val args = mutableMapOf<String, Any>()
 
+    /**
+     * Takes a string and parses it into a ConcreteCommand.
+     * If no matching command could be found in the Store, then we throw.
+     * <br>
+     * Following are some input examples: <br>
+     *   - tags
+     *   - tags -o date
+     *   - tags -o="date"
+     *   - tags --order date
+     *   - tags --order="date"
+     *   - tag create -n Some Name
+     *   - tag create -n="some name"
+     *   - tag create --name some name
+     *   - tag create --name="some name"
+     *   - tag create -n some name --keywords some,cool , list, with gaps,and,more --split-commands="options with dashes" -en 12.4 --dash-in-option="only-when-wrapped-with-quotes" -d="--coolio--"
+     * @param input the user input for a command.
+     * @throws CommandParsingException whenever something goes wrong
+     */
     fun parse(input: String): ConcreteCommand {
         reset()
 
@@ -179,6 +197,8 @@ class CommandParser(private val commandStore: CommandStore) {
     private fun reset() {
         currentState = CommandParserState.Command
         currentDir = commandStore.getRoot()
+        currentOptionDoubleDash = false
+        currentOptionDefinition = null
         buffer.clear()
     }
 
@@ -227,3 +247,5 @@ class CommandParser(private val commandStore: CommandStore) {
         return value
     }
 }
+
+class CommandParsingException(message: String) : Exception(message)
