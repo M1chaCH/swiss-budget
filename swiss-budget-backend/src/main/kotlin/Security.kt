@@ -9,6 +9,7 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
 
+// TODO implement with deployment-controller
 fun Application.configureSecurity() {
     authentication {
         oauth("auth-oauth-google") {
