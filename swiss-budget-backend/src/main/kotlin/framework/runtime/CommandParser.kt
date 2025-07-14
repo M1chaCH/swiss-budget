@@ -191,7 +191,6 @@ class CommandParser(private val commandStore: CommandStore) {
         buffer.clear()
     }
 
-    // TODO respect the configured default value
     private fun parseOptionValue(option: Option, value: String): Any {
         return if (option.isList) {
             parseOptionListValue(option, value)
@@ -208,7 +207,7 @@ class CommandParser(private val commandStore: CommandStore) {
             OptionType.Number -> value.toDoubleOrNull()
                 ?: throw CommandParsingException("Option: '$optionName' must be a number but was not.")
 
-            OptionType.Flag -> value.isEmpty() || value.lowercase() == "true" || value.lowercase() == "on" || value == "1"
+            OptionType.Flag -> value.isEmpty() || value.lowercase() == "true" || value.lowercase() == "on" || value.lowercase() == "yes" || value == "1"
         }
     }
 
@@ -238,6 +237,12 @@ class CommandParser(private val commandStore: CommandStore) {
     }
 
     private fun buildConcreteCommand(): ConcreteCommand {
+        commandDefinition.options
+            .filter { !args.containsKey(it.longKeyword) && it.defaultValue != null }
+            .forEach {
+                args.put(it.longKeyword, it.defaultValue!!)
+            }
+
         val missingOptions = commandDefinition.options
             .filter { !args.containsKey(it.longKeyword) }
             .sortedBy { it.required }

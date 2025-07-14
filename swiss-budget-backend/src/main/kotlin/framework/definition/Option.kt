@@ -10,6 +10,7 @@ data class Option(
     val defaultValue: Any? = null,
     val isList: Boolean = false,
     val type: OptionType = OptionType.Text,
+    val valueSuggestionLoader: DynamicOptionValueSuggestionLoader? = null,
 )
 
 enum class OptionType {
@@ -17,3 +18,5 @@ enum class OptionType {
     Text,
     Flag,
 }
+
+typealias DynamicOptionValueSuggestionLoader = suspend (String) -> List<String>
