@@ -11,22 +11,31 @@ data class Command(
 ) : SelfDescribingNode {
     val options: MutableList<Option> = mutableListOf()
     var parent: Directory? = null
-    var runFunction: RunCommandFunction = { CommandResult(HttpStatusCode.NotImplemented, CommandResultBody(error = "Not Implemented!")) }
+    var runFunction: RunCommandFunction = { CommandResult(HttpStatusCode.NotImplemented, CommandResultPage(error = "Not Implemented!")) }
 }
 
 typealias RunCommandFunction = suspend (options: ConcreteOptions) -> CommandResult
 
 data class CommandResult(
     val statusCode: HttpStatusCode,
-    val body: CommandResultBody,
+    val body: CommandResultPage,
+)
+
+@Serializable
+data class CommandResultPage(
+    val title: String? = null,
+    val description: String? = null,
+    val error: String? = null,
+    val page: CommandResultBody? = null,
 )
 
 @Serializable
 data class CommandResultBody(
-    val table: Map<String, List<String>>? = null,
+    val subtitle: String? = null,
     val prequel: String? = null,
+    val table: Map<String, List<String>>? = null,
     val sequel: String? = null,
-    val error: String? = null,
+    val children: List<CommandResultBody>? = null,
 )
 
 fun Command.action(block: RunCommandFunction) {

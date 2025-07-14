@@ -1,7 +1,7 @@
 package com.michu_tech.swiss_budget.backend.app.tag
 
 import com.michu_tech.swiss_budget.backend.framework.definition.CommandResult
-import com.michu_tech.swiss_budget.backend.framework.definition.CommandResultBody
+import com.michu_tech.swiss_budget.backend.framework.definition.CommandResultPage
 import com.michu_tech.swiss_budget.backend.framework.runtime.ConcreteOptions
 import com.michu_tech.swiss_budget.backend.framework.runtime.extract
 import com.michu_tech.swiss_budget.backend.framework.runtime.extractOptional
@@ -19,5 +19,5 @@ suspend fun createTag(options: ConcreteOptions): CommandResult {
         message += "\n\nTag will not be applied to existing transactions"
     }
 
-    return CommandResult(HttpStatusCode.OK, CommandResultBody(prequel = message))
+    return CommandResult(HttpStatusCode.OK, CommandResultPage(title = message))
 }
