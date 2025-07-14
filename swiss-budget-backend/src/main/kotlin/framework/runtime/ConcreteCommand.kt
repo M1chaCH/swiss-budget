@@ -13,6 +13,6 @@ data class ConcreteCommand(
     val missingOptions: List<Option>,
 ) : SelfDescribingNode {
     fun isComplete(): Boolean {
-        return missingOptions.isEmpty()
+        return missingOptions.none { it.required }
     }
 }

@@ -7,20 +7,29 @@ import io.ktor.server.routing.*
 import kotlinx.serialization.Serializable
 import org.koin.ktor.ext.get
 
+
 @Serializable
 data class CommandBody(val command: String)
 
 fun Route.postExecuteCommand() {
     post("/command") {
-        val body: CommandBody = call.receive()
-        val commandStore: CommandStore = call.application.get<CommandStore>()
+        val requestBody: CommandBody = call.receive()
+        val parser: CommandParser = call.application.get<CommandParser>()
+        val command = parser.parse(requestBody.command)
 
-        val command = parseCommand(body.command, commandStore)
-        if (!command.isComplete()) {
-            call.respond(HttpStatusCode.OK, "Command $command is missing required parameters")
-            return@post
+        if (command.isComplete()) {
+            val result = command.runFunction(command.args)
+            call.respond(HttpStatusCode.OK, result.body)
+        } else {
+            var prompt = command.missingOptions.first { it.required }.prompt.trim()
+            if (!prompt.endsWith("?")) prompt += "?"
+
+            val result = """
+                You need to give some more information to the command: ${command.name}
+                $prompt
+            """.trimIndent()
+
+            call.respond(HttpStatusCode.Accepted, result)
         }
-
-        call.respond(HttpStatusCode.OK, command)
     }
 }

@@ -81,7 +81,7 @@ class CommandParserTests {
         val command = "tags"
         val result = parser.parse(command)
         assertEquals("Tags", result.name)
-        assertEquals(0, result.missingOptions.size)
+        assertEquals(3, result.missingOptions.size)
     }
 
     @Test
@@ -89,7 +89,7 @@ class CommandParserTests {
         val command = "tag create"
         val result = parser.parse(command)
         assertEquals("Create Tag", result.name)
-        assertEquals(2, result.missingOptions.size)
+        assertEquals(4, result.missingOptions.size)
     }
 
     @Test
@@ -97,7 +97,7 @@ class CommandParserTests {
         val command = "tag create --name Test Command"
         val result = parser.parse(command)
         assertEquals("Create Tag", result.name)
-        assertEquals(1, result.missingOptions.size)
+        assertEquals(3, result.missingOptions.size)
         assertEquals(1, result.args.size)
         assertEquals("Test Command", result.args["name"])
     }
@@ -107,7 +107,7 @@ class CommandParserTests {
         val command = "tag create -n Test Command"
         val result = parser.parse(command)
         assertEquals("Create Tag", result.name)
-        assertEquals(1, result.missingOptions.size)
+        assertEquals(3, result.missingOptions.size)
         assertEquals(1, result.args.size)
         assertEquals("Test Command", result.args["name"])
     }
@@ -117,7 +117,7 @@ class CommandParserTests {
         val command = "tag create --NaMe Test Command"
         val result = parser.parse(command)
         assertEquals("Create Tag", result.name)
-        assertEquals(1, result.missingOptions.size)
+        assertEquals(3, result.missingOptions.size)
         assertEquals(1, result.args.size)
         assertEquals("Test Command", result.args["name"])
     }
@@ -127,7 +127,7 @@ class CommandParserTests {
         val command = "tag create -N Test Command"
         val result = parser.parse(command)
         assertEquals("Create Tag", result.name)
-        assertEquals(1, result.missingOptions.size)
+        assertEquals(3, result.missingOptions.size)
         assertEquals(1, result.args.size)
         assertEquals("Test Command", result.args["name"])
     }
@@ -171,7 +171,7 @@ class CommandParserTests {
     @Test
     fun testTagCreateFullDoubleEqual() {
         val command =
-            "tag create --apply --name=\"Test Command\" --\"skip-check some check,and_more\" --keywords=\"some,keyword, cool keyword, some more,test,\""
+            "tag create --apply --name=\"Test Command\" --skip-check=\"some check,and_more\" --keywords=\"some,keyword, cool keyword, some more,test,\""
         val result = parser.parse(command)
         assertAllCreateTag(result)
     }
@@ -187,9 +187,9 @@ class CommandParserTests {
     @Test
     fun testTagCreateFullMixed() {
         val command =
-            "tag create -a --name=\"Test-Command\" -sc some check,and_more -keywords some,keyword, cool keyword, some more,test,"
+            "tag create -a --name=\"Test-Command\" -sc some check,and_more --keywords some,keyword, cool keyword, some more,test,"
         val result = parser.parse(command)
-        assertAllCreateTag(result)
+        assertAllCreateTag(result, tagName = "Test-Command")
     }
 
     @Test
@@ -206,12 +206,12 @@ class CommandParserTests {
         checkKeywords: Boolean = true,
         checkApply: Boolean = true,
         checkSkipCheck: Boolean = true,
-        tagName: String = "Create Tag"
+        tagName: String = "Test Command"
     ) {
-        assertEquals(tagName, result.name)
-        assertEquals(0, result.missingOptions.size)
+        assertEquals("Create Tag", result.name)
+        assertEquals(if (justRequired) 2 else 0, result.missingOptions.size)
         assertEquals(if (justRequired) 2 else 4, result.args.size)
-        assertEquals("Test Command", result.args["name"])
+        assertEquals(tagName, result.args["name"])
 
         if (checkKeywords) {
             val keywords = result.args["keywords"]
@@ -233,7 +233,7 @@ class CommandParserTests {
         if (checkSkipCheck) {
             val skipCheck = result.args["skip-check"]
             assertIs<List<String>>(skipCheck)
-            assertEquals(5, skipCheck.size)
+            assertEquals(2, skipCheck.size)
             assertContains(skipCheck, "some check")
             assertContains(skipCheck, "and_more")
         }
@@ -262,7 +262,7 @@ class CommandParserTests {
     fun testTagCreateOptionValueWithDash() {
         val command = "tag create -a false -n=\"Test-Command\""
         val result = parser.parse(command)
-        assertEquals(1, result.missingOptions.size)
+        assertEquals(2, result.missingOptions.size)
         assertEquals(2, result.args.size)
 
         val apply = result.args["apply"]

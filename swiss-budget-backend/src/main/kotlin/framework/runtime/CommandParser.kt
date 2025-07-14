@@ -69,18 +69,7 @@ class CommandParser(private val commandStore: CommandStore) {
             args.put(currentOptionDefinition!!.longKeyword, value)
         }
 
-        val missingOptions = commandDefinition.options.filter { definedOption ->
-            definedOption.required && !args.containsKey(definedOption.longKeyword)
-        }.toList()
-
-        return ConcreteCommand(
-            commandDefinition.keyword,
-            commandDefinition.name,
-            commandDefinition.description,
-            commandDefinition.runFunction,
-            args,
-            missingOptions
-        )
+        return buildConcreteCommand()
     }
 
     private fun handleCommand(next: Char): CommandParserState {
@@ -232,6 +221,7 @@ class CommandParser(private val commandStore: CommandStore) {
 
         val splits = value.split(",").map { it.trim() }.toList()
         for (part in splits) {
+            if (part.isEmpty()) continue
             resultList = resultList.plus(parseOptionSingleValue(option, part))
         }
 
@@ -245,6 +235,29 @@ class CommandParser(private val commandStore: CommandStore) {
         }
 
         return value
+    }
+
+    private fun buildConcreteCommand(): ConcreteCommand {
+        val missingOptions = commandDefinition.options
+            .filter { !args.containsKey(it.longKeyword) }
+            .sortedBy { it.required }
+            .toList()
+
+        var keyword = commandDefinition.keyword
+        var currentParent = commandDefinition.parent
+        while (currentParent != null && currentParent.keyword.isNotBlank()) {
+            keyword = currentParent.keyword + " " + keyword
+            currentParent = currentParent.parent
+        }
+
+        return ConcreteCommand(
+            keyword,
+            commandDefinition.name,
+            commandDefinition.description,
+            commandDefinition.runFunction,
+            args,
+            missingOptions
+        )
     }
 }
 
