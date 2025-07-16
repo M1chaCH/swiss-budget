@@ -1,6 +1,6 @@
 package com.michu_tech.swiss_budget.backend
 
-import com.michu_tech.swiss_budget.backend.framework.handleAutoCompleteConnection
+import com.michu_tech.swiss_budget.backend.framework.runtime.wsCommandAutoComplete
 import io.ktor.server.application.*
 import io.ktor.server.routing.*
 import io.ktor.server.websocket.*
@@ -14,7 +14,7 @@ fun Application.configureSockets() {
         masking = false
     }
     routing {
-        webSocket("/ws") { handleAutoCompleteConnection }
+        wsCommandAutoComplete()
     }
 }
 

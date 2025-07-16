@@ -1,6 +1,7 @@
 package com.michu_tech.swiss_budget.backend
 
 import com.michu_tech.swiss_budget.backend.app.SwissBudgetInitializer
+import com.michu_tech.swiss_budget.backend.framework.runtime.CommandAutoCompleteProvider
 import com.michu_tech.swiss_budget.backend.framework.runtime.CommandParser
 import com.michu_tech.swiss_budget.backend.framework.runtime.CommandStore
 import io.ktor.server.application.*
@@ -15,6 +16,7 @@ fun Application.configureDependencyInjection() {
             // Framework
             single<CommandStore> { CommandStore() }
             factory<CommandParser> { CommandParser(get()) }
+            factory<CommandAutoCompleteProvider> { CommandAutoCompleteProvider(get()) }
 
             // SwissBudget
             single { SwissBudgetInitializer(get()) }
