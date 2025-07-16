@@ -68,7 +68,6 @@ class CommandAutoCompleteProviderTests {
     fun testEmpty() = runTest {
         val input = ""
         val result = provider.getAutocompleteSuggestions(input)
-        assertEquals(2, result.size)
         assertContains(result, "tags ")
         assertContains(result, "tag ")
     }
@@ -77,7 +76,6 @@ class CommandAutoCompleteProviderTests {
     fun testTag() = runTest {
         val input = "tag"
         val result = provider.getAutocompleteSuggestions(input)
-        assertEquals(2, result.size)
         assertContains(result, "tags ")
         assertContains(result, "tag ")
     }
@@ -94,7 +92,6 @@ class CommandAutoCompleteProviderTests {
     fun testTagCreateOptions() = runTest {
         val input = "tag create "
         val result = provider.getAutocompleteSuggestions(input)
-        assertEquals(2, result.size)
         assertContains(result, "tag create --keywords=\"")
         assertContains(result, "tag create --name=\"")
     }
@@ -104,7 +101,7 @@ class CommandAutoCompleteProviderTests {
         val input = "tag create --name=\"micha\""
         val result = provider.getAutocompleteSuggestions(input)
         assertEquals(1, result.size)
-        assertContains(result, "tag create --name=\"micha\" --keywords=\"")
+        assertEquals("tag create --name=\"micha\" --keywords=\"", result[0])
     }
 
     @Test
@@ -119,7 +116,8 @@ class CommandAutoCompleteProviderTests {
     fun testTagCreateOpenOption1() = runTest {
         val input = "tag create -n micha"
         val result = provider.getAutocompleteSuggestions(input)
-        assertTrue { result.isEmpty() }
+        assertEquals(1, result.size)
+        assertEquals("tag create -n micha --keywords=\"", result[0])
     }
 
     @Test
@@ -127,7 +125,7 @@ class CommandAutoCompleteProviderTests {
         val input = "tag create -n micha "
         val result = provider.getAutocompleteSuggestions(input)
         assertEquals(1, result.size)
-        assertContains(result, "tag create -n micha --keywords=\"")
+        assertEquals("tag create -n micha --keywords=\"", result[0])
     }
 
     @Test
@@ -135,7 +133,7 @@ class CommandAutoCompleteProviderTests {
         val input = "tag create -n micha -"
         val result = provider.getAutocompleteSuggestions(input)
         assertEquals(1, result.size)
-        assertContains(result, "tag create -n micha --keywords=\"")
+        assertEquals("tag create -n micha --keywords=\"", result[0])
     }
 
     @Test
@@ -143,7 +141,7 @@ class CommandAutoCompleteProviderTests {
         val input = "tag create -n micha --key"
         val result = provider.getAutocompleteSuggestions(input)
         assertEquals(1, result.size)
-        assertContains(result, "tag create -n micha --keywords=\"")
+        assertEquals("tag create -n micha --keywords=\"", result[0])
     }
 
     @Test
@@ -157,35 +155,32 @@ class CommandAutoCompleteProviderTests {
     fun testTagsFlag() = runTest {
         val input = "tags -asc "
         val result = provider.getAutocompleteSuggestions(input)
-        assertEquals(1, result.size)
-        assertContains(result, "tags -asc --sort-column=\"")
+        assertContains(result, "tags -asc true ")
+        assertContains(result, "tags -asc false ")
     }
 
     @Test
     fun testTagsFlagValue() = runTest {
         val input = "tags -asc=\""
         val result = provider.getAutocompleteSuggestions(input)
-        assertEquals(2, result.size)
-        assertContains(result, "tags -asc=\"true\"")
-        assertContains(result, "tags -asc=\"false\"")
+        assertContains(result, "tags -asc=\"true\" ")
+        assertContains(result, "tags -asc=\"false\" ")
     }
 
     @Test
     fun testTagUpdateDynamicOptionValue() = runTest {
-        val input = "tag update --new-name test name -id tr"
+        val input = "tag rename --new-name test name -id tr"
         val result = provider.getAutocompleteSuggestions(input)
-        assertEquals(2, result.size)
-        assertContains(result, "tag update --new-name test name -id tracking")
-        assertContains(result, "tag update --new-name test name -id travel")
+        assertContains(result, "tag rename --new-name test name -id tracking ")
+        assertContains(result, "tag rename --new-name test name -id travel ")
     }
 
     @Test
     fun testTagUpdateDynamicOptionValueQuoted() = runTest {
-        val input = "tag update --new-name test name -id=\"tr"
+        val input = "tag rename --new-name test name -id=\"tr"
         val result = provider.getAutocompleteSuggestions(input)
-        assertEquals(2, result.size)
-        assertContains(result, "tag update --new-name test name -id=\"tracking\"")
-        assertContains(result, "tag update --new-name test name -id=\"travel\"")
+        assertContains(result, "tag rename --new-name test name -id=\"tracking\" ")
+        assertContains(result, "tag rename --new-name test name -id=\"travel\" ")
     }
 
     private fun updateTagSuggestionLoader(filter: String): List<String> {

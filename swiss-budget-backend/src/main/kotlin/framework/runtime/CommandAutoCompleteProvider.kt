@@ -43,7 +43,7 @@ class CommandAutoCompleteProvider(
                 CommandAutoCompleteProviderState.Command -> handleCommand(char)
                 CommandAutoCompleteProviderState.OptionDefinition -> handleOptionDefinition(char)
                 CommandAutoCompleteProviderState.QuoteOptionValue -> handleQuoteOptionValue(char)
-                CommandAutoCompleteProviderState.OpenOptionValue -> CommandAutoCompleteProviderState.Done
+                CommandAutoCompleteProviderState.OpenOptionValue -> handleOpenOptionValue(char)
                 CommandAutoCompleteProviderState.Done -> CommandAutoCompleteProviderState.Done
             }
         }
@@ -105,20 +105,19 @@ class CommandAutoCompleteProvider(
         }
 
         // no CommandDefinition -> invalid state, initially no dash -> wrong syntax
-        if (commandDefinition == null || buffer.isEmpty() && next != dash) {
+        if (commandDefinition == null) {
             return CommandAutoCompleteProviderState.Done
         }
 
         // done -> find suggestions
         if (next == nullChar) {
-            val optionFilter = flushBuffer()
-            val matchingOptions = commandDefinition!!.options
-                .filter {
-                    it.longKeyword.startsWith(optionFilter, true) ||
-                            it.shortKeyword.startsWith(optionFilter, true)
-                }
-                .map { alreadyGoodInput + "--" + it.longKeyword + "=$quote" }
+            val optionFilter = replaceLeadingDashes(flushBuffer())
+            val matchingOptions = getOptionSuggestions(optionFilter)
             result.addAll(matchingOptions)
+            return CommandAutoCompleteProviderState.Done
+        }
+
+        if (buffer.isEmpty() && next != dash) {
             return CommandAutoCompleteProviderState.Done
         }
 
@@ -131,7 +130,7 @@ class CommandAutoCompleteProvider(
 
         // option definition done -> find option in command definition
         if (next == equal || next == space) {
-            val keyword = flushBuffer()
+            val keyword = replaceLeadingDashes(flushBuffer())
             currentOption = commandDefinition!!.options.find { o ->
                 if (longOptionDefinition) {
                     o.longKeyword == keyword
@@ -144,6 +143,7 @@ class CommandAutoCompleteProvider(
                 return CommandAutoCompleteProviderState.Done
             }
 
+            alreadyGoodInput += if (longOptionDefinition) "--" else "-"
             alreadyGoodInput += keyword
             return if (next == equal) CommandAutoCompleteProviderState.QuoteOptionValue else CommandAutoCompleteProviderState.OpenOptionValue
         }
@@ -162,22 +162,9 @@ class CommandAutoCompleteProvider(
         // done -> find suggestions
         if (next == nullChar) {
             val filter = flushBuffer().substring(1) // skip leading "
-            val suggestedValues = mutableListOf<String>()
-            if (currentOption!!.valueSuggestionLoader != null) {
-                val dynamicResult = currentOption!!.valueSuggestionLoader?.invoke(filter) ?: listOf()
-                suggestedValues.addAll(dynamicResult)
-            } else if (currentOption!!.type == OptionType.Flag && !currentOption!!.isList) {
-                if ("true".startsWith(filter, true)) {
-                    suggestedValues.add("true")
-                }
-                if ("false".startsWith(filter, true)) {
-                    suggestedValues.add("false")
-                }
-            }
-
-
-            result.addAll(suggestedValues.map {
-                "$alreadyGoodInput$quote$it$quote "
+            val suggestedOptionValues = getSuggestedValuesForCurrentOption(filter)
+            result.addAll(suggestedOptionValues.map {
+                "$alreadyGoodInput$equal$quote$it$quote "
             })
             return CommandAutoCompleteProviderState.Done
         }
@@ -185,7 +172,7 @@ class CommandAutoCompleteProvider(
         // value defined -> mark as defined and continue
         if (buffer.isNotEmpty() && next == quote) {
             val valueInput = flushBuffer()
-            alreadyGoodInput += valueInput
+            alreadyGoodInput += "$equal$valueInput$quote "
             alreadyDefinedOptions.add(currentOption!!.longKeyword)
             return CommandAutoCompleteProviderState.OptionDefinition
         }
@@ -193,6 +180,83 @@ class CommandAutoCompleteProvider(
         // default -> add to buffer and continue
         buffer.add(next)
         return CommandAutoCompleteProviderState.QuoteOptionValue
+    }
+
+    private suspend fun handleOpenOptionValue(next: Char): CommandAutoCompleteProviderState {
+        if (currentOption == null) {
+            return CommandAutoCompleteProviderState.Done
+        }
+
+        if (buffer.isEmpty() && next == space) {
+            return CommandAutoCompleteProviderState.OpenOptionValue
+        }
+
+        if (next == nullChar) {
+            val filter = flushBuffer()
+            val suggestedOptionValues = getSuggestedValuesForCurrentOption(filter)
+
+            if (suggestedOptionValues.isNotEmpty()) {
+                alreadyGoodInput += " "
+                result.addAll(suggestedOptionValues.map { "$alreadyGoodInput$it " })
+                return CommandAutoCompleteProviderState.Done
+            }
+
+            alreadyGoodInput += " ${filter.trim()} "
+            alreadyDefinedOptions.add(currentOption!!.longKeyword)
+            val suggestedOptions = getOptionSuggestions("")
+            result.addAll(suggestedOptions)
+            return CommandAutoCompleteProviderState.Done
+        }
+
+        if (next == dash) {
+            val valueInput = flushBuffer()
+            alreadyGoodInput += " ${valueInput.trim()} "
+            alreadyDefinedOptions.add(currentOption!!.longKeyword)
+            state = CommandAutoCompleteProviderState.OptionDefinition
+            longOptionDefinition = false
+            currentOption = null
+            return handleOptionDefinition(next)
+        }
+
+        buffer.add(next)
+        return CommandAutoCompleteProviderState.OpenOptionValue
+    }
+
+    private fun getOptionSuggestions(filter: String): List<String> {
+        if (commandDefinition == null) {
+            return emptyList()
+        }
+
+        return commandDefinition!!.options
+            .filter {
+                filter.isBlank() || it.longKeyword.startsWith(filter, true) ||
+                        it.shortKeyword.startsWith(filter, true)
+            }
+            .filter {
+                !alreadyDefinedOptions.contains(it.longKeyword)
+            }
+            .map { alreadyGoodInput + "--" + it.longKeyword + "=$quote" }
+    }
+
+    private suspend fun getSuggestedValuesForCurrentOption(filter: String): List<String> {
+        if (currentOption == null) {
+            return emptyList()
+        }
+
+        val suggestedValues = mutableListOf<String>()
+        if (currentOption!!.valueSuggestionLoader != null) {
+            val dynamicResult = currentOption!!.valueSuggestionLoader?.invoke(filter) ?: listOf()
+            suggestedValues.addAll(dynamicResult)
+        } else if (currentOption!!.type == OptionType.Flag && !currentOption!!.isList) {
+            if ("true".startsWith(filter, true)) {
+                suggestedValues.add("true")
+            }
+            if ("false".startsWith(filter, true)) {
+                suggestedValues.add("false")
+            }
+        }
+
+        return suggestedValues
     }
 
     private fun flushBuffer(): String {

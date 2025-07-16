@@ -89,7 +89,7 @@ class CommandParserTests {
         val command = "tag create"
         val result = parser.parse(command)
         assertEquals("Create Tag", result.name)
-        assertEquals(4, result.missingOptions.size)
+        assertEquals(3, result.missingOptions.size)
     }
 
     @Test
@@ -97,9 +97,10 @@ class CommandParserTests {
         val command = "tag create --name Test Command"
         val result = parser.parse(command)
         assertEquals("Create Tag", result.name)
-        assertEquals(3, result.missingOptions.size)
-        assertEquals(1, result.args.size)
+        assertEquals(2, result.missingOptions.size)
+        assertEquals(2, result.args.size)
         assertEquals("Test Command", result.args["name"])
+        assertEquals(true, result.args["apply"])
     }
 
     @Test
@@ -107,9 +108,10 @@ class CommandParserTests {
         val command = "tag create -n Test Command"
         val result = parser.parse(command)
         assertEquals("Create Tag", result.name)
-        assertEquals(3, result.missingOptions.size)
-        assertEquals(1, result.args.size)
+        assertEquals(2, result.missingOptions.size)
+        assertEquals(2, result.args.size)
         assertEquals("Test Command", result.args["name"])
+        assertEquals(true, result.args["apply"])
     }
 
     @Test
@@ -117,8 +119,8 @@ class CommandParserTests {
         val command = "tag create --NaMe Test Command"
         val result = parser.parse(command)
         assertEquals("Create Tag", result.name)
-        assertEquals(3, result.missingOptions.size)
-        assertEquals(1, result.args.size)
+        assertEquals(2, result.missingOptions.size)
+        assertEquals(2, result.args.size)
         assertEquals("Test Command", result.args["name"])
     }
 
@@ -127,8 +129,8 @@ class CommandParserTests {
         val command = "tag create -N Test Command"
         val result = parser.parse(command)
         assertEquals("Create Tag", result.name)
-        assertEquals(3, result.missingOptions.size)
-        assertEquals(1, result.args.size)
+        assertEquals(2, result.missingOptions.size)
+        assertEquals(2, result.args.size)
         assertEquals("Test Command", result.args["name"])
     }
 
@@ -209,8 +211,8 @@ class CommandParserTests {
         tagName: String = "Test Command"
     ) {
         assertEquals("Create Tag", result.name)
-        assertEquals(if (justRequired) 2 else 0, result.missingOptions.size)
-        assertEquals(if (justRequired) 2 else 4, result.args.size)
+        assertEquals(if (justRequired) 1 else 0, result.missingOptions.size)
+        assertEquals(if (justRequired) 3 else 4, result.args.size)
         assertEquals(tagName, result.args["name"])
 
         if (checkKeywords) {

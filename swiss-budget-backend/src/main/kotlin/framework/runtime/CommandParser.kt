@@ -227,15 +227,6 @@ class CommandParser(private val commandStore: CommandStore) {
         return resultList
     }
 
-    private fun replaceLeadingDashes(s: String): String {
-        var value = s
-        while (value.startsWith("-")) {
-            value = value.substring(1)
-        }
-
-        return value
-    }
-
     private fun buildConcreteCommand(): ConcreteCommand {
         commandDefinition.options
             .filter { !args.containsKey(it.longKeyword) && it.defaultValue != null }
