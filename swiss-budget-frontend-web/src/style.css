@@ -1,0 +1,105 @@
+:root {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  align-items: center;
+
+  height: 100svh;
+  width: 100vw;
+  box-sizing: border-box;
+  margin: 0;
+}
+
+main {
+  background-color: black;
+  border-radius: 20px;
+  padding: 20px;
+
+  width: 90%;
+  max-width: 1200px;
+  max-height: 90%;
+  height: 60%;
+
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+p, pre, input {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  font-weight: 300;
+  color: white;
+  margin: 0;
+  white-space: preserve;
+}
+
+input::selection, input::-moz-selection {
+  background-color: white;
+  color: black;
+}
+
+#console-input {
+  pointer-events: none;
+  background-color: transparent;
+  outline: none;
+  color: white;
+  border: none;
+  width: 100%;
+  caret-shape: bar;
+  caret-color: white;
+  padding-left: 1rem;
+}
+
+#console-active-line {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: flex-end;
+  justify-content: flex-start;
+}
+
+#console-cursor {
+  display: block;
+  height: 5px;
+  width: 10px;
+  background-color: white;
+  visibility: hidden;
+  animation: cursor-blink 500ms infinite alternate;
+}
+
+#console-suggestion-container {
+  display: flex;
+  flex-flow: column;
+
+  opacity: 0.8;
+  padding: 1rem;
+}
+
+@keyframes cursor-blink {
+  0% {
+    opacity: 0;
+  }
+  48% {
+    opacity: 0;
+  }
+  52% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+  }
+}

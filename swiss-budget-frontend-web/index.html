@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <!--    <link rel="icon" type="image/svg+xml" href="/vite.svg" />-->
+    <link rel="stylesheet"
+          href="/src/style.css">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0"/>
+
+    <link rel="preconnect"
+          href="https://fonts.googleapis.com">
+    <link rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap"
+          rel="stylesheet">
+
+    <title>Terminal: Swiss Budget</title>
+</head>
+<body>
+<main id="console-background">
+    <p>welcome to swiss budget!</p>
+    <div id="console-active-line">
+        <p style="white-space: nowrap;">&lt;swiss budget&gt; </p>
+        <input id="console-input"
+               type="text"
+               maxlength="1000"/>
+        <!--        <span id="console-cursor"></span>-->
+    </div>
+    <div id="console-suggestion-container">
+    </div>
+</main>
+<script type="module"
+        src="/src/framework/main.ts"></script>
+</body>
+</html>
